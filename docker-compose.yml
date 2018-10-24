@@ -1,0 +1,113 @@
+version: '2'
+services:
+  dips-redis:
+    image: redis:4.0.10
+    ports:
+      - 6379:6379
+    restart: always
+
+  dipsdbserver:
+    image: mysql:5.7.15
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+     - /home/docker/mysql/:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+  dips-eureka:
+    image: dips-eureka
+    build:
+      context: ./
+      dockerfile: ./dips-eureka/Dockerfile
+    restart: always
+    ports:
+      - 1025:1025
+
+  dips-config:
+    image: dips-config
+    links:
+      - dips-eureka
+    build:
+      context: ./
+      dockerfile: ./dips-config/Dockerfile
+    restart: always
+
+  dips-auth:
+    image: dips-auth
+    links:
+      - dips-eureka
+      - dips-redis
+    build:
+      context: ./
+      dockerfile: ./dips-auth/Dockerfile
+    restart: always
+
+  dips-gateway:
+    image: dips-gateway
+    links:
+      - dips-eureka
+      - dips-redis
+    build:
+      context: ./
+      dockerfile: ./dips-gateway/Dockerfile
+    restart: always
+    ports:
+      - 9999:9999
+
+  dips-upms:
+    image: dips-upms
+    links:
+      - dips-eureka
+      - dips-redis
+      - dips-gateway
+    build:
+      context: ./
+      dockerfile: ./dips-upms/dips-upms-biz/Dockerfile
+    restart: always
+
+#   dips-monitor:
+#     image: dips-monitor
+#     links:
+#       - dips-eureka
+#       - dips-redis
+#     build:
+#       context: ./
+#       dockerfile: ./dips-visual/dips-monitor/Dockerfile
+#     restart: always
+#     ports:
+#       - 5001:5001
+  
+#   dips-daemon:
+#   image: dips-daemon
+#   links:
+#     - dips-eureka
+#   build:
+#     context: ./
+#     dockerfile: ./dips-visual/dips-daemon/Dockerfile
+#   restart: always
+#   ports:
+#     - 5002:5002
+
+#  dips-codegen:
+#    image: dips-codegen
+#    links:
+#      - dips-eureka
+#      - dips-redis
+#    build:
+#      context: ./
+#      dockerfile: ./dips-visual/dips-codegen/Dockerfile
+#    restart: always
+
+# dips-tx-manager:
+#   image: dips-tx-manager
+#   links:
+#     - dips-eureka
+#     - dips-redis
+#   build:
+#     context: ./
+#     dockerfile: ./dips-visual/dips-tx-manager/Dockerfile
+#   restart: always
+#   ports:
+#     - 5004:5004
+#     - 9998:9998

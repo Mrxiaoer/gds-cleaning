@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, Wilson All rights reserved.
+ *
+ * Author: Wilson
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.admin.mapper.SysOauthClientDetailsMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysOauthClientDetails">
+		<id column="g_client_id" property="clientId"/>
+		<result column="g_resource_ids" property="resourceIds"/>
+		<result column="g_client_secret" property="clientSecret"/>
+		<result column="g_scope" property="scope"/>
+		<result column="g_authorized_grant_types" property="authorizedGrantTypes"/>
+		<result column="g_web_server_redirect_uri" property="webServerRedirectUri"/>
+		<result column="g_authorities" property="authorities"/>
+		<result column="g_access_token_validity" property="accessTokenValidity"/>
+		<result column="g_refresh_token_validity" property="refreshTokenValidity"/>
+		<result column="g_additional_information" property="additionalInformation"/>
+		<result column="autoapprove" property="autoapprove"/>
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        g_client_id AS clientId, g_resource_ids AS resourceIds, g_client_secret AS clientSecret, g_scope, g_authorized_grant_types AS authorizedGrantTypes, g_web_server_redirect_uri AS webServerRedirectUri, g_authorities, g_access_token_validity AS accessTokenValidity, g_refresh_token_validity AS refreshTokenValidity, g_additional_information AS additionalInformation, g_autoapprove
+    </sql>
+
+</mapper>

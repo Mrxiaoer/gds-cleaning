@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.cloud</groupId>
+    <artifactId>dips</artifactId>
+    <version>${dips.version}</version>
+  </parent>
+  <artifactId>dips-visual</artifactId>
+  <name>dips-visual</name>
+  <description>DIPS 图形化功能模块</description>
+  <packaging>pom</packaging>
+  <modules>
+  	<module>dips-codegen</module>
+  	
+  	<module>dips-monitor</module>
+
+  	
+  </modules>
+</project>

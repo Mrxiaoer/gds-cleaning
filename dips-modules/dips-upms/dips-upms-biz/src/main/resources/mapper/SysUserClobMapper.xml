@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.admin.mapper.SysUserClobMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysUserClob">
+		<id column="g_user_id" property="userId"/>
+		<result column="g_key" property="key"/>
+		<result column="g_value" property="value"/>
+	</resultMap>
+
+	<select id="findOne" resultMap="BaseResultMap">
+		SELECT
+		dc.*
+		FROM
+		gov_user_clob AS dc
+		WHERE
+		dc.g_user_id = #{userId} AND
+		dc.g_key = #{key}
+	</select>
+
+	<update id="updateByIdAndKey">
+		UPDATE gov_user_clob
+		<set>
+			g_value = #{value}
+		</set>
+		WHERE
+		g_user_id = #{userId} AND
+		g_key = #{key}
+	</update>
+
+</mapper>

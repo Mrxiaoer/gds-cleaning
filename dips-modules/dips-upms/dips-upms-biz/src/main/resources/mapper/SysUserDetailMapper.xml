@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.admin.mapper.SysUserDetailMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysUserDetail">
+		<id column="g_user_id" property="userId"/>
+		<result column="g_validation_date" property="validationDate"/>
+		<result column="g_login_error_date" property="loginErrorDate"/>		
+		<result column="g_login_error_count" property="loginErrorCount"/>
+		<result column="g_prev_login_date" property="prevLoginDate"/>
+		<result column="g_prev_login_ip" property="prevLoginIp"/>
+		<result column="g_last_login_date" property="lastLoginDate"/>
+		<result column="g_last_login_ip" property="lastLoginIp"/>
+		<result column="g_creation_date" property="creationDate"/>
+		<result column="g_creation_ip" property="creationIp"/>
+		<result column="g_logins" property="logins"/>
+		<result column="g_is_with_avatar" property="withAvatar"/>
+		<result column="g_bio" property="bio"/>		
+		<result column="g_come_from" property="comeFrom"/>
+		<result column="g_qq" property="qq"/>
+		<result column="g_weixin" property="weixin"/>
+		<result column="g_head_img" property="headImg"/>
+		<result column="g_nick_name" property="nickName"/>
+		<result column="g_sign_name" property="signName"/>		
+		<result column="g_nation" property="nation"/>
+		<result column="g_marry" property="marry"/>
+		<result column="g_bear" property="bear"/>
+		<result column="g_politics" property="politics"/>
+		<result column="g_account_category" property="accountCategory"/>
+		<result column="g_permanent_address" property="permanentAddress"/>
+		<result column="g_present_address" property="presentAddress"/>
+		<result column="g_education" property="educationL"/>
+		<result column="g_school" property="school"/>
+		<result column="g_major" property="major"/>
+		<result column="g_language_level" property="languageLevel"/>
+		<result column="g_start_time" property="startTime"/>
+		<result column="g_regular_time" property="regularTime"/>
+		<result column="g_graduation_time" property="graduationTime"/>
+		<result column="g_external_certificate" property="externalCertificate"/>
+		<result column="g_emergency" property="emergency"/>
+		<result column="g_home_url" property="homeUrl"/>
+	</resultMap>
+
+	<select id="findOne" resultMap="BaseResultMap">
+		SELECT
+		dc.*
+		FROM
+		gov_user_detail AS dc
+		WHERE
+		dc.g_user_id = #{userId}
+	</select>
+
+</mapper>

@@ -1,0 +1,9 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.cloud.dips.common.security.component.PermissionService,\
+  com.cloud.dips.common.security.component.DipsAccessDeniedHandler,\
+  com.cloud.dips.common.security.component.ResourceAuthExceptionEntryPoint,\
+  com.cloud.dips.common.security.component.DipsResourceServerTokenRelayAutoConfiguration,\
+  com.cloud.dips.common.security.feign.DipsFeignClientConfiguration,\
+  com.cloud.dips.common.security.service.DipsUserDetailsServiceImpl,\
+  com.cloud.dips.common.security.social.QqSocialConfig,\
+  com.cloud.dips.common.security.social.WxSocialConfig

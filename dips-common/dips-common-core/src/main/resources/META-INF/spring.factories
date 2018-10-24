@@ -1,0 +1,6 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.cloud.dips.common.core.config.JacksonConfig,\
+  com.cloud.dips.common.core.config.RedisConfig,\
+  com.cloud.dips.common.core.config.RestTemplateConfig,\
+  com.cloud.dips.common.core.exception.GlobalExceptionHandler,\
+  com.cloud.dips.common.core.util.SpringContextHolder

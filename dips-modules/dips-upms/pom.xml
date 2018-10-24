@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, Wilson All rights reserved.
+ *
+ * Author: Wilson
+ *
+ */
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.cloud</groupId>
+		<artifactId>dips-modules</artifactId>
+		<version>${dips.version}</version>
+	</parent>
+
+	<artifactId>dips-upms</artifactId>
+	<name>dips-upms</name>
+	<description>dips 通用用户权限管理聚合模块</description>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>dips-upms-api</module>
+		<module>dips-upms-biz</module>
+	</modules>
+</project>

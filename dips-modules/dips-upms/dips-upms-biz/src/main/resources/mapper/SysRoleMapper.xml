@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, Wilson All rights reserved.
+ *
+ * Author: Wilson
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.admin.mapper.SysRoleMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysRole">
+		<id column="g_role_id" property="roleId"/>
+		<result column="g_role_name" property="roleName"/>
+		<result column="g_role_code" property="roleCode"/>
+		<result column="g_role_desc" property="roleDesc"/>
+		<result column="g_create_time" property="createTime"/>
+		<result column="g_update_time" property="updateTime"/>
+		<result column="g_del_flag" property="delFlag"/>
+	</resultMap>
+
+	<!--roleDto-->
+	<resultMap id="RoleDtoMap" type="com.cloud.dips.admin.api.dto.RoleDTO">
+		<id column="g_role_id" property="roleId"/>
+		<result column="g_role_name" property="roleName"/>
+		<result column="g_role_code" property="roleCode"/>
+		<result column="g_role_desc" property="roleDesc"/>
+		<result column="g_create_time" property="createTime"/>
+		<result column="g_update_time" property="updateTime"/>
+		<result column="g_del_flag" property="delFlag"/>
+		<result column="g_dept_id" property="roleDeptId"/>
+		<result column="g_dept_title" property="deptName"/>
+	</resultMap>
+	<!-- 分页查询 -->
+	<select id="selectRolePage" resultMap="RoleDtoMap">
+		SELECT
+			*
+		FROM
+			gov_role r
+		LEFT JOIN gov_role_dept rd ON rd.g_role_id = r.g_role_id
+		LEFT JOIN gov_dept d ON rd.g_dept_id = d.g_dept_id
+		WHERE r.g_del_flag = 0
+		ORDER BY r.g_role_id ASC
+	</select>
+	<select id="selectListByDeptId" resultMap="BaseResultMap">
+		SELECT
+			r.g_role_id,
+			r.g_role_name,
+			r.g_role_code,
+			r.g_role_desc,
+			r.g_create_time,
+			r.g_update_time,
+			r.g_del_flag
+		FROM gov_role r LEFT OUTER JOIN gov_role_dept rd ON rd.g_role_id = r.g_role_id
+		WHERE rd.g_dept_id = #{deptId}
+	</select>
+	<!-- 通过用户ID，查询角色信息-->
+	<select id="findRolesByUserId" resultMap="BaseResultMap">
+        SELECT
+            r.*
+        FROM
+        gov_role r, gov_user_role ur WHERE r.g_role_id = ur.g_role_id AND r.g_del_flag = 0 and  ur.g_user_id IN (#{userId})
+    </select>
+</mapper>

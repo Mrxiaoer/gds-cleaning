@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, Wilson All rights reserved.
+ *
+ * Author: Wilson
+ *
+ */
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.cloud</groupId>
+		<artifactId>dips</artifactId>
+		<version>${dips.version}</version>
+	</parent>
+
+	<artifactId>dips-common</artifactId>
+	<packaging>pom</packaging>
+	<name>dips-common</name>
+	<description>dips 公共聚合模块</description>
+
+	<modules>
+		<module>dips-common-core</module>
+		<module>dips-common-log</module>
+		<module>dips-common-security</module>
+		
+		<module>dips-common-swagger</module>
+		
+	</modules>
+</project>

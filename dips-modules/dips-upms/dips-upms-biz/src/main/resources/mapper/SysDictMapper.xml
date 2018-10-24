@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, Wilson All rights reserved.
+ *
+ * Author: Wilson
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.admin.mapper.SysDictMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysDict">
+		<id column="g_id" property="id"/>
+		<result column="g_value" property="value"/>
+		<result column="g_label" property="label"/>
+		<result column="g_number" property="number"/>
+		<result column="g_type" property="type"/>
+		<result column="g_description" property="description"/>
+		<result column="g_sort" property="sort"/>
+		<result column="g_create_time" property="createTime"/>
+		<result column="g_update_time" property="updateTime"/>
+		<result column="g_remarks" property="remarks"/>
+		<result column="g_del_flag" property="delFlag"/>
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        g_id, g_value, g_label, g_number, g_type, g_description, g_sort, g_create_time AS createTime, g_update_time AS updateTime, g_remarks, g_del_flag AS delFlag
+    </sql>
+
+</mapper>

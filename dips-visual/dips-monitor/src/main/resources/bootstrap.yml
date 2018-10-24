@@ -1,0 +1,23 @@
+server:
+  port: 5001
+
+spring:
+  application:
+    name: dips-monitor
+  #配置中心
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: dev
+      discovery:
+        enabled: true
+        service-id: dips-config
+
+# 注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://dips:dips@localhost:1025/eureka/

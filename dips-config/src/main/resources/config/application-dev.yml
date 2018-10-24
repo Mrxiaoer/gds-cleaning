@@ -1,0 +1,105 @@
+# 加解密根密码
+jasypt:
+  encryptor:
+    password: dips #根密码
+# redis 相关
+spring:
+  redis:
+    password:
+    host: 127.0.0.1
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+# feign 配置
+feign:
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      feignName:
+        connectTimeout: 10000
+        readTimeout: 10000
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+# hystrix If you need to use ThreadLocal bound variables in your RequestInterceptor`s
+# you will need to either set the thread isolation strategy for Hystrix to `SEMAPHORE or disable Hystrix in Feign.
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 60000
+  shareSecurityContext: true
+
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+
+#mybaits-plus配置，修改主键类型，mapper.xml、type 别名等
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  global-config:
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 0
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 1
+    #驼峰下划线转换
+    db-column-underline: true
+    #刷新mapper 调试神器
+    refresh-mapper: true
+    #逻辑删除字段
+    logic-delete-value: 1
+    logic-not-delete-value: 0
+    #自定义SQL注入器
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    #打印sql语句,调试用
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#swagger公共信息
+swagger:
+  title: 'DIPS Swagger API'
+  description: 'DIPS微服务接口文档'
+  version: '1.1.0'
+  license: 'Powered By Dips'
+  licenseUrl: 'http://www.govmade.com'
+  terms-of-service-url: 'http://ioa.govmade.com'
+#  exclude-path:
+#    - /actuator/**
+#    - /error
+  contact:
+    name: 'BigPan'
+    email: '675556650@qq.com'
+    url: 'http://ioa.govmade.com'
+  authorization:
+    name: 'DIPS OAuth'
+    auth-regex: '^.*$'
+    authorization-scope-list:
+      - scope: 'server'
+        description: 'server all'
+    token-url-list:
+      - ${security.auth.server}/token
+
+## spring security 配置
+security:
+  auth:
+    server: http://127.0.0.1:9999/auth/oauth
+  oauth2:
+    resource:
+      token-info-uri: ${security.auth.server}/check_token

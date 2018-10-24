@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, Wilson All rights reserved.
+ *
+ * Author: Wilson
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.admin.mapper.SysLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysLog">
+		<id column="g_id" property="id"/>
+		<result column="g_type" property="type"/>
+		<result column="g_title" property="title"/>
+		<result column="g_service_id" property="serviceId"/>
+		<result column="g_create_by" property="createBy"/>
+		<result column="g_create_time" property="createTime"/>
+		<result column="g_update_time" property="updateTime"/>
+		<result column="g_remote_addr" property="remoteAddr"/>
+		<result column="g_user_agent" property="userAgent"/>
+		<result column="g_request_uri" property="requestUri"/>
+		<result column="g_method" property="method"/>
+		<result column="g_params" property="params"/>
+		<result column="g_time" property="time"/>
+		<result column="g_del_flag" property="delFlag"/>
+		<result column="g_exception" property="exception"/>
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        g_id, g_type, g_title, g_create_by AS createBy, g_create_time AS createTime, g_update_time AS updateTime, g_remote_addr AS remoteAddr, g_user_agent AS userAgent, g_request_uri AS requestUri, g_method, g_params, g_time, g_del_flag AS delFlag
+    </sql>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, Wilson All rights reserved.
+ *
+ * Author: Wilson
+ *
+ */
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.cloud</groupId>
+		<artifactId>dips-common</artifactId>
+		<version>${dips.version}</version>
+	</parent>
+
+	<artifactId>dips-common-log</artifactId>
+	<packaging>jar</packaging>
+	<name>dips-common-log</name>
+	<description>dips 日志服务</description>
+
+	<dependencies>
+		<!--工具类核心包-->
+		<dependency>
+			<groupId>com.cloud</groupId>
+			<artifactId>dips-common-core</artifactId>
+			<version>${dips.version}</version>
+		</dependency>
+		<!--UPMS接口模块-->
+		<dependency>
+			<groupId>com.cloud</groupId>
+			<artifactId>dips-upms-api</artifactId>
+			<version>${dips.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.cloud</groupId>
+			<artifactId>dips-common-security</artifactId>
+			<version>${dips.version}</version>
+		</dependency>
+	</dependencies>
+</project>

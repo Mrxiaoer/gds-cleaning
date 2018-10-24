@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.admin.mapper.SysRelationMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysRelation">
+		<result column="g_node" property="node"/>
+		<result column="g_relation_id" property="relationId"/>
+		<result column="g_correlation_id" property="correlationId"/>
+		<result column="g_type_id" property="typeId"/>
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        node, relationId, correlationId, typeId
+    </sql>
+
+	<!-- 根据node relationId correlationId 关联类型查询结果-->
+	<select id="findOne" resultMap="BaseResultMap">
+		SELECT
+		gr.*
+		FROM
+		gov_relation AS gr
+		WHERE
+		gr.g_node = #{node} AND
+		gr.g_relation_id = #{relationId} AND
+		gr.g_correlation_id = #{correlationId} AND
+		gr.g_type_id = (SELECT rt.g_type_id FROM gov_relation_type AS rt WHERE rt.g_type_number = #{number})
+	</select>
+
+	<!-- 根据编码 关联ID 关联类型查询所有被关联的对象 -->
+	<select id="selectByNodeAndIdAndType" resultMap="BaseResultMap">
+		SELECT gr.*
+		FROM
+		gov_relation AS gr
+		WHERE
+		gr.g_node = #{node} AND
+		gr.g_relation_id = #{relationId} AND
+		gr.g_type_id = (SELECT rt.g_type_id FROM gov_relation_type AS rt WHERE rt.g_type_number = #{number})
+	</select>
+
+	<!-- 删除一个关联 -->
+	<delete id="deleteOne">
+		DELETE
+		FROM
+		gov_relation
+		WHERE
+		g_node = #{node} AND
+		g_relation_id = #{relationId} AND
+		g_correlation_id = #{correlationId} AND
+		g_type_id = #{typeId}
+	</delete>
+
+</mapper>
