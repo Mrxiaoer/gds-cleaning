@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.cloud</groupId>
+    <artifactId>dips-tms</artifactId>
+    <version>${dips.version}</version>
+  </parent>
+  <artifactId>dips-tms-api</artifactId>
+  <name>dips-tms-api</name>
+  <packaging>jar</packaging>
+  <description>dips 标签管理系统api模块</description>
+	<dependencies>
+		<!--mybatis-plus 依賴-->
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-boot-starter</artifactId>
+			<version>${mbp.boot.version}</version>
+		</dependency>
+		<!--core 工具类-->
+		<dependency>
+			<groupId>com.cloud</groupId>
+			<artifactId>dips-common-core</artifactId>
+			<version>${dips.version}</version>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.cloud.dips.tag.api.feign.fallback.RemoteTagRelationServiceFallbackImpl,\
+com.cloud.dips.tag.api.feign.factory.RemoteTagRelationServiceFallbackFactory
