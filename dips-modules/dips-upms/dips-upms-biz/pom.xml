@@ -33,7 +33,7 @@
 		<!--tms api、model 模块-->
 		<dependency>
 			<groupId>com.cloud</groupId>
-			<artifactId>dips-tms</artifactId>
+			<artifactId>dips-tms-api</artifactId>
 			<version>${dips.version}</version>
 		</dependency>
 		<!--日志处理-->

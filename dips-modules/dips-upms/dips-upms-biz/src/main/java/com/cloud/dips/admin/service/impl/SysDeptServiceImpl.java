@@ -21,7 +21,7 @@ import com.cloud.dips.admin.mapper.*;
 import com.cloud.dips.admin.service.SysDeptService;
 import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.util.Query;
-import com.cloud.dips.tag.feign.RemoteTagRelationService;
+import com.cloud.dips.tag.api.feign.RemoteTagRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

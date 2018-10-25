@@ -45,7 +45,7 @@ import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.constant.enums.EnumLoginType;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
-import com.cloud.dips.tag.feign.RemoteTagRelationService;
+import com.cloud.dips.tag.api.feign.RemoteTagRelationService;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
