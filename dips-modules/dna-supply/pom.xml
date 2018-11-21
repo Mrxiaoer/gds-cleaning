@@ -2,15 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.cloud</groupId>
-    <artifactId>dips</artifactId>
+    <artifactId>dips-modules</artifactId>
     <version>${dips.version}</version>
   </parent>
-  <artifactId>dips-modules</artifactId>
-  <packaging>pom</packaging>
-    <modules>
-        <module>dips-upms</module>
-        <module>dips-tms</module>        
-        <module>dna-survey</module>
-        <module>dna-supply</module>
-    </modules>
+  <artifactId>dna-supply</artifactId>
 </project>
