@@ -15,12 +15,7 @@ import com.cloud.dips.admin.api.entity.SysCity;
  */
 public interface SysCityService extends IService<SysCity> {
 
-	/**
-	 * 查询城市树菜单
-	 *
-	 * @param sysCityEntityWrapper
-	 * @return 树
-	 */
+	
 	List<CityTree> selectListTree(EntityWrapper<SysCity> entityWrapper);
 	
 	

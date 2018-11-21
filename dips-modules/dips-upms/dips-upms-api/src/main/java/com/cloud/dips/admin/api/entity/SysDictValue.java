@@ -23,6 +23,7 @@ import lombok.Data;
 
 /**
  * 字典值列表
+ * 
  * @author ZB
  *
  */
@@ -41,13 +42,13 @@ public class SysDictValue implements Serializable {
 	 * 字典键
 	 */
 	@TableField("key")
-	@NotBlank(message="字典键不能为空")
+	@NotBlank(message = "字典键不能为空")
 	private String key;
 	/**
 	 * 字典值
 	 */
 	@TableField("value")
-	@NotBlank(message="字典值不能为空")
+	@NotBlank(message = "字典值不能为空")
 	private String value;
 
 	/**
@@ -64,25 +65,24 @@ public class SysDictValue implements Serializable {
 	 * 所属字典id
 	 */
 	@TableField("dict_id")
-	@NotNull(message="所属字典不能为空")
+	@NotNull(message = "所属字典不能为空")
 	private Integer dictId;
 	/**
 	 * 父类id
 	 */
 	@TableField("parent_id")
-	private Integer parentId=0;
+	private Integer parentId = 0;
 	/**
 	 * 排序
 	 */
 	@TableField("sort")
-	private Integer sort=0;
-	
-	
+	private Integer sort = 0;
+
 	@Override
 	public String toString() {
 		return "SysDictValue [id=" + id + ", key=" + key + ", value=" + value + ", createTime=" + createTime
 				+ ", updateTime=" + updateTime + ", dictId=" + dictId + ", parentId=" + parentId + ", sort=" + sort
 				+ "]";
 	}
-	
+
 }

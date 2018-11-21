@@ -42,7 +42,7 @@ public class DictVauleVO implements Serializable {
 	/**
 	 * 父类id
 	 */
-	private Integer parentId=0;
+	private Integer parentId;
 	/**
 	 * 排序
 	 */

@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
  * @author BigPan
  * 认证成功事件处理器
  */
-public abstract class AuthenticationSuccessEventHandler implements ApplicationListener<AuthenticationSuccessEvent> {
+public abstract class AbstractAuthenticationSuccessEventHandler implements ApplicationListener<AuthenticationSuccessEvent> {
 	/**
 	 * Handle an application event.
 	 *

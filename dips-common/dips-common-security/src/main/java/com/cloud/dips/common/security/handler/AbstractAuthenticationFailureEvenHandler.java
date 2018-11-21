@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
  * @author BigPan
  * 认证失败事件处理器
  */
-public abstract class AuthenticationFailureEvenHandler implements ApplicationListener<AbstractAuthenticationFailureEvent> {
+public abstract class AbstractAuthenticationFailureEvenHandler implements ApplicationListener<AbstractAuthenticationFailureEvent> {
 
 	/**
 	 * Handle an application event.
