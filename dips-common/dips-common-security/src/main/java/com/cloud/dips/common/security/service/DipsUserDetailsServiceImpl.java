@@ -6,26 +6,28 @@
 
 package com.cloud.dips.common.security.service;
 
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.StrUtil;
-import com.cloud.dips.admin.api.dto.UserInfo;
-import com.cloud.dips.admin.api.entity.SysUser;
-import com.cloud.dips.admin.api.feign.RemoteUserService;
-import com.cloud.dips.common.core.constant.CommonConstant;
-import com.cloud.dips.common.core.constant.SecurityConstants;
-import com.cloud.dips.common.core.util.R;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import com.cloud.dips.admin.api.dto.UserInfo;
+import com.cloud.dips.admin.api.entity.SysUser;
+import com.cloud.dips.admin.api.feign.RemoteUserService;
+import com.cloud.dips.common.core.constant.CommonConstant;
+import com.cloud.dips.common.core.constant.SecurityConstants;
+import com.cloud.dips.common.core.util.R;
+
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 用户详细信息
@@ -87,10 +89,10 @@ public class DipsUserDetailsServiceImpl implements DipsUserDetailsService {
 		Collection<? extends GrantedAuthority> authorities
 			= AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
 		SysUser user = info.getSysUser();
-		boolean enabled = StrUtil.equals(user.getDelFlag(), CommonConstant.STATUS_NORMAL);
+		boolean enabled = StrUtil.equals(user.getIsDeleted(), CommonConstant.STATUS_NORMAL);
 		// 构造security用户
 
-		return new DipsUser(user.getUserId(), user.getUsername(), SecurityConstants.BCRYPT + user.getPassword(), enabled,
+		return new DipsUser(user.getId(), user.getDeptId(), user.getUsername(), SecurityConstants.BCRYPT + user.getPassword(), enabled,
 			true, true, true, authorities);
 	}
 }

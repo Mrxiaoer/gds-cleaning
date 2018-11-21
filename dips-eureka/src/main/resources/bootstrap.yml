@@ -8,7 +8,9 @@ spring:
       password: dips
   application:
     name: dips-eureka
-
+  cloud:
+    config:
+      enabled: false
 # docker-compose部署时候 hostname 换成dips-eureka
 # 类似的 redis 使用dips-redis ,gateway 换成 dips-gateway
 eureka:

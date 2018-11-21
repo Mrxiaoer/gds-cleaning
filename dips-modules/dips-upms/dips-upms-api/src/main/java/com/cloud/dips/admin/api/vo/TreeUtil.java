@@ -1,24 +1,16 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.vo;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.cloud.dips.admin.api.dto.MenuTree;
 import com.cloud.dips.admin.api.dto.TreeNode;
 import com.cloud.dips.admin.api.entity.SysMenu;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * @author Wilson
- * @date 2017年11月9日23:34:11
+ * @author RCG
+ * @date 2018年11月19日
  */
 public class TreeUtil {
 	/**
@@ -29,7 +21,7 @@ public class TreeUtil {
 	 */
 	public static <T extends TreeNode> List<T> bulid(List<T> treeNodes, Object root) {
 
-		List<T> trees = new ArrayList<T>();
+		List<T> trees = new ArrayList<>();
 
 		for (T treeNode : treeNodes) {
 
@@ -40,7 +32,7 @@ public class TreeUtil {
 			for (T it : treeNodes) {
 				if (it.getParentId() == treeNode.getId()) {
 					if (treeNode.getChildren() == null) {
-						treeNode.setChildren(new ArrayList<TreeNode>());
+						treeNode.setChildren(new ArrayList<>());
 					}
 					treeNode.add(it);
 				}
@@ -75,7 +67,7 @@ public class TreeUtil {
 		for (T it : treeNodes) {
 			if (treeNode.getId() == it.getParentId()) {
 				if (treeNode.getChildren() == null) {
-					treeNode.setChildren(new ArrayList<TreeNode>());
+					treeNode.setChildren(new ArrayList<>());
 				}
 				treeNode.add(findChildren(it, treeNodes));
 			}
@@ -91,11 +83,11 @@ public class TreeUtil {
 	 * @return
 	 */
 	public static List<MenuTree> bulidTree(List<SysMenu> menus, int root) {
-		List<MenuTree> trees = new ArrayList<MenuTree>();
+		List<MenuTree> trees = new ArrayList<>();
 		MenuTree node;
 		for (SysMenu menu : menus) {
 			node = new MenuTree();
-			node.setId(menu.getMenuId());
+			node.setId(menu.getId());
 			node.setParentId(menu.getParentId());
 			node.setName(menu.getName());
 			node.setPath(menu.getPath());

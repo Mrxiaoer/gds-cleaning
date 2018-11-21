@@ -14,22 +14,22 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysAttachment">
-		<id column="g_file_id" property="attachmentId"/>
-		<result column="g_user_id" property="userId"/>
-		<result column="g_url" property="url"/>
-		<result column="g_length" property="length"/>
-		<result column="g_ip" property="ip"/>
-		<result column="g_time" property="time"/>
+		<id column="id" property="attachmentId"/>
+		<result column="user_id" property="userId"/>
+		<result column="url" property="url"/>
+		<result column="file_size" property="length"/>
+		<result column="ip" property="ip"/>
+		<result column="create_time" property="time"/>
 	</resultMap>
 	
 	<!-- deptVo结果集 -->
 	<resultMap id="attachmentVoResultMap" type="com.cloud.dips.admin.api.vo.AttachmentVO">
-		<id column="g_file_id" property="attachmentId"/>
-		<result column="g_user_id" property="userId"/>
-		<result column="g_url" property="url"/>
-		<result column="g_length" property="length"/>
-		<result column="g_ip" property="ip"/>
-		<result column="g_time" property="time"/>
+		<id column="id" property="attachmentId"/>
+		<result column="user_id" property="userId"/>
+		<result column="url" property="url"/>
+		<result column="file_size" property="length"/>
+		<result column="ip" property="ip"/>
+		<result column="create_time" property="time"/>
 	</resultMap>
 
 

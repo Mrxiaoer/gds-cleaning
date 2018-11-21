@@ -1,27 +1,23 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.feign.fallback;
+
+import org.springframework.stereotype.Component;
 
 import com.cloud.dips.admin.api.entity.SysLog;
 import com.cloud.dips.admin.api.feign.RemoteLogService;
 import com.cloud.dips.common.core.util.R;
+
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 /**
- * @author Wilson
- * @date 2018/6/26
+ * @author RCG
+ * @date 2018/11/19
  */
 @Slf4j
 @Component
 public class RemoteLogServiceFallbackImpl implements RemoteLogService {
-
+	@Setter
+	private Throwable cause;
 	/**
 	 * 保存日志
 	 *

@@ -1,12 +1,18 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: BigPan
- *
- */
-
 package com.cloud.dips.admin.controller;
+
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -16,18 +22,15 @@ import com.cloud.dips.admin.service.SysSocialDetailsService;
 import com.cloud.dips.admin.service.SysUserService;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.Map;
+import lombok.AllArgsConstructor;
 
 
 /**
  * 系统社交登录账号表
  *
- * @author BigPan
- * @date 2018-08-16 21:30:41
+ * @author RCG
+ * @date 2018-11-19
  */
 @RestController
 @RequestMapping("/social")
@@ -104,7 +107,7 @@ public class SysSocialDetailsController {
 	 */
 	@GetMapping("/info/{inStr}")
 	public R<UserInfo> social(@PathVariable String inStr) {
-		Map<String,String> result = sysSocialDetailsService.findOpenId(inStr);
+		Map<String, String> result = sysSocialDetailsService.findOpenId(inStr);
 		return new R<>(sysUserService.findUserInfo(result.get("type"), result.get("openId")));
 	}
 

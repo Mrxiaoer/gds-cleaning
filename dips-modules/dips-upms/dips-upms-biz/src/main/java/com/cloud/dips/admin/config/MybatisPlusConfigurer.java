@@ -1,23 +1,15 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.config;
-
-import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
-import com.cloud.dips.common.core.datascope.DataScopeInterceptor;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
+import com.cloud.dips.common.core.datascope.DataScopeInterceptor;
+
 /**
- * @author Wilson
- * @date 2017/10/29
+ * @author RCG
+ * @date 2018/11/19
  */
 @Configuration
 @MapperScan("com.cloud.dips.admin.mapper")

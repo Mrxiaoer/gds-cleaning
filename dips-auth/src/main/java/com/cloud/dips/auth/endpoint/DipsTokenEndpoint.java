@@ -112,7 +112,7 @@ public class DipsTokenEndpoint {
 
 				if (authenticationToken.getPrincipal() instanceof DipsUser) {
 					DipsUser user = (DipsUser) authenticationToken.getPrincipal();
-					map.put("user_id", user.getId() + "");
+					map.put("id", user.getId() + "");
 					map.put("user_name", user.getUsername() + "");
 				}
 			} else if (authentication instanceof PreAuthenticatedAuthenticationToken) {
@@ -120,7 +120,7 @@ public class DipsTokenEndpoint {
 				PreAuthenticatedAuthenticationToken authenticationToken = (PreAuthenticatedAuthenticationToken) authentication;
 				if (authenticationToken.getPrincipal() instanceof DipsUser) {
 					DipsUser user = (DipsUser) authenticationToken.getPrincipal();
-					map.put("user_id", user.getId() + "");
+					map.put("id", user.getId() + "");
 					map.put("user_name", user.getUsername() + "");
 				}
 			}

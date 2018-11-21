@@ -5,6 +5,11 @@ import java.util.Date;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @Data
 public class GovTagDescriptionVO implements Serializable{
 	

@@ -1,124 +1,62 @@
 package com.cloud.dips.admin.api.vo;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
-import com.cloud.dips.admin.api.dto.UserRealNameDTO;
+import javax.validation.constraints.NotBlank;
+
+import com.baomidou.mybatisplus.annotations.TableLogic;
 
 import lombok.Data;
 
 /**
- * @author C.Z.H
- * @date 2018/08/15
+ * @author Dingbin
+ *
  */
 @Data
 public class DeptVO implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
 	/**
-	 * 主键ID
+	 * 部门ID
 	 */
-	private Integer deptId;
-	/**
-	 * 部门编号
-	 */
-	private String number;
+	private Integer id;
 	/**
 	 * 部门名称
 	 */
-	private String title;
-	/**
-	 * 创建人名称
-	 */
-	private String creatorName;
-	/**
-	 * 成立时间
-	 */
-	private Date startTime;
-	/**
-	 * 更新时间
-	 */
-	private Date updateTime;
+	@NotBlank(message = "部门名称不能为空")
+	private String name;
 	/**
 	 * 排序
 	 */
 	private Integer orderNum;
 	/**
-	 * 机构分类
+	 * 创建时间
 	 */
-	private String category;
+	private LocalDateTime createTime;
 	/**
-	 * 是否财务结算公司
+	 * 修改时间
 	 */
-	private Integer isFinancial;
-	/**
-	 * 是否财务结算公司
-	 */
-	private String isFinancialName;
-	/**
-	 * 是否内网结算部门
-	 */
-	private Integer isIntranet;
-	/**
-	 * 是否内网结算部门
-	 */
-	private String isIntranetName;
-	/**
-	 * 宣传图路径
-	 */
-	private String image;
-	/**
-	 * 联系方式
-	 */
-	private String input;
-	/**
-	 * 部门简介
-	 */
-	private String introduce;
-	/**
-	 * 组织架构
-	 */
-	private String structure;
-	/**
-	 * 核心优势
-	 */
-	private String advantage;
+	private LocalDateTime modifiedTime;
 	/**
 	 * 是否删除  -1：已删除  0：正常
 	 */
-	private String status;
+	@TableLogic
+	private String isDeleted;
+
 	/**
 	 * 父级ID
 	 */
 	private Integer parentId;
+	
 	/**
-	 * 部门负责人
-	 * */
-	private UserRealNameDTO master;
+	 * 所属城市ID
+	 */
+	private Integer cityId;
+	
 	/**
-	 * 部门成员
-	 * */
-	private List<UserRealNameDTO> memberList;
-	/**
-	 * 部门助手
-	 * */
-	private List<UserRealNameDTO> writerList;
-	/**
-	 * 卓越标签
-	 * */
-	private List<CommonVo> abilityTags;
-	/**
-	 * 专业标签
-	 * */
-	private List<CommonVo> projectTags;
-	/**
-	 * 进步标签
-	 * */
-	private List<CommonVo> learningTags;
-	/**
-	 * 部门资质
-	 * */
-	private List<CommonVo> aptitudeList;
+	 * 所属城市名称
+	 */
+	private String cityName;
 
 }

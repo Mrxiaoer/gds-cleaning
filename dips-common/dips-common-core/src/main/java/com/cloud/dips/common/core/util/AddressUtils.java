@@ -17,20 +17,28 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * 地址工具类
+ * @author BigPan
+ *
+ */
 public class AddressUtils {
+	private static String REGULAR="\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>";
 	/**
 	* 获取本机的内网ip地址
 	* @return
 	* @throws SocketException
 	*/
 	public String getInnetIp() throws SocketException {
-	        String localip = null;// 本地IP，如果没有配置外网IP则返回它
-	        String netip = null;// 外网IP
+			// 本地IP，如果没有配置外网IP则返回它
+	        String localip = null;
+	        // 外网IP
+	        String netip = null;
 	        Enumeration<NetworkInterface> netInterfaces;
 	netInterfaces = NetworkInterface.getNetworkInterfaces();
 	        InetAddress ip = null;
-	        boolean finded = false;// 是否找到外网IP
+	        // 是否找到外网IP
+	        boolean finded = false;
 	        while (netInterfaces.hasMoreElements() && !finded) {
 	          NetworkInterface ni = netInterfaces.nextElement();
 	          Enumeration<InetAddress> address = ni.getInetAddresses();
@@ -38,13 +46,13 @@ public class AddressUtils {
 	                ip = address.nextElement();
 	              if (!ip.isSiteLocalAddress() 
 	                        && !ip.isLoopbackAddress() 
-	                        && ip.getHostAddress().indexOf(":") == -1) {// 外网IP
+	                        && ip.getHostAddress().indexOf(":") == -1) {
 	                    netip = ip.getHostAddress();
 	                    finded = true;
 	                              break;
 	            } else if (ip.isSiteLocalAddress() 
 	                     && !ip.isLoopbackAddress() 
-	             && ip.getHostAddress().indexOf(":") == -1) {// 内网IP
+	             && ip.getHostAddress().indexOf(":") == -1) {
 	                    localip = ip.getHostAddress();
 	                }
 	            }
@@ -77,7 +85,7 @@ public class AddressUtils {
 	while((read=in.readLine())!=null){
 	inputLine.append(read+"\r\n");
 	}
-	//System.out.println(inputLine.toString());
+
 	} catch (MalformedURLException e) {
 	e.printStackTrace();
 	} catch (IOException e) {
@@ -87,17 +95,17 @@ public class AddressUtils {
 	try {
 	in.close();
 	} catch (IOException e) {
-	// TODO Auto-generated catch block
+
 	e.printStackTrace();
 	}
 	}
 	}
-	Pattern p = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
+	Pattern p = Pattern.compile(REGULAR);
 	Matcher m = p.matcher(inputLine.toString());
 	if(m.find()){
 	String ipstr = m.group(1);
 	ip = ipstr;
-	//System.out.println(ipstr);
+
 	}
 	return ip;
 	}
@@ -121,47 +129,55 @@ public class AddressUtils {
 	String returnStr = this.getResult(urlStr, content, encoding);
 	if (returnStr != null) {
 	// 处理返回的省市区信息
-	// System.out.println(returnStr);
+
 	String[] temp = returnStr.split(",");
 	if (temp.length < 3) {
-	return "0";// 无效IP，局域网测试
+		// 无效IP，局域网测试
+		return "0";
 	}
 
-	String country = ""; //国家
-	String area = ""; //地区
-	String region = ""; //省份
-	String city = ""; //市区
-	String county = ""; //地区
-	String isp = ""; //ISP公司
+	//国家
+	String country = ""; 
+	//地区
+	String area = ""; 
+	//省份
+	String region = ""; 
+	//市区
+	String city = "";
+	//地区
+	String county = ""; 
+	//ISP公司
+	String isp = ""; 
 	for (int i = 0; i < temp.length; i++) {
 	switch (i) {
 	case 2:
 	country = (temp[i].split(":"))[1].replaceAll("\"", "");
-	country = URLDecoder.decode(country, encoding);// 国家
+	country = URLDecoder.decode(country, encoding);
 	break;
 	case 3:
 	area = (temp[i].split(":"))[1].replaceAll("\"", "");
-	area = URLDecoder.decode(area, encoding);// 地区
+	area = URLDecoder.decode(area, encoding);
 	break;
 	case 4:
 	region = (temp[i].split(":"))[1].replaceAll("\"", "");
-	region = URLDecoder.decode(region, encoding);// 省份
+	region = URLDecoder.decode(region, encoding);
 	break;
 	case 5:
 	city = (temp[i].split(":"))[1].replaceAll("\"", "");
-	city = URLDecoder.decode(city, encoding);// 市区
+	city = URLDecoder.decode(city, encoding);
 	if("内网IP".equals(city)) {
 	return "地址为：内网IP";
 	}
 	break;
 	case 6:
 	county = (temp[i].split(":"))[1].replaceAll("\"", "");
-	county = URLDecoder.decode(county, encoding);// 地区
+	county = URLDecoder.decode(county, encoding);
 	break;
 	case 7:
 	isp = (temp[i].split(":"))[1].replaceAll("\"", "");
-	isp = URLDecoder.decode(isp, encoding); // ISP公司
+	isp = URLDecoder.decode(isp, encoding);
 	break;
+	default:
 	}
 	}
 
@@ -185,19 +201,31 @@ public class AddressUtils {
 	HttpURLConnection connection = null;
 	try {
 	url = new URL(urlStr);
-	connection = (HttpURLConnection) url.openConnection();// 新建连接实例
-	connection.setConnectTimeout(2000);// 设置连接超时时间，单位毫秒
-	connection.setReadTimeout(33000);// 设置读取数据超时时间，单位毫秒
-	connection.setDoOutput(true);// 是否打开输出流 true|false
-	connection.setDoInput(true);// 是否打开输入流true|false
-	connection.setRequestMethod("POST");// 提交方法POST|GET
-	connection.setUseCaches(false);// 是否缓存true|false
-	connection.connect();// 打开连接端口
-	DataOutputStream out = new DataOutputStream(connection.getOutputStream());// 打开输出流往对端服务器写数据
-	out.writeBytes(content);// 写数据,也就是提交你的表单 name=xxx&pwd=xxx
-	out.flush();// 刷新
-	out.close();// 关闭输出流
-	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), encoding));// 往对端写完数据对端服务器返回数据
+	// 新建连接实例
+	connection = (HttpURLConnection) url.openConnection();
+	// 设置连接超时时间，单位毫秒
+	connection.setConnectTimeout(2000);
+	// 设置读取数据超时时间，单位毫秒
+	connection.setReadTimeout(33000);
+	// 是否打开输出流 true|false
+	connection.setDoOutput(true);
+	// 是否打开输入流true|false
+	connection.setDoInput(true);
+	// 提交方法POST|GET
+	connection.setRequestMethod("POST");
+	// 是否缓存true|false
+	connection.setUseCaches(false);
+	// 打开连接端口
+	connection.connect();
+	// 打开输出流往对端服务器写数据
+	DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+	// 写数据,也就是提交你的表单 name=xxx&pwd=xxx
+	out.writeBytes(content);
+	// 刷新
+	out.flush();
+	out.close();
+	// 往对端写完数据对端服务器返回数据
+	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), encoding));
 	// ,以BufferedReader流来读取
 	StringBuffer buffer = new StringBuffer();
 	String line = "";
@@ -210,7 +238,7 @@ public class AddressUtils {
 	e.printStackTrace();
 	} finally {
 	if (connection != null) {
-	connection.disconnect();// 关闭连接
+	connection.disconnect();
 	}
 	}
 	return null;

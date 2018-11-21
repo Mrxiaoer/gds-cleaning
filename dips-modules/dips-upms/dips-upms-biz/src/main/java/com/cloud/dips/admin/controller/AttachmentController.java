@@ -1,21 +1,21 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.controller;
 
 
+import java.awt.Image;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aliyun.oss.OSSClient;
 import com.cloud.dips.admin.api.entity.SysAttachment;
 import com.cloud.dips.admin.service.SysAttachmentService;
-import com.cloud.dips.common.log.annotation.SysLog;
-
-import cn.hutool.core.date.DateUtil;
-import io.swagger.annotations.ApiOperation;
+import com.cloud.dips.common.security.util.SecurityUtils;
 
 /**
- * <p>
- * 附件表 前端控制器
- * </p>
+ * 上传附件 前端控制器
  *
  * @author RCG
  * @since 2017-11-20
@@ -44,120 +40,106 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/upload")
 public class AttachmentController {
 
+	private final String endpoint = "oss-cn-hangzhou.aliyuncs.com";
+	private final String accessKeyId = "LTAIxflxdBSdv55S";
+	private final String accessKeySecret = "5iF5QmgvBYdI6VYGbJlJZpoGaX8ySs";
+
+	private final String bucketName = "dips-cloud-gov";
+	private final String key = "upload/";
+
+
 	/**
-	 * 上传附件
-	 *
-	 * @param SysAttachment 附件实体类
-	 * @return success/false
-	 * @throws UnknownHostException 
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 */         
-	@SysLog("上传用户头像")
+	 * 上传图片，视频，文件
+	 */
 	@PostMapping("/uploadAvatar")
-	@ApiOperation(value = "上传用户头像", notes = "头像以及被操作用户ID",httpMethod="POST")
-	public String save(@RequestParam(value="file",required=false)MultipartFile file,@RequestParam Integer userId,HttpServletRequest request) throws UnknownHostException{		
-		
-		File targetFile=null;
-        String msg="";//返回存储路径
+	public String save(@RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws IOException {
 
-        String fileName=file.getOriginalFilename();//获取文件名加后缀
-        if(fileName!=null&&fileName!=""){   
-            String returnUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() +"/upload/imgs/";//存储路径
-            String path = request.getSession().getServletContext().getRealPath("upload"); //文件存储位置
-            String fileF = fileName.substring(fileName.lastIndexOf("."), fileName.length());//文件后缀
-            fileName=new Date().getTime()+"_"+new Random().nextInt(1000)+fileF;//新的文件名
-            
-            //先判断文件是否存在
-            String fileAdd = DateUtil.format(new Date(),"yyyyMMdd");
+		// 创建OSSClient实例。
+		OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
 
-            File file1 =new File(path+"/imgs/"+fileAdd); 
-            
-            //如果文件夹不存在则创建    
-            if(!file1.exists()  && !file1.isDirectory()){       
-                file1.mkdir();  
-            }
+		// 获取文件名.后缀
+		String fileName = file.getOriginalFilename();
+		InputStream ins = file.getInputStream();
+		File f = new File(fileName);
+		inputStreamToFile(ins, f);
 
-           targetFile = new File(file1, fileName);
-           
-           msg=returnUrl+fileAdd+"/"+fileName;
-           SysAttachment sysAttachment=new SysAttachment();
-           sysAttachment.setUrl(msg);
-           sysAttachment.setUserId(userId);
-           sysAttachment.setTime(new Date());
-           sysAttachment.setIp(getIpAddress());
-           sysAttachment.setLength(file.getSize());
-           sysAttachmentService.insert(sysAttachment);
+		FileInputStream is = new FileInputStream(f);
+		String filePostfix = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+		String newFileName;
+		if (isImage(f)) {
+			newFileName = key + "images/" + sdf.format(date) + "/";
+		} else if (isVideo(f)) {
+			newFileName = key + "videos/" + sdf.format(date) + "/";
+		} else {
+			newFileName = key + "files/" + sdf.format(date) + "/";
+		}
+		newFileName = newFileName +  UUID.randomUUID() + filePostfix;
+		// 上传文件
+		ossClient.putObject(bucketName, newFileName, is);
+		String url = "//" + bucketName + "." + endpoint + "/" + newFileName;
 
-           try {
-			file.transferTo(targetFile);
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		// 删除本地临时文件
+		File del = new File(f.toURI());
+		del.delete();
 
-        }
-		
-		return msg;
+		// 关闭OSSClient。
+		ossClient.shutdown();
+
+		// 保存上传记录
+		SysAttachment sysAttachment = new SysAttachment();
+		sysAttachment.setUrl(url);
+		sysAttachment.setUserId(SecurityUtils.getUser().getId());
+		sysAttachment.setTime(new Date());
+		sysAttachment.setIp(getIpAddress());
+		sysAttachment.setLength(file.getSize());
+		sysAttachmentService.insert(sysAttachment);
+		// 返回上传的地址
+		return url;
 	}
-	
-	
-	@SysLog("上传附件")
-	@PostMapping("/uploadAttach")
-	@ApiOperation(value = "上传附件", notes = "附件以及操作用户ID",httpMethod="POST")
-	public String saveAttach(@RequestParam(value="file",required=false)MultipartFile file,@RequestParam Integer userId,HttpServletRequest request) throws UnknownHostException{		
-		
-		File targetFile=null;
-        String msg="";//返回存储路径
 
-        String fileName=file.getOriginalFilename();//获取文件名加后缀
-        if(fileName!=null&&fileName!=""){   
-            String returnUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() +"/upload/imgs/";//存储路径
-            String path = request.getSession().getServletContext().getRealPath("upload"); //文件存储位置
-            String fileF = fileName.substring(fileName.lastIndexOf("."), fileName.length());//文件后缀
-            fileName=new Date().getTime()+"_"+new Random().nextInt(1000)+fileF;//新的文件名
-            
-            //先判断文件是否存在
-            String fileAdd = DateUtil.format(new Date(),"yyyyMMdd");
 
-            File file1 =new File(path+"/"+fileF+"/"+fileAdd); 
-            
-            //如果文件夹不存在则创建    
-            if(!file1.exists()  && !file1.isDirectory()){       
-                file1.mkdir();  
-            }
-
-           targetFile = new File(file1, fileName);
-           
-           msg=returnUrl+fileAdd+"/"+fileName;
-           SysAttachment sysAttachment=new SysAttachment();
-           sysAttachment.setUrl(msg);
-           sysAttachment.setUserId(userId);
-           sysAttachment.setTime(new Date());
-           sysAttachment.setIp(getIpAddress());
-           sysAttachment.setLength(file.getSize());
-           sysAttachmentService.insert(sysAttachment);
-
-           try {
-			file.transferTo(targetFile);
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+	private static void inputStreamToFile(InputStream ins, File file) {
+		try {
+			OutputStream os = new FileOutputStream(file);
+			int bytesRead = 0;
+			byte[] buffer = new byte[8192];
+			while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+				os.write(buffer, 0, bytesRead);
 			}
-
-        }
-		
-		return msg;
+			os.close();
+			ins.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
-	  
-	private static String getIpAddress() throws UnknownHostException {   
-        InetAddress address = InetAddress.getLocalHost(); 
-        return address.getHostAddress();   
-    }
-	
+
+	private boolean isImage(File file) {
+		try {
+			// 通过ImageReader来解码这个file并返回一个BufferedImage对象
+			// 如果找不到合适的ImageReader则会返回null，我们可以认为这不是图片文件
+			// 或者在解析过程中报错，也返回false
+			Image image = ImageIO.read(file);
+			return image != null;
+		} catch (IOException ex) {
+			return false;
+		}
+	}
+
+	private boolean isVideo(File file) {
+		String reg = "(mp4|flv|avi|rm|rmvb|wmv)";
+		Pattern p = Pattern.compile(reg);
+		boolean boo = p.matcher(file.getName()).find();
+		return boo;
+	}
+
+	private static String getIpAddress() throws UnknownHostException {
+		InetAddress address = InetAddress.getLocalHost();
+		return address.getHostAddress();
+	}
+
 	@Autowired
 	private SysAttachmentService sysAttachmentService;
+
 }

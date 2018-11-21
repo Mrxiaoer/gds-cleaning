@@ -9,21 +9,21 @@
 package com.cloud.dips.admin.api.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.activerecord.Model;
+import javax.validation.constraints.NotBlank;
+
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.cloud.dips.common.core.constant.CommonConstant;
 
 import lombok.Data;
 
 /**
  * <p>
- * 字典表
+ * 字典名称列表
  * </p>
  *
  * @author Wilson
@@ -31,65 +31,47 @@ import lombok.Data;
  */
 @Data
 @TableName("gov_dict")
-public class SysDict extends Model<SysDict> {
+public class SysDict implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 编号
+	 * id
 	 */
-	@TableId(value = "g_id", type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 	/**
-	 * 数据值
+	 * 字典编码
 	 */
-	@TableField("g_value")
-	private String value;
+	@TableField("number")
+	@NotBlank(message="字典编码不能为空")
+	private String number;
 	/**
-	 * 标签名
+	 * 字典名称
 	 */
-	@TableField("g_label")
-	private String label;
-	/**
-	 * 类型
-	 */
-	@TableField("g_type")
-	private String type;
-	/**
-	 * 描述
-	 */
-	@TableField("g_description")
-	private String description;
-	/**
-	 * 排序（升序）
-	 */
-	@TableField("g_sort")
-	private BigDecimal sort;
+	@TableField("name")
+	@NotBlank(message="字典名称不能为空")
+	private String name;
+
 	/**
 	 * 创建时间
 	 */
-	@TableField("g_create_time")
-	private Date createTime;
+	@TableField("create_time")
+	private Date createTime = new Date();
 	/**
 	 * 更新时间
 	 */
-	@TableField("g_update_time")
-	private Date updateTime;
+	@TableField("update_time")
+	private Date updateTime = new Date();
 	/**
-	 * 备注信息
+	 * 所属系统
 	 */
-	@TableField("g_remarks")
-	private String remarks;
-	/**
-	 * 删除标记
-	 */
+	@TableField("system")
+	private String system=CommonConstant.SYSTEM_NAME;	
 	
-	@TableLogic
-	@TableField("g_del_flag")
-	private String delFlag;
-
 	@Override
-	protected Serializable pkVal() {
-		return this.id;
+	public String toString() {
+		return "SysDict [id=" + id + ", number=" + number + ", name=" + name + ", createTime=" + createTime
+				+ ", updateTime=" + updateTime + ", system=" + system + "]";
 	}
 }

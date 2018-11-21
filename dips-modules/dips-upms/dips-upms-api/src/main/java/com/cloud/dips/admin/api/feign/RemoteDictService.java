@@ -1,11 +1,3 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.feign;
 
 import java.util.List;
@@ -20,8 +12,8 @@ import com.cloud.dips.admin.api.feign.fallback.RemoteDictServiceFallbackImpl;
 import com.cloud.dips.common.core.constant.ServiceNameConstant;
 
 /**
- * @author Wilson
- * @date 2018/6/22
+ * @author RCG
+ * @date 2018/11/19
  */
 @FeignClient(value = ServiceNameConstant.UMPS_SERVICE, fallback = RemoteDictServiceFallbackImpl.class)
 

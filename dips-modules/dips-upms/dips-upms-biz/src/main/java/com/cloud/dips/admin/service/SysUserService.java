@@ -1,11 +1,3 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
@@ -17,10 +9,13 @@ import com.cloud.dips.admin.api.vo.UserVO;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
 
-
 /**
- * @author Wilson
- * @date 2017/10/31
+ * <p>
+ * 服务类
+ * </p>
+ *
+ * @author RCG
+ * @since 2018-11-19
  */
 public interface SysUserService extends IService<SysUser> {
 	/**
@@ -39,14 +34,7 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return
 	 */
 	Page selectWithRolePage(Query query);
-	
-	/**
-	 * 分页查询用户信息（含有角色信息）
-	 *
-	 * @param query 查询条件
-	 * @return
-	 */
-	Page selectWithRolePageNoLock(Query query);
+
 
 	/**
 	 * 删除用户
@@ -55,7 +43,6 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return boolean
 	 */
 	Boolean deleteUserById(SysUser sysUser);
-	
 
 	/**
 	 * 更新当前用户基本信息
@@ -82,17 +69,6 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return 用户信息
 	 */
 	UserVO selectUserVoById(Integer id);
-	
-	SysUser selectUserById(Integer id);
-
-	SysUser save(UserDTO userDto);
-
-	/**
-	 * 获取关联用户的数据
-	 * @param query
-	 * @return
-	 */
-	Page selectRelation(Query query);
 
 	/**
 	 * 通过用户名查找已经删除的用户
@@ -110,5 +86,6 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return
 	 */
 	Boolean deleteSysUserByUsernameAndUserId(String username, Integer userId);
+
 
 }

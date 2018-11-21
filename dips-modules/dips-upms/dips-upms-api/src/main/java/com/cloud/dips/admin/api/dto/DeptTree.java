@@ -1,19 +1,11 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author Wilson
- * @date 2018/1/20
+ * @author RCG
+ * @date 2018/11/19
  * 部门树
  */
 @Data

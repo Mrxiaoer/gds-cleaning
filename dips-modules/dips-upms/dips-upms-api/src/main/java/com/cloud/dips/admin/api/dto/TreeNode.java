@@ -1,21 +1,13 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.dto;
-
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
+
 /**
- * @author Wilson
- * @date 2017年11月9日23:33:45
+ * @author RCG
+ * @date 2017年11月19日23:33:45
  */
 @Data
 public class TreeNode {

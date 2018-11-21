@@ -1,7 +1,6 @@
 package com.cloud.dips.tag.api.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -10,6 +9,11 @@ import com.baomidou.mybatisplus.enums.IdType;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @Data
 @TableName("gov_tag_relation_type")
 public class GovTagRelationType implements Serializable{
@@ -17,14 +21,14 @@ public class GovTagRelationType implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 
-	@TableId(value = "g_type_id", type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Integer typeId;
 
 
-	@TableField("g_type_name")
+	@TableField("type_name")
 	private String name;
 
-	@TableField("g_type_number")
+	@TableField("type_number")
 	private String number;
 
 	@Override

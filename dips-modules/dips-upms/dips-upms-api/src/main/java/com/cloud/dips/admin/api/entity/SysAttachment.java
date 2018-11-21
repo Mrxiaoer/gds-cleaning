@@ -1,11 +1,3 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.entity;
 
 import java.beans.Transient;
@@ -24,10 +16,10 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 菜单权限表
+ * 附件表
  * </p>
  *
- * @author Wilson
+ * @author RCG
  * @since 2017-11-08
  */
 @Data
@@ -47,42 +39,37 @@ public class SysAttachment extends Model<SysAttachment> {
 	/**
 	 * 主键ID
 	 */
-	@TableId(value = "g_file_id", type = IdType.AUTO)
-	private Integer attachmentId;
+	@TableId(value = "id", type = IdType.AUTO)
+	private Integer id;
 	/**
 	 * 存附件用户ID
 	 */
-	@TableField("g_user_id")
+	@TableField("user_id")
 	private Integer userId;
 	/**
 	 * 附件服务器路径
 	 */
-	@TableField("g_url")
+	@TableField("url")
 	private String url;
 	/**
 	 * 文件长度
 	 */
-	@TableField("g_length")
+	@TableField("file_size")
 	private Long length;
 	/**
 	 * ip
 	 */
-	@TableField("g_ip")
+	@TableField("ip")
 	private String ip;
 	/**
 	 * 附件上传时间
 	 */
-	@TableField("g_time")
+	@TableField("create_time")
 	private Date time;
 
-	@Override
-	public String toString() {
-		return "Attachment [attachmentId=" + attachmentId + ", userId=" + userId + ", url=" + url + ", length=" + length
-				+ ", ip=" + ip + ", time=" + time + "]";
-	}
 
 	@Override
 	protected Serializable pkVal() {
-		return this.attachmentId;
+		return this.id;
 	}
 }

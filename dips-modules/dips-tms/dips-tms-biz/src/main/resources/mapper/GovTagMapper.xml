@@ -13,61 +13,62 @@
 <mapper namespace="com.cloud.dips.tag.mapper.GovTagMapper">
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.cloud.dips.tag.api.entity.GovTag">
-		<id column="g_tag_id" property="tagId"/>
-		<result column="g_name" property="name"/>
-		<result column="g_creation_date" property="creationDate"/>
-		<result column="g_refers" property="refers"/>
-		<result column="g_priority" property="priority"/>
-		<result column="g_type_id" property="typeId"/>
-		<result column="g_level_id" property="levelId"/>
-		<result column="g_views" property="views"/>
-		<result column="g_description" property="description"/>
-		<result column="g_relation" property="relation"/>
-		<result column="g_creator_id" property="creatorId"/>
+		<id column="id" property="tagId"/>
+		<result column="name" property="name"/>
+		<result column="creation_date" property="creationDate"/>
+		<result column="refers" property="refers"/>
+		<result column="priority" property="priority"/>
+		<result column="type_id" property="typeId"/>
+		<result column="level_id" property="levelId"/>
+		<result column="views" property="views"/>
+		<result column="description" property="description"/>
+		<result column="relation" property="relation"/>
+		<result column="creator_id" property="creatorId"/>
+		<result column="system" property="system"/>
 	</resultMap>
 
 	<!-- govTagVo结果集 -->
 	<resultMap id="govTagVoResultMap" type="com.cloud.dips.tag.api.vo.GovTagVO">
-		<id column="g_tag_id" property="tagId"/>
-		<result column="g_name" property="name"/>
-		<result column="g_creation_date" property="creationDate"/>
-		<result column="g_refers" property="refers"/>
-		<result column="g_priority" property="priority"/>
-		<result column="g_type_id" property="typeId"/>
+		<id column="id" property="tagId"/>
+		<result column="name" property="name"/>
+		<result column="creation_date" property="creationDate"/>
+		<result column="refers" property="refers"/>
+		<result column="priority" property="priority"/>
+		<result column="type_id" property="typeId"/>
 		<result column="typeName" property="typeName"/>
-		<result column="g_level_id" property="levelId"/>
+		<result column="level_id" property="levelId"/>
 		<result column="levelName" property="levelName"/>
-		<result column="g_views" property="views"/>
-		<result column="g_description" property="description"/>
-		<result column="g_relation" property="relation"/>
-		<result column="g_creator_id" property="creatorId"/>
+		<result column="views" property="views"/>
+		<result column="description" property="description"/>
+		<result column="relation" property="relation"/>
+		<result column="creator_id" property="creatorId"/>
 		<result column="creatorRealName" property="creatorRealName"/>
-		<collection property="tagDescriptionList" select="selectTagDesc" column="g_tag_id">
+		<collection property="tagDescriptionList" select="selectTagDesc" column="id">
 
 		</collection>
 	</resultMap>
 
 	<sql id="selectGovTagVo">
 		SELECT
-            `tag`.g_tag_id,
-            `tag`.g_name,
-            `tag`.g_creation_date,
-            `tag`.g_refers,
-            `tag`.g_priority,
-            `tag`.g_type_id,
-            t.g_name AS typeName,
-            `tag`.g_level_id,
-            l.g_name AS levelName,
-            `tag`.g_views,
-            `tag`.g_description,
-            `tag`.g_relation,
-            `tag`.g_creator_id,
-            u.g_real_name AS creatorRealName
+            `tag`.id,
+            `tag`.name,
+            `tag`.creation_date,
+            `tag`.refers,
+            `tag`.priority,
+            `tag`.type_id,
+            t.name AS typeName,
+            `tag`.level_id,
+            l.name AS levelName,
+            `tag`.views,
+            `tag`.description,
+            `tag`.relation,
+            `tag`.creator_id,
+            u.real_name AS creatorRealName
         FROM
             gov_tag AS `tag`
-            LEFT JOIN gov_user AS u ON u.g_user_id = `tag`.g_creator_id
-            LEFT JOIN gov_tag_level AS l ON l.g_level_id = `tag`.g_level_id
-            LEFT JOIN gov_tag_type AS t ON t.g_type_id = `tag`.g_type_id
+            LEFT JOIN gov_user AS u ON u.id = `tag`.creator_id
+            LEFT JOIN gov_tag_level AS l ON l.id = `tag`.level_id
+            LEFT JOIN gov_tag_type AS t ON t.id = `tag`.type_id
     </sql>
 
 	<select id="selectGovTagVoPage" resultMap="govTagVoResultMap">
@@ -75,17 +76,17 @@
         WHERE
         	1 = 1
         <if test="tagname != null and tagname != ''">
-			and `tag`.g_name LIKE CONCAT('%',#{tagname},'%')
+			and `tag`.name LIKE CONCAT('%',#{tagname},'%')
 		</if>
-        <if test="typename != null and typename != ''">
-			and t.g_name LIKE CONCAT('%',#{typename},'%')
+        <if test="typeid != null and typeid != ''">
+			and t.type_id = #{typeid}
 		</if>
     </select>
 
 	<select id="selectGovTagVoById" resultMap="govTagVoResultMap">
         <include refid="selectGovTagVo"/>
         WHERE
-            `tag`.g_tag_id = #{id}
+            `tag`.id = #{id}
     </select>
 
 
@@ -96,26 +97,26 @@
         FROM
             gov_tag AS `tag`
         WHERE
-            `tag`.g_name = #{tagName}
+            `tag`.name = #{tagName}
     </select>
 
 	<select id="selectTagDesc" resultMap="govTagDesc">
 		SELECT
-			d.g_tag_description_id,
-            d.g_description AS dDescription,
-            d.g_tag_id AS dTagId,
-            d.g_creation_date AS dcreationDate,
-            d.g_creator_id AS dcreatorId,
-            u.g_real_name AS dcreatorRealName
+			d.id,
+            d.description AS dDescription,
+            d.tag_id AS dTagId,
+            d.creation_date AS dcreationDate,
+            d.creator_id AS dcreatorId,
+            u.real_name AS dcreatorRealName
 		FROM
 			gov_tag_description AS d
-		LEFT JOIN gov_user AS u ON u.g_user_id = d.g_creator_id
+		LEFT JOIN gov_user AS u ON u.id = d.creator_id
 		WHERE
-			d.g_tag_id = #{g_tag_id}
+			d.tag_id = #{id}
 	</select>
 
 	<resultMap id="govTagDesc" type="com.cloud.dips.tag.api.vo.GovTagDescriptionVO">
-		<id column="g_tag_description_id" property="descriptionId"/>
+		<id column="id" property="descriptionId"/>
 		<result column="dDescription" property="description"/>
 		<result column="dTagId" property="tagId"/>
 		<result column="dcreationDate" property="creationDate"/>

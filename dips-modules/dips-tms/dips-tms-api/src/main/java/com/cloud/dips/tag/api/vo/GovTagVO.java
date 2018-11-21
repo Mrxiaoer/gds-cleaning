@@ -6,6 +6,11 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @Data
 public class GovTagVO implements Serializable{
 	
@@ -23,6 +28,10 @@ public class GovTagVO implements Serializable{
 	 * 标签创建时间
 	 */
 	private Date creationDate;
+	/**
+	 * 标签更新时间
+	 */
+	private Date updateDate;
 	/**
 	 * 标签应用次数
 	 */
@@ -80,5 +89,5 @@ public class GovTagVO implements Serializable{
 	/**
 	 * 标签描述列表
 	 */
-	private List<GovTagDescriptionVO> tagDescriptionList;
+	private List<GovTagDescriptionVO> tagDescriptionList;	
 }

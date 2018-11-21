@@ -1,11 +1,3 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.mapper;
 
 
@@ -17,8 +9,8 @@ import com.cloud.dips.admin.api.entity.SysOauthClientDetails;
  * Mapper 接口
  * </p>
  *
- * @author Wilson
- * @since 2018-05-15
+ * @author RCG
+ * @since 2018-11-19
  */
 public interface SysOauthClientDetailsMapper extends BaseMapper<SysOauthClientDetails> {
 

@@ -1,17 +1,8 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.entity;
 
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -24,8 +15,8 @@ import lombok.EqualsAndHashCode;
  * 用户角色表
  * </p>
  *
- * @author Wilson
- * @since 2017-10-29
+ * @author RCG
+ * @since 2018-11-19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -37,12 +28,12 @@ public class SysUserRole extends Model<SysUserRole> {
 	/**
 	 * 用户ID
 	 */
-	@TableId(value = "g_user_id",type = IdType.INPUT)
+	@TableId(type = IdType.INPUT)
 	private Integer userId;
 	/**
 	 * 角色ID
 	 */
-	@TableField(value = "g_role_id")
+	@TableId(type = IdType.INPUT)
 	private Integer roleId;
 
 

@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @Data
 public class GovTagRelationVO implements Serializable{
 	

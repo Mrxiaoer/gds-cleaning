@@ -1,23 +1,15 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.vo;
-
-import lombok.Data;
 
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import lombok.Data;
+
 
 /**
- * @author Wilson
- * @date 2017-12-18
+ * @author RCG
+ * @date 2018-11-19
  */
 @Data
 public class ImageCode implements Serializable {

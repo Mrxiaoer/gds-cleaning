@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,11 @@ import com.cloud.dips.tag.service.GovTagService;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @RestController
 @RequestMapping("/tagLevel")
 public class TagLevelController {
@@ -49,13 +55,13 @@ public class TagLevelController {
 		Page<GovTagLevel> p=new Page<GovTagLevel>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
 		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
-		p.setOrderByField(params.getOrDefault("orderByField", "g_level_id").toString());
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
 		p.setAsc(isAsc);
 		EntityWrapper<GovTagLevel> e=new EntityWrapper<GovTagLevel>();
 		String name=params.getOrDefault("levelname", "").toString();
 		if(StrUtil.isNotBlank(name)){
 			name="%"+name+"%";
-			e.where( "g_name like {0}", name);
+			e.where( "name like {0}", name);
 		}
 		return service.selectPage(p,e);
 	}
@@ -64,7 +70,7 @@ public class TagLevelController {
 
 	@SysLog("删除标签级别")
 	@DeleteMapping("/{id}")
-	//@PreAuthorize("@pms.hasPermission('gov_tagLevel_del')")
+	@PreAuthorize("@pms.hasPermission('gov_tagLevel_del')")
 	@ApiOperation(value = "删除标签级别", notes = "删除标签级别",httpMethod="DELETE")
 	public R<Boolean> tagLevelDel(@PathVariable Integer id) {
 		GovTagLevel govTagLevel = service.selectById(id);
@@ -72,15 +78,15 @@ public class TagLevelController {
 			return new R<>(false);
 		}else{
 				EntityWrapper<GovTag> e=new EntityWrapper<GovTag>();
-				e.where( "g_level_id = {0}", govTagLevel.getLevelId());
-				govTagService.updateForSet("g_level_id=null", e);
+				e.where( "level_id = {0}", govTagLevel.getLevelId());
+				govTagService.updateForSet("level_id=0", e);
 				return new R<>(service.deleteById(govTagLevel.getLevelId()));
 		}
 	}
 	
 	@SysLog("添加标签级别")
 	@PostMapping("/saveTagLevel")
-	//@PreAuthorize("@pms.hasPermission('gov_tagLevel_add')")
+	@PreAuthorize("@pms.hasPermission('gov_tagLevel_add')")
 	@ApiOperation(value = "添加标签级别", notes = "添加标签级别", httpMethod = "POST")
 	public R<Boolean> saveTagLevel(@RequestBody GovTagLevelDTO govTagLevelDto) {
 			GovTagLevel govTagLevel = new GovTagLevel();
@@ -91,7 +97,7 @@ public class TagLevelController {
 	
 	@SysLog("更新标签级别")
 	@PutMapping("/updateTagLevel")
-	//@PreAuthorize("@pms.hasPermission('gov_tagLevel_edit')")
+	@PreAuthorize("@pms.hasPermission('gov_tagLevel_edit')")
 	@ApiOperation(value = "更新标签级别", notes = "更新标签级别", httpMethod = "PUT")
 	public R<Boolean> updateTagLevel(@RequestBody GovTagLevelDTO govTagLevelDto) {
 		GovTagLevel govTagLevel = service.selectById(govTagLevelDto.getLevelId());

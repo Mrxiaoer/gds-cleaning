@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.tag.api.entity.GovTag;
 import com.cloud.dips.tag.api.vo.GovTagVO;
@@ -36,10 +37,10 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 	@Override
 	public Page<GovTagVO> selectAllPage(Query query) {
 
-		Object tagname = query.getCondition().get("tagname");
-		Object typename = query.getCondition().get("typename");
+		Object tagname = query.getCondition().get("name");
+		Object typeid = query.getCondition().get("typeid");
 
-		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typename));
+		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid));
 
 		return query;
 
@@ -80,6 +81,7 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 	 */
 	@Override
 	public GovTag save(GovTag govTag) {
+		govTag.setSystem(CommonConstant.SYSTEM_NAME);
 		this.insert(govTag);
 		return govTag;
 	}

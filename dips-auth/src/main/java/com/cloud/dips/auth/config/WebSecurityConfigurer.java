@@ -6,10 +6,6 @@
 
 package com.cloud.dips.auth.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.cloud.dips.common.security.handler.MobileLoginSuccessHandler;
-import com.cloud.dips.common.security.mobile.MobileSecurityConfigurer;
-import com.cloud.dips.common.security.service.DipsUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import com.cloud.dips.common.security.handler.MobileLoginSuccessHandler;
+import com.cloud.dips.common.security.mobile.MobileSecurityConfigurer;
+import com.cloud.dips.common.security.service.DipsUserDetailsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author BigPan
@@ -76,8 +77,10 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public MobileSecurityConfigurer mobileSecurityConfigurer() {
-		return new MobileSecurityConfigurer(mobileLoginSuccessHandler()
-			, userDetailsService);
+		MobileSecurityConfigurer mobileSecurityConfigurer = new MobileSecurityConfigurer();
+		mobileSecurityConfigurer.setMobileLoginSuccessHandler(mobileLoginSuccessHandler());
+		mobileSecurityConfigurer.setUserDetailsService(userDetailsService);
+		return mobileSecurityConfigurer;
 	}
 
 

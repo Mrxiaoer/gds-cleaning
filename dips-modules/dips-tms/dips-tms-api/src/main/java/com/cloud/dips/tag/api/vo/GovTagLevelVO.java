@@ -5,15 +5,17 @@ import java.util.Date;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @Data
 public class GovTagLevelVO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
 	private Integer levelId;
-
-
-	private Integer parentId;
 
 	private String name;
 

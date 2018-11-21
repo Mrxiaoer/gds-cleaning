@@ -1,21 +1,14 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.vo;
-
-import com.cloud.dips.admin.api.entity.SysLog;
-import lombok.Data;
 
 import java.io.Serializable;
 
+import com.cloud.dips.admin.api.entity.SysLog;
+
+import lombok.Data;
+
 /**
- * @author Wilson
- * @date 2017/11/20
+ * @author RCG
+ * @date 2018/11/19
  */
 @Data
 public class LogVO implements Serializable {

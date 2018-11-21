@@ -19,12 +19,13 @@ import com.cloud.dips.tag.api.vo.GovTagVO;
 public interface GovTagMapper extends BaseMapper<GovTag> {
 
 	/**
-	 * 分页查询信息
-	 *
-	 * @param query 查询条件
-	 * @return list
+	 * 分页查询标签信息
+	 * @param query 
+	 * @param tagname 标签名称
+	 * @param typeid 类型id
+	 * @return List<GovTagVO>
 	 */
-	List<GovTagVO> selectGovTagVoPage(Query<GovTag> query, @Param("tagname") Object tagname,@Param("typename") Object typename);
+	List<GovTagVO> selectGovTagVoPage(Query<GovTag> query, @Param("tagname") Object tagname,@Param("typeid") Object typeid);
 	
 	/**
 	 * 通过ID查询标签

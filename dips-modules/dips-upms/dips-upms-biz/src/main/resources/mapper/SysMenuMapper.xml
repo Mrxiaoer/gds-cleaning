@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
+  ~
+  ~      Copyright (c) 2018-2025, RCG All rights reserved.
+  ~
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -14,33 +10,33 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysMenu">
-		<id column="g_menu_id" property="menuId"/>
-		<result column="g_name" property="name"/>
-		<result column="g_permission" property="permission"/>
-		<result column="g_path" property="path"/>
-		<result column="g_parent_id" property="parentId"/>
-		<result column="g_icon" property="icon"/>
-		<result column="g_component" property="component"/>
-		<result column="g_sort" property="sort"/>
-		<result column="g_type" property="type"/>
-		<result column="g_create_time" property="createTime"/>
-		<result column="g_update_time" property="updateTime"/>
-		<result column="g_del_flag" property="delFlag"/>
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="permission" property="permission"/>
+		<result column="path" property="path"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="icon" property="icon"/>
+		<result column="component" property="component"/>
+		<result column="sort" property="sort"/>
+		<result column="type" property="type"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="is_deleted" property="isDeleted"/>
 	</resultMap>
 
 	<resultMap id="MenuVoResultMap" type="com.cloud.dips.admin.api.vo.MenuVO">
-		<id column="g_menu_id" property="menuId"/>
-		<result column="g_name" property="name"/>
-		<result column="g_permission" property="permission"/>
-		<result column="g_parent_id" property="parentId"/>
-		<result column="g_icon" property="icon"/>
-		<result column="g_path" property="path"/>
-		<result column="g_component" property="component"/>
-		<result column="g_sort" property="sort"/>
-		<result column="g_type" property="type"/>
-		<result column="g_create_time" property="createTime"/>
-		<result column="g_update_time" property="updateTime"/>
-		<result column="g_del_flag" property="delFlag"/>
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="permission" property="permission"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="icon" property="icon"/>
+		<result column="path" property="path"/>
+		<result column="component" property="component"/>
+		<result column="sort" property="sort"/>
+		<result column="type" property="type"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="is_deleted" property="isDeleted"/>
 	</resultMap>
 
 	<!--通过角色查询菜单信息-->
@@ -49,20 +45,20 @@
             gov_menu.*
         FROM
         gov_role
-        LEFT JOIN gov_role_menu ON gov_role_menu.g_role_id = gov_role.g_role_id
-        LEFT JOIN gov_menu ON gov_menu.g_menu_id = gov_role_menu.g_menu_id
+        LEFT JOIN gov_role_menu ON gov_role_menu.role_id = gov_role.id
+        LEFT JOIN gov_menu ON gov_menu.id = gov_role_menu.menu_id
         WHERE
-        gov_role.g_del_flag = 0
-        AND gov_menu.g_del_flag = 0
-        AND gov_role.g_role_code = #{role}
-        ORDER BY gov_menu.g_sort DESC
+        gov_role.is_deleted = 0
+        AND gov_menu.is_deleted = 0
+        AND gov_role.role_code = #{role}
+        ORDER BY gov_menu.sort DESC
     </select>
 
 	<!--通过角色ID 查询权限-->
 	<select id="findPermissionsByRoleIds" resultType="java.lang.String">
         SELECT
-            m.g_permission
+            m.permission
         FROM
-        gov_menu m, gov_role_menu rm WHERE m.g_menu_id = rm.g_menu_id AND m.g_del_flag = 0 AND rm.g_role_id IN (#{roleIds})
+        gov_menu m, gov_role_menu rm WHERE m.id = rm.menu_id AND m.is_deleted = 0 AND rm.role_id IN (#{roleIds})
     </select>
 </mapper>

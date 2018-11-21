@@ -1,22 +1,14 @@
-/*
- *
- * Copyright (c) 2018-2025, BigPan All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotBlank;
+
 import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,8 +16,8 @@ import lombok.EqualsAndHashCode;
 /**
  * 系统社交登录账号表
  *
- * @author BigPan
- * @date 2018-08-16 21:30:41
+ * @author rcg
+ * @date 2018-11-19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -36,49 +28,44 @@ public class SysSocialDetails extends Model<SysSocialDetails> {
 	/**
 	 * 主鍵
 	 */
-	@TableId(value = "g_id", type = IdType.AUTO)
+	@TableId
 	private Integer id;
 	/**
 	 * 类型
 	 */
-	@TableField("g_type")
+	@NotBlank(message = "类型不能为空")
 	private String type;
 	/**
 	 * 描述
 	 */
-	@TableField("g_remark")
 	private String remark;
 	/**
 	 * appid
 	 */
-	@TableField("g_app_id")
+	@NotBlank(message = "账号不能为空")
 	private String appId;
 	/**
 	 * app_secret
 	 */
-	@TableField("g_app_secret")
+	@NotBlank(message = "密钥不能为空")
 	private String appSecret;
 	/**
 	 * 回调地址
 	 */
-	@TableField("g_redirect_url")
 	private String redirectUrl;
 	/**
 	 * 创建时间
 	 */
-	@TableField("g_create_time")
 	private LocalDateTime createTime;
 	/**
 	 * 更新时间
 	 */
-	@TableField("g_update_time")
-	private LocalDateTime updateTime;
+	private LocalDateTime modifiedTime;
 	/**
 	 * 删除标记
 	 */
 	@TableLogic
-	@TableField("g_del_flag")
-	private String delFlag;
+	private String isDeleted;
 
   /**
    * 主键值

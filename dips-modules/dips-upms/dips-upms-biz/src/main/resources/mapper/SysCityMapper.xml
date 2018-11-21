@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.dips.admin.mapper.SysCityMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cloud.dips.admin.api.entity.SysCity" id="BaseResultMap">
+        <result property="cityId" column="id"/>
+        <result property="name" column="name"/>
+        <result property="number" column="number"/>
+        <result property="code" column="code"/>
+        <result property="level" column="city_level"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifiedTime" column="modified_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="parentId" column="parent_id"/>
+    </resultMap>
+    <resultMap type="com.cloud.dips.admin.api.vo.CityVO" id="cityVOMap">
+        <result property="cityId" column="id"/>
+        <result property="name" column="name"/>
+        <result property="number" column="number"/>
+        <result property="code" column="code"/>
+        <result property="level" column="city_level"/>
+        <result  property="levelName" column="levelName"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifiedTime" column="modified_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="parentId" column="parent_id"/>
+    
+    </resultMap>
+    
+
+
+	
+
+</mapper>

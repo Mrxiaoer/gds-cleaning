@@ -1,145 +1,72 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import javax.validation.constraints.NotBlank;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- *
+ * <p>
  * 部门管理
+ * </p>
  *
- * @author C.Z.H
- * @since 2018-08-15
+ * @author RCG
+ * @since 2018-11-19
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @TableName("gov_dept")
 public class SysDept extends Model<SysDept> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 部门ID
-	 */
-	@TableId(value = "g_dept_id", type = IdType.AUTO)
-	private Integer deptId;
-
-	/**
-	 * 部门编号
-	 */
-	@TableField("g_dept_number")
-	private String number;
-
+	@TableId(value = "id", type = IdType.AUTO)
+	private Integer id;
 	/**
 	 * 部门名称
 	 */
-	@TableField("g_dept_title")
-	private String title;
-
-	/**
-	 * 创建人ID
-	 */
-	@TableField("g_creator_id")
-	private Integer creatorId;
-
-	/**
-	 * 创建时间
-	 */
-	@TableField("g_start_time")
-	private Date startTime;
-
-	/**
-	 * 更新时间
-	 */
-	@TableField("g_update_time")
-	private Date updateTime;
-
+	@NotBlank(message = "部门名称不能为空")
+	private String name;
 	/**
 	 * 排序
 	 */
-	@TableField("g_order_num")
 	private Integer orderNum;
-
 	/**
-	 * 机构分类
+	 * 创建时间
 	 */
-	@TableField("g_category")
-	private String category;
-
+	private LocalDateTime createTime;
 	/**
-	 * 是否财务结算公司
+	 * 修改时间
 	 */
-	@TableField("g_isFinancial")
-	private Integer isFinancial;
-
+	private LocalDateTime modifiedTime;
 	/**
-	 * 是否内网结算部门
+	 * 是否删除  -1：已删除  0：正常
 	 */
-	@TableField("g_isIntranet")
-	private Integer isIntranet;
-
-	/**
-	 * 宣传图路径
-	 */
-	@TableField("g_image")
-	private String image;
-
-	/**
-	 * 联系方式
-	 */
-	@TableField("g_dept_input")
-	private String input;
-
-	/**
-	 * 是否删除  1：已删除  0：正常
-	 */
-	@TableField("g_status")
 	@TableLogic
-	private String status;
+	private String isDeleted;
 
 	/**
 	 * 父级ID
 	 */
-	@TableField("g_parent_id")
 	private Integer parentId;
+	
+	/**
+	 * 所属城市
+	 */
+	private Integer cityId;
+
 
 	@Override
 	protected Serializable pkVal() {
-		return this.deptId;
-	}
-
-	@Override
-	public String toString() {
-		return "SysDept{" +
-			"deptId=" + deptId +
-			", number='" + number + '\'' +
-			", title='" + title + '\'' +
-			", creatorId=" + creatorId +
-			", startTime=" + startTime +
-			", updateTime=" + updateTime +
-			", orderNum=" + orderNum +
-			", category='" + category + '\'' +
-			", isFinancial=" + isFinancial +
-			", isIntranet=" + isIntranet +
-			", image='" + image + '\'' +
-			", input='" + input + '\'' +
-			", status='" + status + '\'' +
-			", parentId=" + parentId +
-			'}';
+		return this.id;
 	}
 }

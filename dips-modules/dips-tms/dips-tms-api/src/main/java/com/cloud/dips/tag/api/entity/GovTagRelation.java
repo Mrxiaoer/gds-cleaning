@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
-import com.google.common.base.Objects;
 
 import lombok.Data;
 
@@ -27,51 +26,29 @@ public class GovTagRelation extends Model<GovTagRelation> {
 	 * 标签ID
 	 */
 	@TableId(type = IdType.INPUT)
-	private Integer gTagId;
+	private Integer tagId;
 	/**
 	 * 关联ID
 	 */
 	@TableId(type = IdType.INPUT)
-	private Integer gRelationId;
+	private Integer relationId;
 	
 	
 	@TableId(type = IdType.INPUT)
-	private Integer gTypeId;
+	private Integer typeId;
 	
 	@TableId(type = IdType.ID_WORKER_STR)
-	private String gNode;
+	private String node;
 
 
 	@Override
 	protected Serializable pkVal() {
-		return this.gTagId;
+		return this.tagId;
 	}
-
-
 	@Override
 	public String toString() {
-		return "GovTagRelation [gTagId=" + gTagId + ", gRelationId=" + gRelationId + ", gTypeId=" + gTypeId + ", gNode="
-				+ gNode + "]";
+		return "GovTagRelation [tagId=" + tagId + ", relationId=" + relationId + ", typeId=" + typeId + ", node=" + node
+				+ "]";
 	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GovTagRelation that = (GovTagRelation) obj;
-		return Objects.equal(gTagId, that.gTagId) && Objects.equal(gRelationId, that.gRelationId) 
-				&& Objects.equal(gTypeId, that.gTypeId) && Objects.equal(gNode, that.gNode);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(gTagId, gRelationId,gTypeId,gNode);
-	}
-
 
 }

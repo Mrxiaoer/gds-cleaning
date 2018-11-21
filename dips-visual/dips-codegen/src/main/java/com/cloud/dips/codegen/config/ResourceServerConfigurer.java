@@ -4,13 +4,15 @@
 
 package com.cloud.dips.codegen.config;
 
-import com.cloud.dips.common.security.component.BaseResourceServerConfigurerAdapter;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+
+import com.cloud.dips.common.security.component.BaseResourceServerConfigurerAdapter;
+
+import lombok.AllArgsConstructor;
 
 /**
  * @author BigPan
@@ -38,6 +40,6 @@ public class ResourceServerConfigurer extends BaseResourceServerConfigurerAdapte
 	@Override
 	public void configure(ResourceServerSecurityConfigurer resources) {
 		resources.authenticationEntryPoint(resourceAuthExceptionEntryPoint)
-			.accessDeniedHandler(dipsAccessDeniedHandler);
+		.accessDeniedHandler(dipsAccessDeniedHandler);
 	}
 }

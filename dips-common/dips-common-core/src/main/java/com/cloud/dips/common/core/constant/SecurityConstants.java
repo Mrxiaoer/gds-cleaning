@@ -33,6 +33,26 @@ public interface SecurityConstants {
 	 * 标志
 	 */
 	String FROM = "from";
+	
+
+	/**
+	 * 默认登录URL
+	 */
+	String OAUTH_TOKEN_URL = "/oauth/token";
+
+	/**
+	 * grant_type
+	 */
+	String REFRESH_TOKEN = "refresh_token";
+
+	/**
+	 * oauth 客户端信息
+	 */
+	String CLIENT_DETAILS_KEY = "dips_oauth:client:details";
+
+
+	/**
+
 
 	/**
 	 * 内部
@@ -46,9 +66,9 @@ public interface SecurityConstants {
 	/**
 	 * sys_oauth_client_details 表的字段，不包括client_id、client_secret
 	 */
-	String CLIENT_FIELDS = "g_client_id, CONCAT('{noop}',g_client_secret) as g_client_secret, g_resource_ids, g_scope, "
-		+ "g_authorized_grant_types, g_web_server_redirect_uri, g_authorities, g_access_token_validity, "
-		+ "g_refresh_token_validity, g_additional_information, g_autoapprove";
+	String CLIENT_FIELDS = "client_id, CONCAT('{noop}',client_secret) as client_secret, resource_ids, scope, "
+		+ "authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, "
+		+ "refresh_token_validity, additional_information, autoapprove";
 
 	/**
 	 * JdbcClientDetailsService 查询语句
@@ -59,12 +79,12 @@ public interface SecurityConstants {
 	/**
 	 * 默认的查询语句
 	 */
-	String DEFAULT_FIND_STATEMENT = BASE_FIND_STATEMENT + " order by g_client_id";
+	String DEFAULT_FIND_STATEMENT = BASE_FIND_STATEMENT + " order by client_id";
 
 	/**
 	 * 按条件client_id 查询
 	 */
-	String DEFAULT_SELECT_STATEMENT = BASE_FIND_STATEMENT + " where g_client_id = ?";
+	String DEFAULT_SELECT_STATEMENT = BASE_FIND_STATEMENT + " where client_id = ?";
 
 	/**
 	 * 手机号登录URL

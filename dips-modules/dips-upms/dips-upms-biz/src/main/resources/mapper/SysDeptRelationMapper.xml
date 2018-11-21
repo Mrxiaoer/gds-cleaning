@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
+  ~
+  ~      Copyright (c) 2018-2025, RCG All rights reserved.
+  ~
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -14,13 +10,54 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysDeptRelation">
-		<id column="g_ancestor" property="ancestor"/>
-		<result column="g_descendant" property="descendant"/>
+		<id column="ancestor" property="ancestor"/>
+		<result column="descendant" property="descendant"/>
 	</resultMap>
 
 	<!-- 通用查询结果列 -->
 	<sql id="Base_Column_List">
-        g_ancestor, g_descendant
+        ancestor, descendant
     </sql>
 
+	<!-- 更新部门关系 -->
+	<select id="deleteDeptRealtion">
+	DELETE FROM gov_dept_relation
+        WHERE
+        	descendant IN ( SELECT temp.descendant FROM
+        	( SELECT descendant FROM gov_dept_relation WHERE ancestor = #{descendant} ) temp )
+        AND ancestor IN ( SELECT temp.ancestor FROM ( SELECT ancestor FROM
+        	gov_dept_relation WHERE descendant = #{descendant} AND ancestor != descendant ) temp );
+	</select>
+	
+	
+	<select id="insertDeptRealtion">
+	INSERT INTO gov_dept_relation (ancestor, descendant)
+		SELECT a.ancestor, b.descendant
+		FROM gov_dept_relation a
+			CROSS JOIN gov_dept_relation b
+		WHERE a.descendant = #{ancestor}
+			AND b.ancestor = #{descendant};
+	</select>
+	
+
+	<!--删除部门-->
+	<delete id="deleteAllDeptRealtion">
+        DELETE
+        FROM
+            gov_dept_relation
+        WHERE
+            descendant IN (
+                SELECT
+                    temp.descendant
+                FROM
+                    (
+                        SELECT
+                            descendant
+                        FROM
+                            gov_dept_relation
+                        WHERE
+                            ancestor = #{id}
+                    ) temp
+            )
+    </delete>
 </mapper>

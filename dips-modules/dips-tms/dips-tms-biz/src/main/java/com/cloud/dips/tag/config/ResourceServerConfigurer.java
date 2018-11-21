@@ -24,9 +24,7 @@ public class ResourceServerConfigurer extends BaseResourceServerConfigurerAdapte
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/actuator/**"
-				//, "/tag/**"
-				, "/v2/api-docs").permitAll()
+			.antMatchers("/actuator/**", "/v2/api-docs").permitAll()
 			.anyRequest().authenticated()
 			.and().csrf().disable();
 	}

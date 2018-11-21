@@ -1,16 +1,18 @@
 package com.cloud.dips.auth.handler;
 
-import com.cloud.dips.common.security.handler.AuthenticationSuccessEventHandler;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import com.cloud.dips.common.security.handler.BaseAuthenticationSuccessEventHandler;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author BigPan
  */
 @Slf4j
 @Component
-public class DipsAuthenticationSuccessEventHandler extends AuthenticationSuccessEventHandler {
+public class DipsAuthenticationSuccessEventHandler extends BaseAuthenticationSuccessEventHandler {
 
 	/**
 	 * 处理登录成功方法

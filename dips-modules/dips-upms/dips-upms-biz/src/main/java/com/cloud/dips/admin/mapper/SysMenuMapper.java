@@ -1,26 +1,18 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.mapper;
+
+import java.util.List;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.cloud.dips.admin.api.entity.SysMenu;
 import com.cloud.dips.admin.api.vo.MenuVO;
 
-import java.util.List;
-
 /**
  * <p>
- * 菜单权限表 Mapper 接口
+ * Mapper 接口
  * </p>
  *
- * @author Wilson
- * @since 2017-10-29
+ * @author RCG
+ * @since 2018-11-19
  */
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 

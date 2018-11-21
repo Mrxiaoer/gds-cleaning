@@ -8,15 +8,25 @@ import lombok.Data;
  */
 @Data
 public class Attachment {
-	
-	private String name;//文件名
-	
-	private String status;//上传状态
-	
-	private long uid;//文件id
-	
-	private String url;//服务器路径
-
+	/**
+     * 文件名
+     */
+	private String name;
+	/**
+     * 上传状态
+     */
+	private String status;
+	/**
+     * id
+     */
+	private long uid;
+	/**
+     * 服务器路径
+     */
+	private String url;
+	/**
+     * path
+     */
 	private String path;
 
 }

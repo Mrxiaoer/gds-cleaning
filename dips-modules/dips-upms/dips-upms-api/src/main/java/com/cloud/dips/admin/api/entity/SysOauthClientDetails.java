@@ -1,17 +1,10 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.entity;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
+
 import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -24,8 +17,8 @@ import lombok.EqualsAndHashCode;
  * 客户端信息
  * </p>
  *
- * @author Wilson
- * @since 2018-05-15
+ * @author RCG
+ * @since 2018-11-19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -34,27 +27,57 @@ public class SysOauthClientDetails extends Model<SysOauthClientDetails> {
 
 	private static final long serialVersionUID = 1L;
 
-	@TableId(value = "g_client_id", type = IdType.INPUT)	
+	/**
+	 * 客户端ID
+	 */
+	@NotBlank(message = "client_id 不能为空")
+	@TableId(value = "client_id", type = IdType.INPUT)
 	private String clientId;
-	@TableField("g_resource_ids")
-	private String resourceIds;
-	@TableField("g_client_secret")
+
+	/**
+	 * 客户端密钥
+	 */
+	@NotBlank(message = "client_secret 不能为空")
 	private String clientSecret;
-	@TableField("g_scope")
+
+	/**
+	 * 资源ID
+	 */
+	private String resourceIds;
+
+	/**
+	 * 作用域
+	 */
+	@NotBlank(message = "scope 不能为空")
 	private String scope;
-	@TableField("g_authorized_grant_types")
+
+	/**
+	 * 授权方式（A,B,C）
+	 */
 	private String authorizedGrantTypes;
-	@TableField("g_web_server_redirect_uri")
+
 	private String webServerRedirectUri;
-	@TableField("g_authorities")
+
 	private String authorities;
-	@TableField("g_access_token_validity")
+
+	/**
+	 * 请求令牌有效时间
+	 */
 	private Integer accessTokenValidity;
-	@TableField("g_refresh_token_validity")
+
+	/**
+	 * 刷新令牌有效时间
+	 */
 	private Integer refreshTokenValidity;
-	@TableField("g_additional_information")
+
+	/**
+	 * 扩展信息
+	 */
 	private String additionalInformation;
-	@TableField("g_autoapprove")
+
+	/**
+	 * 是否自动放行
+	 */
 	private String autoapprove;
 
 	@Override

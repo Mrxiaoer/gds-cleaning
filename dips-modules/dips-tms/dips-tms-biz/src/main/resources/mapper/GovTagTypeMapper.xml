@@ -13,18 +13,18 @@
 <mapper namespace="com.cloud.dips.tag.mapper.GovTagTypeMapper">
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.cloud.dips.tag.api.entity.GovTagType">
-		<id column="g_type_id" property="typeId"/>
-		<result column="g_parent_id" property="parentId"/>
-		<result column="g_name" property="name"/>
-		<result column="g_creation_date" property="creationDate"/>
+		<id column="id" property="typeId"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="name" property="name"/>
+		<result column="creation_date" property="creationDate"/>
 	</resultMap>
 
 	<!-- govTagVo结果集 -->
 	<resultMap id="govTagTypeVoResultMap" type="com.cloud.dips.tag.api.vo.GovTagTypeVO">
-		<id column="g_type_id" property="typeId"/>
-		<result column="g_parent_id" property="parentId"/>
-		<result column="g_name" property="name"/>
-		<result column="g_creation_date" property="creationDate"/>
+		<id column="id" property="typeId"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="name" property="name"/>
+		<result column="creation_date" property="creationDate"/>
 	</resultMap>
 
 

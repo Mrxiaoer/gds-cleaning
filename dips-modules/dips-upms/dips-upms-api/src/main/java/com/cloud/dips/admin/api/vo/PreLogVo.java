@@ -3,8 +3,8 @@ package com.cloud.dips.admin.api.vo;
 import lombok.Data;
 
 /**
- * @author BigPan
- * @date 2018/8/27
+ * @author RCG
+ * @date 2018/11/19
  * 前端日志vo
  */
 @Data

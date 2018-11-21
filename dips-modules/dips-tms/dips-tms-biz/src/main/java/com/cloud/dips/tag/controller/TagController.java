@@ -1,5 +1,6 @@
 package com.cloud.dips.tag.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
@@ -16,15 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.cloud.dips.admin.api.dto.UserInfo;
-import com.cloud.dips.admin.api.feign.RemoteUserService;
-import com.cloud.dips.common.core.constant.SecurityConstants;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.dips.common.log.annotation.SysLog;
+import com.cloud.dips.common.security.service.DipsUser;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.dips.tag.api.dto.GovTagDTO;
 import com.cloud.dips.tag.api.entity.GovTag;
+import com.cloud.dips.tag.api.vo.GovTagDescriptionVO;
 import com.cloud.dips.tag.api.vo.GovTagVO;
 import com.cloud.dips.tag.service.GovTagDescriptionService;
 import com.cloud.dips.tag.service.GovTagRelationService;
@@ -33,6 +33,11 @@ import com.cloud.dips.tag.service.GovTagService;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @RestController
 @RequestMapping("/tag")
 public class TagController {
@@ -45,8 +50,6 @@ public class TagController {
 	@Autowired
 	private GovTagRelationService govTagRelationService;
 	
-	@Autowired
-	private RemoteUserService remoteUserService;
 	
 	/**
 	 * 
@@ -58,10 +61,16 @@ public class TagController {
 	 * 
 	 */
 	@GetMapping("/{id}")
-	//@PreAuthorize("@pms.hasPermission('gov_tag_view')")
 	@ApiOperation(value = "查询标签详情", notes = "根据ID查询标签详情: params{通知ID: tagId}",httpMethod="GET")
 	public GovTagVO tag(@PathVariable Integer id) {
-		return service.selectGovTagVoById(id);
+		GovTagVO bean=service.selectGovTagVoById(id);
+		List<GovTagDescriptionVO> tagDescriptionList=bean.getTagDescriptionList();
+		if(tagDescriptionList.size()>0){
+			bean.setUpdateDate(tagDescriptionList.get(tagDescriptionList.size()-1).getCreationDate());
+		}else{
+			bean.setUpdateDate(bean.getCreationDate());
+		}
+		return bean;
 	}
 	
 	/**
@@ -74,8 +83,9 @@ public class TagController {
 	@RequestMapping("/tagPage")
 	@ApiOperation(value = "分页查询标签", notes = "标签集合",httpMethod="GET")
 	public Page<GovTagVO> tagPage(@RequestParam Map<String, Object> params) {
-		if(StrUtil.isBlank(params.getOrDefault("orderByField", "").toString())){
-			params.put("orderByField", "g_tag_id");
+		String orderByField="orderByField";
+		if(StrUtil.isBlank(params.getOrDefault(orderByField, "").toString())){
+			params.put("orderByField", "id");
 		}
 		return service.selectAllPage(new Query<>(params));
 	}
@@ -89,7 +99,7 @@ public class TagController {
 	 */
 	@SysLog("删除标签")
 	@DeleteMapping("/{id}")
-	//@PreAuthorize("@pms.hasPermission('gov_tag_del')")
+	@PreAuthorize("@pms.hasPermission('gov_tag_del')")
 	@ApiOperation(value = "删除标签", notes = "根据ID删除标签: params{标签ID: tagId}",httpMethod="DELETE")
 	public R<Boolean> tagDel(@PathVariable Integer id) {
 		GovTag govTag = service.selectById(id);
@@ -104,17 +114,16 @@ public class TagController {
 	
 	@SysLog("添加标签")
 	@PostMapping("/saveTag")
-	//@PreAuthorize("@pms.hasPermission('gov_tag_add')")
+	@PreAuthorize("@pms.hasPermission('gov_tag_add')")
 	@ApiOperation(value = "添加标签", notes = "添加标签", httpMethod = "POST")
 	public R<Boolean> saveTag(@RequestBody GovTagDTO govTagDto) {
 		Integer i=service.findByGovTagName(govTagDto.getName());
-		if(!(i>0)){
+		if(i<1){
 			GovTag govTag = new GovTag();
 			BeanUtils.copyProperties(govTagDto, govTag);
 			// 获取当前用户 
-			String username = SecurityUtils.getUser().getUsername();
-			R<UserInfo> userInfo = remoteUserService.info(username, SecurityConstants.FROM_IN);
-			govTag.setCreatorId(userInfo.getData().getSysUser().getUserId());
+			DipsUser user = SecurityUtils.getUser();
+			govTag.setCreatorId(user.getId());
 			govTag.applyDefaultValue();
 			service.save(govTag);
 		}
@@ -167,7 +176,7 @@ public class TagController {
 
 	@SysLog("更新标签")
 	@PutMapping("/updateTag")
-	//@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
+	@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
 	@ApiOperation(value = "更新标签", notes = "更新标签", httpMethod = "PUT")
 	public R<Boolean> updateTag(@RequestBody GovTagDTO govTagDto) {
 		GovTag govTag = service.selectById(govTagDto.getTagId());

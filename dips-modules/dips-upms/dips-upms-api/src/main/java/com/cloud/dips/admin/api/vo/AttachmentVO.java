@@ -24,7 +24,7 @@ public class AttachmentVO implements Serializable {
 	/**
 	 * 主键ID
 	 */
-	private Integer attachmentId;
+	private Integer id;
 	/**
 	 * 上传用户ID
 	 */

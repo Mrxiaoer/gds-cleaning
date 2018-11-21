@@ -1,68 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, RCG All rights reserved.
+  ~
+  -->
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cloud.dips.admin.mapper.SysDeptMapper">
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysDept">
-		<id column="g_dept_id" property="deptId"/>
-		<result column="g_dept_number" property="number"/>
-		<result column="g_dept_title" property="title"/>
-		<result column="g_creator_id" property="creatorId"/>
-		<result column="g_start_time" property="startTime"/>
-		<result column="g_update_time" property="updateTime"/>
-		<result column="g_order_num" property="orderNum"/>
-		<result column="g_category" property="category"/>
-		<result column="g_isFinancial" property="isFinancial"/>
-		<result column="g_isIntranet" property="isIntranet"/>
-		<result column="g_image" property="image"/>
-		<result column="g_dept_input" property="input"/>
-		<result column="g_status" property="status"/>
-		<result column="g_parent_id" property="parentId"/>
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="order_num" property="orderNum"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="is_deleted" property="isDeleted"/>
+		<result column="city_id" property="cityId"/>
+	</resultMap>
+	
+	<resultMap type="com.cloud.dips.admin.api.vo.DeptVO" id="DeptVOMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="orderNum" property="orderNum"/>
+		<result column="createTime" property="createTime"/>
+		<result column="modifiedTime" property="modifiedTime"/>
+		<result column="isDeleted" property="isDeleted"/>
+		<result column="parentId" property="parentId"/>
+		<result column="cityId" property="cityId"/>
+		<result column="cityName" property="cityName"/>
 	</resultMap>
 
 	<!-- 通用查询结果列 -->
 	<sql id="Base_Column_List">
-        g_dept_id AS deptId,
-        g_dept_number AS number,
-        g_dept_title AS title,
-        g_creator_id AS creatorId,
-        g_start_time AS startTime,
-        g_update_time AS updateTime,
-        g_order_num AS orderNum,
-        g_category AS category,
-        g_isFinancial AS isFinancial,
-        g_isIntranet AS isIntranet,
-        g_image AS image,
-        g_dept_input AS input,
-        g_status AS status,
-        g_parent_id AS parentId,
+        id, parent_id AS parentId, name, order_num AS orderNum, create_time AS createTime, modified_time AS modifiedTime, is_deleted AS isDeleted
     </sql>
-
-	<delete id="deleteDeptRelation">
-        DELETE
-        FROM
-            gov_dept_relation
-        WHERE
-            g_descendant IN (
-                SELECT
-                    temp.g_descendant
-                FROM
-                    (
-                        SELECT
-                            g_descendant
-                        FROM
-                            gov_dept_relation
-                        WHERE
-                            g_ancestor = #{id}
-                    ) temp
-            )
-    </delete>
     
-    <!-- deptCommonVo结果集 -->
-    <resultMap id="deptCommonVo" type="com.cloud.dips.admin.api.vo.DeptVO">
-    	<id column="deptId" property="deptId"/>
-		<result column="title" property="title"/>
-    </resultMap>
+    <select id="selectDeptVoById" resultMap="DeptVOMap">
+    SELECT
+    	t.id AS id,
+    	t.name AS name,
+    	t.order_num AS orderNum,
+    	t.create_time AS createTime,
+    	t.modified_time AS modifiedTime,
+    	t.is_deleted AS isDeleted,
+    	t.parent_id AS parentId,
+    	t.city_id AS cityId,
+    	c.name AS cityName
+    FROM
+		gov_dept t 
+	LEFT JOIN gov_city AS c on c.id=t.city_id 
+	WHERE t.id = #{id}
+    </select>
 
 	<!--关联查询部门列表-->
 	<select id="selectDeptDtoList" resultType="com.cloud.dips.admin.api.entity.SysDept">
@@ -70,190 +59,7 @@
 			t.*
 		FROM
 			gov_dept t
-		LEFT JOIN gov_dept_relation dr ON t.g_dept_id = dr.g_descendant
-		WHERE dr.g_ancestor = 0
-	</select>
-
-	<!-- deptVo结果集 -->
-	<resultMap id="deptVoResultMap" type="com.cloud.dips.admin.api.vo.DeptVO">
-		<id column="g_dept_id" property="deptId"/>
-		<result column="g_dept_number" property="number"/>
-		<result column="g_dept_title" property="title"/>
-		<result column="creatorName" property="creatorName"/>
-		<result column="g_start_time" property="startTime"/>
-		<result column="g_update_time" property="updateTime"/>
-		<result column="g_order_num" property="orderNum"/>
-		<result column="g_category" property="category"/>
-		<result column="g_isFinancial" property="isFinancial"/>
-		<result column="isFinancialName" property="isFinancialName"/>
-		<result column="g_isIntranet" property="isIntranet"/>
-		<result column="isIntranetName" property="isIntranetName"/>
-		<result column="g_image" property="image"/>
-		<result column="g_dept_input" property="input"/>
-		<result column="introduce" property="introduce"/>
-		<result column="structure" property="structure"/>
-		<result column="advantage" property="advantage"/>
-		<result column="g_status" property="status"/>
-		<result column="g_parent_id" property="parentId"/>
-		<association property="master" javaType="com.cloud.dips.admin.api.dto.UserRealNameDTO">
-			<result column="masterId" property="userId"/>
-			<result column="masterName" property="realName"/>
-		</association>
-		<collection property="memberList" select="selectUsers" column="{deptId = g_dept_id, number = memberNumber}">
-		</collection>
-		<collection property="writerList" select="selectUsers" column="{deptId = g_dept_id, number = writerNumber}">
-		</collection>
-		<collection property="aptitudeList" select="selectAptitudes" column="g_dept_id">
-		</collection>
-		<collection property="abilityTags" select="selectTags" column="{deptId = g_dept_id, number = abilityNumber}">
-		</collection>
-		<collection property="projectTags" select="selectTags" column="{deptId = g_dept_id, number = projectNumber}">
-		</collection>
-		<collection property="learningTags" select="selectTags" column="{deptId = g_dept_id, number = learningNumber}">
-		</collection>
-	</resultMap>
-
-	<!--部门详细VO-->
-	<sql id="selectDeptVo">
-	  	SELECT
-		dept.g_dept_id,
-		dept.g_dept_number,
-		dept.g_dept_title,
-		u.g_real_name AS creatorName,
-		dept.g_start_time,
-		dept.g_update_time,
-		dept.g_order_num,
-		dept.g_category,
-		dept.g_isFinancial,
-		d1.g_label AS isFinancialName,
-		dept.g_isIntranet,
-		d2.g_label AS isIntranetName,
-		dept.g_image,
-		dept.g_dept_input,
-		c1.g_value AS introduce,
-		c2.g_value AS structure,
-		c3.g_value AS advantage,
-		dept.g_parent_id,
-		u1.g_user_id AS masterId,
-		u1.g_real_name AS masterName,
-		'gov_dept_member' AS memberNumber,
-		'gov_dept_writer' AS writerNumber,
-		'ability' AS abilityNumber,
-		'project' AS projectNumber,
-		'learning' AS learningNumber
-		FROM
-		gov_dept AS dept
-		LEFT JOIN gov_dict AS d1 ON d1.g_value = dept.g_isFinancial AND d1.g_type = 'sys_dept_isFinancial'
-		LEFT JOIN gov_dict AS d2 ON d2.g_value = dept.g_isIntranet AND d2.g_type = 'sys_dept_isIntranet'
-		LEFT JOIN gov_dept_clob AS c1 ON c1.g_dept_id = dept.g_dept_id AND c1.g_key = 'introduce'
-		LEFT JOIN gov_dept_clob AS c2 ON c2.g_dept_id = dept.g_dept_id AND c2.g_key = 'structure'
-		LEFT JOIN gov_dept_clob AS c3 ON c3.g_dept_id = dept.g_dept_id AND c3.g_key = 'advantage'
-		LEFT JOIN gov_user AS u ON u.g_user_id = dept.g_creator_id
-		LEFT JOIN gov_user AS u1 ON u1.g_user_id = (SELECT sr1.g_correlation_id FROM gov_relation AS sr1 WHERE sr1.g_node = 'dept' AND sr1.g_relation_id = dept.g_dept_id AND sr1.g_type_id = (SELECT rt1.g_type_id FROM gov_relation_type AS rt1 WHERE rt1.g_type_number = 'gov_dept_master'))
-	</sql>
-
-	<!--查询部门详细-->
-	<select id="selectDeptVoById" resultMap="deptVoResultMap">
-		<include refid="selectDeptVo"/>
-		WHERE
-		dept.g_dept_id = #{id} AND
-		dept.g_status = 0
-	</select>
-
-	<!--分页部门-->
-	<select id="selectDeptVoPage" resultMap="deptVoResultMap">
-		SELECT
-		dept.g_dept_id,
-		dept.g_dept_number,
-		dept.g_dept_title,
-		u.g_real_name AS creatorName,
-		dept.g_start_time,
-		dept.g_update_time,
-		dept.g_order_num,
-		dept.g_category,
-		dept.g_isFinancial,
-		d1.g_label AS isFinancialName,
-		dept.g_isIntranet,
-		d2.g_label AS isIntranetName,
-		dept.g_image,
-		dept.g_dept_input,
-		c1.g_value AS introduce,
-		c2.g_value AS structure,
-		c3.g_value AS advantage,
-		dept.g_parent_id,
-		u1.g_user_id AS masterId,
-		u1.g_real_name AS masterName,
-		'gov_dept_member' AS memberNumber,
-		'gov_dept_writer' AS writerNumber,
-		'ability' AS abilityNumber,
-		'project' AS projectNumber,
-		'learning' AS learningNumber
-		FROM
-		gov_dept AS dept
-		LEFT JOIN gov_dict AS d1 ON d1.g_value = dept.g_isFinancial AND d1.g_type = 'sys_dept_isFinancial'
-		LEFT JOIN gov_dict AS d2 ON d2.g_value = dept.g_isIntranet AND d2.g_type = 'sys_dept_isIntranet'
-		LEFT JOIN gov_dept_clob AS c1 ON c1.g_dept_id = dept.g_dept_id AND c1.g_key = 'introduce'
-		LEFT JOIN gov_dept_clob AS c2 ON c2.g_dept_id = dept.g_dept_id AND c2.g_key = 'structure'
-		LEFT JOIN gov_dept_clob AS c3 ON c3.g_dept_id = dept.g_dept_id AND c3.g_key = 'advantage'
-		LEFT JOIN gov_user AS u ON u.g_user_id = dept.g_creator_id
-		LEFT JOIN gov_user AS u1 ON u1.g_user_id = (SELECT sr1.g_correlation_id FROM gov_relation AS sr1 WHERE sr1.g_node = 'dept' AND sr1.g_relation_id = dept.g_dept_id AND sr1.g_type_id = (SELECT rt1.g_type_id FROM gov_relation_type AS rt1 WHERE rt1.g_type_number = 'gov_dept_master'))
-		WHERE
-		dept.g_status = 0
-		<if test="title != null and title != ''">
-			and dept.g_dept_title LIKE CONCAT('%',#{title},'%')
-		</if>
-		<if test="masterName != null and masterName != ''">
-			and u1.g_real_name LIKE CONCAT('%',#{masterName},'%')
-		</if>
-		<if test="isFinancial != null and isFinancial != ''">
-			and dept.g_isFinancial = #{isFinancial}
-		</if>
-		<if test="isIntranet != null and isIntranet != ''">
-			and dept.g_isIntranet = #{isIntranet}
-		</if>
-		ORDER BY dept.g_order_num ASC
-	</select>
-
-	<resultMap id="UserRealNameDTOMap" type="com.cloud.dips.admin.api.dto.UserRealNameDTO">
-		<id column="userId" property="userId"/>
-		<result column="realName" property="realName"/>
-	</resultMap>
-
-	<resultMap id="CommonVoMap" type="com.cloud.dips.admin.api.vo.CommonVo">
-		<id column="commonId" property="commonId"/>
-		<result column="commonName" property="commonName"/>
-	</resultMap>
-
-	<select id="selectUsers" resultMap="UserRealNameDTOMap">
-		SELECT
-			u.g_user_id AS userId,
-			u.g_real_name AS realName
-		FROM
-			gov_relation AS gr
-		LEFT JOIN gov_relation_type AS rt ON rt.g_type_number = #{number}
-		LEFT JOIN gov_user AS u ON u.g_user_id = gr.g_correlation_id
-		WHERE gr.g_node = 'dept' AND gr.g_relation_id = #{deptId} AND gr.g_type_id = rt.g_type_id
-	</select>
-
-	<select id="selectAptitudes" resultMap="CommonVoMap">
-		SELECT
-            gm.g_materials_id AS commonId,
-            gm.g_materials_name AS commonName
-		FROM
-			gov_relation AS gr
-		LEFT JOIN gov_relation_type AS rt ON rt.g_type_number = 'gov_dept_aptitude'
-		LEFT JOIN gov_materials AS gm ON gm.g_materials_id = gr.g_correlation_id
-		WHERE gr.g_node = 'dept' AND gr.g_relation_id = #{deptId} AND gr.g_type_id = rt.g_type_id
-	</select>
-
-	<select id="selectTags" resultMap="CommonVoMap">
-		SELECT
-            gt.g_tag_id AS commonId,
-            gt.g_name AS commonName
-		FROM
-			gov_tag_relation AS gtr
-		LEFT JOIN gov_tag_relation_type AS rt ON rt.g_type_number = #{number}
-		LEFT JOIN gov_tag AS gt ON gt.g_tag_id = gtr.g_tag_id
-		WHERE gtr.g_node = 'dept' AND gtr.g_relation_id = #{deptId} AND gtr.g_type_id = rt.g_type_id
+		LEFT JOIN gov_dept_relation dr ON t.id = dr.descendant
+		WHERE dr.ancestor = 0
 	</select>
 </mapper>

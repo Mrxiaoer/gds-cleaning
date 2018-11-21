@@ -15,9 +15,19 @@ import java.util.Map;
 @FeignClient(value = ServiceNameConstant.TMS_SERVICE, fallbackFactory = RemoteTagRelationServiceFallbackFactory.class)
 public interface RemoteTagRelationService {
 
+	/**
+	 * 标签关联保存
+	 * @param params 参数集
+	 * @return R
+	 */
 	@PostMapping("/tagRelation/saveTagRelation")
 	R<Boolean> saveTagRelation(@RequestParam Map<String, Object> params);
 
+	/**
+	 * 标签关联删除
+	 * @param params 参数集
+	 * @return R
+	 */
 	@PostMapping("/tagRelation/deleteTagRelation")
 	R<Boolean> deleteTagRelation(@RequestParam Map<String, Object> params);
 }

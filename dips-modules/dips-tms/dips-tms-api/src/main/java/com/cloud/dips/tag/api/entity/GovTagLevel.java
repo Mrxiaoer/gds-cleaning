@@ -10,6 +10,11 @@ import com.baomidou.mybatisplus.enums.IdType;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @Data
 @TableName("gov_tag_level")
 public class GovTagLevel implements Serializable{
@@ -19,28 +24,22 @@ public class GovTagLevel implements Serializable{
 	/**
 	 * 主键ID
 	 */
-	@TableId(value = "g_level_id", type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Integer levelId;
-
-	/**
-	 * 上级级别ID
-	 */
-	@TableField("g_parent_id")
-	private Integer parentId;
 	/**
 	 * 标签级别名称
 	 */
-	@TableField("g_name")
+	@TableField("name")
 	private String name;
 	/**
 	 * 创建时间
 	 */
-	@TableField("g_creation_date")
+	@TableField("creation_date")
 	private Date creationDate;
 	
 	@Override
 	public String toString() {
-		return "GovTagLevel [levelId=" + levelId + ", parentId=" + parentId + ", name=" + name + ", creationDate="
+		return "GovTagLevel [levelId=" + levelId + ", name=" + name + ", creationDate="
 				+ creationDate + "]";
 	}
 	

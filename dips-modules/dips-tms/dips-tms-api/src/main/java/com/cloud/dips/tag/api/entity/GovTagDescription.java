@@ -12,6 +12,11 @@ import com.baomidou.mybatisplus.enums.IdType;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @Data
 @TableName("gov_tag_description")
 public class GovTagDescription implements Serializable{
@@ -28,29 +33,29 @@ public class GovTagDescription implements Serializable{
 	/**
 	 * 主键ID
 	 */
-	@TableId(value = "g_tag_description_id", type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Integer descriptionId;
 
 
 	/**
 	 * 描述
 	 */
-	@TableField("g_description")
+	@TableField("description")
 	private String description;
 	/**
 	 * 关联标签id
 	 */
-	@TableField("g_tag_id")
+	@TableField("tag_id")
 	private Integer tagId;
 	/**
 	 * 创建时间
 	 */
-	@TableField("g_creation_date")
+	@TableField("creation_date")
 	private Date creationDate;
 	/**
 	 * 创建者id
 	 */
-	@TableField("g_creator_id")
+	@TableField("creator_id")
 	private Integer creatorId;
 	
 	@Override

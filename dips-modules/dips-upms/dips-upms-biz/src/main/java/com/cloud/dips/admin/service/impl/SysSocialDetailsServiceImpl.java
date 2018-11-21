@@ -1,14 +1,12 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.service.impl;
 
-import cn.hutool.json.JSONUtil;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.cache.CacheManager;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.admin.api.entity.SysSocialDetails;
 import com.cloud.dips.admin.api.entity.SysUser;
@@ -18,18 +16,18 @@ import com.cloud.dips.admin.service.SysSocialDetailsService;
 import com.cloud.dips.common.core.constant.SecurityConstants;
 import com.cloud.dips.common.core.constant.enums.EnumLoginType;
 import com.cloud.dips.common.security.util.SecurityUtils;
+
+import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.CacheManager;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * @author Wilson
- * @date 2018年08月16日
+ * <p>
+ * 服务实现类
+ * </p>
+ *
+ * @author RCG
+ * @since 2018-11-19
  */
 @Slf4j
 @AllArgsConstructor
@@ -63,7 +61,7 @@ public class SysSocialDetailsServiceImpl extends ServiceImpl<SysSocialDetailsMap
 		Map<String, String> result = getOpenId(appId, code);
 
 		SysUser sysUser = sysUserMapper.selectById(SecurityUtils.getUser().getId());
-		sysUser.setWxOpenid(result.get("openId"));
+		sysUser.setWeixinOpenid(result.get("openId"));
 
 		sysUserMapper.updateAllColumnById(sysUser);
 		//更新緩存

@@ -6,8 +6,6 @@ spring:
     username: root
     password: root
     #本地数据库
-    url: jdbc:mysql://127.0.0.1:3306/dips_cloud?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    #重庆数据库
-    #url: jdbc:mysql://172.18.34.31:3306/dips_cloud?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    #舟山数据库
-    #url: jdbc:mysql://192.168.1.199:12315/dips_cloud?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/dips_cloud_core?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    #测试数据库
+    #url: jdbc:mysql://192.168.12.199:12315/dips_cloud_core?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false

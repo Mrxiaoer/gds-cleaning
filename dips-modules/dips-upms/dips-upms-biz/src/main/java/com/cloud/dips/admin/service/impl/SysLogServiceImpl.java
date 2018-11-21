@@ -1,23 +1,25 @@
 package com.cloud.dips.admin.service.impl;
 
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.cloud.dips.admin.api.entity.SysLog;
-import com.cloud.dips.admin.mapper.SysLogMapper;
-import com.cloud.dips.admin.service.SysLogService;
-import com.cloud.dips.admin.api.vo.PreLogVo;
-import com.cloud.dips.common.core.constant.CommonConstant;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.admin.api.entity.SysLog;
+import com.cloud.dips.admin.api.vo.PreLogVo;
+import com.cloud.dips.admin.mapper.SysLogMapper;
+import com.cloud.dips.admin.service.SysLogService;
+import com.cloud.dips.common.core.constant.CommonConstant;
+
 /**
  * <p>
- * 日志表 服务实现类
+ * 服务实现类
  * </p>
  *
- * @author Wilson
- * @since 2017-11-20
+ * @author RCG
+ * @since 2018-11-19
  */
 @Service
 public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements SysLogService {
@@ -27,8 +29,8 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
 
 		SysLog sysLog = new SysLog();
 		sysLog.setId(id);
-		sysLog.setDelFlag(CommonConstant.STATUS_DEL);
-		sysLog.setUpdateTime(LocalDateTime.now());
+		sysLog.setIsDeleted(CommonConstant.STATUS_DEL);
+		sysLog.setModifiedTime(LocalDateTime.now());
 		return updateById(sysLog);
 	}
 
@@ -40,18 +42,18 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
 	 */
 	@Override
 	public Boolean insertLogs(List<PreLogVo> preLogVoList) {
-		List<SysLog> sysLogs = new ArrayList<>();
-		preLogVoList.forEach(pre -> {
-			SysLog log = new SysLog();
-			log.setType(CommonConstant.STATUS_LOCK);
-			log.setTitle(pre.getInfo());
-			log.setException(pre.getStack());
-			log.setParams(pre.getMessage());
-			log.setCreateTime(LocalDateTime.now());
-			log.setRequestUri(pre.getUrl());
-			log.setCreateBy(pre.getUser());
-			sysLogs.add(log);
-		});
-		return this.insertBatch(sysLogs);
+		List<SysLog> sysLogList = preLogVoList.stream()
+			.map(pre -> {
+				SysLog log = new SysLog();
+				log.setType(CommonConstant.STATUS_LOCK);
+				log.setTitle(pre.getInfo());
+				log.setException(pre.getStack());
+				log.setParams(pre.getMessage());
+				log.setCreateTime(LocalDateTime.now());
+				log.setRequestUri(pre.getUrl());
+				log.setCreateBy(pre.getUser());
+				return log;
+			}).collect(Collectors.toList());
+		return this.insertBatch(sysLogList);
 	}
 }

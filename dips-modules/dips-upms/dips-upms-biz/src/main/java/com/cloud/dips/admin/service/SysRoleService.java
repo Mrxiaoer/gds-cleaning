@@ -1,11 +1,3 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.service;
 
 import java.util.List;
@@ -22,8 +14,8 @@ import com.cloud.dips.common.core.util.Query;
  * 服务类
  * </p>
  *
- * @author Wilson
- * @since 2017-10-29
+ * @author RCG
+ * @since 2018-11-19
  */
 public interface SysRoleService extends IService<SysRole> {
 

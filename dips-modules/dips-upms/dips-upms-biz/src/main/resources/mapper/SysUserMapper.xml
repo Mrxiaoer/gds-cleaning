@@ -1,480 +1,174 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- * Editor: RCG
- *
- */
+  ~
+  ~      Copyright (c) 2018-2025, RCG All rights reserved.
+  ~
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cloud.dips.admin.mapper.SysUserMapper">
 	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysUser">
-		<id column="g_user_id" property="userId"/>
-		<result column="g_membergroup_id" property="membergroupId"/>
-		<result column="g_username" property="username"/>
-		<result column="g_password" property="password"/>
-		<result column="g_safe_password" property="safePassword"/>
-		<result column="g_real_name" property="realName"/>
-		<result column="g_salt" property="salt"/>
-		<result column="g_phone" property="phone"/>
-		<result column="g_avatar" property="avatar"/>
-		<result column="g_email" property="email"/>
-		<result column="g_create_time" property="createTime"/>
-		<result column="g_update_time" property="updateTime"/>
-		<result column="g_del_flag" property="delFlag"/>
-		<result column="g_status" property="status"/>
-		<result column="g_gender" property="gender"/>
-		<result column="g_birth_date" property="birthDate"/>
-		<result column="g_id_card" property="idCard"/>
-		<result column="g_rank" property="rank"/>
-		<result column="g_type" property="type"/>
-		<result column="g_qq_openid" property="qqOpenid"/>
-		<result column="g_weibo_uid" property="weiboUid"/>
-		<result column="g_weixin_openid" property="wxOpenid"/>
-		<result column="g_subscribe" property="subscribe"/>
-		<result column="g_staff_id" property="staffID"/>
-		<result column="g_integral" property="integral"/>
-		<result column="g_amount" property="amount"/>
-		<result column="g_logintime" property="loginTime"/>
+	<resultMap id="baseResultMap" type="com.cloud.dips.admin.api.entity.SysUser">
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="real_name" property="realName"/>
+		<result column="password" property="password"/>
+		<result column="phone" property="phone"/>
+		<result column="avatar" property="avatar"/>
+		<result column="salt" property="salt"/>
+		<result column="dept_id" property="deptId"/>
+		<result column="weixin_openid" property="weixinOpenid"/>
+		<result column="qq_openid" property="qqOpenid"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="is_deleted" property="isDeleted"/>
 	</resultMap>
 
 	<!-- userVo结果集 -->
 	<resultMap id="userVoResultMap" type="com.cloud.dips.admin.api.vo.UserVO">
-		<id column="g_user_id" property="userId"/>
-		<result column="g_membergroup_id" property="membergroupId"/>
-		<result column="g_username" property="username"/>
-		<result column="g_password" property="password"/>
-		<result column="g_safe_password" property="safePassword"/>
-		<result column="g_real_name" property="realName"/>
-		<result column="g_salt" property="salt"/>
-		<result column="g_phone" property="phone"/>
-		<result column="g_avatar" property="avatar"/>
-		<result column="g_email" property="email"/>
-		<result column="g_create_time" property="createTime"/>
-		<result column="g_update_time" property="updateTime"/>
-		<result column="g_del_flag" property="delFlag"/>
-		<result column="g_status" property="status"/>
-		<result column="g_gender" property="gender"/>
-		<result column="g_birth_date" property="birthDate"/>
-		<result column="g_id_card" property="idCard"/>
-		<result column="g_rank" property="rank"/>
-		<result column="g_type" property="type"/>
-		<result column="g_qq_openid" property="qqOpenid"/>
-		<result column="g_weibo_uid" property="weiboUid"/>
-		<result column="g_weixin_openid" property="wxOpenid"/>
-		<result column="g_subscribe" property="subscribe"/>
-		<result column="g_staff_id" property="staffID"/>
-		<result column="g_integral" property="integral"/>
-		<result column="g_amount" property="amount"/>
-		<result column="g_logintime" property="loginTime"/>
-		<result column="g_validation_date" property="validationDate"/>
-		<result column="g_login_error_date" property="loginErrorDate"/>
-		<result column="g_login_error_count" property="loginErrorCount"/>
-		<result column="g_prev_login_date" property="prevLoginDate"/>
-		<result column="g_prev_login_ip" property="prevLoginIp"/>
-		<result column="g_last_login_date" property="lastLoginDate"/>
-		<result column="g_last_login_ip" property="lastLoginIp"/>
-		<result column="g_creation_date" property="creationDate"/>
-		<result column="g_creation_ip" property="creationIp"/>
-		<result column="g_logins" property="logins"/>
-		<result column="g_is_with_avatar" property="withAvatar"/>
-		<result column="g_bio" property="bio"/>
-		<result column="g_come_from" property="comeFrom"/>
-		<result column="g_qq" property="qq"/>
-		<result column="g_weixin" property="weixin"/>
-		<result column="g_head_img" property="headImg"/>
-		<result column="g_nick_name" property="nickName"/>
-		<result column="g_sign_name" property="signName"/>
-		<result column="g_nation" property="nation"/>
-		<result column="g_marry" property="marry"/>
-		<result column="g_bear" property="bear"/>
-		<result column="g_politics" property="politics"/>
-		<result column="g_account_category" property="accountCategory"/>
-		<result column="g_permanent_address" property="permanentAddress"/>
-		<result column="g_present_address" property="presentAddress"/>
-		<result column="g_education" property="educationL"/>
-		<result column="g_school" property="school"/>
-		<result column="g_major" property="major"/>
-		<result column="g_language_level" property="languageLevel"/>
-		<result column="g_start_time" property="startTime"/>
-		<result column="g_regular_time" property="regularTime"/>
-		<result column="workText" property="workText"/>
-		<result column="education" property="education"/>
-		<result column="g_graduation_time" property="graduationTime"/>
-		<result column="g_external_certificate" property="externalCertificate"/>
-		<result column="g_emergency" property="emergency"/>
-		<result column="g_home_url" property="homeUrl"/>
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="real_name" property="realName"/>
+		<result column="password" property="password"/>
+		<result column="salt" property="salt"/>
+		<result column="phone" property="phone"/>
+		<result column="avatar" property="avatar"/>
+		<result column="weixin_openid" property="weixinOpenid"/>
+		<result column="qq_openid" property="qqOpenid"/>
+		<result column="ucreate_time" property="createTime"/>
+		<result column="umodified_time" property="modifiedTime"/>
+		<result column="uis_deleted" property="isDeleted"/>
+		<result column="deptId" property="deptId"/>
+		<result column="deptName" property="deptName"/>
 		<collection property="roleList" ofType="com.cloud.dips.admin.api.entity.SysRole">
-			<id column="g_role_id" property="roleId"/>
-			<result column="g_role_name" property="roleName"/>
-			<result column="g_role_code" property="roleCode"/>
-			<result column="g_role_desc" property="roleDesc"/>
-			<result column="rg_create_time" property="createTime"/>
-			<result column="rupdate_time" property="updateTime"/>
-		</collection>
-		<collection property="abilityTags" ofType="com.cloud.dips.admin.api.vo.CommonVo">
-			<id column="abilityId" property="commonId"/>
-			<result column="abilityName" property="commonName"/>
-		</collection>
-		<collection property="projectTags" ofType="com.cloud.dips.admin.api.vo.CommonVo">
-			<id column="projectId" property="commonId"/>
-			<result column="projectName" property="commonName"/>
-		</collection>
-		<collection property="learningTags" ofType="com.cloud.dips.admin.api.vo.CommonVo">
-			<id column="learningId" property="commonId"/>
-			<result column="learningName" property="commonName"/>
-		</collection>
-		<collection property="deptList" ofType="com.cloud.dips.admin.api.vo.DeptVO">
-			<id column="deptId" property="deptId"/>
-			<result column="title" property="title"/>
+			<id column="roleId" property="id"/>
+			<result column="role_name" property="roleName"/>
+			<result column="role_code" property="roleCode"/>
+			<result column="role_desc" property="roleDesc"/>
+			<result column="rcreate_time" property="createTime"/>
+			<result column="rmodified_time" property="modifiedTime"/>
 		</collection>
 	</resultMap>
 
 	<sql id="selectUserVo">
         SELECT
-            `user`.g_user_id,
-            `user`.g_username,
-            `user`.g_password,
-            `user`.g_safe_password,
-            `user`.g_real_name,
-            `user`.g_salt,
-            `user`.g_phone,
-            `user`.g_avatar,
-            `user`.g_email,
-            `user`.g_create_time,
-            `user`.g_update_time,
-            `user`.g_del_flag,
-            `user`.g_status,
-            `user`.g_gender,
-            `user`.g_birth_date,
-            `user`.g_id_card,
-            `user`.g_rank,
-            `user`.g_type,
-            `user`.g_qq_openid,
-            `user`.g_weibo_uid,
-            `user`.g_weixin_openid,
-            `user`.g_subscribe,
-            `user`.g_staff_id,
-            `user`.g_integral,
-            `user`.g_amount,
-            `user`.g_logintime,
-            r.g_role_id,
-            r.g_role_name,
-            r.g_role_code,
-            r.g_role_desc,
-            r.g_create_time AS rcreate_time,
-            r.g_update_time AS rupdate_time,
-            ud.g_validation_date,
-            ud.g_login_error_date,
-            ud.g_login_error_count,
-            ud.g_prev_login_date,
-            ud.g_prev_login_ip,
-            ud.g_last_login_date,
-            ud.g_last_login_ip,
-            ud.g_creation_date,
-            ud.g_creation_ip,
-            ud.g_logins,
-            ud.g_is_with_avatar,
-            ud.g_bio,
-            ud.g_come_from,
-            ud.g_qq,
-            ud.g_weixin,
-            ud.g_head_img,
-            ud.g_nick_name,
-            ud.g_sign_name,
-            ud.g_nation,
-            ud.g_marry,
-            ud.g_bear,
-            ud.g_politics,
-            ud.g_account_category,
-            ud.g_permanent_address,
-            ud.g_present_address,
-            ud.g_education,
-            ud.g_school,
-            ud.g_major,
-            ud.g_language_level,
-            ud.g_start_time,
-            ud.g_regular_time,
-            ud.g_graduation_time,
-            ud.g_external_certificate,
-            ud.g_emergency,
-            ud.g_home_url,
-            c1.g_value AS workText,
-        	c2.g_value AS education,
-        	gt1.g_tag_id AS abilityId,
-            gt1.g_name AS abilityName,
-            gt2.g_tag_id AS projectId,
-            gt2.g_name AS projectName,
-            gt3.g_tag_id AS learningId,
-            gt3.g_name AS learningName,
-            dept.g_dept_id AS deptId,
-            dept.g_dept_title AS title
+            `user`.id,
+            `user`.username,
+            `user`.real_name,
+            `user`.`password`,
+            `user`.salt,
+            `user`.phone,
+            `user`.avatar,
+            `user`.weixin_openid,
+            `user`.qq_openid,
+            `user`.dept_id,
+            `user`.create_time AS ucreate_time,
+            `user`.modified_time AS umodified_time,
+            `user`.is_deleted AS uis_deleted,
+            `user`.dept_id AS deptId,
+            r.id AS roleId,
+            r.role_name,
+            r.role_code,
+            r.role_desc,
+            r.create_time AS rcreate_time,
+            r.modified_time AS rmodified_time
         FROM
             gov_user AS `user`
-            LEFT JOIN gov_dept AS dept ON dept.g_dept_id IN (SELECT dept.g_dept_id FROM gov_relation AS gr WHERE gr.g_node = 'dept' AND dept.g_dept_id = gr.g_relation_id AND gr.g_correlation_id=`user`.g_user_id AND gr.g_type_id IN (SELECT ggrt.g_type_id FROM gov_relation_type AS ggrt WHERE ggrt.g_type_number='gov_dept_member' OR ggrt.g_type_number='gov_dept_master' OR ggrt.g_type_number='gov_dept_writer'))
-            LEFT JOIN gov_user_role AS ur ON ur.g_user_id = `user`.g_user_id
-            LEFT JOIN gov_role AS r ON r.g_role_id = ur.g_role_id
-            LEFT JOIN gov_user_detail AS ud ON ud.g_user_id=`user`.g_user_id
-            LEFT JOIN gov_user_clob AS c1 ON c1.g_user_id = `user`.g_user_id AND c1.g_key = 'workText'
-			LEFT JOIN gov_user_clob AS c2 ON c2.g_user_id = `user`.g_user_id AND c2.g_key = 'education'
-			LEFT JOIN gov_tag AS gt1 ON gt1.g_tag_id IN (SELECT gtr1.g_tag_id FROM gov_tag_relation AS gtr1 WHERE gtr1.g_node = 'user' AND gtr1.g_relation_id = `user`.g_user_id AND gtr1.g_type_id = (SELECT gtrt1.g_type_id FROM gov_tag_relation_type AS gtrt1 WHERE gtrt1.g_type_number = 'ability'))
-            LEFT JOIN gov_tag AS gt2 ON gt2.g_tag_id IN (SELECT gtr2.g_tag_id FROM gov_tag_relation AS gtr2 WHERE gtr2.g_node = 'user' AND gtr2.g_relation_id = `user`.g_user_id AND gtr2.g_type_id = (SELECT gtrt2.g_type_id FROM gov_tag_relation_type AS gtrt2 WHERE gtrt2.g_type_number = 'project'))
-            LEFT JOIN gov_tag AS gt3 ON gt3.g_tag_id IN (SELECT gtr3.g_tag_id FROM gov_tag_relation AS gtr3 WHERE gtr3.g_node = 'user' AND gtr3.g_relation_id = `user`.g_user_id AND gtr3.g_type_id = (SELECT gtrt3.g_type_id FROM gov_tag_relation_type AS gtrt3 WHERE gtrt3.g_type_number = 'learning'))
+            LEFT JOIN gov_user_role AS ur ON ur.user_id = `user`.id
+            LEFT JOIN gov_role AS r ON r.id = ur.role_id
     </sql>
 
 	<select id="selectUserVoByUsername" resultMap="userVoResultMap">
 		<include refid="selectUserVo"/>
-		WHERE `user`.g_username = #{username}
-	</select>
-
-	<select id="selectUserVoByRealname" resultMap="userVoResultMap">
-		<include refid="selectUserVo"/>
-		WHERE `user`.g_real_name LIKE CONCAT('%',#{realname},'%')
+		WHERE `user`.username = #{username}
 	</select>
 
 	<select id="selectUserVoById" resultMap="userVoResultMap">
          SELECT
-            `user`.g_user_id,
-            `user`.g_username,
-            `user`.g_password,
-            `user`.g_safe_password,
-            `user`.g_real_name,
-            `user`.g_salt,
-            `user`.g_phone,
-            `user`.g_avatar,
-            `user`.g_email,
-            `user`.g_create_time,
-            `user`.g_update_time,
-            `user`.g_status,
-            `user`.g_gender,
-            `user`.g_birth_date,
-            `user`.g_id_card,
-            `user`.g_rank,
-            `user`.g_type,
-            `user`.g_qq_openid,
-            `user`.g_weibo_uid,
-            `user`.g_weixin_openid,
-            `user`.g_subscribe,
-            `user`.g_staff_id,
-            `user`.g_integral,
-            `user`.g_amount,
-            `user`.g_logintime,
-            `user`.g_del_flag AS udel_flag,
-            r.g_role_id,
-            r.g_role_name,
-            r.g_role_code,
-            r.g_role_desc,
-            r.g_create_time AS rcreate_time,
-            r.g_update_time AS rupdate_time,
-            ud.g_validation_date,
-            ud.g_login_error_date,
-            ud.g_login_error_count,
-            ud.g_prev_login_date,
-            ud.g_prev_login_ip,
-            ud.g_last_login_date,
-            ud.g_last_login_ip,
-            ud.g_creation_date,
-            ud.g_creation_ip,
-            ud.g_logins,
-            ud.g_is_with_avatar,
-            ud.g_bio,
-            ud.g_come_from,
-            ud.g_qq,
-            ud.g_weixin,
-            ud.g_head_img,
-            ud.g_nick_name,
-            ud.g_sign_name,
-            ud.g_nation,
-            ud.g_marry,
-            ud.g_bear,
-            ud.g_politics,
-            ud.g_account_category,
-            ud.g_permanent_address,
-            ud.g_present_address,
-            ud.g_education,
-            ud.g_school,
-            ud.g_major,
-            ud.g_language_level,
-            ud.g_start_time,
-            ud.g_regular_time,
-            ud.g_graduation_time,
-            ud.g_external_certificate,
-            ud.g_emergency,
-            ud.g_home_url,
-            c1.g_value AS workText,
-        	c2.g_value AS education,
-        	gt1.g_tag_id AS abilityId,
-            gt1.g_name AS abilityName,
-            gt2.g_tag_id AS projectId,
-            gt2.g_name AS projectName,
-            gt3.g_tag_id AS learningId,
-            gt3.g_name AS learningName,
-            dept.g_dept_id AS deptId,
-            dept.g_dept_title AS title
+            `user`.id,
+            `user`.username,
+            `user`.real_name,
+            `user`.`password`,
+            `user`.salt,
+            `user`.phone,
+            `user`.avatar,
+			`user`.weixin_openid,
+            `user`.qq_openid,
+            `user`.create_time AS ucreate_time,
+            `user`.modified_time AS umodified_time,
+            `user`.is_deleted AS uis_deleted,
+            r.id AS roleId,
+            r.role_name,
+            r.role_code,
+            r.role_desc,
+            r.create_time AS rcreate_time,
+            r.modified_time AS rmodified_time,
+            d.name AS deptName,
+            d.id AS deptId
         FROM
             gov_user AS `user`
-            LEFT JOIN gov_dept AS dept ON dept.g_dept_id IN (SELECT dept.g_dept_id FROM gov_relation AS gr WHERE gr.g_node = 'dept' AND dept.g_dept_id = gr.g_relation_id AND gr.g_correlation_id=`user`.g_user_id AND gr.g_type_id IN (SELECT ggrt.g_type_id FROM gov_relation_type AS ggrt WHERE ggrt.g_type_number='gov_dept_member' OR ggrt.g_type_number='gov_dept_master' OR ggrt.g_type_number='gov_dept_writer'))
-            LEFT JOIN gov_user_role AS ur ON ur.g_user_id = `user`.g_user_id
-            LEFT JOIN gov_role AS r ON r.g_role_id = ur.g_role_id
-            LEFT JOIN gov_user_detail AS ud ON ud.g_user_id=`user`.g_user_id
-            LEFT JOIN gov_user_clob AS c1 ON c1.g_user_id = `user`.g_user_id AND c1.g_key = 'workText'
-			LEFT JOIN gov_user_clob AS c2 ON c2.g_user_id = `user`.g_user_id AND c2.g_key = 'education'
-			LEFT JOIN gov_tag AS gt1 ON gt1.g_tag_id IN (SELECT gtr1.g_tag_id FROM gov_tag_relation AS gtr1 WHERE gtr1.g_node = 'user' AND gtr1.g_relation_id = `user`.g_user_id AND gtr1.g_type_id = (SELECT gtrt1.g_type_id FROM gov_tag_relation_type AS gtrt1 WHERE gtrt1.g_type_number = 'ability'))
-            LEFT JOIN gov_tag AS gt2 ON gt2.g_tag_id IN (SELECT gtr2.g_tag_id FROM gov_tag_relation AS gtr2 WHERE gtr2.g_node = 'user' AND gtr2.g_relation_id = `user`.g_user_id AND gtr2.g_type_id = (SELECT gtrt2.g_type_id FROM gov_tag_relation_type AS gtrt2 WHERE gtrt2.g_type_number = 'project'))
-            LEFT JOIN gov_tag AS gt3 ON gt3.g_tag_id IN (SELECT gtr3.g_tag_id FROM gov_tag_relation AS gtr3 WHERE gtr3.g_node = 'user' AND gtr3.g_relation_id = `user`.g_user_id AND gtr3.g_type_id = (SELECT gtrt3.g_type_id FROM gov_tag_relation_type AS gtrt3 WHERE gtrt3.g_type_number = 'learning'))
+            LEFT JOIN gov_user_role AS ur ON ur.user_id = `user`.id
+            LEFT JOIN gov_role AS r ON r.id = ur.role_id
+            LEFT JOIN gov_dept AS d ON d.id = `user`.dept_id
         WHERE
-           `user`.g_user_id = #{id}
-    </select>
-
-    <select id="selectUserById" resultMap="BaseResultMap">
-         SELECT
-            `user`.g_user_id,
-            `user`.g_username,
-            `user`.g_password,
-            `user`.g_safe_password,
-            `user`.g_real_name,
-            `user`.g_salt,
-            `user`.g_phone,
-            `user`.g_avatar,
-            `user`.g_email,
-            `user`.g_create_time,
-            `user`.g_update_time,
-            `user`.g_status,
-            `user`.g_gender,
-            `user`.g_birth_date,
-            `user`.g_id_card,
-            `user`.g_rank,
-            `user`.g_type,
-            `user`.g_qq_openid,
-            `user`.g_weibo_uid,
-            `user`.g_weixin_openid,
-            `user`.g_subscribe,
-            `user`.g_staff_id,
-            `user`.g_integral,
-            `user`.g_amount,
-            `user`.g_logintime,
-            `user`.g_del_flag AS udel_flag
-        FROM
-            gov_user AS `user`
-        WHERE
-           `user`.g_user_id = #{id}
+           `user`.id = #{id}
     </select>
 
 	<select id="selectUserVoPage" resultMap="userVoResultMap">
 		SELECT
-		`user`.g_user_id,
-		`user`.g_username,
-		`user`.g_real_name,
-		`user`.g_avatar,
-		`user`.g_status,
-        `user`.g_staff_id
+		`user`.id,
+		`user`.username,
+		`user`.real_name,
+		`user`.`password`,
+		`user`.salt,
+		`user`.phone,
+		`user`.avatar,
+		`user`.weixin_openid,
+		`user`.qq_openid,
+		`user`.create_time AS ucreate_time,
+		`user`.modified_time AS umodified_time,
+		`user`.is_deleted AS uis_deleted,
+		r.id AS roleId,
+		r.role_name,
+		r.role_code,
+		r.role_desc,
+		r.create_time AS rcreate_time,
+		r.modified_time AS rmodified_time,
+		d.name AS deptName,
+		d.id AS deptId
 		FROM
 		gov_user AS `user`
-		LEFT JOIN gov_dept AS dept ON dept.g_dept_id IN (SELECT dept.g_dept_id FROM gov_relation AS gr WHERE gr.g_node = 'dept' AND dept.g_dept_id = gr.g_relation_id AND gr.g_correlation_id=`user`.g_user_id AND gr.g_type_id IN (SELECT ggrt.g_type_id FROM gov_relation_type AS ggrt WHERE ggrt.g_type_number='gov_dept_member' OR ggrt.g_type_number='gov_dept_master' OR ggrt.g_type_number='gov_dept_writer'))
-		WHERE 1=1
+		LEFT JOIN gov_user_role AS ur ON ur.user_id = `user`.id
+		LEFT JOIN gov_role AS r ON r.id = ur.role_id
+		LEFT JOIN gov_dept AS d ON d.id = `user`.dept_id
+		WHERE
+		r.is_deleted = 0
 		<if test="username != null and username != ''">
-		AND	`user`.g_username LIKE CONCAT('%',#{username},'%')
+			and `user`.username LIKE CONCAT('%',#{username},'%')
 		</if>
-		<if test="realname != null and realname != ''">
-		AND	`user`.g_real_name LIKE CONCAT('%',#{realname},'%')
-		</if>
-		<if test="status != null and status != ''">
-		AND	`user`.g_status = #{status}
-		</if>
-		<if test="deptId != null and deptId != ''">
-		AND dept.g_dept_id = #{deptId}
-		</if>
-		GROUP BY `user`.g_user_id
-		ORDER BY `user`.g_staff_id ASC,`user`.g_user_id  ASC
+		ORDER BY `user`.create_time DESC
 	</select>
 
-	<select id="selectUserVoNoLockPage" resultMap="userVoResultMap">
-		SELECT
-		`user`.g_user_id,
-		`user`.g_username,
-		`user`.g_real_name,
-		`user`.g_avatar,
-		`user`.g_status,
-        `user`.g_staff_id
-		FROM
-		gov_user AS `user`
-		LEFT JOIN gov_dept AS dept ON dept.g_dept_id IN (SELECT dept.g_dept_id FROM gov_relation AS gr WHERE gr.g_node = 'dept' AND dept.g_dept_id = gr.g_relation_id AND gr.g_correlation_id=`user`.g_user_id AND gr.g_type_id IN (SELECT ggrt.g_type_id FROM gov_relation_type AS ggrt WHERE ggrt.g_type_number='gov_dept_member' OR ggrt.g_type_number='gov_dept_master' OR ggrt.g_type_number='gov_dept_writer'))
-		WHERE	`user`.g_status=0
-		<if test="username != null and username != ''">
-		AND	`user`.g_username LIKE CONCAT('%',#{username},'%')
-		</if>
-		<if test="realname != null and realname != ''">
-		AND	`user`.g_real_name LIKE CONCAT('%',#{realname},'%')
-		</if>
-		<if test="deptId != null and deptId != ''">
-		AND dept.g_dept_id = #{deptId}
-		</if>
-		GROUP BY `user`.g_user_id
-		ORDER BY `user`.g_staff_id ASC,`user`.g_user_id  ASC
-	</select>
-	
-	
-	<select id="selectDeletedUserByUsername" resultMap="BaseResultMap">
-		SELECT g_user_id,
-		 	   g_username,
-		 	   g_password,
-		 	   g_phone,
-		 	   g_avatar,
-		 	   g_salt,
-		 	   g_weixin_openid,
-		 	   g_qq_openid,
-		 	   g_create_time,
-		 	   g_update_time,
-		 	   g_del_flag
+	<select id="selectDeletedUserByUsername" resultMap="baseResultMap">
+		SELECT id,
+		 	   username,
+		 	   real_name,
+		 	   password,
+		 	   phone,
+		 	   avatar,
+		 	   salt,
+		 	   dept_id,
+		 	   weixin_openid,
+		 	   qq_openid,
+		 	   create_time,
+		 	   modified_time,
+		 	   is_deleted
 		FROM gov_user
-			WHERE g_username = #{username}
-			AND g_del_flag = 1
+			WHERE username = #{username}
+			AND is_deleted = 1
 	</select>
 
 	<delete id="deleteSysUserByUsernameAndUserId">
-		DELETE FROM gov_user WHERE g_username=#{username} AND g_user_id=#{userId};
+		DELETE FROM gov_user WHERE username=#{username} AND id=#{userId};
 	</delete>
-	
-	<resultMap id="selectRelationResultMap" type="com.cloud.dips.admin.api.vo.UserRelationVO">
-		<id column="g_user_id" property="userId"/>
-		<result column="g_real_name" property="realName"/>
-		<result column="g_phone" property="phone"/>
-		<result column="g_gender" property="gender"/>
-		<result column="g_staff_id" property="staffID"/>
-		<result column="g_start_time" property="startTime"/>
-		<collection property="deptList" select="selectDepts" column="g_user_id">
-		</collection>
-	</resultMap>
-	
-	
-	<select id="selectUserRelation" resultMap="selectRelationResultMap">
-		SELECT `user`.g_user_id,
-			   `user`.g_staff_id,
-			   `user`.g_real_name,
-			   `user`.g_gender,
-			   `user`.g_phone,
-			   detail.g_start_time
-		FROM gov_user as `user`
-		LEFT JOIN gov_user_detail as detail on detail.g_user_id = `user`.g_user_id
-		WHERE `user`.g_status !='1'
-		ORDER BY `user`.g_staff_id ASC,`user`.g_user_id  ASC
-	</select>
-	
-	<select id="selectDepts" resultMap="com.cloud.dips.admin.mapper.SysDeptMapper.deptCommonVo">
-		SELECT
-			d.g_dept_id AS deptId,
-			d.g_dept_title AS title
-		FROM
-			gov_relation AS gr
-		LEFT JOIN gov_relation_type AS rt ON rt.g_type_number = 'gov_dept_member'
-		LEFT JOIN gov_dept AS d ON d.g_dept_id = gr.g_relation_id
-		WHERE gr.g_node = 'dept' AND gr.g_correlation_id = #{g_user_id} AND gr.g_type_id = rt.g_type_id
-	</select>
-
-
 </mapper>

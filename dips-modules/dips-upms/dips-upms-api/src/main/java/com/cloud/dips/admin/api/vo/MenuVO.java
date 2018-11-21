@@ -1,25 +1,17 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.vo;
-
-import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import lombok.Data;
 
 /**
  * <p>
  * 菜单权限表
  * </p>
  *
- * @author Wilson
- * @since 2017-11-08
+ * @author RCG
+ * @since 2018-11-19
  */
 @Data
 public class MenuVO implements Serializable {
@@ -29,7 +21,7 @@ public class MenuVO implements Serializable {
 	/**
 	 * 菜单ID
 	 */
-	private Integer menuId;
+	private Integer id;
 	/**
 	 * 菜单名称
 	 */
@@ -69,16 +61,16 @@ public class MenuVO implements Serializable {
 	/**
 	 * 更新时间
 	 */
-	private LocalDateTime updateTime;
+	private LocalDateTime modifiedTime;
 	/**
 	 * 0--正常 1--删除
 	 */
-	private String delFlag;
+	private String isDeleted;
 
 
 	@Override
 	public int hashCode() {
-		return menuId.hashCode();
+		return id.hashCode();
 	}
 
 	/**
@@ -90,8 +82,8 @@ public class MenuVO implements Serializable {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MenuVO) {
-			Integer targetMenuId = ((MenuVO) obj).getMenuId();
-			return menuId.equals(targetMenuId);
+			Integer targetMenuId = ((MenuVO) obj).getId();
+			return id.equals(targetMenuId);
 		}
 		return super.equals(obj);
 	}

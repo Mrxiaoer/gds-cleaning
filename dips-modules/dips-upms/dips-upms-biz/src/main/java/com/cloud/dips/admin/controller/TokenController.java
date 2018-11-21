@@ -1,18 +1,25 @@
 package com.cloud.dips.admin.controller;
 
+import java.util.Map;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.admin.api.feign.RemoteTokenService;
 import com.cloud.dips.common.core.constant.SecurityConstants;
 import com.cloud.dips.common.core.util.R;
-import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import lombok.AllArgsConstructor;
 
 /**
- * @author BigPan
- * @date 2018/9/4
+ * @author RCG
+ * @date 2018/11/19
  * token 管理
  */
 @RestController

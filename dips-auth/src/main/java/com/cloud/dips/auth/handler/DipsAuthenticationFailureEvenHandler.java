@@ -1,20 +1,22 @@
 package com.cloud.dips.auth.handler;
 
-import com.cloud.dips.common.security.handler.AuthenticationFailureEvenHandler;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+
+import com.cloud.dips.common.security.handler.BaseAuthenticationFailureEvenHandler;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author BigPan
  */
 @Slf4j
 @Component
-public class DipsAuthenticationFailureEvenHandler extends AuthenticationFailureEvenHandler {
+public class DipsAuthenticationFailureEvenHandler extends BaseAuthenticationFailureEvenHandler {
 
 	/**
-	 * 处理登录成功方法
+	 * 处理登录失败方法
 	 * <p>
 	 *
 	 * @param authenticationException 登录的authentication 对象

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,11 @@ import com.cloud.dips.tag.service.GovTagTypeService;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @RestController
 @RequestMapping("/tagType")
 public class TagTypeController {
@@ -43,6 +49,17 @@ public class TagTypeController {
 		EntityWrapper<GovTagType> e=new EntityWrapper<GovTagType>();
 		return service.selectList(e);
 	}
+	
+	@RequestMapping("/tagTypeParents")
+	@ApiOperation(value = "标签父分类集合", notes = "标签父分类集合",httpMethod="GET")
+	public List<GovTagType> tagTypeParents(@RequestParam String id) {
+		EntityWrapper<GovTagType> e=new EntityWrapper<GovTagType>();
+		e.eq("parent_id", 0);
+		if(StrUtil.isNotBlank(id)){
+			e.notIn("id", id);
+		}
+		return service.selectList(e);
+	}
 
 	@RequestMapping("/tagTypePage")
 	@ApiOperation(value = "分页查询标签分类", notes = "标签分类集合",httpMethod="GET")
@@ -51,13 +68,13 @@ public class TagTypeController {
 		Page<GovTagType> p=new Page<GovTagType>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
 		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
-		p.setOrderByField(params.getOrDefault("orderByField", "g_type_id").toString());
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
 		p.setAsc(isAsc);
 		EntityWrapper<GovTagType> e=new EntityWrapper<GovTagType>();
 		String name=params.getOrDefault("typename", "").toString();
 		if(StrUtil.isNotBlank(name)){
 			name="%"+name+"%";
-			e.where( "g_name like {0}", name);
+			e.where( "name like {0}", name);
 		}
 		return service.selectPage(p,e);
 	}
@@ -66,7 +83,7 @@ public class TagTypeController {
 
 	@SysLog("删除标签分类")
 	@DeleteMapping("/{id}")
-	//@PreAuthorize("@pms.hasPermission('gov_tagType_del')")
+	@PreAuthorize("@pms.hasPermission('gov_tagType_del')")
 	@ApiOperation(value = "删除标签分类", notes = "删除标签分类",httpMethod="DELETE")
 	public R<Boolean> tagTypeDel(@PathVariable Integer id) {
 		GovTagType govTagType = service.selectById(id);
@@ -74,15 +91,18 @@ public class TagTypeController {
 			return new R<>(false);
 		}else{
 				EntityWrapper<GovTag> e=new EntityWrapper<GovTag>();
-				e.where( "g_type_id = {0}", govTagType.getTypeId());
-				govTagService.updateForSet("g_type_id=null", e);
+				e.where( "type_id = {0}", govTagType.getTypeId());
+				govTagService.updateForSet("type_id=0", e);
+				EntityWrapper<GovTagType> e2=new EntityWrapper<GovTagType>();
+				e2.where( "parent_id = {0}", govTagType.getTypeId());
+				service.updateForSet("parent_id=0", e2);
 				return new R<>(service.deleteById(govTagType.getTypeId()));
 		}
 	}
 	
 	@SysLog("添加标签分类")
 	@PostMapping("/saveTagType")
-	//@PreAuthorize("@pms.hasPermission('gov_tagType_add')")
+	@PreAuthorize("@pms.hasPermission('gov_tagType_add')")
 	@ApiOperation(value = "添加标签分类", notes = "添加标签分类", httpMethod = "POST")
 	public R<Boolean> saveTagType(@RequestBody GovTagTypeDTO govTagTypeDto) {
 			GovTagType govTagType = new GovTagType();
@@ -93,12 +113,18 @@ public class TagTypeController {
 	
 	@SysLog("更新标签分类")
 	@PutMapping("/updateTagType")
-	//@PreAuthorize("@pms.hasPermission('gov_tagLevel_edit')")
+	@PreAuthorize("@pms.hasPermission('gov_tagType_edit')")
 	@ApiOperation(value = "更新标签分类", notes = "更新标签分类", httpMethod = "PUT")
 	public R<Boolean> updateTagType(@RequestBody GovTagTypeDTO govTagTypeDto) {
 		GovTagType govTagType = service.selectById(govTagTypeDto.getTypeId());
 		BeanUtils.copyProperties(govTagTypeDto, govTagType);
-		return new R<>(service.updateById(govTagType));
+		Integer parentId=govTagType.getParentId();
+		if(parentId!=null){
+			EntityWrapper<GovTagType> e=new EntityWrapper<GovTagType>();
+			e.where( "parent_id = {0}", govTagType.getTypeId());
+			service.updateForSet("parent_id="+parentId,e);
+		}
+		return new R<>(service.updateAllColumnById(govTagType));
 	}
 	
 }

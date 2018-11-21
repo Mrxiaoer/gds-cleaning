@@ -56,6 +56,12 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
+		<!--hanlp-->
+		<dependency>
+		    <groupId>com.hankcs</groupId>
+		    <artifactId>hanlp</artifactId>
+		    <version>portable-1.6.8</version>
+		</dependency>
 		<!--web 模块-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

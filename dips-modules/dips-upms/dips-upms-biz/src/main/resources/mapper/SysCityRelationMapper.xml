@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.dips.admin.mapper.SysCityRelationMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cloud.dips.admin.api.entity.SysCityRelation" id="BaseResultMap">
+        <result property="ancestor" column="ancestor"/>
+        <result property="descendant" column="descendant"/>
+    </resultMap>
+
+
+<!-- 更新城市关系 -->
+	<select id="deleteCityRealtion">
+		DELETE FROM gov_city_relation
+	        WHERE
+	        	descendant IN ( SELECT temp.descendant FROM
+	        	( SELECT descendant FROM gov_city_relation WHERE ancestor = #{descendant} ) temp )
+	        AND ancestor IN ( SELECT temp.ancestor FROM ( SELECT ancestor FROM
+	        	gov_city_relation WHERE descendant = #{descendant} AND ancestor != descendant ) temp );
+	</select>
+	<select id="insertCityRealtion">
+		INSERT INTO gov_city_relation (ancestor, descendant) 
+			SELECT a.ancestor, b.descendant 
+			FROM gov_city_relation a 
+				CROSS JOIN gov_city_relation b 
+			WHERE a.descendant = #{ancestor} 
+				AND b.ancestor = #{descendant}; 
+	</select>
+
+	<!--删除城市-->
+	<delete id="deleteAllCityRealtion">
+        DELETE
+        FROM
+            gov_city_relation
+        WHERE
+            descendant IN (
+                SELECT
+                    temp.descendant
+                FROM
+                    (
+                        SELECT
+                            descendant
+                        FROM
+                            gov_city_relation
+                        WHERE
+                            ancestor = #{id}
+                    ) temp
+            )
+    </delete>
+
+</mapper>

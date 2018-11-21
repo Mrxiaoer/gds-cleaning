@@ -1,7 +1,11 @@
 package com.cloud.dips.gateway.filter;
 
-import com.cloud.dips.common.core.constant.SecurityConstants;
-import com.cloud.dips.gateway.config.SwaggerProvider;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -9,13 +13,10 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
+
+import com.cloud.dips.common.core.constant.SecurityConstants;
+
 import reactor.core.publisher.Mono;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
 
 /**
  * @author BigPan
@@ -24,7 +25,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.a
  * <p>
  * 1. 对请求头中参数进行处理 from 参数进行清洗
  * 2. 重写StripPrefix = 1,支持全局
- * 3. 支持swagger添加X-Forwarded-Prefix header
+ * 3. 支持swagger添加X-Forwarded-Prefix header  （F SR2 已经支持，不需要自己维护）
  */
 @Component
 public class DipsRequestGlobalFilter implements GlobalFilter, Ordered {
@@ -42,7 +43,7 @@ public class DipsRequestGlobalFilter implements GlobalFilter, Ordered {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		// 1. 清洗请求头中from 参数
 		ServerHttpRequest request = exchange.getRequest().mutate()
-			.headers(httpHeaders -> httpHeaders.remove(SecurityConstants.FROM_IN))
+			.headers(httpHeaders -> httpHeaders.remove(SecurityConstants.FROM))
 			.build();
 
 		// 2. 重写StripPrefix
@@ -55,16 +56,9 @@ public class DipsRequestGlobalFilter implements GlobalFilter, Ordered {
 			.build();
 		exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequest.getURI());
 
-		// 3. 支持swagger添加X-Forwarded-Prefix header
-		String path = request.getURI().getPath();
-		if (!StringUtils.endsWithIgnoreCase(path, SwaggerProvider.API_URI)) {
-			return chain.filter(exchange.mutate().request(newRequest).build());
-		}
-		String basePath = path.substring(0, path.lastIndexOf(SwaggerProvider.API_URI));
 		return chain.filter(exchange.mutate()
-			.request(newRequest.mutate()
-				.header(HEADER_NAME, basePath)
-				.build()).build());
+				.request(newRequest.mutate()
+					.build()).build());
 	}
 
 	@Override

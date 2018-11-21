@@ -1,17 +1,8 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.entity;
 
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -24,8 +15,8 @@ import lombok.EqualsAndHashCode;
  * 角色菜单表
  * </p>
  *
- * @author Wilson
- * @since 2017-10-29
+ * @author RCG
+ * @since 2018-11-19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -37,12 +28,12 @@ public class SysRoleMenu extends Model<SysRoleMenu> {
 	/**
 	 * 角色ID
 	 */
-	@TableId(value = "g_role_id",type = IdType.INPUT)
+	@TableId(type = IdType.INPUT)
 	private Integer roleId;
 	/**
 	 * 菜单ID
 	 */
-	@TableField(value = "g_menu_id")
+	@TableId(type = IdType.INPUT)
 	private Integer menuId;
 
 	@Override

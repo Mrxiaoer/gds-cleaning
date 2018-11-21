@@ -10,9 +10,5 @@
     <modules>
         <module>dips-upms</module>
         <module>dips-tms</module>
-        
-        
-        
-        
     </modules>
 </project>

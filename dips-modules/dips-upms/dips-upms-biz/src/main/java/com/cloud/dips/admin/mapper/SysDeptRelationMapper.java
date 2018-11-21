@@ -1,11 +1,3 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -16,9 +8,33 @@ import com.cloud.dips.admin.api.entity.SysDeptRelation;
  * Mapper 接口
  * </p>
  *
- * @author Wilson
- * @since 2018-02-12
+ * @author RCG
+ * @since 2018-11-19
  */
 public interface SysDeptRelationMapper extends BaseMapper<SysDeptRelation> {
+	/**
+	 * 删除部门关系表数据
+	 *
+	 * @param id 部门ID
+	 */
+	void deleteAllDeptRealtion(Integer id);
 
+//	/**
+//	 * 更改部分关系表数据
+//	 *
+//	 * @param deptRelation
+//	 */
+//	void updateDeptRealtion(SysDeptRelation deptRelation);
+
+	/**
+	 * 删除部分关系表数据
+	 * @param relation
+	 */
+	void deleteDeptRealtion(SysDeptRelation relation);
+
+	/**
+	 * 添加部分关系表数据
+	 * @param relation
+	 */
+	void insertDeptRealtion(SysDeptRelation relation);
 }

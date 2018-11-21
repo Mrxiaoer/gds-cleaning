@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 /**
  * @author BigPan
  * @date 2018/6/22
+ * 1. 支持remoteTokenServices 负载均衡
+ * 2. 支持 获取用户全部信息
  */
 public abstract class BaseResourceServerConfigurerAdapter extends ResourceServerConfigurerAdapter {
 	@Autowired
@@ -31,9 +33,9 @@ public abstract class BaseResourceServerConfigurerAdapter extends ResourceServer
 	@Autowired
 	protected UserDetailsService userDetailsService;
 
+
 	@Override
 	public abstract void configure(HttpSecurity http) throws Exception;
-
 	/**
 	 * why add  resourceId
 	 * https://stackoverflow.com/questions/28703847/how-do-you-set-a-resource-id-for-a-token
@@ -51,6 +53,7 @@ public abstract class BaseResourceServerConfigurerAdapter extends ResourceServer
 			.accessDeniedHandler(dipsAccessDeniedHandler)
 			.tokenServices(remoteTokenServices);
 	}
+
 
 
 }

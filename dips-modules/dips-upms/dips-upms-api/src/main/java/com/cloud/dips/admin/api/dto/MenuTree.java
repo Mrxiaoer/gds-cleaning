@@ -1,20 +1,13 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.api.dto;
 
 import com.cloud.dips.admin.api.vo.MenuVO;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author Wilson
- * @date 2017年11月9日23:33:27
+ * @author rcg
+ * @date 2018年11月19日
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -49,7 +42,7 @@ public class MenuTree extends TreeNode {
 	}
 
 	public MenuTree(MenuVO menuVo) {
-		this.id = menuVo.getMenuId();
+		this.id = menuVo.getId();
 		this.parentId = menuVo.getParentId();
 		this.icon = menuVo.getIcon();
 		this.name = menuVo.getName();

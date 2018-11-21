@@ -5,9 +5,9 @@
 
 package com.cloud.dips.common.security.mobile;
 
-import com.cloud.dips.common.core.constant.SecurityConstants;
-import lombok.Getter;
-import lombok.Setter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -21,8 +21,10 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.cloud.dips.common.core.constant.SecurityConstants;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author BigPan
@@ -31,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MobileAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 	private static final String SPRING_SECURITY_FORM_MOBILE_KEY = "mobile";
-	private AuthenticationEventPublisher eventPublisher = new MobileAuthenticationFilter.NullEventPublisher();
 	private AuthenticationEntryPoint authenticationEntryPoint = new MobileAuthenticationEntryPoint();
 	@Getter
 	@Setter
@@ -39,6 +40,9 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
 	@Getter
 	@Setter
 	private boolean postOnly = true;
+	@Getter
+	@Setter
+	private AuthenticationEventPublisher eventPublisher;
 
 	public MobileAuthenticationFilter() {
 		super(new AntPathRequestMatcher(SecurityConstants.MOBILE_TOKEN_URL, "POST"));
@@ -64,8 +68,13 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
 
 		setDetails(request, mobileAuthenticationToken);
 
+		Authentication authResult = null;
 		try {
-			return this.getAuthenticationManager().authenticate(mobileAuthenticationToken);
+			authResult = this.getAuthenticationManager().authenticate(mobileAuthenticationToken);
+
+			logger.debug("Authentication success: " + authResult);
+			eventPublisher.publishAuthenticationSuccess(authResult);
+			SecurityContextHolder.getContext().setAuthentication(authResult);
 
 		} catch (Exception failed) {
 			SecurityContextHolder.clearContext();
@@ -81,7 +90,8 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
 				logger.error("authenticationEntryPoint handle error:{}", failed);
 			}
 		}
-		return null;
+
+		return authResult;
 	}
 
 	private String obtainMobile(HttpServletRequest request) {
@@ -91,16 +101,6 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
 	private void setDetails(HttpServletRequest request,
 							MobileAuthenticationToken authRequest) {
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
-	}
-
-	private static final class NullEventPublisher implements AuthenticationEventPublisher {
-		@Override
-		public void publishAuthenticationFailure(AuthenticationException exception, Authentication authentication) {
-		}
-
-		@Override
-		public void publishAuthenticationSuccess(Authentication authentication) {
-		}
 	}
 }
 

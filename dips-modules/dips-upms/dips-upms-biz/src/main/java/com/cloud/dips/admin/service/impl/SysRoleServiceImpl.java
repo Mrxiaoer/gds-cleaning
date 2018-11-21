@@ -1,18 +1,9 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.service.impl;
 
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +23,8 @@ import com.cloud.dips.common.core.util.Query;
  * 服务实现类
  * </p>
  *
- * @author Wilson
- * @since 2017-10-29
+ * @author RCG
+ * @since 2018-11-19
  */
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
@@ -54,7 +45,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 		BeanUtils.copyProperties(roleDto, sysRole);
 		sysRoleMapper.insert(sysRole);
 		SysRoleDept roleDept = new SysRoleDept();
-		roleDept.setRoleId(sysRole.getRoleId());
+		roleDept.setRoleId(sysRole.getId());
 		roleDept.setDeptId(roleDto.getRoleDeptId());
 		sysRoleDeptMapper.insert(roleDept);
 		return true;
@@ -80,12 +71,11 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 	 * @return 成功、失败
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	@CacheEvict(value = "menu_details", allEntries = true)
 	@Override
 	public Boolean updateRoleById(RoleDTO roleDto) {
 		//删除原有的角色部门关系
 		SysRoleDept condition = new SysRoleDept();
-		condition.setRoleId(roleDto.getRoleId());
+		condition.setRoleId(roleDto.getId());
 		sysRoleDeptMapper.delete(new EntityWrapper<>(condition));
 
 		//更新角色信息
@@ -95,7 +85,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
 		//维护角色部门关系
 		SysRoleDept roleDept = new SysRoleDept();
-		roleDept.setRoleId(sysRole.getRoleId());
+		roleDept.setRoleId(sysRole.getId());
 		roleDept.setDeptId(roleDto.getRoleDeptId());
 		sysRoleDeptMapper.insert(roleDept);
 		return true;

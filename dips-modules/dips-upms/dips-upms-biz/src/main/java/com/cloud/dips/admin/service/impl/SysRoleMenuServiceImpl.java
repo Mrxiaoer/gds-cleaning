@@ -1,37 +1,30 @@
-/*
- *
- * Copyright (c) 2018-2025, Wilson All rights reserved.
- *
- * Author: Wilson
- *
- */
-
 package com.cloud.dips.admin.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.admin.api.entity.SysRoleMenu;
 import com.cloud.dips.admin.mapper.SysRoleMenuMapper;
 import com.cloud.dips.admin.service.SysRoleMenuService;
-import lombok.AllArgsConstructor;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import cn.hutool.core.util.StrUtil;
+import lombok.AllArgsConstructor;
 
 /**
  * <p>
- * 角色菜单表 服务实现类
+ * 服务实现类
  * </p>
  *
- * @author Wilson
- * @since 2017-10-29
+ * @author RCG
+ * @since 2018-11-19
  */
 @Service
 @AllArgsConstructor
@@ -45,7 +38,7 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRo
 	 * @return
 	 */
 	@Override
-	@CacheEvict(value = "menu_details", key = "#role + '_menu'")
+	@CacheEvict(value = "menu_details", key = "#role + '_menu'" )
 	public Boolean insertRoleMenus(String role, Integer roleId, String menuIds) {
 		SysRoleMenu condition = new SysRoleMenu();
 		condition.setRoleId(roleId);
@@ -55,18 +48,17 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRo
 			return Boolean.TRUE;
 		}
 
-		List<SysRoleMenu> roleMenuList = new ArrayList<>();
-		List<String> menuIdList = Arrays.asList(menuIds.split(","));
-
-		for (String menuId : menuIdList) {
-			SysRoleMenu roleMenu = new SysRoleMenu();
-			roleMenu.setRoleId(roleId);
-			roleMenu.setMenuId(Integer.valueOf(menuId));
-			roleMenuList.add(roleMenu);
-		}
+		String[] menuIdList = menuIds.split("," );
+		List<SysRoleMenu> roleMenuList = Arrays.stream(menuIdList)
+			.map(menuId -> {
+				SysRoleMenu roleMenu = new SysRoleMenu();
+				roleMenu.setRoleId(roleId);
+				roleMenu.setMenuId(Integer.valueOf(menuId));
+				return roleMenu;
+			}).collect(Collectors.toList());
 
 		//清空userinfo
-		cacheManager.getCache("user_details").clear();
+		Objects.requireNonNull(cacheManager.getCache("user_details" )).clear();
 		return this.insertBatch(roleMenuList);
 	}
 }

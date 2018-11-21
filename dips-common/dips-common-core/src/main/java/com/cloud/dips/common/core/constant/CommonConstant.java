@@ -53,7 +53,7 @@ public interface CommonConstant {
 	/**
 	 * 删除标记
 	 */
-	String DEL_FLAG = "g_del_flag";
+	String DEL_FLAG = "is_deleted";
 
 	/**
 	 * 编码
@@ -93,5 +93,10 @@ public interface CommonConstant {
 	 * 系统消息分类
 	 * */
 	String SYS_INFO_TYPE = "sys_info_type";
+
+	/**
+	 * 系统名称
+	 */
+	String SYSTEM_NAME = "DIPS";
 	
 }

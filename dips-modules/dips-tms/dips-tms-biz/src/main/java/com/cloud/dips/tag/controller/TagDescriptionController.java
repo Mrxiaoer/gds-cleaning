@@ -19,6 +19,11 @@ import com.cloud.dips.tag.service.GovTagDescriptionService;
 
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 
+ * @author ZB
+ *
+ */
 @RestController
 @RequestMapping("/tagDescription")
 public class TagDescriptionController {
@@ -38,7 +43,7 @@ public class TagDescriptionController {
 			// 获取当前用户 
 			String username = SecurityUtils.getUser().getUsername();
 			R<UserInfo> userInfo = remoteUserService.info(username, SecurityConstants.FROM_IN);
-			govTagDescription.setCreatorId(userInfo.getData().getSysUser().getUserId());
+			govTagDescription.setCreatorId(userInfo.getData().getSysUser().getId());
 			govTagDescription.applyDefaultValue();
 			return new R<>(service.insert(govTagDescription));
 	}
