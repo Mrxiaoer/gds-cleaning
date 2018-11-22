@@ -5,18 +5,16 @@ import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 
-import com.cloud.dips.admin.api.entity.SysDict;
-import com.cloud.dips.admin.api.feign.fallback.RemoteDictServiceFallbackImpl;
+import com.cloud.dips.admin.api.feign.factory.RemoteDictServiceFallbackFactory;
+import com.cloud.dips.admin.api.vo.DictVauleVO;
 import com.cloud.dips.common.core.constant.ServiceNameConstant;
 
 /**
  * @author RCG
  * @date 2018/11/19
  */
-@FeignClient(value = ServiceNameConstant.UMPS_SERVICE, fallback = RemoteDictServiceFallbackImpl.class)
-
+@FeignClient(value = ServiceNameConstant.UMPS_SERVICE, fallbackFactory = RemoteDictServiceFallbackFactory.class)
 public interface RemoteDictService {
 	
 
@@ -26,14 +24,12 @@ public interface RemoteDictService {
 	 *
 	 * @param type 类型
 	 * 
-	 * @param from 调用标志
-	 * 
 	 * @return R
 	 * 
 	 */
 
-	@GetMapping("/dict/remoteFindDictByType/{type}")
+	@GetMapping("/dict/list/{number}")
 
-	List<SysDict> list(@PathVariable("type") String type, @RequestHeader("from") String from);
+	List<DictVauleVO> list(@PathVariable("number") String number);
 
 }
