@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.cloud.dips.admin.api.feign.factory.RemoteDictServiceFallbackFactory;
+import com.cloud.dips.admin.api.vo.DictVO;
 import com.cloud.dips.admin.api.vo.DictVauleVO;
 import com.cloud.dips.common.core.constant.ServiceNameConstant;
 
@@ -27,9 +28,19 @@ public interface RemoteDictService {
 	 * @return R
 	 * 
 	 */
-
 	@GetMapping("/dict/list/{number}")
-
 	List<DictVauleVO> list(@PathVariable("number") String number);
+	
+	/**
+	 * 
+	 * 通过类型查询字典值域列表
+	 *
+	 * @param type 类型
+	 * 
+	 * @return R
+	 * 
+	 */
+	@GetMapping("/dict/all_list")
+	List<DictVO> allList();
 
 }
