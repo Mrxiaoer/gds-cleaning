@@ -27,6 +27,7 @@ import com.cloud.dips.common.security.service.DipsUserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
+ * 11
  * @author BigPan
  * @date 2018/6/22
  * 认证相关配置
