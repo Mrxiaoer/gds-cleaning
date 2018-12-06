@@ -17,6 +17,7 @@
 		<result column="avatar" property="avatar"/>
 		<result column="salt" property="salt"/>
 		<result column="dept_id" property="deptId"/>
+		<result column="dept_name" property="deptName"/>
 		<result column="weixin_openid" property="weixinOpenid"/>
 		<result column="qq_openid" property="qqOpenid"/>
 		<result column="create_time" property="createTime"/>
@@ -62,6 +63,7 @@
             `user`.weixin_openid,
             `user`.qq_openid,
             `user`.dept_id,
+            `user`.dept_name,
             `user`.create_time AS ucreate_time,
             `user`.modified_time AS umodified_time,
             `user`.is_deleted AS uis_deleted,
@@ -94,6 +96,8 @@
             `user`.avatar,
 			`user`.weixin_openid,
             `user`.qq_openid,
+            `user`.dept_id,
+            `user`.dept_name,
             `user`.create_time AS ucreate_time,
             `user`.modified_time AS umodified_time,
             `user`.is_deleted AS uis_deleted,
@@ -125,6 +129,8 @@
 		`user`.avatar,
 		`user`.weixin_openid,
 		`user`.qq_openid,
+		`user`.dept_id,
+        `user`.dept_name,
 		`user`.create_time AS ucreate_time,
 		`user`.modified_time AS umodified_time,
 		`user`.is_deleted AS uis_deleted,
@@ -158,6 +164,7 @@
 		 	   avatar,
 		 	   salt,
 		 	   dept_id,
+		 	   dept_name,
 		 	   weixin_openid,
 		 	   qq_openid,
 		 	   create_time,

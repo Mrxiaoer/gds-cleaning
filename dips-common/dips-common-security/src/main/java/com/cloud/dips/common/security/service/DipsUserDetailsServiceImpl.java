@@ -92,7 +92,7 @@ public class DipsUserDetailsServiceImpl implements DipsUserDetailsService {
 		boolean enabled = StrUtil.equals(user.getIsDeleted(), CommonConstant.STATUS_NORMAL);
 		// 构造security用户
 
-		return new DipsUser(user.getId(), user.getDeptId(), user.getUsername(), SecurityConstants.BCRYPT + user.getPassword(), enabled,
+		return new DipsUser(user.getId(), user.getDeptId(), user.getDeptName(),user.getUsername(), SecurityConstants.BCRYPT + user.getPassword(), enabled,
 			true, true, true, authorities);
 	}
 }

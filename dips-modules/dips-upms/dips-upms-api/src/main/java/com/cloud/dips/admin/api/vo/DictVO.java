@@ -4,15 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.cloud.dips.admin.api.entity.SysDictValue;
-
 import lombok.Data;
 
 /**
  * @author ZB
  */
 @Data
-public class DictVauleVO implements Serializable {
+public class DictVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -20,13 +18,14 @@ public class DictVauleVO implements Serializable {
 	 */
 	private Integer id;
 	/**
-	 * 字典键
+	 * 字典编码
 	 */
-	private String key;
+	private String number;
 	/**
-	 * 字典值
+	 * 字典名称
 	 */
-	private String value;
+	private String name;
+
 	/**
 	 * 创建时间
 	 */
@@ -36,18 +35,10 @@ public class DictVauleVO implements Serializable {
 	 */
 	private Date updateTime;
 	/**
-	 * 所属字典id
+	 * 所属系统
 	 */
-	private Integer dictId;
-	/**
-	 * 父类id
-	 */
-	private Integer parentId;
-	/**
-	 * 排序
-	 */
-	private Integer sort;
+	private String system;
 
-	private List<SysDictValue> dictVauleList;
+	private List<DictVauleVO> dictVauleVoList;
 
 }

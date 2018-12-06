@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.cloud.dips.admin.api.entity.SysDict;
 import com.cloud.dips.admin.api.feign.RemoteDictService;
+import com.cloud.dips.admin.api.vo.DictVO;
+import com.cloud.dips.admin.api.vo.DictVauleVO;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,10 +16,10 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2018/11/19
  */
 @Slf4j
-
 @Component
-
 public class RemoteDictServiceFallbackImpl implements RemoteDictService {
+	@Setter
+	private Throwable cause;
 	
 	/**
 	 * 
@@ -25,20 +27,20 @@ public class RemoteDictServiceFallbackImpl implements RemoteDictService {
 	 * 
 	 * @param type 类型
 	 * 
-	 * @param from 内外标志
-	 * 
 	 * @return R
 	 * 
 	 */
-
 	@Override
-
-	public List<SysDict> list(String type, String from) {
-		
-		log.error("feign 查询字典信息失败:{}", type);
-		
+	public List<DictVauleVO> list(String number) {		
+		log.error("feign 查询字典信息失败:{}", cause);		
 		return null;
 
+	}
+
+	@Override
+	public List<DictVO> allList() {
+		log.error("feign 查询字典信息失败:{}", cause);
+		return null;
 	}
 
 }

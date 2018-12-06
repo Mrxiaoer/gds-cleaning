@@ -34,6 +34,11 @@ public abstract class BaseResourceServerConfigurerAdapter extends ResourceServer
 	protected UserDetailsService userDetailsService;
 
 
+	
+	/**
+	 *  configure
+	 * @see org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)
+	 */
 	@Override
 	public abstract void configure(HttpSecurity http) throws Exception;
 	/**

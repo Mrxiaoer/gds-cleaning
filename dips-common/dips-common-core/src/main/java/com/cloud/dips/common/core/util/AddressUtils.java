@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
  *
  */
 public class AddressUtils {
+	private static final int TEMPLENGTH = 3;
 	private static String REGULAR="\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>";
 	/**
 	* 获取本机的内网ip地址
@@ -131,7 +132,7 @@ public class AddressUtils {
 	// 处理返回的省市区信息
 
 	String[] temp = returnStr.split(",");
-	if (temp.length < 3) {
+	if (temp.length < TEMPLENGTH) {
 		// 无效IP，局域网测试
 		return "0";
 	}

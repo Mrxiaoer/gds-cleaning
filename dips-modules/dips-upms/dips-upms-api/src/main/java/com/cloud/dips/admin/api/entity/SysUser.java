@@ -102,6 +102,11 @@ public class SysUser implements Serializable {
 	 * 部门ID
 	 */
 	private Integer deptId;
+	
+	/**
+	 * 部门名称
+	 */
+	private String deptName;
 
 	/**
 	 * 微信openid
