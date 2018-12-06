@@ -114,8 +114,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public Page selectWithRolePage(Query query) {
 		DataScope dataScope = new DataScope();
 		dataScope.setScopeName("deptId" );
-		dataScope.setIsOnly(true);
-		dataScope.setDeptIds(getChildDepts());
+		//dataScope.setIsOnly(true);是否只显示当前用户所在部门
+		//dataScope.setDeptIds(getChildDepts());
 		Object username = query.getCondition().get("username" );
 		query.setRecords(sysUserMapper.selectUserVoPage(query, username, dataScope));
 		return query;
