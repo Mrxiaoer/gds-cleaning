@@ -53,24 +53,24 @@ public class ExcelUtil {
             // 创建工作表
             HSSFSheet sheet = workbook.createSheet(title);
             // 产生表格标题行
-            HSSFRow rowm = sheet.createRow(0);
+            //HSSFRow rowm = sheet.createRow(0);
             //创建表格标题列
-            HSSFCell cellTiltle = rowm.createCell(0);  
+            //HSSFCell cellTiltle = rowm.createCell(0);  
             // sheet样式定义;    getColumnTopStyle();    getStyle()均为自定义方法 --在下面,可扩展
             // 获取列头样式对象
             HSSFCellStyle columnTopStyle = this.getColumnTopStyle(workbook);
             // 获取单元格样式对象
             HSSFCellStyle style = this.getStyle(workbook); 
             //合并表格标题行，合并列数为列名的长度,第一个0为起始行号，第二个1为终止行号，第三个0为起始列好，第四个参数为终止列号
-            sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, (rowName.length - 1)));
+            //sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, (rowName.length - 1)));
             //设置标题行样式
-            cellTiltle.setCellStyle(columnTopStyle);
+            //cellTiltle.setCellStyle(columnTopStyle);
             //设置标题行值
-            cellTiltle.setCellValue(title);
+            //cellTiltle.setCellValue(title);
             // 定义所需列数
             int columnNum = rowName.length;
             // 在索引2的位置创建行(最顶端的行开始的第二行)
-            HSSFRow rowRowName = sheet.createRow(2);
+            HSSFRow rowRowName = sheet.createRow(0);
             // 将列头设置到sheet的单元格中
             for (int n = 0; n < columnNum; n++) {
             	// 创建列头对应个数的单元格
@@ -88,14 +88,10 @@ public class ExcelUtil {
             	// 遍历每个对象
                 Object[] obj = dataList.get(i);
                 // 创建所需的行数
-                HSSFRow row = sheet.createRow(i + 3);
+                HSSFRow row = sheet.createRow(i + 1);
                 for (int j = 0; j < obj.length; j++) {
                 	// 设置单元格的数据类型
                     HSSFCell cell = null;
-                    if (j == 0) {
-                        cell = row.createCell(j, HSSFCell.CELL_TYPE_NUMERIC);
-                        cell.setCellValue(i + 1);
-                    } else {
                         cell = row.createCell(j, HSSFCell.CELL_TYPE_STRING);
                         if (!"".equals(obj[j]) && obj[j] != null) {
                         	// 设置单元格的值
@@ -103,7 +99,6 @@ public class ExcelUtil {
                         }else{
                         	cell.setCellValue("无");
                         }
-                    }
                     // 设置单元格样式
                     cell.setCellStyle(style);
                 }
