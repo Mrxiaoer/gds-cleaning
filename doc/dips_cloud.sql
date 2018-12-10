@@ -131,10 +131,10 @@ CREATE TABLE `gov_dict` (
 -- ----------------------------
 -- Records of gov_dict
 -- ----------------------------
-INSERT INTO `gov_dict` VALUES ('1', 'IS_NORMAL', '是否正常', '', '2018-11-20 13:56:55', '2018-11-20 13:56:55', 'DIPS');
-INSERT INTO `gov_dict` VALUES ('2', 'IS_NOTT', '是否', '', '2018-11-20 14:39:21', '2018-11-20 14:39:21', 'DIPS');
-INSERT INTO `gov_dict` VALUES ('3', 'CITYLEVEL', '城市级别', '', '2018-11-20 14:44:52', '2018-11-20 14:44:52', 'DIPS');
-INSERT INTO `gov_dict` VALUES ('4', 'SOCIAL_TYPE', '社交类型', '', '2018-11-20 13:56:55', '2018-11-20 13:56:55', 'DIPS');
+INSERT INTO `gov_dict` VALUES ('1', 'IS_NORMAL', '是否正常', '2018-11-20 13:56:55', '2018-11-20 13:56:55', 'DIPS');
+INSERT INTO `gov_dict` VALUES ('2', 'IS_NOTT', '是否', '2018-11-20 14:39:21', '2018-11-20 14:39:21', 'DIPS');
+INSERT INTO `gov_dict` VALUES ('3', 'CITYLEVEL', '城市级别', '2018-11-20 14:44:52', '2018-11-20 14:44:52', 'DIPS');
+INSERT INTO `gov_dict` VALUES ('4', 'SOCIAL_TYPE', '社交类型', '2018-11-20 13:56:55', '2018-11-20 13:56:55', 'DIPS');
 
 -- ----------------------------
 -- Table structure for `gov_dict_value`
