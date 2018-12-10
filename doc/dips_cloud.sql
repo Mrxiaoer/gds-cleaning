@@ -536,23 +536,24 @@ DROP TABLE IF EXISTS `gov_tag`;
 CREATE TABLE `gov_tag` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL DEFAULT '' COMMENT '标签名称',
-  `creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '标签创建时间',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '标签创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   `refers` int(11) NOT NULL DEFAULT '0' COMMENT '标签应用次数',
-  `priority` tinyint(4) NOT NULL COMMENT '标签优先级',
-  `type_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '标签分类',
-  `level_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '标签级别',
+  `order_num` tinyint(4) NOT NULL COMMENT '标签优先级',
+  `type_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '标签分类',
+  `level_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '标签级别',
   `views` int(11) NOT NULL COMMENT '标签浏览量',
-  `description` mediumtext NOT NULL COMMENT '标签介绍',
-  `relation` varchar(80) NOT NULL DEFAULT '' COMMENT '关联标签',
+  `description` varchar(255) NOT NULL COMMENT '标签介绍',
   `creator_id` bigint(20) NOT NULL COMMENT '标签创建者',
   `system` varchar(80) NOT NULL COMMENT '所属系统',
+  `status` int(1) NOT NULL DEFAULT '1' COMMENT '标签状态',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '标签启用',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='标签表';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COMMENT='标签表';
 
 -- ----------------------------
 -- Records of gov_tag
 -- ----------------------------
-INSERT INTO `gov_tag` VALUES ('1', '大数据', '2018-11-21 09:37:31', '0', '1', '1', '1', '0', '大数据（big data），指无法在一定时间范围内用常规软件工具进行捕捉、管理和处理的数据集合，是需要新处理模式才能具有更强的决策力、洞察发现力和流程优化能力的海量、高增长率和多样化的信息资产。', '', '2', 'DIPS');
 
 -- ----------------------------
 -- Table structure for `gov_tag_description`
@@ -560,19 +561,39 @@ INSERT INTO `gov_tag` VALUES ('1', '大数据', '2018-11-21 09:37:31', '0', '1',
 DROP TABLE IF EXISTS `gov_tag_description`;
 CREATE TABLE `gov_tag_description` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '标签描述id',
-  `description` mediumtext NOT NULL COMMENT '描述',
+  `description` varchar(255) NOT NULL COMMENT '描述',
   `tag_id` bigint(20) NOT NULL COMMENT '关联标签id',
-  `creation_date` datetime NOT NULL COMMENT '创建时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
   `creator_id` bigint(20) NOT NULL COMMENT '创建者',
   PRIMARY KEY (`id`),
   KEY `g_tag_id` (`tag_id`),
   KEY `g_creator_id` (`creator_id`),
   CONSTRAINT `gov_tag_description_ibfk_1` FOREIGN KEY (`tag_id`) REFERENCES `gov_tag` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='标签描述表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='标签描述表';
 
 -- ----------------------------
 -- Records of gov_tag_description
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for `gov_tag_function`
+-- ----------------------------
+DROP TABLE IF EXISTS `gov_tag_function`;
+CREATE TABLE `gov_tag_function` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '功能名称',
+  `number` varchar(255) NOT NULL DEFAULT '' COMMENT '功能编码',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '功能描述',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '是否启用 1启用 0关闭',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='标签功能表';
+
+-- ----------------------------
+-- Records of gov_tag_function
+-- ----------------------------
+INSERT INTO `gov_tag_function` VALUES ('1', '标签审核', 'tagReview', '标签审核即对用户所创建的标签进行审核，根据标签标准和规范给予其通过与否的操作。功能禁用状态下，新增的标签默认审核通过状态。功能启用状态下，新增的标签默认待审核，需要管理员给以通过与否的操作。', '1');
+INSERT INTO `gov_tag_function` VALUES ('2', '标签注释', 'tagNotes', '标签注释即对标签进行定义、描述。功能禁用状态下，无法对标签进行注释。功能启用状态下，管理员可以对标签进行一组注释，并且管理员可对用户的注释进行管理。', '1');
+INSERT INTO `gov_tag_function` VALUES ('3', '标签关联', 'tagRelation', '标签关联指对相关的标签进行有效联系，挖掘标签与标签间潜在的关系，减少标签间的信息跨度。在对事物打标签的过程中提供更加精准的、更加全面可靠的标签特征。功能禁用状态下，无法进行关联操作。功能启用状态下，可以对多个标签进行关联。', '1');
 
 -- ----------------------------
 -- Table structure for `gov_tag_level`
@@ -581,14 +602,44 @@ DROP TABLE IF EXISTS `gov_tag_level`;
 CREATE TABLE `gov_tag_level` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '标签级别ID',
   `name` varchar(150) NOT NULL COMMENT '标签级别名称',
-  `creation_date` datetime NOT NULL COMMENT '创建时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='标签级别表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='标签级别表';
 
 -- ----------------------------
 -- Records of gov_tag_level
 -- ----------------------------
-INSERT INTO `gov_tag_level` VALUES ('1', '默认级别', '2018-11-21 09:36:56');
+
+-- ----------------------------
+-- Table structure for `gov_tag_merge_record`
+-- ----------------------------
+DROP TABLE IF EXISTS `gov_tag_merge_record`;
+CREATE TABLE `gov_tag_merge_record` (
+  `tag_id` bigint(20) NOT NULL COMMENT '标签id',
+  `merge_id` bigint(20) NOT NULL COMMENT '合并id',
+  PRIMARY KEY (`tag_id`,`merge_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标签合并记录表';
+
+-- ----------------------------
+-- Records of gov_tag_merge_record
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `gov_tag_modification_record`
+-- ----------------------------
+DROP TABLE IF EXISTS `gov_tag_modification_record`;
+CREATE TABLE `gov_tag_modification_record` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '修改描述',
+  `creator_id` bigint(20) NOT NULL COMMENT '创建者id',
+  `tag_id` bigint(20) NOT NULL COMMENT '标签id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='标签修改记录表';
+
+-- ----------------------------
+-- Records of gov_tag_modification_record
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `gov_tag_relation`
@@ -631,16 +682,18 @@ INSERT INTO `gov_tag_relation_type` VALUES ('4', '默认标签', 'def');
 DROP TABLE IF EXISTS `gov_tag_type`;
 CREATE TABLE `gov_tag_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '标签分类ID',
-  `parent_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '上级分类ID',
+  `parent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '上级分类ID',
   `name` varchar(150) NOT NULL COMMENT '标签分类名称',
-  `creation_date` datetime NOT NULL COMMENT '创建时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='标签分类表';
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COMMENT='标签分类表';
 
 -- ----------------------------
 -- Records of gov_tag_type
 -- ----------------------------
-INSERT INTO `gov_tag_type` VALUES ('1', '0', '默认分类', '2018-11-21 09:36:48');
+INSERT INTO `gov_tag_type` VALUES ('1', '-1', '人名类', '2018-11-21 09:36:48');
+INSERT INTO `gov_tag_type` VALUES ('2', '-1', '地域类', '2018-11-23 16:30:52');
+INSERT INTO `gov_tag_type` VALUES ('3', '-1', '机构类', '2018-11-23 16:30:59');
 
 -- ----------------------------
 -- Table structure for `gov_user`
