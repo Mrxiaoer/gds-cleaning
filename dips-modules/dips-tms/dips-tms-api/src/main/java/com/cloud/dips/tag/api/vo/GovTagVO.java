@@ -1,8 +1,13 @@
 package com.cloud.dips.tag.api.vo;
 
+import java.beans.Transient;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+
+import com.cloud.dips.tag.api.entity.GovTag;
 
 import lombok.Data;
 
@@ -27,11 +32,11 @@ public class GovTagVO implements Serializable{
 	/**
 	 * 标签创建时间
 	 */
-	private Date creationDate;
+	private Date createTime;
 	/**
 	 * 标签更新时间
 	 */
-	private Date updateDate;
+	private Date updateTime;
 	/**
 	 * 标签应用次数
 	 */
@@ -39,15 +44,15 @@ public class GovTagVO implements Serializable{
 	/**
 	 * 标签优先级
 	 */
-	private Integer priority;
+	private Integer orderNum;
 	/**
 	 * 标签分类id
 	 */
 	private Integer typeId;
 	/**
-	 * 标签分类名称
+	 * 标签分类vo
 	 */
-	private String typeName;
+	private GovTagTypeVO typeVo;
 	/**
 	 * 标签级别id
 	 */
@@ -56,14 +61,6 @@ public class GovTagVO implements Serializable{
 	 * 标签级别名称
 	 */
 	private String levelName;
-	/**
-	 * 应用领域id
-	 */
-	private Integer areaId;
-	/**
-	 * 应用领域名称
-	 */
-	private String areaName;
 	/**
 	 * 标签浏览量
 	 */
@@ -84,10 +81,43 @@ public class GovTagVO implements Serializable{
 	 * 创建者真实姓名
 	 */
 	private String creatorRealName;
-	
+	/**
+	 * 所属系统
+	 */
+	private String system;
 	
 	/**
-	 * 标签描述列表
+	 * 标签状态
 	 */
-	private List<GovTagDescriptionVO> tagDescriptionList;	
+	private Integer status;
+	/**
+	 * 标签启用
+	 */
+	private Integer enable;
+	/**
+	 * 关联标签
+	 */
+	private List<GovTag> tagList;
+	
+	/**
+	 * 分类id数组
+	 */
+	private List<Integer> typeIds;
+	
+	/**
+	 * 分类名称
+	 */
+	private String typeName;
+	
+	
+    @Transient
+    public void addTypeIds() {
+    	typeIds=new LinkedList<Integer>();
+    	while(typeVo!=null){
+    		typeIds.add(typeVo.getTypeId());
+    		typeVo=typeVo.getParentVo();
+    	}
+    	Collections.reverse(typeIds);
+    }
+	
 }

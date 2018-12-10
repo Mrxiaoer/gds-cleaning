@@ -1,5 +1,7 @@
 package com.cloud.dips.tag.controller;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,12 +12,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
@@ -24,11 +26,17 @@ import com.cloud.dips.common.security.service.DipsUser;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.dips.tag.api.dto.GovTagDTO;
 import com.cloud.dips.tag.api.entity.GovTag;
-import com.cloud.dips.tag.api.vo.GovTagDescriptionVO;
+import com.cloud.dips.tag.api.entity.GovTagMergeRecord;
+import com.cloud.dips.tag.api.entity.GovTagModificationRecord;
+import com.cloud.dips.tag.api.entity.GovTagRelation;
 import com.cloud.dips.tag.api.vo.GovTagVO;
 import com.cloud.dips.tag.service.GovTagDescriptionService;
+import com.cloud.dips.tag.service.GovTagMergeRecordService;
+import com.cloud.dips.tag.service.GovTagModificationRecordService;
 import com.cloud.dips.tag.service.GovTagRelationService;
 import com.cloud.dips.tag.service.GovTagService;
+import com.google.common.collect.Maps;
+import com.hankcs.hanlp.HanLP;
 
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +58,15 @@ public class TagController {
 	@Autowired
 	private GovTagRelationService govTagRelationService;
 	
+	@Autowired
+	private GovTagModificationRecordService recordService;
+	
+	@Autowired
+	private GovTagMergeRecordService mergeRecordService;
+	
+	@Autowired
+	private GovTagRelationService relationService;
+	
 	
 	/**
 	 * 
@@ -61,17 +78,30 @@ public class TagController {
 	 * 
 	 */
 	@GetMapping("/{id}")
-	@ApiOperation(value = "查询标签详情", notes = "根据ID查询标签详情: params{通知ID: tagId}",httpMethod="GET")
+	@ApiOperation(value = "查询标签详情", notes = "根据ID查询标签详情: params{标签ID: id}",httpMethod="GET")
 	public GovTagVO tag(@PathVariable Integer id) {
 		GovTagVO bean=service.selectGovTagVoById(id);
-		List<GovTagDescriptionVO> tagDescriptionList=bean.getTagDescriptionList();
-		if(tagDescriptionList.size()>0){
-			bean.setUpdateDate(tagDescriptionList.get(tagDescriptionList.size()-1).getCreationDate());
-		}else{
-			bean.setUpdateDate(bean.getCreationDate());
-		}
+		bean.addTypeIds();
 		return bean;
 	}
+	
+	/**
+	 * 校验标签是否存在
+	 * @param name 标签名称
+	 * @param id 标签id
+	 * @return
+	 */
+	@PostMapping("/check")
+	@ApiOperation(value = "标签检验", notes = "标签检验",httpMethod="POST")
+	public R<Boolean> check(@RequestBody Map<String, Object> params) {
+		String name=params.getOrDefault("name", "").toString();
+		Integer i=service.findByGovTagName(name);
+			if(i<1){
+				return new R<Boolean>(Boolean.TRUE);
+			}else{
+				return new R<Boolean>(Boolean.FALSE);
+			}
+	}	
 	
 	/**
 	 * 分页查询标签
@@ -80,12 +110,17 @@ public class TagController {
 	 * 
 	 * @return 标签集合
 	 */
-	@RequestMapping("/tagPage")
+	@GetMapping("/page")
 	@ApiOperation(value = "分页查询标签", notes = "标签集合",httpMethod="GET")
 	public Page<GovTagVO> tagPage(@RequestParam Map<String, Object> params) {
-		String orderByField="orderByField";
+		String orderByField = "orderByField";
+		//判断前后台
+		String fob = "fob";
 		if(StrUtil.isBlank(params.getOrDefault(orderByField, "").toString())){
-			params.put("orderByField", "id");
+			params.put(orderByField, "id");
+		}
+		if(StrUtil.isBlank(params.getOrDefault(fob, "").toString())){
+			params.put(fob, "b");
 		}
 		return service.selectAllPage(new Query<>(params));
 	}
@@ -108,12 +143,18 @@ public class TagController {
 		}else{
 				govTagDescriptionService.deleteByTagId(govTag.getTagId());
 				govTagRelationService.deleteById(govTag.getTagId());
+				EntityWrapper<GovTagModificationRecord> er=new EntityWrapper<GovTagModificationRecord>();
+				er.eq("tag_id", govTag.getTagId());
+				recordService.delete(er);
+				EntityWrapper<GovTagMergeRecord> em=new EntityWrapper<GovTagMergeRecord>();
+				em.eq("tag_id", govTag.getTagId()).or().eq("merge_id", govTag.getTagId());
+				mergeRecordService.delete(em);
 				return new R<>(service.deleteGovTagById(govTag));
 		}
 	}
 	
 	@SysLog("添加标签")
-	@PostMapping("/saveTag")
+	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('gov_tag_add')")
 	@ApiOperation(value = "添加标签", notes = "添加标签", httpMethod = "POST")
 	public R<Boolean> saveTag(@RequestBody GovTagDTO govTagDto) {
@@ -125,62 +166,184 @@ public class TagController {
 			DipsUser user = SecurityUtils.getUser();
 			govTag.setCreatorId(user.getId());
 			govTag.applyDefaultValue();
-			service.save(govTag);
-		}
-		return new R<>(Boolean.TRUE);
-	}
+			govTag=service.save(govTag);
 	
-/**
- * 增加标签应用次数
- * @param id标签ID
- * @return
- */
-	@PutMapping("/refer/{id}")
-	@ApiOperation(value = "增加标签应用次数", notes = "增加标签应用次数", httpMethod = "PUT")
-	public R<Boolean> refer(@PathVariable Integer id) {
-		GovTag govTag = service.selectById(id);
-		govTag.setRefers(govTag.getRefers()+1);
-		return new R<>(service.updateById(govTag));
-	}
-	/**
-	 * 减少标签应用次数
-	 * @param id标签ID
-	 * @return
-	 */
-	@PutMapping("/derefer/{id}")
-	@ApiOperation(value = "减少标签应用次数", notes = "减少标签应用次数", httpMethod = "PUT")
-	public R<Boolean> derefer(@PathVariable Integer id) {
-		GovTag govTag = service.selectById(id);
-		if(govTag.getRefers()<1){
-			govTag.setRefers(0);
+			String[] relationTags=govTagDto.getTagList();
+			StringBuilder tagKeyWords=new StringBuilder();
+			for(String relation:relationTags){
+				tagKeyWords.append(relation+",");
+			}
+			Map<String, Object> params=new HashMap<String, Object>(0);
+			params.put("relationId", govTag.getTagId());
+			params.put("node", "tag");
+			params.put("tagKeyWords", tagKeyWords.toString());
+			relationService.saveTagRelation(params);
+
+			GovTagModificationRecord record=new GovTagModificationRecord();
+			record.setCreatorId(user.getId());
+			record.setTagId(govTag.getTagId());
+			record.setDescription("创建了标签“"+govTag.getName()+"”");
+			recordService.insert(record);
+			return new R<>(Boolean.TRUE);
 		}else{
-			govTag.setRefers(govTag.getRefers()-1);
+			return new R<>(Boolean.FALSE,"标签已存在");
 		}
-		return new R<>(service.updateById(govTag));
-	}
-	
+		
+	}	
 	
 	/**
 	 * 更新标签浏览量
 	 * @param id标签ID
 	 * @return
 	 */
-	@PutMapping("/tagViews/{id}")
-	@ApiOperation(value = "更新标签浏览量", notes = "更新标签浏览量", httpMethod = "PUT")
+	@PostMapping("/views/{id}")
+	@ApiOperation(value = "更新标签浏览量", notes = "更新标签浏览量", httpMethod = "POST")
 	public R<Boolean> tagViews(@PathVariable Integer id) {
 		GovTag govTag = service.selectById(id);
 		govTag.setViews(govTag.getViews()+1);
 		return new R<>(service.updateById(govTag));
 	}
 	
-
 	@SysLog("更新标签")
-	@PutMapping("/updateTag")
+	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
-	@ApiOperation(value = "更新标签", notes = "更新标签", httpMethod = "PUT")
+	@ApiOperation(value = "更新标签", notes = "更新标签", httpMethod = "POST")
 	public R<Boolean> updateTag(@RequestBody GovTagDTO govTagDto) {
 		GovTag govTag = service.selectById(govTagDto.getTagId());
-		BeanUtils.copyProperties(govTagDto, govTag);
-		return new R<>(service.updateById(govTag));
+		if(StrUtil.equals(govTagDto.getName(), govTag.getName())){
+			BeanUtils.copyProperties(govTagDto, govTag);
+			return new R<Boolean>(service.updateById(govTag));
+		}else{
+			Integer i=service.findByGovTagName(govTagDto.getName());
+			if(i<1){
+				DipsUser user = SecurityUtils.getUser();
+				GovTagModificationRecord record=new GovTagModificationRecord();
+				record.setCreatorId(user.getId());
+				record.setTagId(govTag.getTagId());
+				record.setDescription("“"+govTag.getName()+"”更名为“"+govTagDto.getName()+"”");
+				recordService.insert(record);
+
+				String[] relationTags=govTagDto.getTagList();
+				StringBuilder tagKeyWords=new StringBuilder();
+				for(String relation:relationTags){
+					tagKeyWords.append(relation+",");
+				}
+				Map<String, Object> params=new HashMap<String, Object>(0);
+				params.put("relationId", govTag.getTagId());
+				params.put("node", "tag");
+				params.put("tagKeyWords", tagKeyWords.toString());
+				relationService.saveTagRelation(params);
+
+				BeanUtils.copyProperties(govTagDto, govTag);
+				govTag.setUpdateTime(new Date());
+				return new R<Boolean>(service.updateById(govTag));
+			}else{
+				return new R<Boolean>(Boolean.FALSE,"标签已存在！");
+			}	
+		}
 	}
+	
+	@PostMapping("/review")
+	@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
+	@ApiOperation(value = "批量审核标签", notes = "批量审核标签", httpMethod = "POST")
+	public R<Boolean> review(@RequestBody List<Integer> ids) {
+		EntityWrapper<GovTag> e = new EntityWrapper<GovTag>();
+		e.in("id", ids);
+		return new R<Boolean>(service.updateForSet("status = 1", e));
+	}
+	
+	@PostMapping("/disable")
+	@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
+	@ApiOperation(value = "批量禁用标签", notes = "批量禁用标签", httpMethod = "POST")
+	public R<Boolean> disable(@RequestBody List<Integer> ids) {
+		EntityWrapper<GovTag> e = new EntityWrapper<GovTag>();
+		e.in("id", ids);
+		return new R<Boolean>(service.updateForSet("status = 0", e));
+	}
+	
+	@PostMapping("/delete")
+	@PreAuthorize("@pms.hasPermission('gov_tag_del')")
+	@ApiOperation(value = "批量删除标签", notes = "批量删除标签", httpMethod = "POST")
+	public R<Boolean> delete(@RequestBody List<Integer> ids) {
+		return new R<Boolean>(service.deleteBatchIds(ids));
+	}
+
+	@SuppressWarnings("unchecked")
+	@SysLog("标签合并")
+	@PostMapping("/merge")
+	@ApiOperation(value = "标签合并", notes = "标签合并", httpMethod = "POST")
+	public R<Boolean> tagMerge(@RequestBody Map<String, Object> param) {
+		Integer mainId=(Integer) param.get("mainId");
+		List<Integer> mergeIds=(List<Integer>) param.get("mergeIds");
+		GovTag mainTag = service.selectById(mainId);
+		if(mainTag==null){
+			return new R<Boolean>(false);	
+		}else{
+			Integer allnum=0;
+			for(Integer id:mergeIds){
+				GovTag mergeTag = service.selectById(id);
+				if(mergeTag!=null){
+					EntityWrapper<GovTagRelation> er = new EntityWrapper<GovTagRelation>();
+					er.eq("tag_id", id);
+					List<GovTagRelation> list=relationService.selectList(er);
+					Map<String, Object> params=Maps.newHashMapWithExpectedSize(4);
+					Integer num=list.size();
+					for(GovTagRelation bean:list){
+						EntityWrapper<GovTagRelation> e3 = new EntityWrapper<GovTagRelation>();
+						params.put("tag_id",mainTag.getTagId());
+						params.put("relation_id",bean.getRelationId());
+						params.put("type_id",bean.getTypeId());
+						params.put("node",bean.getNode());
+						e3.allEq(params);
+						GovTagRelation govTagRelation=relationService.selectOne(e3);
+						if(govTagRelation!=null){
+							params.put("tag_id",bean.getTagId());
+							service.deleteByMap(params);
+							num--;
+						}
+					}
+					relationService.updateForSet("tag_id="+mainTag.getTagId(), er);
+					allnum +=num;
+					GovTagMergeRecord govTagMergeRecord=new GovTagMergeRecord();
+					govTagMergeRecord.setTagId(mainId);
+					govTagMergeRecord.setMergeId(id);
+					EntityWrapper<GovTagMergeRecord> em = new EntityWrapper<GovTagMergeRecord>(govTagMergeRecord);
+					Integer i=mergeRecordService.selectCount(em);
+					if(i<1){
+						mergeRecordService.insert(govTagMergeRecord);
+					}
+					DipsUser user = SecurityUtils.getUser();
+					GovTagModificationRecord record=new GovTagModificationRecord();
+					record.setCreatorId(user.getId());
+					record.setTagId(mainId);
+					record.setDescription("“"+mainTag.getName()+"”与“"+mergeTag.getName()+"”合并");
+					recordService.insert(record);
+					mergeTag.setRefers(0);
+					service.updateById(mergeTag);
+				}	
+			}
+			mainTag.setRefers(mainTag.getRefers()+allnum);
+			service.updateById(mainTag);
+			return new R<Boolean>(true);
+		}	
+	}
+	
+
+	@GetMapping("/extract_tag")
+	@ApiOperation(value = "提取标签", notes = "根据内容提取标签", httpMethod = "GET")
+	public List<String> extractTag(@RequestParam String content,@RequestParam Integer num) {
+		List<String> keywordList = HanLP.extractKeyword(content, num);
+		return keywordList;
+	}
+	
+	@GetMapping("/assn_tag")
+	@ApiOperation(value = "联想标签", notes = "联想标签", httpMethod = "GET")
+	public List<Object> assnTag(@RequestParam String keyWord) {
+		EntityWrapper<GovTag> e = new EntityWrapper<GovTag>();
+		e.setSqlSelect("name");
+		e.like("name", keyWord);
+		return service.selectObjs(e);
+	}
+
+	
 }

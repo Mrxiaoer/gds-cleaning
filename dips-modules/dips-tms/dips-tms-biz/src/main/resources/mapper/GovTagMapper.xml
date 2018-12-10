@@ -15,81 +15,134 @@
 	<resultMap id="BaseResultMap" type="com.cloud.dips.tag.api.entity.GovTag">
 		<id column="id" property="tagId"/>
 		<result column="name" property="name"/>
-		<result column="creation_date" property="creationDate"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
 		<result column="refers" property="refers"/>
-		<result column="priority" property="priority"/>
+		<result column="order_num" property="orderNum"/>
 		<result column="type_id" property="typeId"/>
 		<result column="level_id" property="levelId"/>
 		<result column="views" property="views"/>
 		<result column="description" property="description"/>
-		<result column="relation" property="relation"/>
 		<result column="creator_id" property="creatorId"/>
 		<result column="system" property="system"/>
+		<result column="status" property="status"/>
+		<result column="enable" property="enable"/>
 	</resultMap>
 
 	<!-- govTagVo结果集 -->
 	<resultMap id="govTagVoResultMap" type="com.cloud.dips.tag.api.vo.GovTagVO">
 		<id column="id" property="tagId"/>
 		<result column="name" property="name"/>
-		<result column="creation_date" property="creationDate"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
 		<result column="refers" property="refers"/>
-		<result column="priority" property="priority"/>
+		<result column="order_num" property="orderNum"/>
 		<result column="type_id" property="typeId"/>
-		<result column="typeName" property="typeName"/>
 		<result column="level_id" property="levelId"/>
 		<result column="levelName" property="levelName"/>
 		<result column="views" property="views"/>
 		<result column="description" property="description"/>
-		<result column="relation" property="relation"/>
 		<result column="creator_id" property="creatorId"/>
-		<result column="creatorRealName" property="creatorRealName"/>
-		<collection property="tagDescriptionList" select="selectTagDesc" column="id">
-
-		</collection>
+		<result column="system" property="system"/>
+		<result column="status" property="status"/>
+		<result column="enable" property="enable"/>
+		<collection property="typeVo" select="selectTagType" column="type_id" />
+		<collection property="tagList" select="selectTagList" column="id" />
 	</resultMap>
-
-	<sql id="selectGovTagVo">
+	<select id="selectGovTagVoById" resultMap="govTagVoResultMap">
 		SELECT
             `tag`.id,
             `tag`.name,
-            `tag`.creation_date,
+            `tag`.create_time,
+            `tag`.update_time,
             `tag`.refers,
-            `tag`.priority,
+            `tag`.order_num,
             `tag`.type_id,
-            t.name AS typeName,
             `tag`.level_id,
             l.name AS levelName,
             `tag`.views,
             `tag`.description,
-            `tag`.relation,
             `tag`.creator_id,
-            u.real_name AS creatorRealName
+            `tag`.system,
+            `tag`.status,
+            `tag`.enable
         FROM
             gov_tag AS `tag`
-            LEFT JOIN gov_user AS u ON u.id = `tag`.creator_id
             LEFT JOIN gov_tag_level AS l ON l.id = `tag`.level_id
-            LEFT JOIN gov_tag_type AS t ON t.id = `tag`.type_id
-    </sql>
+        WHERE
+            `tag`.id = #{id}
+    </select>
 
-	<select id="selectGovTagVoPage" resultMap="govTagVoResultMap">
-		<include refid="selectGovTagVo"/>
+	<resultMap id="govTagVoPageResultMap" type="com.cloud.dips.tag.api.vo.GovTagVO">
+		<id column="id" property="tagId"/>
+		<result column="name" property="name"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="refers" property="refers"/>
+		<result column="levelName" property="levelName"/>
+		<result column="status" property="status"/>
+		<collection property="typeVo" select="selectTagType" column="type_id" />
+	</resultMap>
+	<select id="selectGovTagVoPage" resultMap="govTagVoPageResultMap">
+		SELECT
+            `tag`.id,
+            `tag`.name,
+            `tag`.update_time,
+            `tag`.refers,
+            `tag`.type_id,
+            l.name AS levelName,
+            `tag`.status
+        FROM
+            gov_tag AS `tag`
+            LEFT JOIN gov_tag_level AS l ON l.id = `tag`.level_id
         WHERE
         	1 = 1
         <if test="tagname != null and tagname != ''">
 			and `tag`.name LIKE CONCAT('%',#{tagname},'%')
 		</if>
         <if test="typeid != null and typeid != ''">
-			and t.type_id = #{typeid}
+			and `tag`.type_id = #{typeid}
+		</if>
+        <if test="levelid != null and levelid != ''">
+			and `tag`.level_id = #{levelid}
+		</if>
+        <if test="status != null and status != ''">
+			and `tag`.status = #{status}
+		</if>
+        <if test="fob != 'b'.toString()">
+			and `tag`.status = 1
+			and `tag`.enable = 1
 		</if>
     </select>
-
-	<select id="selectGovTagVoById" resultMap="govTagVoResultMap">
-        <include refid="selectGovTagVo"/>
-        WHERE
-            `tag`.id = #{id}
+    
+    <resultMap id="govTagVoListResultMap" type="com.cloud.dips.tag.api.vo.GovTagVO">
+		<id column="id" property="tagId"/>
+		<result column="name" property="name"/>
+		<result column="description" property="description"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="refers" property="refers"/>
+		<result column="views" property="views"/>
+		<result column="system" property="system"/>
+		<result column="levelName" property="levelName"/>
+		<result column="typeName" property="typeName"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<select id="getAllTag" resultMap="govTagVoListResultMap">
+		SELECT
+            `tag`.id,
+            `tag`.name,
+            `tag`.update_time,
+            `tag`.refers,
+            `tag`.views,
+            `tag`.system,
+            `tag`.description,
+            l.name AS levelName,
+            t.name AS typeName,
+            `tag`.status
+        FROM
+            gov_tag AS `tag`
+            LEFT JOIN gov_tag_level AS l ON l.id = `tag`.level_id
+            LEFT JOIN gov_tag_type AS t ON t.id = `tag`.type_id
     </select>
-
-
 
 	<select id="findByGovTagName" resultType="java.lang.Integer">
      SELECT
@@ -99,29 +152,78 @@
         WHERE
             `tag`.name = #{tagName}
     </select>
-
-	<select id="selectTagDesc" resultMap="govTagDesc">
+    
+    <resultMap id="commonVoResultMap" type="com.cloud.dips.tag.api.vo.CommonVO">
+		<result column="commonId" property="commonId"/>
+		<result column="commonName" property="commonName"/>
+	</resultMap>
+	<select id="selectTagList" resultMap="commonVoResultMap">
+     SELECT
+            tag.id AS commonId,
+            tag.name AS commonName
+        FROM
+            gov_tag_relation AS tr
+            LEFT JOIN gov_tag AS tag ON tag.id = tr.tag_id
+        WHERE
+            tr.relation_id = #{id}
+            and tr.node = 'tag'
+    </select>
+	
+	<resultMap id="govTagTypeVoResultMap" type="com.cloud.dips.tag.api.vo.GovTagTypeVO">
+		<id column="id" property="typeId"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="name" property="name"/>
+		<collection property="parentVo" select="selectParentType" column="parent_id" />
+	</resultMap>
+	<select id="selectTagType" resultMap="govTagTypeVoResultMap">
 		SELECT
-			d.id,
-            d.description AS dDescription,
-            d.tag_id AS dTagId,
-            d.creation_date AS dcreationDate,
-            d.creator_id AS dcreatorId,
-            u.real_name AS dcreatorRealName
+			*
 		FROM
-			gov_tag_description AS d
-		LEFT JOIN gov_user AS u ON u.id = d.creator_id
+			gov_tag_type AS t
 		WHERE
-			d.tag_id = #{id}
+			t.id = #{type_id}
+	</select>
+	<select id="selectParentType" resultMap="govTagTypeVoResultMap">
+		SELECT
+			*
+		FROM
+			gov_tag_type AS t
+		WHERE
+			t.id = #{parent_id}
 	</select>
 
-	<resultMap id="govTagDesc" type="com.cloud.dips.tag.api.vo.GovTagDescriptionVO">
-		<id column="id" property="descriptionId"/>
-		<result column="dDescription" property="description"/>
-		<result column="dTagId" property="tagId"/>
-		<result column="dcreationDate" property="creationDate"/>
-		<result column="dcreatorId" property="creatorId"/>
-		<result column="dcreatorRealName" property="creatorRealName"/>
-	</resultMap>
+	
+	
+
+<resultMap type="com.cloud.dips.tag.api.vo.MapVO" id="countTypeMap">
+		<result column="name" property="key"/>
+		<result column="value" property="value"/>
+</resultMap>
+
+	<select id="coutnByType" resultMap="countTypeMap">
+		SELECT
+			t.name AS name,
+			count(*) AS value
+		FROM
+			gov_tag AS tag
+		    LEFT JOIN gov_tag_type AS t ON t.id = `tag`.type_id
+		GROUP BY
+			tag.type_id
+	</select>
+	
+	<select id="coutnByDate" resultMap="countTypeMap">
+		SELECT
+			DATE_FORMAT(create_time,'%m月%d日') AS name,
+			count(*) AS value
+		FROM
+			gov_tag
+		WHERE
+			create_time >= #{date}
+		GROUP BY
+			DATE_FORMAT(create_time,'%Y-%m-%d')
+		ORDER BY
+		    DATE_FORMAT(create_time,'%Y-%m-%d')   
+	</select>
+
 
 </mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, ZB All rights reserved.
+ *
+ * Author: ZB
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.tag.mapper.GovTagModificationRecordMapper">
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.tag.api.entity.GovTagModificationRecord">
+		<id column="id" property="id"/>
+		<result column="create_time" property="createTime"/>
+		<result column="description" property="description"/>
+		<result column="creator_id" property="creatorId"/>
+		<result column="tag_id" property="tagId"/>
+	</resultMap>
+
+	<!--Vo结果集 -->
+	<resultMap id="recordVoMap" type="com.cloud.dips.tag.api.vo.GovTagModificationRecordVO">
+		<id column="id" property="id"/>
+		<result column="create_time" property="createTime"/>
+		<result column="description" property="description"/>
+		<result column="creator_id" property="creatorId"/>
+		<result column="tag_id" property="tagId"/>
+		<result column="tagName" property="tagName"/>
+		<result column="creatorRealName" property="creatorRealName"/>
+	</resultMap>
+
+	<sql id="selsectRecordVoMap">
+		SELECT
+            record.*,
+            u.real_name AS creatorRealName,
+            tag.name AS tagName
+        FROM
+            gov_tag_modification_record AS record
+            LEFT JOIN gov_user AS u ON u.id = record.creator_id
+            LEFT JOIN gov_tag AS tag ON tag.id = record.tag_id
+    </sql>
+
+	<select id="getByTagId" resultMap="recordVoMap">
+        <include refid="selsectRecordVoMap"/>
+        WHERE
+            record.tag_id = #{tagId}
+        ORDER BY
+        	record.create_time
+        <if test="limit != null and limit != ''">
+			LIMIT #{limit}
+		</if>     
+    </select>
+
+</mapper>

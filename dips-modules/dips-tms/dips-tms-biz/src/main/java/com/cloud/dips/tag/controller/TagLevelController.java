@@ -1,6 +1,5 @@
 package com.cloud.dips.tag.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -8,9 +7,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,20 +34,20 @@ import io.swagger.annotations.ApiOperation;
  *
  */
 @RestController
-@RequestMapping("/tagLevel")
+@RequestMapping("/tag_level")
 public class TagLevelController {
 	@Autowired
 	private GovTagLevelService service;
 	@Autowired
 	private GovTagService govTagService;
 	
-	@RequestMapping("/tagLevelList")
+	@GetMapping("/list")
 	@ApiOperation(value = "标签级别集合", notes = "标签级别集合",httpMethod="GET")
 	public List<GovTagLevel> tagLevelList() {
 		return service.selectList(new EntityWrapper<GovTagLevel>());
 	}
 
-	@RequestMapping("/tagLevelPage")
+	@GetMapping("/page")
 	@ApiOperation(value = "分页查询标签级别", notes = "标签级别集合",httpMethod="GET")
 	public Page<GovTagLevel> tagLevelPage(@RequestParam Map<String, Object> params) {
 		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
@@ -85,20 +84,19 @@ public class TagLevelController {
 	}
 	
 	@SysLog("添加标签级别")
-	@PostMapping("/saveTagLevel")
+	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('gov_tagLevel_add')")
 	@ApiOperation(value = "添加标签级别", notes = "添加标签级别", httpMethod = "POST")
 	public R<Boolean> saveTagLevel(@RequestBody GovTagLevelDTO govTagLevelDto) {
 			GovTagLevel govTagLevel = new GovTagLevel();
 			BeanUtils.copyProperties(govTagLevelDto, govTagLevel);
-			govTagLevel.setCreationDate(new Date());
 			return new R<>(service.insert(govTagLevel));
 	}
 	
 	@SysLog("更新标签级别")
-	@PutMapping("/updateTagLevel")
+	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('gov_tagLevel_edit')")
-	@ApiOperation(value = "更新标签级别", notes = "更新标签级别", httpMethod = "PUT")
+	@ApiOperation(value = "更新标签级别", notes = "更新标签级别", httpMethod = "POST")
 	public R<Boolean> updateTagLevel(@RequestBody GovTagLevelDTO govTagLevelDto) {
 		GovTagLevel govTagLevel = service.selectById(govTagLevelDto.getLevelId());
 		BeanUtils.copyProperties(govTagLevelDto, govTagLevel);

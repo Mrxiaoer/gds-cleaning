@@ -40,12 +40,6 @@ public class GovTagType implements Serializable{
 	/**
 	 * 创建时间
 	 */
-	@TableField("creation_date")
-	private Date creationDate;
-	
-	@Override
-	public String toString() {
-		return "GovTagType [typeId=" + typeId + ", parentId=" + parentId + ", name=" + name + ", creationDate="
-				+ creationDate + "]";
-	}
+	@TableField("create_time")
+	private Date createTime=new Date();
 }

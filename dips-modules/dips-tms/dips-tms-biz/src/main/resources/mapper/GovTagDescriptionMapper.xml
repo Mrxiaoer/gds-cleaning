@@ -16,7 +16,7 @@
 		<id column="id" property="descriptionId"/>
 		<result column="description" property="description"/>
 		<result column="tag_id" property="tagId"/>
-		<result column="creation_date" property="creationDate"/>
+		<result column="create_time" property="createTime"/>
 		<result column="creator_id" property="creatorId"/>
 	</resultMap>
 
@@ -25,10 +25,28 @@
 		<id column="id" property="descriptionId"/>
 		<result column="description" property="description"/>
 		<result column="tag_id" property="tagId"/>
-		<result column="creation_date" property="creationDate"/>
+		<result column="create_time" property="createTime"/>
 		<result column="creator_id" property="creatorId"/>
 		<result column="creatorRealName" property="creatorRealName"/>
 	</resultMap>
+	
+	<sql id="govTagDescriptionVO">
+		SELECT
+            td.*,
+            u.real_name AS creatorRealName
+        FROM
+            gov_tag_description AS td
+            LEFT JOIN gov_user AS u ON u.id = td.creator_id
+    </sql>
+    
+    <select id="selectAllPage" resultMap="govTagDescriptionVoResultMap">
+		<include refid="govTagDescriptionVO"/>
+        WHERE
+        	1 = 1
+        <if test="tagId != null and tagId != ''">
+			and td.tag_id = #{tagId}
+		</if>
+    </select>
 
 	<!--根据标签Id删除标签描述-->
 	<delete id="deleteByTagId">

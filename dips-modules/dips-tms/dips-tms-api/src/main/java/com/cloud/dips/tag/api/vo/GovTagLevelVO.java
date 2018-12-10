@@ -19,6 +19,6 @@ public class GovTagLevelVO implements Serializable{
 
 	private String name;
 
-	private Date creationDate;
+	private Date createTime;
 	
 }

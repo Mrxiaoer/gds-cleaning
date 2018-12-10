@@ -11,36 +11,37 @@ import lombok.Data;
  *
  */
 @Data
-public class GovTagDescriptionVO implements Serializable{
+public class GovTagModificationRecordVO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * 主键ID
 	 */
-	private Integer descriptionId;
-
-
+	private Integer id;
 	/**
-	 * 描述
-	 */
-	private String description;
-	/**
-	 * 关联标签id
-	 */
-	private Integer tagId;
-	/**
-	 * 创建时间
+	 * 记录创建时间
 	 */
 	private Date createTime;
 	/**
-	 * 创建者id
+	 * 修改描述
+	 */
+	private String description;
+	/**
+	 * 创建者ID
 	 */
 	private Integer creatorId;
 	/**
 	 * 创建者真实姓名
 	 */
 	private String creatorRealName;
-	
+	/**
+	 * 标签id
+	 */
+	private Integer tagId;
+	/**
+	 * 标签名称
+	 */
+	private String tagName;
 
 }

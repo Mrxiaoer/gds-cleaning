@@ -25,8 +25,8 @@ public class GovTagDescription implements Serializable{
 	
     @Transient
     public void applyDefaultValue() {
-        if (getCreationDate()==null) {
-            setCreationDate(new Timestamp(System.currentTimeMillis()));
+        if (getCreateTime()==null) {
+            setCreateTime(new Timestamp(System.currentTimeMillis()));
         }
     }
 	
@@ -50,18 +50,11 @@ public class GovTagDescription implements Serializable{
 	/**
 	 * 创建时间
 	 */
-	@TableField("creation_date")
-	private Date creationDate;
+	@TableField("create_time")
+	private Date createTime;
 	/**
 	 * 创建者id
 	 */
 	@TableField("creator_id")
 	private Integer creatorId;
-	
-	@Override
-	public String toString() {
-		return "GovTagDescription [descriptionId=" + descriptionId + ", description=" + description + ", tagId=" + tagId
-				+ ", creationDate=" + creationDate + ", creatorId=" + creatorId + "]";
-	}
-
 }

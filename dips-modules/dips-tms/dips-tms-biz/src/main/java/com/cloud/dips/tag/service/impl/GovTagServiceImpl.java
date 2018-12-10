@@ -1,5 +1,8 @@
 package com.cloud.dips.tag.service.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,8 +11,11 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.tag.api.entity.GovTag;
+import com.cloud.dips.tag.api.entity.GovTagFunction;
 import com.cloud.dips.tag.api.vo.GovTagVO;
+import com.cloud.dips.tag.api.vo.MapVO;
 import com.cloud.dips.tag.mapper.GovTagMapper;
+import com.cloud.dips.tag.service.GovTagFunctionService;
 import com.cloud.dips.tag.service.GovTagService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +30,8 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 
 	@Autowired
 	private GovTagMapper mapper;
+	@Autowired
+	private GovTagFunctionService govTagFunctionService;
 	
 
 	/**
@@ -39,8 +47,11 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 
 		Object tagname = query.getCondition().get("name");
 		Object typeid = query.getCondition().get("typeid");
+		Object levelid = query.getCondition().get("levelid");
+		Object status = query.getCondition().get("status");
+		Object fob = query.getCondition().get("fob");
 
-		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid));
+		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid,levelid,status,fob));
 
 		return query;
 
@@ -82,6 +93,10 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 	@Override
 	public GovTag save(GovTag govTag) {
 		govTag.setSystem(CommonConstant.SYSTEM_NAME);
+		GovTagFunction govTagFunction=govTagFunctionService.getByNumber("tagReview");
+		if(govTagFunction!=null && govTagFunction.getEnable()==1){
+			govTag.setStatus(0);
+		}
 		this.insert(govTag);
 		return govTag;
 	}
@@ -96,5 +111,28 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 		return mapper.findByGovTagName(tagName);
 	}
 
+	/**
+	 * 根据标签分类统计标签
+	 * @return
+	 */
+	@Override
+	public List<MapVO> coutnByType() {
+		return mapper.coutnByType();
+	}
+	
+	/**
+	 * 根据日期统计标签
+	 * @param date
+	 * @return
+	 */
+	@Override
+	public List<MapVO> coutnByDate(Date date) {
+		return mapper.coutnByDate(date);
+	}
+
+	@Override
+	public List<GovTagVO> getAllTag() {
+		return mapper.getAllTag();
+	}
 
 }

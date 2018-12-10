@@ -34,13 +34,7 @@ public class GovTagLevel implements Serializable{
 	/**
 	 * 创建时间
 	 */
-	@TableField("creation_date")
-	private Date creationDate;
-	
-	@Override
-	public String toString() {
-		return "GovTagLevel [levelId=" + levelId + ", name=" + name + ", creationDate="
-				+ creationDate + "]";
-	}
+	@TableField("create_time")
+	private Date createTime=new Date();
 	
 }

@@ -2,6 +2,7 @@ package com.cloud.dips.tag.api.vo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -17,11 +18,16 @@ public class GovTagTypeVO implements Serializable{
 	
 	private Integer typeId;
 
-
 	private Integer parentId;
+	
+	private String parentName;
 
 	private String name;
 
-	private Date creationDate;
+	private Date createTime;
+
+	private List<GovTagTypeVO> children;
+	
+	private GovTagTypeVO parentVo;
 	
 }

@@ -25,8 +25,8 @@ public class GovTag implements Serializable{
 	
     @Transient
     public void applyDefaultValue() {
-        if (getCreationDate()==null) {
-            setCreationDate(new Timestamp(System.currentTimeMillis()));
+        if (getCreateTime()==null) {
+            setCreateTime(new Timestamp(System.currentTimeMillis()));
         }
     }
 	
@@ -43,8 +43,13 @@ public class GovTag implements Serializable{
 	/**
 	 * 标签创建时间
 	 */
-	@TableField("creation_date")
-	private Date creationDate;
+	@TableField("create_time")
+	private Date createTime;
+	/**
+	 * 标签更新时间
+	 */
+	@TableField("update_time")
+	private Date updateTime=new Timestamp(System.currentTimeMillis());
 	/**
 	 * 标签应用次数
 	 */
@@ -53,8 +58,8 @@ public class GovTag implements Serializable{
 	/**
 	 * 标签优先级
 	 */
-	@TableField("priority")
-	private Integer priority=1;
+	@TableField("order_num")
+	private Integer orderNum=1;
 	/**
 	 * 标签分类id
 	 */
@@ -76,11 +81,6 @@ public class GovTag implements Serializable{
 	@TableField("description")
 	private String description="";
 	/**
-	 * 关联标签
-	 */
-	@TableField("relation")
-	private String relation;
-	/**
 	 * 创建者ID
 	 */
 	@TableField("creator_id")
@@ -91,13 +91,15 @@ public class GovTag implements Serializable{
 	 */
 	@TableField("system")
 	private String system;
-
-	@Override
-	public String toString() {
-		return "GovTag [tagId=" + tagId + ", name=" + name + ", creationDate=" + creationDate + ", refers=" + refers
-				+ ", priority=" + priority + ", typeId=" + typeId + ", levelId=" + levelId + ", views=" + views
-				+ ", description=" + description + ", relation=" + relation + ", creatorId=" + creatorId + ", system="
-				+ system + "]";
-	}
+	/**
+	 * 标签状态 1正常 0待审
+	 */
+	@TableField("status")
+	private Integer status=1;
+	/**
+	 * 标签启用 1启用 0废除
+	 */
+	@TableField("enable")
+	private Integer enable=1;
 
 }

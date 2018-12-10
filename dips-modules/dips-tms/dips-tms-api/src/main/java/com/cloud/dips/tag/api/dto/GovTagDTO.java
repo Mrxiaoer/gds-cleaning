@@ -11,4 +11,8 @@ import lombok.Data;
 @Data
 public class GovTagDTO extends GovTag {
 	
+	/**
+	 * 关联标签
+	 */
+	private String[] tagList;
 }

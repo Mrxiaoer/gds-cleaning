@@ -1,5 +1,6 @@
 package com.cloud.dips.tag.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.tag.api.entity.GovTag;
 import com.cloud.dips.tag.api.vo.GovTagVO;
+import com.cloud.dips.tag.api.vo.MapVO;
 
 /**
  * <p>
@@ -25,7 +27,8 @@ public interface GovTagMapper extends BaseMapper<GovTag> {
 	 * @param typeid 类型id
 	 * @return List<GovTagVO>
 	 */
-	List<GovTagVO> selectGovTagVoPage(Query<GovTag> query, @Param("tagname") Object tagname,@Param("typeid") Object typeid);
+	List<GovTagVO> selectGovTagVoPage(Query<GovTag> query, @Param("tagname") Object tagname,
+			@Param("typeid") Object typeid,@Param("levelid") Object levelid,@Param("status") Object status,@Param("fob") Object fob);
 	
 	/**
 	 * 通过ID查询标签
@@ -41,5 +44,22 @@ public interface GovTagMapper extends BaseMapper<GovTag> {
 	 */
 	Integer findByGovTagName(@Param("tagName") String tagName);
 	
+	/**
+	 * 根据标签分类统计标签
+	 * @return
+	 */
+	List<MapVO> coutnByType();
+	/**
+	 * 根据日期统计标签
+	 * @param date
+	 * @return
+	 */
+	List<MapVO> coutnByDate(Date date);
+	
+	/**
+	 * 获取所有标签集合
+	 * @return
+	 */
+	List<GovTagVO> getAllTag();
 
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, ZB All rights reserved.
+ *
+ * Author: ZB
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.tag.mapper.GovTagMergeRecordMapper">
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.cloud.dips.tag.api.entity.GovTagMergeRecord">
+		<id column="tag_id" property="tagId"/>
+		<id column="merge_id" property="mergeId"/>
+	</resultMap>
+		
+	<resultMap id="commonVoResultMap" type="com.cloud.dips.tag.api.vo.CommonVO">
+		<result column="commonId" property="commonId"/>
+		<result column="commonName" property="commonName"/>
+	</resultMap>
+
+	<select id="selectMergeTag" resultMap="commonVoResultMap">
+		SELECT
+			tmr.merge_id AS commonId,
+			t.name AS commonName
+		FROM
+			gov_tag_merge_record AS tmr
+		    LEFT JOIN gov_tag AS t ON t.id = tmr.merge_id
+		WHERE
+			tmr.tag_id = #{tagId}
+	</select>
+	
+	<select id="selectIncludeTag" resultMap="commonVoResultMap">
+			SELECT
+			tmr.tag_id AS commonId,
+			t.name AS commonName
+		FROM
+			gov_tag_merge_record AS tmr
+		    LEFT JOIN gov_tag AS t ON t.id = tmr.tag_id
+		WHERE
+			tmr.merge_id = #{mergeId}
+	</select>
+
+</mapper>
