@@ -78,6 +78,17 @@
 			<groupId>com.aliyun.oss</groupId>
 			<artifactId>aliyun-sdk-oss</artifactId>
 			<version>2.8.3</version>
-		</dependency>		
+		</dependency>
+		<!--poi-->
+		<dependency>
+		      <groupId>org.apache.poi</groupId>
+		      <artifactId>poi</artifactId>
+		      <version>3.11</version>
+		</dependency>
+		<dependency>
+		      <groupId>org.apache.poi</groupId>
+		      <artifactId>poi-ooxml</artifactId>
+		      <version>3.11</version>
+		</dependency>	
 	</dependencies>
 </project>
