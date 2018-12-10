@@ -81,6 +81,7 @@ DROP TABLE IF EXISTS `gov_dept`;
 CREATE TABLE `gov_dept` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT '部门名称',
+  `number` varchar(100) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '部门编码',
   `order_num` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -89,11 +90,10 @@ CREATE TABLE `gov_dept` (
   `city_id` bigint(11) DEFAULT NULL COMMENT '所属城市ID',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='部门管理';
-
 -- ----------------------------
 -- Records of gov_dept
 -- ----------------------------
-INSERT INTO `gov_dept` VALUES ('1', '国脉集团', '1', '2018-01-22 19:00:23', '2018-11-20 14:50:28', '0', '0', '1');
+INSERT INTO `gov_dept` VALUES ('1', '国脉集团', '', '1', '2018-01-22 19:00:23', '2018-11-20 14:50:28', '0', '0', '1');
 
 -- ----------------------------
 -- Table structure for `gov_dept_relation`
