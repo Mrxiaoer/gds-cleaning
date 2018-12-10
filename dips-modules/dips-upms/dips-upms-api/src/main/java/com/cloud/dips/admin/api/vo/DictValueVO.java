@@ -12,7 +12,7 @@ import lombok.Data;
  * @author ZB
  */
 @Data
-public class DictVauleVO implements Serializable {
+public class DictValueVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -48,6 +48,6 @@ public class DictVauleVO implements Serializable {
 	 */
 	private Integer sort;
 
-	private List<SysDictValue> dictVauleList;
+	private List<SysDictValue> dictValueList;
 
 }

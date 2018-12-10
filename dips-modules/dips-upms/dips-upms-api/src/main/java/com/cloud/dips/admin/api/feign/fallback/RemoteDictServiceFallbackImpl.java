@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.cloud.dips.admin.api.feign.RemoteDictService;
 import com.cloud.dips.admin.api.vo.DictVO;
-import com.cloud.dips.admin.api.vo.DictVauleVO;
+import com.cloud.dips.admin.api.vo.DictValueVO;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class RemoteDictServiceFallbackImpl implements RemoteDictService {
 	 * 
 	 */
 	@Override
-	public List<DictVauleVO> list(String number) {		
+	public List<DictValueVO> list(String number) {		
 		log.error("feign 查询字典信息失败:{}", cause);		
 		return null;
 

@@ -39,6 +39,6 @@ public class DictVO implements Serializable {
 	 */
 	private String system;
 
-	private List<DictVauleVO> dictVauleVoList;
+	private List<DictValueVO> dictValueVoList;
 
 }

@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.admin.api.entity.SysDict;
 import com.cloud.dips.admin.api.entity.SysDictValue;
 import com.cloud.dips.admin.api.vo.DictVO;
-import com.cloud.dips.admin.api.vo.DictVauleVO;
+import com.cloud.dips.admin.api.vo.DictValueVO;
 import com.cloud.dips.admin.service.SysDictService;
 import com.cloud.dips.admin.service.SysDictValueService;
 import com.cloud.dips.common.core.constant.CommonConstant;
@@ -73,12 +73,12 @@ public class DictController {
 	
 	@GetMapping("/list/{number}")
 	@ApiOperation(value = "通过字典编码查询字典值信息", notes = "通过字典编码查询字典值信息",httpMethod="GET")
-	public List<DictVauleVO> dictValueList(@PathVariable("number") String number) {
+	public List<DictValueVO> dictValueList(@PathVariable("number") String number) {
 		EntityWrapper<SysDict> e=new EntityWrapper<SysDict>();
 		e.eq("number", number);
 		SysDict sysDict=service.selectOne(e);
 		if(sysDict!=null){
-			return valueService.selectDictVauleVo(sysDict.getId());
+			return valueService.selectDictValueVo(sysDict.getId());
 		}else{
 			return null;
 		}

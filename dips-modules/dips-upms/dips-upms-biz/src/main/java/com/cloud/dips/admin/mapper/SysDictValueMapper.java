@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.cloud.dips.admin.api.entity.SysDictValue;
-import com.cloud.dips.admin.api.vo.DictVauleVO;
+import com.cloud.dips.admin.api.vo.DictValueVO;
 
 /**
  * <p>
@@ -29,5 +29,5 @@ public interface SysDictValueMapper extends BaseMapper<SysDictValue> {
 	 * @param dId 字典id
 	 * @return
 	 */
-	List<DictVauleVO> selectDictVauleVo(@Param("dId") Integer dId);
+	List<DictValueVO> selectDictValueVo(@Param("dId") Integer dId);
 }

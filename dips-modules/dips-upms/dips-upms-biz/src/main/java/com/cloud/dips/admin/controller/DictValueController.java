@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.admin.api.entity.SysDict;
 import com.cloud.dips.admin.api.entity.SysDictValue;
-import com.cloud.dips.admin.api.vo.DictVauleVO;
+import com.cloud.dips.admin.api.vo.DictValueVO;
 import com.cloud.dips.admin.service.SysDictService;
 import com.cloud.dips.admin.service.SysDictValueService;
 import com.cloud.dips.common.core.util.R;
@@ -68,8 +68,8 @@ public class DictValueController {
 
 	@RequestMapping("/dictValueParents/{dId}")
 	@ApiOperation(value = "字典值一级分类集合", notes = "字典值一级分类集合: params{ID:字典id}",httpMethod="GET")
-	public List<DictVauleVO> dictValueParents(@PathVariable("dId") Integer id) {
-			return valueService.selectDictVauleVo(id);
+	public List<DictValueVO> dictValueParents(@PathVariable("dId") Integer id) {
+			return valueService.selectDictValueVo(id);
 	}
 
 	@SysLog("删除字典值")

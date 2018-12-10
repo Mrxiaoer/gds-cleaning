@@ -25,7 +25,7 @@
 	</resultMap>
 
 	<!-- DictVauleVO结果集 -->
-	<resultMap id="dictVauleVOResultMap" type="com.cloud.dips.admin.api.vo.DictVauleVO">
+	<resultMap id="dictVauleVOResultMap" type="com.cloud.dips.admin.api.vo.DictValueVO">
 		<id column="id" property="id"/>
 		<result column="key" property="key"/>
 		<result column="value" property="value"/>
@@ -34,12 +34,12 @@
 		<result column="dict_id" property="dictId"/>
 		<result column="parent_id" property="parentId"/>
 		<result column="sort" property="sort"/>
-		<collection property="dictVauleList" select="selectDictVaule" column="id">
+		<collection property="dictValueList" select="selectDictValue" column="id">
 
 		</collection>
 	</resultMap>
 
-	<select id="selectDictVauleVo" resultMap="dictVauleVOResultMap">
+	<select id="selectDictValueVo" resultMap="dictVauleVOResultMap">
 		SELECT
 		*
         FROM
@@ -50,7 +50,7 @@
 			dv.sort DESC,dv.id DESC
     </select>
 
-	<select id="selectDictVaule" resultMap="BaseResultMap">
+	<select id="selectDictValue" resultMap="BaseResultMap">
 		SELECT
 		*
         FROM

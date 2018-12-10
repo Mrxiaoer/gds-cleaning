@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.dips.admin.api.entity.SysDictValue;
-import com.cloud.dips.admin.api.vo.DictVauleVO;
+import com.cloud.dips.admin.api.vo.DictValueVO;
 
 /**
  * <p>
@@ -28,5 +28,5 @@ public interface SysDictValueService extends IService<SysDictValue> {
 	 * @param dId
 	 * @return
 	 */
-	List<DictVauleVO> selectDictVauleVo(Integer dId);
+	List<DictValueVO> selectDictValueVo(Integer dId);
 }

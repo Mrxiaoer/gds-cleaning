@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.admin.api.entity.SysDictValue;
-import com.cloud.dips.admin.api.vo.DictVauleVO;
+import com.cloud.dips.admin.api.vo.DictValueVO;
 import com.cloud.dips.admin.mapper.SysDictValueMapper;
 import com.cloud.dips.admin.service.SysDictValueService;
 
@@ -36,8 +36,8 @@ public class SysDictValueServiceImpl extends ServiceImpl<SysDictValueMapper, Sys
 	private SysDictValueMapper mapper;
 	
 	@Override
-	public List<DictVauleVO> selectDictVauleVo(Integer dId) {
-		return mapper.selectDictVauleVo(dId);
+	public List<DictValueVO> selectDictValueVo(Integer dId) {
+		return mapper.selectDictValueVo(dId);
 	}
 
 }

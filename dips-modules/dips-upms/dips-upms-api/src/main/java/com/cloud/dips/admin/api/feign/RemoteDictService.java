@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.cloud.dips.admin.api.feign.factory.RemoteDictServiceFallbackFactory;
 import com.cloud.dips.admin.api.vo.DictVO;
-import com.cloud.dips.admin.api.vo.DictVauleVO;
+import com.cloud.dips.admin.api.vo.DictValueVO;
 import com.cloud.dips.common.core.constant.ServiceNameConstant;
 
 /**
@@ -29,7 +29,7 @@ public interface RemoteDictService {
 	 * 
 	 */
 	@GetMapping("/dict/list/{number}")
-	List<DictVauleVO> list(@PathVariable("number") String number);
+	List<DictValueVO> list(@PathVariable("number") String number);
 	
 	/**
 	 * 
