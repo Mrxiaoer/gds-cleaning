@@ -120,7 +120,6 @@ CREATE TABLE `gov_dict` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
   `number` varchar(100) NOT NULL DEFAULT '' COMMENT '字典编码',
   `name` varchar(100) NOT NULL DEFAULT '' COMMENT '字典名称',
-  `type` varchar(100) NOT NULL DEFAULT '' COMMENT '编码',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `system` varchar(100) NOT NULL DEFAULT '' COMMENT '所属系统',
