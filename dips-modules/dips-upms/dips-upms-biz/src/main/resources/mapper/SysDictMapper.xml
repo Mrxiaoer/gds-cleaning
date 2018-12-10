@@ -39,7 +39,7 @@
     </select>
 
 	<!-- 通用查询映射结果 -->
-	<resultMap id="dictVaule" type="com.cloud.dips.admin.api.entity.SysDictValue">
+	<resultMap id="dictValue" type="com.cloud.dips.admin.api.entity.SysDictValue">
 		<id column="id" property="id"/>
 		<result column="key" property="key"/>
 		<result column="value" property="value"/>
@@ -51,7 +51,7 @@
 	</resultMap>
 
 	<!-- DictVauleVO结果集 -->
-	<resultMap id="dictVauleVOResultMap" type="com.cloud.dips.admin.api.vo.DictValueVO">
+	<resultMap id="dictValueVOResultMap" type="com.cloud.dips.admin.api.vo.DictValueVO">
 		<id column="id" property="id"/>
 		<result column="key" property="key"/>
 		<result column="value" property="value"/>
@@ -65,7 +65,7 @@
 		</collection>
 	</resultMap>
     
-	<select id="selectDictValueVo" resultMap="dictVauleVOResultMap">
+	<select id="selectDictValueVo" resultMap="dictValueVOResultMap">
 		SELECT
 		*
         FROM
@@ -76,7 +76,7 @@
 			dv.sort DESC,dv.id DESC
     </select>
 
-	<select id="selectDictValue" resultMap="BaseResultMap">
+	<select id="selectDictValue" resultMap="dictValue">
 		SELECT
 		*
         FROM
