@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.admin.api.dto.UserDTO;
 import com.cloud.dips.admin.api.dto.UserInfo;
+import com.cloud.dips.admin.api.entity.SysDept;
 import com.cloud.dips.admin.api.entity.SysUser;
 import com.cloud.dips.admin.api.entity.SysUserRole;
 import com.cloud.dips.admin.api.vo.UserVO;
+import com.cloud.dips.admin.service.SysDeptService;
 import com.cloud.dips.admin.service.SysUserService;
 import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.constant.SecurityConstants;
@@ -49,6 +51,8 @@ public class UserController {
 	private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
 	@Autowired
 	private SysUserService userService;
+	@Autowired
+	private SysDeptService sysDeptService;
 
 	/**
 	 * 获取当前用户信息（角色、权限）
@@ -119,6 +123,9 @@ public class UserController {
 		sysUser.setIsDeleted(CommonConstant.STATUS_NORMAL);
 		sysUser.setPassword(ENCODER.encode(userDto.getNewpassword1()));
 		sysUser.applyDefaultValue();
+		SysDept sysDept = new SysDept();
+		sysDept = sysDeptService.selectById(userDto.getDeptId());
+		sysUser.setDeptName(sysDept.getName());
 		userService.insert(sysUser);
 		userDto.getRole().forEach(roleId -> {
 			SysUserRole userRole = new SysUserRole();

@@ -11,20 +11,81 @@
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.cloud.dips.admin.api.entity.SysDict">
 		<id column="id" property="id"/>
-		<result column="value" property="value"/>
-		<result column="label" property="label"/>
-		<result column="type" property="type"/>
-		<result column="description" property="description"/>
-		<result column="sort" property="sort"/>
+		<result column="number" property="number"/>
+		<result column="name" property="name"/>
 		<result column="create_time" property="createTime"/>
-		<result column="modified_time" property="modifiedTime"/>
-		<result column="remarks" property="remarks"/>
-		<result column="is_deleted" property="isDeleted"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="system" property="system"/>
+	</resultMap>
+	
+	<resultMap id="dictVOResultMap" type="com.cloud.dips.admin.api.vo.DictVO">
+		<id column="id" property="id"/>
+		<result column="number" property="number"/>
+		<result column="name" property="name"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="system" property="system"/>
+		<collection property="dictVauleVoList" select="selectDictVauleVo" column="id">
+
+		</collection>
 	</resultMap>
 
-	<!-- 通用查询结果列 -->
-	<sql id="Base_Column_List">
-        id, value, label, type, description, sort, create_time AS createTime, modified_time AS modifiedTime, remarks, is_deleted AS isDeleted
-    </sql>
+
+	<select id="selectAllDict" resultMap="dictVOResultMap">
+		SELECT
+			*
+        FROM
+            gov_dict AS d
+    </select>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="dictVaule" type="com.cloud.dips.admin.api.entity.SysDictValue">
+		<id column="id" property="id"/>
+		<result column="key" property="key"/>
+		<result column="value" property="value"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="dict_id" property="dictId"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="sort" property="sort"/>
+	</resultMap>
+
+	<!-- DictVauleVO结果集 -->
+	<resultMap id="dictVauleVOResultMap" type="com.cloud.dips.admin.api.vo.DictVauleVO">
+		<id column="id" property="id"/>
+		<result column="key" property="key"/>
+		<result column="value" property="value"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="dict_id" property="dictId"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="sort" property="sort"/>
+		<collection property="dictVauleList" select="selectDictVaule" column="id">
+
+		</collection>
+	</resultMap>
+    
+	<select id="selectDictVauleVo" resultMap="dictVauleVOResultMap">
+		SELECT
+		*
+        FROM
+            gov_dict_value AS dv
+        WHERE
+			dv.dict_id = #{id} and dv.parent_id = 0
+		ORDER BY
+			dv.sort DESC,dv.id DESC
+    </select>
+
+	<select id="selectDictVaule" resultMap="BaseResultMap">
+		SELECT
+		*
+        FROM
+            gov_dict_value AS dv
+        WHERE
+			dv.parent_id = #{id}
+		ORDER BY
+			dv.sort DESC,dv.id DESC
+	</select> 
+    
 
 </mapper>

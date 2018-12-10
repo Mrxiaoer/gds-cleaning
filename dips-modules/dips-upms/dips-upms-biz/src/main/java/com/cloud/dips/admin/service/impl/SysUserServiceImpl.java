@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.admin.api.dto.UserDTO;
 import com.cloud.dips.admin.api.dto.UserInfo;
+import com.cloud.dips.admin.api.entity.SysDept;
 import com.cloud.dips.admin.api.entity.SysDeptRelation;
 import com.cloud.dips.admin.api.entity.SysRole;
 import com.cloud.dips.admin.api.entity.SysUser;
@@ -29,6 +30,7 @@ import com.cloud.dips.admin.api.vo.MenuVO;
 import com.cloud.dips.admin.api.vo.UserVO;
 import com.cloud.dips.admin.mapper.SysUserMapper;
 import com.cloud.dips.admin.service.SysDeptRelationService;
+import com.cloud.dips.admin.service.SysDeptService;
 import com.cloud.dips.admin.service.SysMenuService;
 import com.cloud.dips.admin.service.SysRoleService;
 import com.cloud.dips.admin.service.SysUserRoleService;
@@ -62,6 +64,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	private final SysRoleService sysRoleService;
 	private final SysUserRoleService sysUserRoleService;
 	private final SysDeptRelationService sysDeptRelationService;
+	private final SysDeptService sysDeptService;
 
 	/**
 	 * 通过用户名查用户的全部信息
@@ -111,8 +114,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public Page selectWithRolePage(Query query) {
 		DataScope dataScope = new DataScope();
 		dataScope.setScopeName("deptId" );
-		dataScope.setIsOnly(true);
-		dataScope.setDeptIds(getChildDepts());
+		//dataScope.setIsOnly(true);是否只显示当前用户所在部门
+		//dataScope.setDeptIds(getChildDepts());
 		Object username = query.getCondition().get("username" );
 		query.setRecords(sysUserMapper.selectUserVoPage(query, username, dataScope));
 		return query;
@@ -197,6 +200,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		SysUser sysUser = new SysUser();
 		BeanUtils.copyProperties(userDto, sysUser);
 		sysUser.setModifiedTime(LocalDateTime.now());
+		SysDept sysDept = new SysDept();
+		sysDept = sysDeptService.selectById(userDto.getDeptId());
+		sysUser.setDeptName(sysDept.getName());
 		this.updateById(sysUser);
 
 		SysUserRole condition = new SysUserRole();

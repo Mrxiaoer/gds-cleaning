@@ -72,6 +72,7 @@ public class UserVO implements Serializable {
 	 * 部门ID
 	 */
 	private Integer deptId;
+	
 	/**
 	 * 部门名称
 	 */

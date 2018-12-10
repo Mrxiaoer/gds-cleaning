@@ -31,6 +31,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.admin.api.entity.SysDict;
 import com.cloud.dips.admin.api.entity.SysDictValue;
+import com.cloud.dips.admin.api.vo.DictVO;
 import com.cloud.dips.admin.api.vo.DictVauleVO;
 import com.cloud.dips.admin.service.SysDictService;
 import com.cloud.dips.admin.service.SysDictValueService;
@@ -81,6 +82,12 @@ public class DictController {
 		}else{
 			return null;
 		}
+	}
+	
+	@GetMapping("/all_list")
+	@ApiOperation(value = "查询所有字典", notes = "查询所有字典",httpMethod="GET")
+	public List<DictVO> allList() {
+		return service.selectAllDict();
 	}
 
 	/**

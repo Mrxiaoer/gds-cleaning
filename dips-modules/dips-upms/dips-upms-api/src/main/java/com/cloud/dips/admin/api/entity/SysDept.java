@@ -37,6 +37,11 @@ public class SysDept extends Model<SysDept> {
 	@NotBlank(message = "部门名称不能为空")
 	private String name;
 	/**
+	 * 部门编码
+	 */
+	@NotBlank(message = "部门编码不能为空")
+	private String number;
+	/**
 	 * 排序
 	 */
 	private Integer orderNum;
