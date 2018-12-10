@@ -24,8 +24,8 @@
 		<result column="sort" property="sort"/>
 	</resultMap>
 
-	<!-- DictVauleVO结果集 -->
-	<resultMap id="dictVauleVOResultMap" type="com.cloud.dips.admin.api.vo.DictValueVO">
+	<!-- DictValueVO结果集 -->
+	<resultMap id="dictValueVOResultMap" type="com.cloud.dips.admin.api.vo.DictValueVO">
 		<id column="id" property="id"/>
 		<result column="key" property="key"/>
 		<result column="value" property="value"/>
@@ -39,7 +39,7 @@
 		</collection>
 	</resultMap>
 
-	<select id="selectDictValueVo" resultMap="dictVauleVOResultMap">
+	<select id="selectDictValueVo" resultMap="dictValueVOResultMap">
 		SELECT
 		*
         FROM
