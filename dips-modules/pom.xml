@@ -9,8 +9,6 @@
   <packaging>pom</packaging>
     <modules>
         <module>dips-upms</module>
-        <module>dips-tms</module>        
-        <module>dna-survey</module>
-        <module>dna-supply</module>
+        <module>dips-tms</module>
     </modules>
 </project>
