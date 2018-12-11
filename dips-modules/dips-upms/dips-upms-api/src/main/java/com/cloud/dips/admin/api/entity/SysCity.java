@@ -44,6 +44,14 @@ public class SysCity extends Model<SysCity> {
 	 */
 	private String code;
 	/**
+	 * 乡镇街道级代码（3位）
+	 */
+	private String countryCode;
+	/**
+	 * 村居社区级代码（3位）
+	 */
+	private String communityCode;
+	/**
 	 * 城市等级
 	 */
 	private String cityLevel;

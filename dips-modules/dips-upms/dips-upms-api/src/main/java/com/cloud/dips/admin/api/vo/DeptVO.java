@@ -32,6 +32,10 @@ public class DeptVO implements Serializable {
 	@NotBlank(message = "部门编码不能为空")
 	private String number;
 	/**
+	 * 机构类别
+	 */
+	private Integer type;
+	/**
 	 * 排序
 	 */
 	private Integer orderNum;

@@ -13,6 +13,7 @@
 		<id column="id" property="id"/>
 		<result column="name" property="name"/>
 		<result column="number" property="number"/>
+		<result column="type" property="type"/>
 		<result column="order_num" property="orderNum"/>
 		<result column="create_time" property="createTime"/>
 		<result column="modified_time" property="modifiedTime"/>
@@ -24,6 +25,7 @@
 		<id column="id" property="id"/>
 		<result column="name" property="name"/>
 		<result column="number" property="number"/>
+		<result column="type" property="type"/>
 		<result column="orderNum" property="orderNum"/>
 		<result column="createTime" property="createTime"/>
 		<result column="modifiedTime" property="modifiedTime"/>
@@ -35,7 +37,7 @@
 
 	<!-- 通用查询结果列 -->
 	<sql id="Base_Column_List">
-        id, parent_id AS parentId, name, number, order_num AS orderNum, create_time AS createTime, modified_time AS modifiedTime, is_deleted AS isDeleted
+        id, parent_id AS parentId, name, number, type, order_num AS orderNum, create_time AS createTime, modified_time AS modifiedTime, is_deleted AS isDeleted
     </sql>
     
     <select id="selectDeptVoById" resultMap="DeptVOMap">
@@ -43,6 +45,7 @@
     	t.id AS id,
     	t.name AS name,
     	t.number AS number,
+    	t.type AS type,
     	t.order_num AS orderNum,
     	t.create_time AS createTime,
     	t.modified_time AS modifiedTime,
