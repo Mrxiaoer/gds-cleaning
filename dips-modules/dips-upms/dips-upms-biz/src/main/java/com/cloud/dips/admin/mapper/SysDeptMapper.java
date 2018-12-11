@@ -33,4 +33,12 @@ public interface SysDeptMapper extends BaseMapper<SysDept> {
 	 * @return 部门信息
 	 */
 	DeptVO selectDeptVoById(@Param("id") Integer id);
+	
+	/**
+	 * 通过名称查询部门ID
+	 *
+	 * @param id 部门ID
+	 * @return 部门信息
+	 */
+	List<Integer> findDeptIdByName(@Param("name") String name);
 }

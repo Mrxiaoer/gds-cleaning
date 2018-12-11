@@ -124,4 +124,20 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 		
 		return sysDeptMapper.selectDeptVoById(id);
 	}
+
+
+	/**
+	 * 通过名称查询部门ID(如果有名称相同的部门取第一个部门的ID)
+	 *
+	 * @param id 部门ID
+	 * @return 部门信息
+	 */
+	@Override
+	public Integer findDeptIdByName(String name) {
+		Integer deptId = null;
+		if(sysDeptMapper.findDeptIdByName(name)!=null){
+			deptId = sysDeptMapper.findDeptIdByName(name).get(0);
+		}
+		return deptId;
+	}
 }

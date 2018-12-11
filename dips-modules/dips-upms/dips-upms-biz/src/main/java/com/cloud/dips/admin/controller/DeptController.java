@@ -99,4 +99,15 @@ public class DeptController {
 		sysDept.setModifiedTime(LocalDateTime.now());
 		return sysDeptService.updateDeptById(sysDept);
 	}
+	
+	/**
+	 * 通过部门名称查询
+	 *
+	 * @param id ID
+	 * @return deptId
+	 */
+	@GetMapping("/find/{name}")
+	public Integer findDeptIdByName(@PathVariable("name") String name) {
+		return sysDeptService.findDeptIdByName(name);
+	}
 }

@@ -68,4 +68,13 @@
 		LEFT JOIN gov_dept_relation dr ON t.id = dr.descendant
 		WHERE dr.ancestor = 0
 	</select>
+	
+	<!--通过名称查询部门ID-->
+	<select id="findDeptIdByName" resultType="java.lang.Integer">
+		SELECT
+			t.id
+		FROM
+			gov_dept t
+		WHERE t.name = #{name}
+	</select>
 </mapper>

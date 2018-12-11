@@ -57,4 +57,12 @@ public interface SysDeptService extends IService<SysDept> {
 	 * @return 部门信息
 	 */
 	DeptVO selectDeptVoById(Integer id);
+	
+	/**
+	 * 通过名称查询部门ID
+	 *
+	 * @param id 部门ID
+	 * @return 部门信息
+	 */
+	Integer findDeptIdByName(String name);
 }
