@@ -1,12 +1,14 @@
 package com.cloud.dips.tag.api.feign.fallback;
 
-import com.cloud.dips.common.core.util.R;
-import com.cloud.dips.tag.api.feign.RemoteTagRelationService;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import com.cloud.dips.common.core.util.R;
+import com.cloud.dips.tag.api.feign.RemoteTagRelationService;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author ZB
@@ -19,12 +21,12 @@ public class RemoteTagRelationServiceFallbackImpl implements RemoteTagRelationSe
 
 	@Override
 	public R<Boolean> saveTagRelation(Map<String, Object> params) {
-		log.error("feign 插入失败1111", cause);
+		log.error("feign 插入失败", cause);
 		return null;
 	}
 
 	@Override
-	public R<Boolean> deleteTagRelation(Map<String, Object> params) {
+	public R<Boolean> deleteTagRelation(Integer relationId,String node) {
 		log.error("feign 删除失败", cause);
 		return null;
 	}

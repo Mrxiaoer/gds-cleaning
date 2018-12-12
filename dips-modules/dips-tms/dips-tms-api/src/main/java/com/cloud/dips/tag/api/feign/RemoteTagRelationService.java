@@ -29,5 +29,5 @@ public interface RemoteTagRelationService {
 	 * @return R
 	 */
 	@PostMapping("/tagRelation/deleteTagRelation")
-	R<Boolean> deleteTagRelation(@RequestParam Map<String, Object> params);
+	R<Boolean> deleteTagRelation(@RequestParam Integer relationId,@RequestParam String node);
 }

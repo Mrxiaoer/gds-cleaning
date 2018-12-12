@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.cloud.dips.tag.api.entity.GovTag;
-
 import lombok.Data;
 
 /**
@@ -97,7 +95,7 @@ public class GovTagVO implements Serializable{
 	/**
 	 * 关联标签
 	 */
-	private List<GovTag> tagList;
+	private List<CommonVO> tagList;
 	
 	/**
 	 * 分类id数组

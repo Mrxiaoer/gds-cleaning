@@ -103,4 +103,23 @@ public class GovTagRelationServiceImpl extends ServiceImpl<GovTagRelationMapper,
 		}
 	}
 
+	@Override
+	public Boolean deleteTagRelation(Integer relationId, String node) {
+		EntityWrapper<GovTagRelation> e1= new EntityWrapper<GovTagRelation>();
+		e1.eq("relation_id", relationId).eq("node", node);
+		e1.setSqlSelect("tag_id");
+		List<Object> objects=this.selectObjs(e1);
+		for(Object object:objects){
+			Integer tagId=Integer.parseInt(object.toString());
+			GovTag tag = tagService.selectById(tagId);
+			if(tag!=null){
+				EntityWrapper<GovTagRelation> e2= new EntityWrapper<GovTagRelation>();
+				e2.eq("relation_id", relationId).eq("node", node).eq("tag_id", tagId);
+				tag.setRefers(tag.getRefers()-this.selectCount(e2));
+				tagService.updateById(tag);
+			}	
+		}
+		return this.delete(e1);
+	}
+
 }

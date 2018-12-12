@@ -144,6 +144,7 @@ public class TagController {
 		}else{
 				govTagDescriptionService.deleteByTagId(govTag.getTagId());
 				govTagRelationService.deleteById(govTag.getTagId());
+				govTagRelationService.deleteTagRelation(govTag.getTagId(), "tag");
 				EntityWrapper<GovTagModificationRecord> er=new EntityWrapper<GovTagModificationRecord>();
 				er.eq("tag_id", govTag.getTagId());
 				recordService.delete(er);
@@ -266,7 +267,22 @@ public class TagController {
 	@PreAuthorize("@pms.hasPermission('gov_tag_del')")
 	@ApiOperation(value = "批量删除标签", notes = "批量删除标签", httpMethod = "POST")
 	public R<Boolean> delete(@RequestBody List<Integer> ids) {
-		return new R<Boolean>(service.deleteBatchIds(ids));
+		for(Integer id:ids){
+			GovTag govTag = service.selectById(id);
+			if(govTag!=null){
+					govTagDescriptionService.deleteByTagId(govTag.getTagId());
+					govTagRelationService.deleteById(govTag.getTagId());
+					govTagRelationService.deleteTagRelation(govTag.getTagId(), "tag");
+					EntityWrapper<GovTagModificationRecord> er=new EntityWrapper<GovTagModificationRecord>();
+					er.eq("tag_id", govTag.getTagId());
+					recordService.delete(er);
+					EntityWrapper<GovTagMergeRecord> em=new EntityWrapper<GovTagMergeRecord>();
+					em.eq("tag_id", govTag.getTagId()).or().eq("merge_id", govTag.getTagId());
+					mergeRecordService.delete(em);
+					service.deleteGovTagById(govTag);
+			}
+		}
+		return new R<Boolean>(Boolean.TRUE);
 	}
 
 	@SuppressWarnings("unchecked")

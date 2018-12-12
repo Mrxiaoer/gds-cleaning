@@ -17,6 +17,13 @@ public interface GovTagRelationService extends IService<GovTagRelation> {
 	 * @return
 	 */
 	public Boolean saveTagRelation(Map<String, Object> params);
+	/**
+	 * 删除关联
+	 * @param relationId
+	 * @param node
+	 * @return
+	 */
+	public Boolean deleteTagRelation(Integer relationId,String node);
 	
 }
 
