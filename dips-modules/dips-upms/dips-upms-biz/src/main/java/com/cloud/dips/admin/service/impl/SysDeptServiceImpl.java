@@ -135,8 +135,9 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 	@Override
 	public Integer findDeptIdByName(String name) {
 		Integer deptId = null;
-		if(sysDeptMapper.findDeptIdByName(name)!=null){
-			deptId = sysDeptMapper.findDeptIdByName(name).get(0);
+		List<Integer> deptIds = sysDeptMapper.findDeptIdByName(name);
+		if(deptIds !=null && deptIds.size()>0){
+			deptId = deptIds.get(0);
 		}
 		return deptId;
 	}
