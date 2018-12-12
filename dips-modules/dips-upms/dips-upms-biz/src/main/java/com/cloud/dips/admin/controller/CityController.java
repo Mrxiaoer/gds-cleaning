@@ -7,11 +7,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,7 +70,7 @@ public class CityController {
 	 * @param sysCity 实体
 	 * @return success/false
 	 */
-	@PostMapping
+	@PostMapping("/create")
 	@ApiOperation(value = "添加城市", notes = "添加城市", httpMethod = "POST")
 	@PreAuthorize("@pms.hasPermission('sys_city_add')")
 	public R<Boolean> add(@Valid @RequestBody SysCity sysCity) {
@@ -87,8 +85,8 @@ public class CityController {
 	 * @param id ID
 	 * @return success/false
 	 */
-	@DeleteMapping("/{id}")
-	@ApiOperation(value = "删除城市", notes = "根据ID删除城市: params{类型ID: id}", httpMethod = "DELETE")
+	@PostMapping("/delete/{id}")
+	@ApiOperation(value = "删除城市", notes = "根据ID删除城市: params{类型ID: id}", httpMethod = "POST")
 	@PreAuthorize("@pms.hasPermission('sys_city_del')")
 	public R<Boolean> delete(@PathVariable Integer id) {
 		return new R<>(govCityService.deleteCityById(id));
@@ -100,8 +98,8 @@ public class CityController {
 	 * @param sysCity 实体
 	 * @return success/false
 	 */
-	@PutMapping
-	@ApiOperation(value = "更新城市", notes = "更新城市", httpMethod = "PUT")
+	@PostMapping("/update")
+	@ApiOperation(value = "更新城市", notes = "更新城市", httpMethod = "POST")
 	@PreAuthorize("@pms.hasPermission('sys_city_edit')")
 	public Boolean edit(@Valid @RequestBody SysCity sysCity) {
 		sysCity.setModifiedTime(LocalDateTime.now());

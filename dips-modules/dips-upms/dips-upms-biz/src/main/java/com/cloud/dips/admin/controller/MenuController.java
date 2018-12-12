@@ -10,11 +10,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -111,7 +109,7 @@ public class MenuController {
 	 * @param sysMenu 菜单信息
 	 * @return success/false
 	 */
-	@PostMapping
+	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('sys_menu_add')" )
 	public R<Boolean> menu(@Valid @RequestBody SysMenu sysMenu) {
 		return new R<>(sysMenuService.insert(sysMenu));
@@ -124,13 +122,13 @@ public class MenuController {
 	 * @return success/false
 	 * TODO  级联删除下级节点
 	 */
-	@DeleteMapping("/{id}" )
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('sys_menu_del')" )
 	public R<Boolean> menuDel(@PathVariable Integer id) {
 		return new R<>(sysMenuService.deleteMenu(id));
 	}
 
-	@PutMapping
+	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('sys_menu_edit')" )
 	public R<Boolean> menuUpdate(@Valid @RequestBody SysMenu sysMenu) {
 		return new R<>(sysMenuService.updateMenuById(sysMenu));

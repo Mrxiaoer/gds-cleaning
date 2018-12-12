@@ -6,11 +6,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,7 +67,7 @@ public class DeptController {
 	 * @param sysDept 实体
 	 * @return success/false
 	 */
-	@PostMapping
+	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('sys_dept_add')")
 	public R<Boolean> add(@Valid @RequestBody SysDept sysDept) {
 		return new R<>(sysDeptService.insertDept(sysDept));
@@ -81,7 +79,7 @@ public class DeptController {
 	 * @param id ID
 	 * @return success/false
 	 */
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('sys_dept_del')")
 	public R<Boolean> delete(@PathVariable Integer id) {
 		return new R<>(sysDeptService.deleteDeptById(id));
@@ -93,7 +91,7 @@ public class DeptController {
 	 * @param sysDept 实体
 	 * @return success/false
 	 */
-	@PutMapping
+	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('sys_dept_edit')")
 	public Boolean edit(@Valid @RequestBody SysDept sysDept) {
 		sysDept.setModifiedTime(LocalDateTime.now());

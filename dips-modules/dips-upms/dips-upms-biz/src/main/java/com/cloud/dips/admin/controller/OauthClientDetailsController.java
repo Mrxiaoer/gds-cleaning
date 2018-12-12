@@ -6,11 +6,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -66,7 +64,7 @@ public class OauthClientDetailsController {
 	 * @param sysOauthClientDetails 实体
 	 * @return success/false
 	 */
-	@PostMapping
+	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('sys_client_add')")
 	public R<Boolean> add(@Valid @RequestBody SysOauthClientDetails sysOauthClientDetails) {
 		return new R<>(sysOauthClientDetailsService.insert(sysOauthClientDetails));
@@ -78,7 +76,7 @@ public class OauthClientDetailsController {
 	 * @param id ID
 	 * @return success/false
 	 */
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('sys_client_del')")
 	public R<Boolean> delete(@PathVariable String id) {
 		return new R<>(sysOauthClientDetailsService.deleteClientDetailsById(id));
@@ -90,7 +88,7 @@ public class OauthClientDetailsController {
 	 * @param sysOauthClientDetails 实体
 	 * @return success/false
 	 */
-	@PutMapping
+	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('sys_client_edit')")
 	public R<Boolean> edit(@Valid @RequestBody SysOauthClientDetails sysOauthClientDetails) {
 		return new R<>(sysOauthClientDetailsService.updateClientDetailsById(sysOauthClientDetails));

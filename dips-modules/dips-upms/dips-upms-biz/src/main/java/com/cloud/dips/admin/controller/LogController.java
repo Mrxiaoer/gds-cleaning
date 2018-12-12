@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,7 +56,7 @@ public class LogController {
 	 * @param id ID
 	 * @return success/false
 	 */
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('sys_log_del')")
 	public R<Boolean> delete(@PathVariable Long id) {
 		return new R<>(sysLogService.updateByLogId(id));
@@ -69,7 +68,7 @@ public class LogController {
 	 * @param sysLog 日志实体
 	 * @return success/false
 	 */
-	@PostMapping
+	@PostMapping("/create")
 	public R<Boolean> save(@Valid @RequestBody SysLog sysLog) {
 		sysLog.applyDefaultValue();
 		return new R<>(sysLogService.insert(sysLog));

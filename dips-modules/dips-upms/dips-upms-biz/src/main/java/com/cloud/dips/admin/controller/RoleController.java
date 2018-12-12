@@ -5,11 +5,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,7 +54,7 @@ public class RoleController {
 	 * @return success、false
 	 */
 	@SysLog("添加角色")
-	@PostMapping
+	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('sys_role_add')")
 	public R<Boolean> role(@RequestBody RoleDTO roleDto) {
 		return new R<>(sysRoleService.insertRole(roleDto));
@@ -69,7 +67,7 @@ public class RoleController {
 	 * @return success/false
 	 */
 	@SysLog("修改角色")
-	@PutMapping
+	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('sys_role_edit')")
 	public R<Boolean> roleUpdate(@RequestBody RoleDTO roleDto) {
 		return new R<>(sysRoleService.updateRoleById(roleDto));
@@ -82,7 +80,7 @@ public class RoleController {
 	 * @return success/false
 	 */
 	@SysLog("删除角色")
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('sys_role_del')")
 	public R<Boolean> roleDel(@PathVariable Integer id) {
 		SysRole sysRole = sysRoleService.selectById(id);
@@ -121,7 +119,7 @@ public class RoleController {
 	 * @return success、false
 	 */
 	@SysLog("更新角色菜单")
-	@PutMapping("/roleMenuUpd")
+	@PostMapping("/update/roleMenuUpd")
 	@PreAuthorize("@pms.hasPermission('sys_role_perm')")
 	public R<Boolean> roleMenuUpd(Integer roleId, @RequestParam(value = "menuIds", required = false) String menuIds) {
 		SysRole sysRole = sysRoleService.selectById(roleId);
