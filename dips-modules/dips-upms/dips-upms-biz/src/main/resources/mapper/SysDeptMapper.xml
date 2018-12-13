@@ -68,7 +68,7 @@
 		LEFT JOIN gov_dept_relation dr ON t.id = dr.descendant
 		WHERE dr.ancestor = 0
 	</select>
-	
+
 	<!--通过名称查询部门ID-->
 	<select id="findDeptIdByName" resultType="java.lang.Integer">
 		SELECT
@@ -76,5 +76,34 @@
 		FROM
 			gov_dept t
 		WHERE t.name = #{name}
+	</select>
+
+	<!--查询所有部门列表 -->
+	<select id="selectDeptList" resultType="com.cloud.dips.admin.api.vo.DeptCityVO">
+		SELECT
+		a.id AS cityId,
+		a.`name` AS 'cityName',
+		a.parent_id AS 'cityParentId',
+		d.id,
+		d.name
+
+		FROM gov_city a
+		LEFT JOIN gov_dept d ON d.city_id=a.id AND d.is_deleted=0
+		WHERE a.is_deleted=0
+
+	</select>
+	
+	<!--查询所有部门列表 -->
+	<select id="selectDeptVOList" resultType="com.cloud.dips.admin.api.vo.DeptCityVO">
+		SELECT
+		a.id AS cityId,
+		a.`name` AS 'cityName',
+		a.parent_id AS 'cityParentId',
+		d.id,
+		d.name
+		FROM gov_dept d
+		LEFT JOIN gov_city a ON d.city_id=a.id AND d.is_deleted=0
+		WHERE a.is_deleted=0
+
 	</select>
 </mapper>

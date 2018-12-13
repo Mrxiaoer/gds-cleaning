@@ -1,6 +1,7 @@
 package com.cloud.dips.admin.api.feign.fallback;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,12 @@ public class RemoteDeptServiceFallbackImpl implements RemoteDeptService {
 
 	@Override
 	public Integer findDeptIdByName(String name) {
+		log.error("feign 查询机构信息失败:{}", cause);
+		return null;
+	}
+
+	@Override
+	public Map<Integer, DeptCityVO> getDeptCityVOMap() {
 		log.error("feign 查询机构信息失败:{}", cause);
 		return null;
 	}

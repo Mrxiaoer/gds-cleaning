@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.admin.api.dto.DeptTree;
 import com.cloud.dips.admin.api.entity.SysDept;
 import com.cloud.dips.admin.api.entity.SysDeptRelation;
+import com.cloud.dips.admin.api.vo.DeptCityVO;
 import com.cloud.dips.admin.api.vo.DeptVO;
 import com.cloud.dips.admin.api.vo.TreeUtil;
 import com.cloud.dips.admin.mapper.SysDeptMapper;
@@ -34,6 +35,7 @@ import lombok.AllArgsConstructor;
 public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> implements SysDeptService {
 	private final SysDeptRelationService sysDeptRelationService;
 	private final SysDeptMapper sysDeptMapper;
+
 	/**
 	 * 添加信息部门
 	 *
@@ -121,7 +123,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 
 	@Override
 	public DeptVO selectDeptVoById(Integer id) {
-		
+
 		return sysDeptMapper.selectDeptVoById(id);
 	}
 
@@ -136,9 +138,20 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 	public Integer findDeptIdByName(String name) {
 		Integer deptId = null;
 		List<Integer> deptIds = sysDeptMapper.findDeptIdByName(name);
-		if(deptIds !=null && deptIds.size()>0){
+		if (deptIds != null && deptIds.size() > 0) {
 			deptId = deptIds.get(0);
 		}
 		return deptId;
+	}
+
+	@Override
+	public List<DeptCityVO> selectDeptList() {
+		return sysDeptMapper.selectDeptList();
+	}
+
+
+	@Override
+	public List<DeptCityVO> selectDeptVOList() {
+		return sysDeptMapper.selectDeptVOList();
 	}
 }

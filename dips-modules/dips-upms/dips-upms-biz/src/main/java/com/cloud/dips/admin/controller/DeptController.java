@@ -1,7 +1,9 @@
 package com.cloud.dips.admin.controller;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.cloud.dips.admin.api.dto.DeptTree;
 import com.cloud.dips.admin.api.entity.SysDept;
+import com.cloud.dips.admin.api.vo.DeptCityVO;
 import com.cloud.dips.admin.api.vo.DeptVO;
 import com.cloud.dips.admin.service.SysDeptService;
 import com.cloud.dips.common.core.constant.CommonConstant;
@@ -97,7 +100,7 @@ public class DeptController {
 		sysDept.setModifiedTime(LocalDateTime.now());
 		return sysDeptService.updateDeptById(sysDept);
 	}
-	
+
 	/**
 	 * 通过部门名称查询
 	 *
@@ -107,5 +110,30 @@ public class DeptController {
 	@GetMapping("/find/{name}")
 	public Integer findDeptIdByName(@PathVariable("name") String name) {
 		return sysDeptService.findDeptIdByName(name);
+	}
+
+	/**
+	 * 机构 城市 集合
+	 *
+	 * @return R
+	 */
+	@GetMapping("/city/list")
+	public List<DeptCityVO> list() {
+		return sysDeptService.selectDeptList();
+	}
+	
+	/**
+	 * map 集合 id为键，DeptCityVO为值
+	 *
+	 * @return R
+	 */
+	@GetMapping("/map")
+	public Map<Integer,DeptCityVO> getDeptCityVOMap() {
+		Map<Integer,DeptCityVO> map = new HashMap<>();
+		List<DeptCityVO> list = sysDeptService.selectDeptVOList();
+		for(DeptCityVO vo : list){
+			map.put(vo.getId(), vo);
+		}
+		return map;
 	}
 }

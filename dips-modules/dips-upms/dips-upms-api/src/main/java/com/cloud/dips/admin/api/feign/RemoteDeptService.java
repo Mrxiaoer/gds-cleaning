@@ -9,6 +9,7 @@
 package com.cloud.dips.admin.api.feign;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,5 +40,13 @@ public interface RemoteDeptService {
 	 */
 	@GetMapping("/dept/find/{name}")
 	Integer findDeptIdByName(@PathVariable("name") String name);
+	
+	/**
+	 * map 集合 id为键，DeptCityVO为值
+	 *
+	 * @return R
+	 */
+	@GetMapping("/dept/map")
+	Map<Integer,DeptCityVO> getDeptCityVOMap();
 
 }

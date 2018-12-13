@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.dips.admin.api.dto.DeptTree;
 import com.cloud.dips.admin.api.entity.SysDept;
+import com.cloud.dips.admin.api.vo.DeptCityVO;
 import com.cloud.dips.admin.api.vo.DeptVO;
 
 /**
@@ -57,7 +58,7 @@ public interface SysDeptService extends IService<SysDept> {
 	 * @return 部门信息
 	 */
 	DeptVO selectDeptVoById(Integer id);
-	
+
 	/**
 	 * 通过名称查询部门ID
 	 *
@@ -65,4 +66,18 @@ public interface SysDeptService extends IService<SysDept> {
 	 * @return 部门信息
 	 */
 	Integer findDeptIdByName(String name);
+
+	/**
+	 * 机构 城市 集合
+	 *
+	 * @return R
+	 */
+	List<DeptCityVO> selectDeptList();
+	
+	/**
+	 * 机构 城市 集合
+	 *
+	 * @return R
+	 */
+	List<DeptCityVO> selectDeptVOList();
 }
