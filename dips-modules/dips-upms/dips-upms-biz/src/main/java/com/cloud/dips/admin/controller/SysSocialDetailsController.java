@@ -4,11 +4,9 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,7 +68,7 @@ public class SysSocialDetailsController {
 	 * @param sysSocialDetails
 	 * @return R
 	 */
-	@PostMapping
+	@PostMapping("/create")
 	public R save(@Valid @RequestBody SysSocialDetails sysSocialDetails) {
 		sysSocialDetailsService.insert(sysSocialDetails);
 		return new R<>(Boolean.TRUE);
@@ -82,7 +80,7 @@ public class SysSocialDetailsController {
 	 * @param sysSocialDetails
 	 * @return R
 	 */
-	@PutMapping
+	@PostMapping("/update")
 	public R update(@Valid @RequestBody SysSocialDetails sysSocialDetails) {
 		sysSocialDetailsService.updateById(sysSocialDetails);
 		return new R<>(Boolean.TRUE);
@@ -94,7 +92,7 @@ public class SysSocialDetailsController {
 	 * @param id
 	 * @return R
 	 */
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	public R delete(@PathVariable Integer id) {
 		return new R<>(sysSocialDetailsService.deleteById(id));
 	}

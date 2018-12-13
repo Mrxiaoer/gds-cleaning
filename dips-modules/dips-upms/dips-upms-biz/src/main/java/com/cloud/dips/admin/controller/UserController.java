@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -95,7 +93,7 @@ public class UserController {
 	 * @return R
 	 */
 	@SysLog("删除用户信息")
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('sys_user_del')")
 	@ApiOperation(value = "删除用户", notes = "根据ID删除用户")
 	@ApiImplicitParam(name = "id", value = "用户ID", required = true, dataType = "int", paramType = "path", example = "1000")
@@ -111,7 +109,7 @@ public class UserController {
 	 * @return success/false
 	 */
 	@SysLog("添加用户")
-	@PostMapping
+	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('sys_user_add')")
 	public R<Boolean> user(@RequestBody UserDTO userDto) {
 		SysUser deletedUser = userService.selectDeletedUserByUsername(userDto.getUsername());
@@ -143,7 +141,7 @@ public class UserController {
 	 * @return R
 	 */
 	@SysLog("修改用户信息")
-	@PutMapping
+	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('sys_user_edit')")
 	public R<Boolean> userUpdate(@Valid @RequestBody UserDTO userDto) {
 		SysUser user = userService.selectById(userDto.getId());
@@ -168,7 +166,7 @@ public class UserController {
 	 * @return success/false
 	 */
 	@SysLog("修改个人信息")
-	@PutMapping("/editInfo")
+	@PostMapping("/update/editInfo")
 	public R<Boolean> editInfo(@Valid @RequestBody UserDTO userDto) {
 		return userService.updateUserInfo(userDto, SecurityUtils.getUser().getUsername());
 	}

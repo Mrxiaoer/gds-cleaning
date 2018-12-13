@@ -8,11 +8,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,8 +71,8 @@ public class DictValueController {
 	}
 
 	@SysLog("删除字典值")
-	@DeleteMapping("/{id}")
-	@ApiOperation(value = "删除字典值", notes = "根据ID删除字典值: params{字典值ID: id}",httpMethod="DELETE")
+	@PostMapping("/delete/{id}")
+	@ApiOperation(value = "删除字典值", notes = "根据ID删除字典值: params{字典值ID: id}",httpMethod="POST")
 	public R<Boolean> dictValueDel(@PathVariable Integer id) {
 		SysDictValue sysDictValue = valueService.selectById(id);
 		if(sysDictValue==null){
@@ -90,7 +88,7 @@ public class DictValueController {
 	}
 	
 	@SysLog("添加字典值")
-	@PostMapping
+	@PostMapping("/create")
 	@ApiOperation(value = "添加字典值", notes = "添加字典值", httpMethod = "POST")
 	public R<Boolean> addDictValue(@Valid @RequestBody SysDictValue sysDictValue) {
 		SysDict sysDict=service.selectById(sysDictValue.getDictId());
@@ -110,8 +108,8 @@ public class DictValueController {
 	}
 	
 	@SysLog("更新字典值")
-	@PutMapping
-	@ApiOperation(value = "更新字典值", notes = "更新字典值", httpMethod = "PUT")
+	@PostMapping("/update")
+	@ApiOperation(value = "更新字典值", notes = "更新字典值", httpMethod = "POST")
 	public R<Boolean> updateDictValue(@Valid @RequestBody SysDictValue sysDictValue) {
 		SysDictValue bean=valueService.selectById(sysDictValue.getId());
 		if(bean==null){
