@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -159,7 +161,7 @@ public class TagController {
 	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('gov_tag_add')")
 	@ApiOperation(value = "添加标签", notes = "添加标签", httpMethod = "POST")
-	public R<Boolean> saveTag(@RequestBody GovTagDTO govTagDto) {
+	public R<Boolean> saveTag(@Valid @RequestBody GovTagDTO govTagDto) {
 		Integer i=service.findByGovTagName(govTagDto.getName());
 		if(i<1){
 			GovTag govTag = new GovTag();
@@ -210,7 +212,7 @@ public class TagController {
 	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
 	@ApiOperation(value = "更新标签", notes = "更新标签", httpMethod = "POST")
-	public R<Boolean> updateTag(@RequestBody GovTagDTO govTagDto) {
+	public R<Boolean> updateTag(@Valid @RequestBody GovTagDTO govTagDto) {
 		GovTag govTag = service.selectById(govTagDto.getTagId());
 		if(StrUtil.equals(govTagDto.getName(), govTag.getName())){
 			BeanUtils.copyProperties(govTagDto, govTag);

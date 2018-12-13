@@ -32,10 +32,12 @@ import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.dips.tag.api.entity.GovTag;
 import com.cloud.dips.tag.api.entity.GovTagLevel;
 import com.cloud.dips.tag.api.entity.GovTagType;
+import com.cloud.dips.tag.api.vo.CommonVO;
 import com.cloud.dips.tag.api.vo.GovTagVO;
 import com.cloud.dips.common.core.excel.ExcelUtil;
 import com.cloud.dips.common.core.excel.ImportExcelUntil;
 import com.cloud.dips.tag.service.GovTagLevelService;
+import com.cloud.dips.tag.service.GovTagMergeRecordService;
 import com.cloud.dips.tag.service.GovTagService;
 import com.cloud.dips.tag.service.GovTagTypeService;
 
@@ -59,6 +61,9 @@ public class ExcelController {
 	
 	@Autowired
 	private GovTagTypeService typeService;
+	
+	@Autowired
+	private GovTagMergeRecordService mergeRecordservice;
 
 	
 	@GetMapping("/export")
@@ -67,13 +72,13 @@ public class ExcelController {
         // 定义表的标题
         String title = "标签列表一览";
         //定义表的列名
-        String[] rowsName = new String[] { "ID", "标签名称", "标签级别", "所属分类", "标签注释", "来源", "状态", "应用次数", "更新时间" };
+        String[] rowsName = new String[] { "ID", "标签名称", "标签级别", "所属分类", "标签注释", "来源", "状态", "应用次数", "更新时间","关联标签", "合并标签","归入标签"};
         //定义表的内容
         List<Object[]> dataList = new ArrayList<Object[]>();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<GovTagVO> tags=service.getAllTag();
         for(GovTagVO tagvo:tags){
-            Object[] objs = new Object[9];
+            Object[] objs = new Object[12];
             objs[0] = tagvo.getTagId();
             objs[1] = tagvo.getName();
             objs[2] = tagvo.getLevelName();
@@ -87,6 +92,24 @@ public class ExcelController {
             }
             objs[7] = tagvo.getRefers();
             objs[8] = df.format(tagvo.getUpdateTime());
+            StrBuilder relationTags=new StrBuilder("");
+            for(CommonVO c:tagvo.getTagList()){
+            	relationTags.append(c.getCommonName()+",");
+            }
+            objs[9] = relationTags.toString();
+            
+            StrBuilder mergeTags=new StrBuilder("");
+            for(CommonVO c:mergeRecordservice.selectMergeTag(tagvo.getTagId())){
+            	mergeTags.append(c.getCommonName()+",");
+            }
+            objs[10] = mergeTags.toString();
+            
+            StrBuilder includeTags=new StrBuilder("");
+            for(CommonVO c:mergeRecordservice.selectIncludeTag(tagvo.getTagId())){
+            	includeTags.append(c.getCommonName()+",");
+            }
+            objs[11] = includeTags.toString();
+            
             dataList.add(objs);	
         }
         // 创建ExportExcel对象

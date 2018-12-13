@@ -51,6 +51,12 @@
 			<artifactId>spring-boot-admin-starter-client</artifactId>
 			<version>${monitor.version}</version>
 		</dependency>
+		<!--mybatis-->
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-boot-starter</artifactId>
+			<version>${mbp.boot.version}</version>
+		</dependency>
 		<!--数据库-->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -72,6 +78,12 @@
 		      <groupId>org.apache.poi</groupId>
 		      <artifactId>poi-ooxml</artifactId>
 		      <version>3.11</version>
+		</dependency>
+		<!--joda-time-->
+		<dependency>
+		    <groupId>joda-time</groupId>
+		    <artifactId>joda-time</artifactId>
+		    <version>2.5</version>
 		</dependency>
 		<!--web 模块-->
 		<dependency>

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -39,6 +41,7 @@ public class GovTag implements Serializable{
 	 * 标签名称
 	 */
 	@TableField("name")
+	@NotBlank(message="标签名称不能为空")
 	private String name;
 	/**
 	 * 标签创建时间

@@ -125,6 +125,7 @@
 		<result column="levelName" property="levelName"/>
 		<result column="typeName" property="typeName"/>
 		<result column="status" property="status"/>
+		<collection property="tagList" select="selectTagList" column="id" />
 	</resultMap>
 	<select id="getAllTag" resultMap="govTagVoListResultMap">
 		SELECT
@@ -142,6 +143,8 @@
             gov_tag AS `tag`
             LEFT JOIN gov_tag_level AS l ON l.id = `tag`.level_id
             LEFT JOIN gov_tag_type AS t ON t.id = `tag`.type_id
+       ORDER BY
+       		`tag`.id     
     </select>
 
 	<select id="findByGovTagName" resultType="java.lang.Integer">
