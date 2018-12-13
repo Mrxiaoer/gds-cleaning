@@ -18,25 +18,5 @@
         <result property="isDeleted" column="is_deleted"/>
         <result property="parentId" column="parent_id"/>
     </resultMap>
-    <resultMap type="com.cloud.dips.admin.api.vo.CityVO" id="cityVOMap">
-        <result property="cityId" column="id"/>
-        <result property="name" column="name"/>
-        <result property="number" column="number"/>
-        <result property="code" column="code"/>
-        <result property="countryCode" column="country_code"/>
-        <result property="communityCode" column="community_code"/>
-        <result property="level" column="city_level"/>
-        <result  property="levelName" column="levelName"/>
-        <result property="orderNum" column="order_num"/>
-        <result property="createTime" column="create_time"/>
-        <result property="modifiedTime" column="modified_time"/>
-        <result property="isDeleted" column="is_deleted"/>
-        <result property="parentId" column="parent_id"/>
-    
-    </resultMap>
-    
-
-
-	
 
 </mapper>
