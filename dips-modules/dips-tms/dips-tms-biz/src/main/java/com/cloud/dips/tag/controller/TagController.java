@@ -256,18 +256,26 @@ public class TagController {
 	@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
 	@ApiOperation(value = "批量审核标签", notes = "批量审核标签", httpMethod = "POST")
 	public R<Boolean> review(@RequestBody List<Integer> ids) {
-		EntityWrapper<GovTag> e = new EntityWrapper<GovTag>();
-		e.in("id", ids);
-		return new R<Boolean>(service.updateForSet("status = 1", e));
+		if(ids.size()>0){
+			EntityWrapper<GovTag> e = new EntityWrapper<GovTag>();
+			e.in("id", ids);
+			return new R<Boolean>(service.updateForSet("status = 1", e));
+		}else{
+			return new R<Boolean>(Boolean.FALSE,"请选择要审核的标签！");
+		}
 	}
 	
 	@PostMapping("/disable")
 	@PreAuthorize("@pms.hasPermission('gov_tag_edit')")
 	@ApiOperation(value = "批量禁用标签", notes = "批量禁用标签", httpMethod = "POST")
 	public R<Boolean> disable(@RequestBody List<Integer> ids) {
-		EntityWrapper<GovTag> e = new EntityWrapper<GovTag>();
-		e.in("id", ids);
-		return new R<Boolean>(service.updateForSet("status = 0", e));
+		if(ids.size()>0){
+			EntityWrapper<GovTag> e = new EntityWrapper<GovTag>();
+			e.in("id", ids);
+			return new R<Boolean>(service.updateForSet("status = 0", e));
+		}else{
+			return new R<Boolean>(Boolean.FALSE,"请选择要禁用的标签！");
+		}
 	}
 	
 	@PostMapping("/delete")
