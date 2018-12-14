@@ -12,10 +12,12 @@ import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.tag.api.entity.GovTag;
 import com.cloud.dips.tag.api.entity.GovTagFunction;
+import com.cloud.dips.tag.api.entity.GovTagModificationRecord;
 import com.cloud.dips.tag.api.vo.GovTagVO;
 import com.cloud.dips.tag.api.vo.MapVO;
 import com.cloud.dips.tag.mapper.GovTagMapper;
 import com.cloud.dips.tag.service.GovTagFunctionService;
+import com.cloud.dips.tag.service.GovTagModificationRecordService;
 import com.cloud.dips.tag.service.GovTagService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,8 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 	private GovTagMapper mapper;
 	@Autowired
 	private GovTagFunctionService govTagFunctionService;
+	@Autowired
+	private GovTagModificationRecordService recordService;
 	
 
 	/**
@@ -49,9 +53,10 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 		Object typeid = query.getCondition().get("typeid");
 		Object levelid = query.getCondition().get("levelid");
 		Object status = query.getCondition().get("status");
+		Object enable = query.getCondition().get("enable");
 		Object fob = query.getCondition().get("fob");
 
-		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid,levelid,status,fob));
+		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid,levelid,status,enable,fob));
 
 		return query;
 
@@ -98,6 +103,11 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 			govTag.setStatus(0);
 		}
 		this.insert(govTag);
+		GovTagModificationRecord record=new GovTagModificationRecord();
+		record.setCreatorId(govTag.getCreatorId());
+		record.setTagId(govTag.getTagId());
+		record.setDescription("创建了标签“"+govTag.getName()+"”");
+		recordService.insert(record);
 		return govTag;
 	}
 	

@@ -108,6 +108,9 @@
         <if test="status != null and status != ''">
 			and `tag`.status = #{status}
 		</if>
+        <if test="enable != null and enable != ''">
+			and `tag`.enable = #{enable}
+		</if>
         <if test="fob != 'b'.toString()">
 			and `tag`.status = 1
 			and `tag`.enable = 1

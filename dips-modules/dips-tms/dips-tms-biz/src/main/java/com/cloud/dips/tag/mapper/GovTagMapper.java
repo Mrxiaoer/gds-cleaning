@@ -25,10 +25,14 @@ public interface GovTagMapper extends BaseMapper<GovTag> {
 	 * @param query 
 	 * @param tagname 标签名称
 	 * @param typeid 类型id
+	 * @param levelid 级别id
+	 * @param status 状态
+	 * @param enable 启用
+	 * @param fob 前后端
 	 * @return List<GovTagVO>
 	 */
 	List<GovTagVO> selectGovTagVoPage(Query<GovTag> query, @Param("tagname") Object tagname,
-			@Param("typeid") Object typeid,@Param("levelid") Object levelid,@Param("status") Object status,@Param("fob") Object fob);
+			@Param("typeid") Object typeid,@Param("levelid") Object levelid,@Param("status") Object status,@Param("enable") Object enable,@Param("fob") Object fob);
 	
 	/**
 	 * 通过ID查询标签

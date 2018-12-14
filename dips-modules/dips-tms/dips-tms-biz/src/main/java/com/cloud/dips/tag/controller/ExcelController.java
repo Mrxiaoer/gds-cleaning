@@ -167,14 +167,13 @@ public class ExcelController {
 			        	e.eq("name", strs[0]);
 			        	if(service.selectCount(e)<1){
 			        		GovTag tag=new GovTag();
-			        		tag.applyDefaultValue();
 			        		tag.setName(strs[0]);
 			        		tag.setLevelId(new Long(levelMap.getOrDefault(strs[1], 0L)).intValue());
 			        		tag.setTypeId(new Long(typeMap.getOrDefault(strs[2], 0L)).intValue());
 			        		tag.setDescription(strs[3]);
 			        		tag.setSystem(strs[4]);
 			        		tag.setCreatorId(user.getId());
-			        		service.insert(tag);
+			        		service.save(tag);
 			        		success +=1;
 			        	}
 		        		}

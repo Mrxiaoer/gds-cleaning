@@ -1,6 +1,5 @@
 package com.cloud.dips.tag.api.entity;
 
-import java.beans.Transient;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -25,13 +24,6 @@ public class GovTag implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
-    @Transient
-    public void applyDefaultValue() {
-        if (getCreateTime()==null) {
-            setCreateTime(new Timestamp(System.currentTimeMillis()));
-        }
-    }
-	
 	/**
 	 * 主键ID
 	 */
@@ -47,7 +39,7 @@ public class GovTag implements Serializable{
 	 * 标签创建时间
 	 */
 	@TableField("create_time")
-	private Date createTime;
+	private Date createTime=new Timestamp(System.currentTimeMillis());
 	/**
 	 * 标签更新时间
 	 */

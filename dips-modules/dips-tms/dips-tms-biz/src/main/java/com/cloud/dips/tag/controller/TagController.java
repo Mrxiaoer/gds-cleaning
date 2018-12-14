@@ -169,7 +169,6 @@ public class TagController {
 			// 获取当前用户 
 			DipsUser user = SecurityUtils.getUser();
 			govTag.setCreatorId(user.getId());
-			govTag.applyDefaultValue();
 			govTag=service.save(govTag);
 	
 			String[] relationTags=govTagDto.getTagList();
@@ -182,12 +181,6 @@ public class TagController {
 			params.put("node", "tag");
 			params.put("tagKeyWords", tagKeyWords.toString());
 			relationService.saveTagRelation(params);
-
-			GovTagModificationRecord record=new GovTagModificationRecord();
-			record.setCreatorId(user.getId());
-			record.setTagId(govTag.getTagId());
-			record.setDescription("创建了标签“"+govTag.getName()+"”");
-			recordService.insert(record);
 			return new R<>(Boolean.TRUE);
 		}else{
 			return new R<>(Boolean.FALSE,"标签已存在");

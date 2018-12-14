@@ -25,8 +25,9 @@ public interface RemoteTagRelationService {
 
 	/**
 	 * 标签关联删除
-	 * @param params 参数集
-	 * @return R
+	 * @param relationId
+	 * @param node
+	 * @return
 	 */
 	@PostMapping("/tagRelation/deleteTagRelation")
 	R<Boolean> deleteTagRelation(@RequestParam Integer relationId,@RequestParam String node);
