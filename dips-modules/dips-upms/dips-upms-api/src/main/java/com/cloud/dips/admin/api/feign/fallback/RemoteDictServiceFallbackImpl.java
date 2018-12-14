@@ -1,6 +1,7 @@
 package com.cloud.dips.admin.api.feign.fallback;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,12 @@ public class RemoteDictServiceFallbackImpl implements RemoteDictService {
 
 	@Override
 	public List<DictVO> allList() {
+		log.error("feign 查询字典信息失败:{}", cause);
+		return null;
+	}
+
+	@Override
+	public Map<String, List<DictValueVO>> getDictMap(String[] numberList) {
 		log.error("feign 查询字典信息失败:{}", cause);
 		return null;
 	}

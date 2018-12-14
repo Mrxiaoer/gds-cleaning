@@ -9,6 +9,7 @@
 package com.cloud.dips.admin.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,6 +87,16 @@ public class DictController {
 	@ApiOperation(value = "查询所有字典", notes = "查询所有字典",httpMethod="GET")
 	public List<DictVO> allList() {
 		return service.selectAllDict();
+	}
+
+	@GetMapping("/map")
+	@ApiOperation(value = "通过字典编码集合查询字典值信息集合", notes = "通过字典编码集合查询字典值信息集合", httpMethod = "GET")
+	public Map<String, List<DictValueVO>> getDictMap(@RequestParam("numberList[]") String[] numberList) {
+		Map<String, List<DictValueVO>> dictMap = new HashMap<>(0);
+		for (String number : numberList) {
+			dictMap.put(number, dictValueList(number));
+		}
+		return dictMap;
 	}
 
 	/**
@@ -168,6 +179,6 @@ public class DictController {
 				}
 			}	
 		}
-	}	
+	}
 
 }
