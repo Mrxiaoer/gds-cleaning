@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +74,7 @@ public class DeptController {
 	 */
 	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('sys_dept_add')")
+	@CacheEvict(value = "deptCityVO_details", allEntries = true)
 	public R<Boolean> add(@Valid @RequestBody SysDept sysDept) {
 		return new R<>(sysDeptService.insertDept(sysDept));
 	}
@@ -84,6 +87,7 @@ public class DeptController {
 	 */
 	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('sys_dept_del')")
+	@CacheEvict(value = "deptCityVO_details", allEntries = true)
 	public R<Boolean> delete(@PathVariable Integer id) {
 		return new R<>(sysDeptService.deleteDeptById(id));
 	}
@@ -96,6 +100,7 @@ public class DeptController {
 	 */
 	@PostMapping("/update")
 	@PreAuthorize("@pms.hasPermission('sys_dept_edit')")
+	@CacheEvict(value = "deptCityVO_details", allEntries = true)
 	public Boolean edit(@Valid @RequestBody SysDept sysDept) {
 		sysDept.setModifiedTime(LocalDateTime.now());
 		return sysDeptService.updateDeptById(sysDept);
@@ -128,6 +133,7 @@ public class DeptController {
 	 * @return R
 	 */
 	@GetMapping("/map")
+	@Cacheable(value = "deptCityVO_details", key = "#root.methodName", unless = "#result == null" )
 	public Map<Integer,DeptCityVO> getDeptCityVOMap() {
 		Map<Integer,DeptCityVO> map = new HashMap<>();
 		List<DeptCityVO> list = sysDeptService.selectDeptVOList();
