@@ -208,7 +208,19 @@ public class TagController {
 	public R<Boolean> updateTag(@Valid @RequestBody GovTagDTO govTagDto) {
 		GovTag govTag = service.selectById(govTagDto.getTagId());
 		if(StrUtil.equals(govTagDto.getName(), govTag.getName())){
+			String[] relationTags=govTagDto.getTagList();
+			StringBuilder tagKeyWords=new StringBuilder();
+			for(String relation:relationTags){
+				tagKeyWords.append(relation+",");
+			}
+			Map<String, Object> params=new HashMap<String, Object>(0);
+			params.put("relationId", govTag.getTagId());
+			params.put("node", "tag");
+			params.put("tagKeyWords", tagKeyWords.toString());
+			relationService.saveTagRelation(params);
+			
 			BeanUtils.copyProperties(govTagDto, govTag);
+			govTag.setUpdateTime(new Date());
 			return new R<Boolean>(service.updateById(govTag));
 		}else{
 			Integer i=service.findByGovTagName(govTagDto.getName());
