@@ -31,6 +31,7 @@ import lombok.AllArgsConstructor;
 public class SysCityServiceImpl extends ServiceImpl<SysCityMapper, SysCity> implements SysCityService {
 
 	private final SysCityRelationMapper sysCityRelationMapper;
+	
 
 	@Override
 	public Boolean insertCity(SysCity city) {
@@ -124,5 +125,4 @@ public class SysCityServiceImpl extends ServiceImpl<SysCityMapper, SysCity> impl
 		}
 		return TreeUtil.bulid(trees, root);
 	}
-
 }

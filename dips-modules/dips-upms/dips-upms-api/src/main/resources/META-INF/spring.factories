@@ -8,4 +8,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.cloud.dips.admin.api.feign.fallback.RemoteLogServiceFallbackImpl,\
   com.cloud.dips.admin.api.feign.factory.RemoteLogServiceFallbackFactory,\
   com.cloud.dips.admin.api.feign.fallback.RemoteDeptServiceFallbackImpl,\
-  com.cloud.dips.admin.api.feign.factory.RemoteDeptServiceFallbackFactory
+  com.cloud.dips.admin.api.feign.factory.RemoteCityServiceFallbackFactory,\
+  com.cloud.dips.admin.api.feign.fallback.RemoteCityServiceFallbackImpl,\
+  com.cloud.dips.admin.api.feign.factory.RemoteCityServiceFallbackFactory

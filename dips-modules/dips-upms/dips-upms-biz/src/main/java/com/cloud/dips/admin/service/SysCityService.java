@@ -42,8 +42,5 @@ public interface SysCityService extends IService<SysCity> {
 	 * @return 成功、失败
 	 */
 	Boolean updateCityById(SysCity sysCity);
-
-
-
 }
 

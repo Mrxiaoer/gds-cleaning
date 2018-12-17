@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.cloud.dips.admin.api.dto.CityTree;
 import com.cloud.dips.admin.api.entity.SysCity;
 import com.cloud.dips.admin.service.SysCityService;
+import com.cloud.dips.admin.service.SysDeptService;
 import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.util.R;
 
@@ -37,6 +38,8 @@ import lombok.AllArgsConstructor;
 public class CityController {
     @Autowired
     private SysCityService govCityService;
+    @Autowired
+    private SysDeptService sysDeptService;
 
     
     /**
@@ -105,4 +108,15 @@ public class CityController {
 		sysCity.setModifiedTime(LocalDateTime.now());
 		return govCityService.updateCityById(sysCity);
 	}
+	
+	/**
+     * 通过部门ID查询
+     * @param id
+     * @return R
+     */
+    @GetMapping("/deptId/{id}")
+    @ApiOperation(value = "查询城市详细", notes = "根据ID查询城市详细: params{部门ID: id}", httpMethod = "GET")
+    public SysCity findByDeptId(@PathVariable("id") Integer id){    	
+		return govCityService.selectById(sysDeptService.selectDeptVoById(id).getCityId());
+    }
 }
