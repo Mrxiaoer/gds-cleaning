@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.cloud.dips.admin.api.feign.RemoteDeptService;
 import com.cloud.dips.admin.api.vo.DeptCityVO;
+import com.cloud.dips.admin.api.vo.DeptVO;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,12 @@ public class RemoteDeptServiceFallbackImpl implements RemoteDeptService {
 
 	@Override
 	public Map<Integer, DeptCityVO> getDeptCityVOMap() {
+		log.error("feign 查询机构信息失败:{}", cause);
+		return null;
+	}
+
+	@Override
+	public DeptVO get(Integer id) {
 		log.error("feign 查询机构信息失败:{}", cause);
 		return null;
 	}

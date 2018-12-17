@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.cloud.dips.admin.api.feign.factory.RemoteDeptServiceFallbackFactory;
 import com.cloud.dips.admin.api.vo.DeptCityVO;
+import com.cloud.dips.admin.api.vo.DeptVO;
 import com.cloud.dips.common.core.constant.ServiceNameConstant;
 
 /**
@@ -48,5 +49,14 @@ public interface RemoteDeptService {
 	 */
 	@GetMapping("/dept/map")
 	Map<Integer,DeptCityVO> getDeptCityVOMap();
+	
+	/**
+	 * 通过ID查询
+	 *
+	 * @param id ID
+	 * @return SysDept
+	 */
+	@GetMapping("/dept/{id}")
+	DeptVO get(@PathVariable("id") Integer id);
 
 }
