@@ -26,7 +26,7 @@ public class RemoteLogServiceFallbackImpl implements RemoteLogService {
 	 */
 	@Override
 	public R<Boolean> saveLog(SysLog sysLog) {
-		log.error("feign 插入日志失败:{}");
+		log.error("feign 插入日志失败:{}",cause);
 		return null;
 	}
 }
