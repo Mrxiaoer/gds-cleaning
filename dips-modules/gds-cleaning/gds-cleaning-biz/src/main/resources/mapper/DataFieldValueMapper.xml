@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.cleaning.mapper.DataFieldValueMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap id="dataFieldValueMap" type="com.cloud.gds.cleaning.api.entity.DataFieldValue">
+		<result column="id" property="id"/>
+		<result column="field_id" property="fieldId"/>
+		<result column="field_value" property="fieldValue"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="create_user" property="createUser"/>
+		<result column="modified_user" property="modifiedUser"/>
+		<result column="is_deleted" property="isDeleted"/>
+		<result column="state" property="state"/>
+		<result column="remark" property="remark"/>
+		<result column="be_cleaned_id" property="beCleanedId"/>
+	</resultMap>
+
+	<update id="deleteByIds">
+		UPDATE dataclean_data_field_value
+		<set>
+			is_deleted = 1
+		</set>
+		where id in
+		<foreach close=")" collection="ids" item="id" open="(" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<select id="selectByCleanIds" resultMap="dataFieldValueMap">
+		SELECT * FROM dataclean_data_field_value WHERE be_cleaned_id IN
+		<foreach close=")" collection="ids" item="id" open="(" separator=",">
+			#{id}
+		</foreach>
+	</select>
+
+</mapper>

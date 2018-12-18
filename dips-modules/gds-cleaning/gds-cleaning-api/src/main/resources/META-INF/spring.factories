@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.cloud.gds.cleaning.api.feign.fallback.DataFieldServiceFallbackImpl,\
+  com.cloud.gds.cleaning.api.feign.factory.DataFieldServiceFallbackFactory

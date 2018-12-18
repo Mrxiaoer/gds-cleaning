@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.cleaning.mapper.AttributeMatchMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap id="attributeMatchMap" type="com.cloud.gds.cleaning.api.entity.AttributeMatch">
+		<result column="id" property="id"/>
+		<result column="data_id" property="dataId"/>
+		<result column="attribute_value" property="attributeValue"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="create_user" property="createUser"/>
+		<result column="modified_user" property="modifiedUser"/>
+		<result column="is_deleted" property="isDeleted"/>
+	</resultMap>
+
+
+</mapper>

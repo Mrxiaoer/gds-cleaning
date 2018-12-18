@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.cleaning.mapper.DataFieldMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap id="dataFieldMap" type="com.cloud.gds.cleaning.api.entity.DataField">
+		<result column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="rule_id" property="ruleId"/>
+		<result column="dept_id" property="deptId"/>
+		<result column="dept_name" property="deptName"/>
+		<result column="method_name" property="methodName"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="create_user" property="createUser"/>
+		<result column="modified_user" property="modifiedUser"/>
+		<result column="is_deleted" property="isDeleted"/>
+		<result column="remark" property="remark"/>
+		<result column="analyse_state" property="analyseState"/>
+	</resultMap>
+
+
+</mapper>

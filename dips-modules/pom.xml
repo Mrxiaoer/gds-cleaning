@@ -10,5 +10,6 @@
     <modules>
         <module>dips-upms</module>
         <module>dips-tms</module>
+		<module>gds-cleaning</module>
     </modules>
 </project>

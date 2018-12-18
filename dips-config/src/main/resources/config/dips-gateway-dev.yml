@@ -48,6 +48,10 @@ spring:
         uri: lb://dips-codegen
         predicates:
         - Path=/gen/**
+      - id: gds-cleaning
+        uri: lb://gds-cleaning
+        predicates:
+        - Path=/cleaning/**
 security:
   encode:
     # 前端密码密钥，必须16位
