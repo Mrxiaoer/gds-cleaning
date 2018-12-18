@@ -68,6 +68,7 @@ public class GovTagRelationServiceImpl extends ServiceImpl<GovTagRelationMapper,
 			if(StrUtil.isNotBlank(params.getOrDefault(TKW, "").toString())){
 				String[] tagKeyWords = params.getOrDefault(TKW, "").toString().split(",");
 				for (String tagname : tagKeyWords) {
+					if(tagname.length()<=60){
 					EntityWrapper<GovTag> e3 = new EntityWrapper<GovTag>();
 					e3.where("name = {0}", tagname);
 					GovTag tag = tagService.selectOne(e3);
@@ -96,6 +97,7 @@ public class GovTagRelationServiceImpl extends ServiceImpl<GovTagRelationMapper,
 					if (this.selectOne(e4) == null) {
 						this.insert(bean);
 					}   
+				}
 				}
 			}
 			return Boolean.TRUE;

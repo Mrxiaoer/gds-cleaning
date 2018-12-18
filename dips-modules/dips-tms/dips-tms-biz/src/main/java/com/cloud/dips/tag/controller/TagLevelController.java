@@ -3,6 +3,9 @@ package com.cloud.dips.tag.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,12 +62,22 @@ public class TagLevelController {
 		EntityWrapper<GovTagLevel> e=new EntityWrapper<GovTagLevel>();
 		String name=params.getOrDefault("levelname", "").toString();
 		if(StrUtil.isNotBlank(name)){
-			name="%"+name+"%";
-			e.where( "name like {0}", name);
+			e.like("name",  escapeExprSpecialWord(name));
 		}
 		return service.selectPage(p,e);
 	}
 	
+	public String escapeExprSpecialWord(String keyword) {
+        if (StringUtils.isNotEmpty(keyword)) {
+            String[] fbsArr = { "\\","$","(",")","*","+",".","[", "]","?","^","{","}","|","'","%" };
+            for (String key : fbsArr) {
+                if (keyword.contains(key)) {
+                    keyword = keyword.replace(key, "\\" + key);
+                }
+            }
+        }
+        return keyword;
+    }
 	
 
 	@SysLog("删除标签级别")
@@ -87,7 +100,7 @@ public class TagLevelController {
 	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('gov_tagLevel_add')")
 	@ApiOperation(value = "添加标签级别", notes = "添加标签级别", httpMethod = "POST")
-	public R<Boolean> saveTagLevel(@RequestBody GovTagLevelDTO govTagLevelDto) {
+	public R<Boolean> saveTagLevel(@Valid @RequestBody GovTagLevelDTO govTagLevelDto) {
 			GovTagLevel govTagLevel = new GovTagLevel();
 			BeanUtils.copyProperties(govTagLevelDto, govTagLevel);
 			return new R<>(service.insert(govTagLevel));

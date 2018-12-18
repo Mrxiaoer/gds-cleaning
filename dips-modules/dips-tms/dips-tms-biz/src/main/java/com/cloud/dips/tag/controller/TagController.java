@@ -330,7 +330,7 @@ public class TagController {
 						GovTagRelation govTagRelation=relationService.selectOne(e3);
 						if(govTagRelation!=null){
 							params.put("tag_id",bean.getTagId());
-							service.deleteByMap(params);
+							relationService.deleteByMap(params);
 							num--;
 						}
 					}

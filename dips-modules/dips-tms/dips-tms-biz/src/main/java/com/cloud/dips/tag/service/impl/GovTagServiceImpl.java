@@ -3,6 +3,7 @@ package com.cloud.dips.tag.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,19 +49,31 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Page<GovTagVO> selectAllPage(Query query) {
-
-		Object tagname = query.getCondition().get("name");
+		Object name = query.getCondition().get("name");
 		Object typeid = query.getCondition().get("typeid");
 		Object levelid = query.getCondition().get("levelid");
 		Object status = query.getCondition().get("status");
 		Object enable = query.getCondition().get("enable");
 		Object fob = query.getCondition().get("fob");
-
+		String tagname="";
+		if(name!=null){
+			tagname=escapeExprSpecialWord(name.toString());
+		}
 		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid,levelid,status,enable,fob));
-
 		return query;
-
 	}
+	
+public String escapeExprSpecialWord(String keyword) {
+        if (StringUtils.isNotEmpty(keyword)) {
+            String[] fbsArr = { "\\","$","(",")","*","+",".","[", "]","?","^","{","}","|","'","%" };
+            for (String key : fbsArr) {
+                if (keyword.contains(key)) {
+                    keyword = keyword.replace(key, "\\" + key);
+                }
+            }
+        }
+        return keyword;
+    }
 	
 	/**
 	 * 通过ID查询标签

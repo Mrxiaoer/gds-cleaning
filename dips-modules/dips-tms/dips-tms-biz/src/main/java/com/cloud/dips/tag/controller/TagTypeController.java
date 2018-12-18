@@ -3,6 +3,8 @@ package com.cloud.dips.tag.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -91,7 +93,7 @@ public class TagTypeController {
 	@PostMapping("/create")
 	@PreAuthorize("@pms.hasPermission('gov_tagType_add')")
 	@ApiOperation(value = "添加标签分类", notes = "添加标签分类", httpMethod = "POST")
-	public R<Boolean> saveTagType(@RequestBody GovTagTypeDTO govTagTypeDto) {
+	public R<Boolean> saveTagType(@Valid @RequestBody GovTagTypeDTO govTagTypeDto) {
 			GovTagType govTagType = new GovTagType();
 			BeanUtils.copyProperties(govTagTypeDto, govTagType);
 			return new R<>(service.insert(govTagType));

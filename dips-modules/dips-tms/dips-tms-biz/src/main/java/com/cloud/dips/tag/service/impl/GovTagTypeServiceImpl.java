@@ -2,6 +2,7 @@ package com.cloud.dips.tag.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.plugins.Page;
@@ -30,7 +31,23 @@ public class GovTagTypeServiceImpl extends ServiceImpl<GovTagTypeMapper, GovTagT
 	@Override
 	public Page<GovTagTypeVO> selectTypeVoPage(Query<GovTagTypeVO> query) {
 		Object name = query.getCondition().get("name");
-		query.setRecords(baseMapper.selectTypeVoPage(query, name));
+		String typename="";
+		if(name!=null){
+			typename=escapeExprSpecialWord(name.toString());
+		}
+		query.setRecords(baseMapper.selectTypeVoPage(query, typename));
 		return query;
 	}
+	
+	public String escapeExprSpecialWord(String keyword) {
+        if (StringUtils.isNotEmpty(keyword)) {
+            String[] fbsArr = { "\\","$","(",")","*","+",".","[", "]","?","^","{","}","|","'","%" };
+            for (String key : fbsArr) {
+                if (keyword.contains(key)) {
+                    keyword = keyword.replace(key, "\\" + key);
+                }
+            }
+        }
+        return keyword;
+    }
 }
