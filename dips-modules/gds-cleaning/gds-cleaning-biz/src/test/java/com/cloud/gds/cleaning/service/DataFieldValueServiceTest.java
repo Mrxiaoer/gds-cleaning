@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.swing.text.MaskFormatter;
 import java.util.*;
 
 @SpringBootTest(classes = GdsCleaningApplication.class)
@@ -120,6 +121,18 @@ public class DataFieldValueServiceTest {
 		Wrapper<DataFieldValue> entityWrapper = CommonUtils.pagePart(params,pp,new DataFieldValue());
 
 		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)),entityWrapper));
+	}
+
+	@Test
+	public void saveAll(){
+    	List<Map<String,Object>> maps = new ArrayList<Map<String,Object>>();
+    	Map<String,Object> map = new HashMap<>();
+    	map.put("city", "舟山");
+    	map.put("name", "王小二");
+    	map.put("age",24 );
+    	maps.add(map);
+    	maps.add(map);
+    	dataFieldValueService.saveAll(2L,maps );
 	}
 
 }

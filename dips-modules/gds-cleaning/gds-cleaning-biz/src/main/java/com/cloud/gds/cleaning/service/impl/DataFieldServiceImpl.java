@@ -56,7 +56,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		dataField.setCreateTime(LocalDateTime.now());
 //		dataField.setCreateUser(SecurityUtils.getUser().getId());
 //		dataField.setDeptId(SecurityUtils.getUser().getDeptId());
-		dataField.setDeptName(SecurityUtils.getUser().getDeptName());
+//		dataField.setDeptName(SecurityUtils.getUser().getDeptName());
 		return this.insert(dataField);
 	}
 
@@ -96,6 +96,22 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 			SortedMap<String,String> one = DataRuleUtils.changeSortedMap(oneVo.getDetail());
 			SortedMap<String,String> two = DataRuleUtils.changeSortedMap(twoVo.getDetail());
 			return CommonUtils.checkSortedMap(one,two);
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean updateMatrixFile(Long ruleId) {
+		if ( !ruleId.equals(DataCleanConstant.ZERO )){
+			List<DataField> list = this.selectByRuleId(ruleId);
+			for (DataField dataField : list){
+				if ( !dataField.getMatrixFile().isEmpty()){
+					DataField q = new DataField();
+					q.setId(dataField.getId());
+					q.setMatrixFile("");
+					this.updateById(q);
+				}
+			}
 		}
 		return true;
 	}

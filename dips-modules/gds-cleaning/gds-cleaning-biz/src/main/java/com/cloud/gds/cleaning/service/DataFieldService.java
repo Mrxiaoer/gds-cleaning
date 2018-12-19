@@ -64,4 +64,11 @@ public interface DataFieldService extends IService<DataField> {
 	 * @return
 	 */
 	Boolean checkRule(Long id, Long ruleId);
+
+	/**
+	 * 根据规则id清空matrixFile
+	 * @param ruleId
+	 * @return
+	 */
+	Boolean updateMatrixFile(Long ruleId);
 }

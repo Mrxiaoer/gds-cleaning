@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -46,7 +47,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
     @Override
     public Boolean update(DataFieldValue dataFieldValue) {
         dataFieldValue.setModifiedTime(LocalDateTime.now());
-        //		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+//        dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
         return this.updateById(dataFieldValue);
     }
 
@@ -54,7 +55,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
     public Boolean deleteById(Long id) {
         DataFieldValue dataFieldValue = new DataFieldValue();
         dataFieldValue.setId(id);
-        //		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+//        dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
         dataFieldValue.setIsDeleted(DataCleanConstant.YES);
         dataFieldValue.setModifiedTime(LocalDateTime.now());
         return this.updateById(dataFieldValue);
@@ -73,7 +74,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
         DataFieldValue dataFieldValue = new DataFieldValue();
         dataFieldValue.setFieldId(id);
         dataFieldValue.setFieldValue(params.toJSONString());
-        //        dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
+//        dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
         dataFieldValue.setCreateTime(LocalDateTime.now());
         return this.insert(dataFieldValue);
     }
@@ -87,7 +88,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
             DataFieldValue dataFieldValue = new DataFieldValue();
             // 组装
             dataFieldValue.setFieldId(fieldId);
-            dataFieldValue.setFieldValue(map.toString());
+            dataFieldValue.setFieldValue(JSON.toJSONString(map));
 //            dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
             dataFieldValue.setCreateTime(LocalDateTime.now());
             dataFieldValue.setModifiedTime(LocalDateTime.now());
