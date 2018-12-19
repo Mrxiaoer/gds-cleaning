@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
@@ -87,6 +88,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
             // 组装
             dataFieldValue.setFieldId(fieldId);
             dataFieldValue.setFieldValue(map.toString());
+//            dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
             dataFieldValue.setCreateTime(LocalDateTime.now());
             dataFieldValue.setModifiedTime(LocalDateTime.now());
             // 添加数据

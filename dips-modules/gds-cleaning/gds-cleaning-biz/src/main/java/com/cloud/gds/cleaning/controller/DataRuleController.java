@@ -46,12 +46,14 @@ public class DataRuleController {
 	@GetMapping("/page")
 	@ApiOperation(value = "查看列表", notes = "根据条件获取列表")
 	public R page(@RequestParam Map<String, Object> params) {
+
 		CommonUtils.PiPei pp = CommonUtils.createPP();
 		List<String> likelist = new ArrayList<>();
 		likelist.add("name");
 		pp.setLike(likelist);
 		Wrapper<DataRule> wrapper = CommonUtils.pagePart(params,pp,new DataRule());
 		Page page = dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper);
+
 		return new R<>(page);
 	}
 
@@ -61,21 +63,20 @@ public class DataRuleController {
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-		DataRuleVo dataFieldVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
+		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
 		SecurityUtils.getUser();
-		return new R<>(dataFieldVo);
+		return new R<>(dataRuleVo);
 	}
 
 	@GetMapping("/list")
 	public R selectAll(){
-
-		return new R();
+		return new R(dataRuleService.selectAll());
 	}
 
 	@GetMapping("/key")
 	public R getKey(@RequestParam Long id){
-		DataRuleVo dataFieldVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
-		return new R(DataRuleUtils.convet(dataFieldVo));
+		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
+		return new R(DataRuleUtils.convet(dataRuleVo));
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class DataRuleController {
 	@PostMapping("/update")
 	public R update(@RequestBody DataRuleVo dataRuleVo) {
 		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
-		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+//		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 		return new R<>(dataRuleService.updateById(dataRule));
 	}

@@ -29,7 +29,7 @@ public class DataRuleServiceTest {
 
 	@Test
 	public void deleteById() {
-		System.out.println(dataRuleService.deleteById(5));
+		System.out.println(dataRuleService.deleteById(7L));
 	}
 
 	@Test
@@ -47,6 +47,13 @@ public class DataRuleServiceTest {
 		DataRuleVo dataRuleVo = new DataRuleVo();
 		dataRuleVo.setName("小二规则1214");
 		dataRuleService.save(dataRuleVo);
+	}
+
+	@Test
+	public void selectAll(){
+		List<DataRuleVo> dataRules = DataRuleUtils.listPo2Vo(dataRuleService.selectAll());
+
+		System.out.println(dataRules);
 	}
 
 	@Test

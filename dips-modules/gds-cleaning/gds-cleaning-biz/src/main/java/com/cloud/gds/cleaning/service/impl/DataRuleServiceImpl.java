@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.security.util.SecurityUtils;
@@ -28,7 +29,12 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 
 	@Override
 	public List<DataRule> selectAll() {
-		return null;
+		DataRule dataRule = new DataRule();
+		dataRule.setIsDeleted(DataCleanConstant.NO);
+		dataRule.setDeptId(1);
+//		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
+		List<DataRule> dataRules = this.selectList(new EntityWrapper<>(dataRule));
+		return dataRules;
 	}
 
 	@Override
@@ -57,20 +63,8 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		// 赋予用户信息
 		dataRule.setCreateTime(LocalDateTime.now());
 //		dataRule.setCreateUser(SecurityUtils.getUser().getId());
-		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
+//		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		return this.insert(dataRule);
 	}
 
-	@Override
-	public Page pagePo2Vo(Page page) {
-		List<DataRule> list = page.getRecords();
-		List<DataRulePageVo> vos = new ArrayList<>();
-		for (DataRule vo : list){
-			DataRulePageVo ruleVo = new DataRulePageVo();
-			BeanUtils.copyProperties(vo, ruleVo);
-			vos.add(ruleVo);
-		}
-		page.setRecords(vos);
-		return page;
-	}
 }
