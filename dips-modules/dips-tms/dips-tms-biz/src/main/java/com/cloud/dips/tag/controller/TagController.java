@@ -277,6 +277,7 @@ public class TagController {
 		}
 	}
 	
+	@SysLog("批量删除标签")
 	@PostMapping("/delete")
 	@PreAuthorize("@pms.hasPermission('gov_tag_del')")
 	@ApiOperation(value = "批量删除标签", notes = "批量删除标签", httpMethod = "POST")
