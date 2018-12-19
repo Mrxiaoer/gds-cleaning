@@ -52,7 +52,7 @@ public class DataRuleController {
 		likelist.add("name");
 		pp.setLike(likelist);
 		Wrapper<DataRule> wrapper = CommonUtils.pagePart(params,pp,new DataRule());
-		Page page = dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper);
+		Page page = DataRuleUtils.changePage(dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper));
 
 		return new R<>(page);
 	}
@@ -97,6 +97,8 @@ public class DataRuleController {
 		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
 //		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
+		// 如果规则的百分比更新,矩阵文件名称也进行清空
+		dataFieldService.updateMatrixFile(dataRuleVo.getDetail().isEmpty() ? 0 : dataRuleVo.getId());
 		return new R<>(dataRuleService.updateById(dataRule));
 	}
 

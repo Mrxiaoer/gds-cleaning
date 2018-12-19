@@ -13,8 +13,8 @@ logging:
         web: INFO
     com:
       cloud:
-        dna:
-          dataclean: DEBUG
+        gds:
+          cleaning: DEBUG
 
 # 数据源配置
 spring:

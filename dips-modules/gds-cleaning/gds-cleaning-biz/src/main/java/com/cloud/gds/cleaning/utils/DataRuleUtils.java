@@ -2,7 +2,9 @@ package com.cloud.gds.cleaning.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.gds.cleaning.api.entity.DataRule;
+import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
@@ -21,7 +23,6 @@ import java.util.TreeMap;
  * @Date : 2018-12-11
  */
 public class DataRuleUtils {
-
 
 	/**
 	 * 规则 vo 2 po
@@ -77,6 +78,18 @@ public class DataRuleUtils {
 		return vos;
 	}
 
+	public static Page changePage(Page page){
+		List<DataRule> dataRules = page.getRecords();
+		List<DataRulePageVo> vos = new ArrayList<>();
+		for (DataRule dataRule : dataRules){
+			DataRulePageVo dataRulePageVo = new DataRulePageVo();
+			BeanUtils.copyProperties(dataRule, dataRulePageVo );
+			vos.add(dataRulePageVo);
+		}
+		page.setRecords(vos);
+		return page;
+	}
+
 	/**
 	 * 前端vo显示的时候转json
 	 * @param list
@@ -90,6 +103,11 @@ public class DataRuleUtils {
 		return a.toString();
 	}
 
+	/**
+	 * 取出规则的名称
+	 * @param dataRuleVo
+	 * @return
+	 */
 	public static ArrayList<LabelVo> convet(DataRuleVo dataRuleVo){
 
 		ArrayList<LabelVo> list = new ArrayList<>();

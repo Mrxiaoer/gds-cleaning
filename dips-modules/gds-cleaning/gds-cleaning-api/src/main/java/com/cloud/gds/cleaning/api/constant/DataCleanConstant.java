@@ -13,5 +13,10 @@ public interface DataCleanConstant {
 
 	Integer NO = 0;
 
+	Long ZERO = 0L;
+
+	Long ONE = 1L;
+
+
 
 }

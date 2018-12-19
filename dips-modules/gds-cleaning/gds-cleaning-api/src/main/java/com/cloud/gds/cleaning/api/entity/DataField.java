@@ -81,6 +81,7 @@ public class DataField extends Model<DataField> {
 	/**
 	 * 矩阵文件名称
 	 */
+	@JsonIgnore
 	private String matrixFile;
 
 	@Override

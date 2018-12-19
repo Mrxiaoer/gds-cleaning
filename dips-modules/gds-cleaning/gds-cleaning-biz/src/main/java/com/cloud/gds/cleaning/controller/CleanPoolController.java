@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.entity.DataField;
+import com.cloud.gds.cleaning.api.vo.DataFieldVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
+import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,9 @@ public class CleanPoolController {
 
 	@Autowired
 	DataFieldService dataFieldService;
+
+	@Autowired
+	DataRuleService dataRuleService;
 
 	/**
 	 * 分页
@@ -56,7 +62,13 @@ public class CleanPoolController {
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-		return new R<>(dataFieldService.selectById(id));
+
+		DataFieldVo dataFieldVo = new DataFieldVo();
+		DataField dataField = dataFieldService.selectById(id);
+		BeanUtils.copyProperties(dataField, dataFieldVo);
+		dataFieldVo.setRuleName((dataField.getRuleId() == 0) ? null : (dataRuleService.selectById(dataField.getRuleId()).getName()));
+
+		return new R<>(dataFieldVo);
 	}
 
 	/**

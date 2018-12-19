@@ -27,10 +27,15 @@ public class DataFieldVo {
 	/**
 	 * 来源方式
 	 */
-	private String source;
-
+	private String methodName;
+	/**
+	 * 关联规则id
+	 */
 	private Long ruleId;
-
+	/**
+	 * 规则名称
+	 */
+	private String ruleName;
 	/**
 	 * 分析状态（0、未分析 1、正在分析 2、已分析 3、分析出错）
 	 */

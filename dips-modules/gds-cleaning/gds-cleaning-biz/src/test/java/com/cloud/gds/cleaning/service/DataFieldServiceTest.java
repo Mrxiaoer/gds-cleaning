@@ -29,6 +29,9 @@ public class DataFieldServiceTest {
 	@Autowired
 	DataRuleService dataRuleService;
 
+	@Autowired
+	DataFieldService dataFieldService;
+
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Test
@@ -94,6 +97,11 @@ public class DataFieldServiceTest {
 		for (Long x : ids){
 			System.out.print(x);
 		}
+	}
+
+	@Test
+	public void updateMatrixFile(){
+		dataFieldService.updateMatrixFile(5L);
 	}
 
 
