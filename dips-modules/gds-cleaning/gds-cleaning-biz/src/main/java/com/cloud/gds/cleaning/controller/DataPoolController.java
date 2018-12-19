@@ -1,6 +1,6 @@
 package com.cloud.gds.cleaning.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -12,13 +12,18 @@ import com.cloud.gds.cleaning.api.vo.DataPoolVo;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 导入数据的内容
@@ -39,6 +44,7 @@ public class DataPoolController {
 	/**
 	 * 分页
 	 * 参数要求：page、limit、fieldId
+	 *
 	 * @param params
 	 */
 	@GetMapping("/page")
@@ -48,39 +54,44 @@ public class DataPoolController {
 		eqList.add("fieldId");
 		eqList.add("remark");
 		pp.setEq(eqList);
-//		List<String> likelist = new ArrayList<>();
-//		likelist.add("");
-//		pp.setLike(likelist);
-		Wrapper<DataFieldValue> wrapper = CommonUtils.pagePart(params,pp,new DataFieldValue());
-		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper));
+		//		List<String> likelist = new ArrayList<>();
+		//		likelist.add("");
+		//		pp.setLike(likelist);
+		Wrapper<DataFieldValue> wrapper = CommonUtils.pagePart(params, pp, new DataFieldValue());
+		Page page = dataFieldValueService
+			.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)), wrapper));
 		return new R<>(page);
 	}
 
 	/**
 	 * 根据id查询
+	 *
 	 * @param id
 	 * @return R
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-		DataFieldValue dataFieldValue = dataFieldValueService.selectOne(new EntityWrapper<DataFieldValue>().eq("id", id).eq("is_deleted", DataCleanConstant.NO));
+		DataFieldValue dataFieldValue = dataFieldValueService
+			.selectOne(new EntityWrapper<DataFieldValue>().eq("id", id).eq("is_deleted", DataCleanConstant.NO));
 		DataPoolVo dataPoolVo = DataPoolUtils.entity2Vo(dataFieldValue);
 		return new R<>(dataPoolVo);
 	}
 
 	/**
 	 * 保存
+	 *
 	 * @param params
 	 * @param id
 	 * @return
 	 */
 	@PostMapping("/create/{id}")
 	public R save(@RequestBody JSONObject params, @RequestParam("fieldId") Long id) {
-		return new R<>(dataFieldValueService.save(id,params));
+		return new R<>(dataFieldValueService.save(id, params));
 	}
 
 	/**
 	 * 修改
+	 *
 	 * @param dataPoolVo
 	 * @return R
 	 */
@@ -93,21 +104,23 @@ public class DataPoolController {
 
 	/**
 	 * 单独删除
+	 *
 	 * @param id
 	 * @return
 	 */
 	@PostMapping("/delete/{id}")
-	public R delete(@PathVariable("id") Long id){
+	public R delete(@PathVariable("id") Long id) {
 		return new R(dataFieldValueService.deleteById(id));
 	}
 
 	/**
 	 * 批量删除
+	 *
 	 * @param ids
 	 * @return
 	 */
 	@PostMapping("/ids")
-	public R deleteT(@RequestBody Set<Long> ids){
+	public R deleteT(@RequestBody Set<Long> ids) {
 		dataFieldValueService.deleteByIds(ids);
 		return new R<>();
 	}

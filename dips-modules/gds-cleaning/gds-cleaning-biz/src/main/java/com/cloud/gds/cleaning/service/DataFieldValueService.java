@@ -1,11 +1,10 @@
 package com.cloud.gds.cleaning.service;
 
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,9 +17,9 @@ import java.util.Set;
  */
 public interface DataFieldValueService extends IService<DataFieldValue> {
 
-
 	/**
 	 * 更新数据
+	 *
 	 * @param dataFieldValue
 	 * @return
 	 */
@@ -28,6 +27,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 单独删除
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -35,12 +35,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 批量删除
+	 *
 	 * @param ids
 	 */
 	Boolean deleteByIds(Set<Long> ids);
 
 	/**
 	 * 保存单一数据
+	 *
 	 * @param id
 	 * @param params
 	 * @return
@@ -49,13 +51,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * excel工具导数据保存到数据库
+	 *
 	 * @param maps
 	 */
 	void saveAll(Long fieldId, List<Map<String, Object>> maps);
 
-
 	/**
 	 * page po 2 vo
+	 *
 	 * @param page
 	 * @return
 	 */
@@ -75,7 +78,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @param id 数据集id
 	 * @return String JSON字符串
 	 */
-	String getAnalysisData(Long id);
+	String getAnalysisData(Long fieldId);
 
 }
 

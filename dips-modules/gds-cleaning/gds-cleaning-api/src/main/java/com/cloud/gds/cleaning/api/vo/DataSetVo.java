@@ -25,7 +25,7 @@ public class DataSetVo {
 	/**
 	 * 权重
 	 */
-	private double weight;
+	private Float weight;
 
 	/**
 	 * 有无同义
