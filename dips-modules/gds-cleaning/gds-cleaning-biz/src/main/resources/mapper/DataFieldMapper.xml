@@ -18,6 +18,7 @@
 		<result column="is_deleted" property="isDeleted"/>
 		<result column="remark" property="remark"/>
 		<result column="analyse_state" property="analyseState"/>
+		<result column="matrix_file" property="matrixFile"/>
 	</resultMap>
 
 

@@ -55,7 +55,7 @@ public class DataFieldValue extends Model<DataFieldValue> {
 	 */
 	private Integer isDeleted;
 	/**
-	 * 状态
+	 * 分析状态(0、未分析 1、已分析）
 	 */
 	private Integer state;
 	/**

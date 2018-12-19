@@ -17,7 +17,7 @@ import java.util.Set;
 public interface DataRuleService extends IService<DataRule> {
 
 	/**
-	 * 导入自动保存
+	 * 查询规则
 	 * @return
 	 */
 	List<DataRule> selectAll();
@@ -39,11 +39,5 @@ public interface DataRuleService extends IService<DataRule> {
 	 * @return
 	 */
 	Boolean save(DataRuleVo dataRuleVo);
-	/**
-	 * page po 2 vo
-	 * @param page
-	 * @return
-	 */
-	Page pagePo2Vo(Page page);
 }
 
