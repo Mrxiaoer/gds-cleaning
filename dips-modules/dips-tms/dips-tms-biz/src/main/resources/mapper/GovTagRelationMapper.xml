@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, ZB All rights reserved.
+ *
+ * Author: ZB
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.tag.mapper.GovTagRelationMapper">
+	<!-- Vo结果集 -->
+	<resultMap id="resultMap" type="com.cloud.dips.tag.api.vo.GovTagRelationVO">
+		<result column="typeNumber" property="typeNumber"/>
+		<result column="typeName" property="typeName"/>
+		<collection property="tagList" ofType="com.cloud.dips.tag.api.vo.CommonVO">
+			<result column="commonId" property="commonId"/>
+			<result column="commonName" property="commonName"/>
+		</collection>
+	</resultMap>
+	
+	<select id="getTags" resultMap="resultMap">
+		SELECT
+            type.type_name AS typeName,
+            type.type_number AS typeNumber,
+            tag.id AS commonId,
+            tag.name AS commonName
+        FROM
+            gov_tag_relation AS relation
+            LEFT JOIN gov_tag_relation_type AS type ON type.id = relation.type_id
+            LEFT JOIN gov_tag AS tag ON tag.id = relation.tag_id
+        WHERE
+			relation.relation_id = #{relationId}
+			and relation.node = #{node}
+        <if test="fob != 'b'.toString()">
+			and tag.status = 1
+			and tag.enable = 1
+		</if>
+    </select>
+
+</mapper>

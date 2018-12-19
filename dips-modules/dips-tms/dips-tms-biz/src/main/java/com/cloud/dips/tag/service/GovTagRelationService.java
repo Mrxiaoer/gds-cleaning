@@ -1,9 +1,11 @@
 package com.cloud.dips.tag.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.dips.tag.api.entity.GovTagRelation;
+import com.cloud.dips.tag.api.vo.GovTagRelationVO;
 
 
 /**
@@ -24,6 +26,14 @@ public interface GovTagRelationService extends IService<GovTagRelation> {
 	 * @return
 	 */
 	public Boolean deleteTagRelation(Integer relationId,String node);
+	/**
+	 * 获取标签集合
+	 * @param relationId
+	 * @param node
+	 * @param fob
+	 * @return
+	 */
+	public List<GovTagRelationVO> getTags(Integer relationId,String node,String fob);
 	
 }
 
