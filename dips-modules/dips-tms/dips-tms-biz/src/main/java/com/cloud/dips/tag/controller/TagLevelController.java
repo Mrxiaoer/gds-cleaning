@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,9 +80,9 @@ public class TagLevelController {
 	
 
 	@SysLog("删除标签级别")
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('gov_tagLevel_del')")
-	@ApiOperation(value = "删除标签级别", notes = "删除标签级别",httpMethod="DELETE")
+	@ApiOperation(value = "删除标签级别", notes = "删除标签级别",httpMethod="POST")
 	public R<Boolean> tagLevelDel(@PathVariable Integer id) {
 		GovTagLevel govTagLevel = service.selectById(id);
 		if(govTagLevel==null){

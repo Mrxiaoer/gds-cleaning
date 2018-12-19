@@ -20,7 +20,7 @@ public interface RemoteTagRelationService {
 	 * @param params 参数集
 	 * @return R
 	 */
-	@PostMapping("/tagRelation/saveTagRelation")
+	@PostMapping("/relation/save")
 	R<Boolean> saveTagRelation(@RequestParam Map<String, Object> params);
 
 	/**
@@ -29,6 +29,6 @@ public interface RemoteTagRelationService {
 	 * @param node
 	 * @return
 	 */
-	@PostMapping("/tagRelation/deleteTagRelation")
+	@PostMapping("/relation/delete")
 	R<Boolean> deleteTagRelation(@RequestParam Integer relationId,@RequestParam String node);
 }

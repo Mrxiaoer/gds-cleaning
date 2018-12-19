@@ -20,20 +20,20 @@ import io.swagger.annotations.ApiOperation;
  *
  */
 @RestController
-@RequestMapping("/tagRelation")
+@RequestMapping("/relation")
 public class TagRelationController {
 	@Autowired
 	private GovTagRelationService service;
 
 	@SysLog("添加标签关联")
-	@PostMapping("/saveTagRelation")
+	@PostMapping("/save")
 	@ApiOperation(value = "添加标签关联", notes = "添加标签关联", httpMethod = "POST")
 	public R<Boolean> saveTagRelation(@RequestParam Map<String, Object> params) {
 		return new R<Boolean>(service.saveTagRelation(params));
 	}
 
 	@SysLog("删除标签关联")
-	@PostMapping("/deleteTagRelation")
+	@PostMapping("/delete")
 	@ApiOperation(value = "删除标签关联", notes = "删除标签关联", httpMethod = "POST")
 	public R<Boolean> deleteTagRelation(@RequestParam Integer relationId,@RequestParam String node) {
 		return new R<Boolean>(service.deleteTagRelation(relationId, node));
