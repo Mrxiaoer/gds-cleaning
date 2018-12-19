@@ -69,5 +69,13 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	List<DataFieldValueTree> compareDifference(Long id);
 
+	/**
+	 * 获取待分析数据
+	 *
+	 * @param id 数据集id
+	 * @return String JSON字符串
+	 */
+	String getAnalysisData(Long id);
+
 }
 

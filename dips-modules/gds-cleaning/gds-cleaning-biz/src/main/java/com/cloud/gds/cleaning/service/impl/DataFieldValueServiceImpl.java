@@ -120,7 +120,16 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
         return TreeUtil.buildByRecursive(treeList, 0L);
     }
 
-    /**
+	@Override
+	public String getAnalysisData(Long id) {
+		//第一次分析
+
+		//多次分析
+
+		return null;
+	}
+
+	/**
      * 调用清洗相似度计算
      */
     public void interfaceTest() {
