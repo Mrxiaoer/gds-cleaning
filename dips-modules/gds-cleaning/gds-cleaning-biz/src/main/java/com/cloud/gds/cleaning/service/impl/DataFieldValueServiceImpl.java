@@ -153,7 +153,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		List<DataSetVo> list = JSONUtil.parseArray(dataRule.getParams()).toList(DataSetVo.class);
 		List<String> params = new ArrayList<>(4);
 		List<Float> weights = new ArrayList<>(4);
-		List<Boolean> approximates = new ArrayList<>(4);
+		List<Integer> approximates = new ArrayList<>(4);
 		List<String> needDeleteFields = new ArrayList<>();
 		for (DataSetVo dataSetVo : list) {
 			//如果权重为零，删除该字段

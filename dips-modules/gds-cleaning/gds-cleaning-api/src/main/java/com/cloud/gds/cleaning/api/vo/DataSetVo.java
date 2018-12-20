@@ -30,6 +30,6 @@ public class DataSetVo {
 	/**
 	 * 有无同义
 	 */
-	private Boolean isSynonymous;
+	private Integer isSynonymous;
 
 }

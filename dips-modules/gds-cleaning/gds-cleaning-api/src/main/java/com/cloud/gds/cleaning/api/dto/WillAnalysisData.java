@@ -33,7 +33,7 @@ public class WillAnalysisData {
 	/**
 	 * 是否为近似字段
 	 */
-	List<Boolean> approximates;
+	List<Integer> approximates;
 
 	/**
 	 * 标准数据
