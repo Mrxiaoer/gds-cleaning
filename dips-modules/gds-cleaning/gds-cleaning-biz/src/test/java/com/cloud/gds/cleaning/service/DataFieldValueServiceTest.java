@@ -135,4 +135,9 @@ public class DataFieldValueServiceTest {
     	dataFieldValueService.saveAll(2L,maps );
 	}
 
+	@Test
+	public void getAnalysisData(){
+		String a = dataFieldValueService.getAnalysisData(3L);
+		System.out.println(a);
+	}
 }

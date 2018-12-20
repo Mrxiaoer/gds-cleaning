@@ -13,7 +13,7 @@ import lombok.Data;
  * @Date : 2018-12-19
  */
 @Data
-public class FirstAnalysisData {
+public class WillAnalysisData {
 
 	/**
 	 * 阀值
@@ -48,9 +48,9 @@ public class FirstAnalysisData {
 	Map<String, Map<String, Float>> similarity;
 
 	/**
-	 * 删减的数据id
+	 * 需要分析的数据id
 	 */
-	List<Long> deletedDataId;
+	List<Long> needAnalysisDataId;
 
 	/**
 	 * 待分析数据

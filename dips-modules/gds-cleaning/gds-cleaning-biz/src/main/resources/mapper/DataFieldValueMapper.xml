@@ -36,4 +36,12 @@
 		</foreach>
 	</select>
 
+	<select id="selectNeedAnalysisIdList" resultType="java.lang.Long">
+		SELECT
+			id
+		FROM
+			dataclean_data_field_value
+		WHERE field_id = #{dataFieldValue.fieldId} AND is_deleted = 0
+	</select>
+
 </mapper>

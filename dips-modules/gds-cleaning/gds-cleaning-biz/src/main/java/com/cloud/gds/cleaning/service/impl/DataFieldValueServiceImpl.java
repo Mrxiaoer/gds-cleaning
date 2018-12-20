@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
-import com.cloud.gds.cleaning.api.dto.FirstAnalysisData;
+import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
@@ -135,6 +135,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public String getAnalysisData(Long fieldId) {
 
 		DataField dataField = new DataField();
@@ -145,9 +146,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataRule.setId(dataField.getRuleId());
 		dataRule = dataRuleService.selectById(dataRule);
 
-		FirstAnalysisData firstAnalysisData = new FirstAnalysisData();
+		WillAnalysisData willAnalysisData = new WillAnalysisData();
 		//设置阀值
-		firstAnalysisData.setThreshold(0.8F);
+		willAnalysisData.setThreshold(0.8F);
 		//设置字段名，权重，字段是否近似
 		List<DataSetVo> list = JSONUtil.parseArray(dataRule.getParams()).toList(DataSetVo.class);
 		List<String> params = new ArrayList<>(4);
@@ -164,33 +165,42 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 				needDeleteFields.add(dataSetVo.getProp());
 			}
 		}
-		firstAnalysisData.setParams(params);
-		firstAnalysisData.setWeights(weights);
-		firstAnalysisData.setApproximates(approximates);
+		willAnalysisData.setParams(params);
+		willAnalysisData.setWeights(weights);
+		willAnalysisData.setApproximates(approximates);
 
-		if (StrUtil.isNotBlank(dataField.getMatrixFile())) {
+		//设置待分析数据
+		List<DataFieldValue> willAnalysisList;
+		List<JSONObject> objList = new ArrayList<>();
+		if (StrUtil.isBlank(dataField.getMatrixFile())) {
 			//第一次分析
-
-			//设置待分析数据
-			List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
-			List<JSONObject> objList = new ArrayList<>();
-			for (DataFieldValue dataFieldValue : willAnalysisList) {
-				if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
-					JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
-					//删除权重为0的字段
-					for (String needDeleteField : needDeleteFields) {
-						jsonObj.remove(needDeleteField);
-					}
-					objList.add(jsonObj);
-				}
-			}
-			firstAnalysisData.setData(objList);
+			willAnalysisList = firstAnalysisList(fieldId);
 		} else {
 			//非首次分析
+			willAnalysisList = notFirstAnalysisList(fieldId);
 
+			DataFieldValue dfv = new DataFieldValue();
+			dfv.setFieldId(fieldId);
+			List<Long> needAnalysisIdList = baseMapper.selectNeedAnalysisIdList(dfv);
+			willAnalysisData.setNeedAnalysisDataId(needAnalysisIdList);
 		}
+		for (DataFieldValue dataFieldValue : willAnalysisList) {
+			if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
+				JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
+				//添加id字段
+				jsonObj.putOnce("id",dataFieldValue.getId());
+				//删除权重为0的字段
+				for (String needDeleteField : needDeleteFields) {
+					jsonObj.remove(needDeleteField);
+				}
 
-		return JSONUtil.toJsonStr(firstAnalysisData);
+				objList.add(jsonObj);
+			}
+		}
+		willAnalysisData.setData(objList);
+
+		//返回json字符串
+		return JSONUtil.toJsonStr(willAnalysisData);
 	}
 
 	/**
@@ -204,8 +214,31 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
 			.eq("is_deleted", DataCleanConstant.NO);
 
+		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
+		DataFieldValue dataFieldValue = new DataFieldValue();
+		dataFieldValue.setState(1);
+		baseMapper.update(dataFieldValue, wrapper);
 
-		return baseMapper.selectList(wrapper);
+		return needAnalysisList;
+	}
+
+	/**
+	 * 多次分析的数据
+	 *
+	 * @param fieldId
+	 * @return List<DataFieldValue>
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public List<DataFieldValue> notFirstAnalysisList(Long fieldId) {
+		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
+			.eq("is_deleted", DataCleanConstant.NO).eq("state", 0);
+
+		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
+		DataFieldValue dataFieldValue = new DataFieldValue();
+		dataFieldValue.setState(1);
+		baseMapper.update(dataFieldValue, wrapper);
+
+		return needAnalysisList;
 	}
 
 	/**
