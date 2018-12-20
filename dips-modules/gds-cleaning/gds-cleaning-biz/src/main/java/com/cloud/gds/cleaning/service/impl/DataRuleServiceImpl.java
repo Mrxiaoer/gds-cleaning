@@ -32,7 +32,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		DataRule dataRule = new DataRule();
 		dataRule.setIsDeleted(DataCleanConstant.NO);
 		dataRule.setDeptId(1);
-//		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
+		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		List<DataRule> dataRules = this.selectList(new EntityWrapper<>(dataRule));
 		return dataRules;
 	}
@@ -41,7 +41,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 	public Boolean deleteById(Long id) {
 		DataRule dataRule = new DataRule();
 		dataRule.setId(id);
-//		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 		dataRule.setIsDeleted(DataCleanConstant.YES);
 		return this.updateById(dataRule);
@@ -62,8 +62,8 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		dataRule.setName(dataRuleVo.getName());
 		// 赋予用户信息
 		dataRule.setCreateTime(LocalDateTime.now());
-//		dataRule.setCreateUser(SecurityUtils.getUser().getId());
-//		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
+		dataRule.setCreateUser(SecurityUtils.getUser().getId());
+		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		return this.insert(dataRule);
 	}
 

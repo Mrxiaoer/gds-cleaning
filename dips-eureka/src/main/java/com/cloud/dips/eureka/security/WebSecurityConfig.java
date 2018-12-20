@@ -23,5 +23,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeRequests().antMatchers("actuator/**").permitAll().anyRequest().authenticated()
 				.and().httpBasic();
+//		http.csrf().ignoringAntMatchers("actuator/**").and().authorizeRequests().anyRequest().authenticated().and().httpBasic();
 	}
 }

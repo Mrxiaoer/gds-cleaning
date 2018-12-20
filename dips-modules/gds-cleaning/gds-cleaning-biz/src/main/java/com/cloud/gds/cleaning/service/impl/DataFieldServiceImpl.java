@@ -54,15 +54,15 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	@Override
 	public Boolean save(DataField dataField) {
 		dataField.setCreateTime(LocalDateTime.now());
-//		dataField.setCreateUser(SecurityUtils.getUser().getId());
-//		dataField.setDeptId(SecurityUtils.getUser().getDeptId());
-//		dataField.setDeptName(SecurityUtils.getUser().getDeptName());
+		dataField.setCreateUser(SecurityUtils.getUser().getId());
+		dataField.setDeptId(SecurityUtils.getUser().getDeptId());
+		dataField.setDeptName(SecurityUtils.getUser().getDeptName());
 		return this.insert(dataField);
 	}
 
 	@Override
 	public Boolean update(DataField dataField) {
-//		dataField.setModifiedUser(SecurityUtils.getUser().getId());
+		dataField.setModifiedUser(SecurityUtils.getUser().getId());
 		dataField.setModifiedTime(LocalDateTime.now());
 		return this.updateById(dataField);
 	}
