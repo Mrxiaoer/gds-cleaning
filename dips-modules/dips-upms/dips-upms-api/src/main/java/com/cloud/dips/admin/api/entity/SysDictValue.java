@@ -14,6 +14,8 @@ import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -43,12 +45,14 @@ public class SysDictValue implements Serializable {
 	 */
 	@TableField("key")
 	@NotBlank(message = "字典键不能为空")
+	@Length(max=60,message="字典键过长")
 	private String key;
 	/**
 	 * 字典值
 	 */
 	@TableField("value")
 	@NotBlank(message = "字典值不能为空")
+	@Length(max=60,message="字典值过长")
 	private String value;
 
 	/**
