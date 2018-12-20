@@ -91,7 +91,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void saveAll(Long fieldId, List<Map<String, Object>> maps) {
 
 		// 循环插入数据库相关信息
@@ -187,8 +187,10 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		for (DataFieldValue dataFieldValue : willAnalysisList) {
 			if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
 				JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
+				//如果原数据含字段id，删除之
+				jsonObj.remove("id");
 				//添加id字段
-				jsonObj.putOnce("id",dataFieldValue.getId());
+				jsonObj.putOnce("id", dataFieldValue.getId());
 				//删除权重为0的字段
 				for (String needDeleteField : needDeleteFields) {
 					jsonObj.remove(needDeleteField);
