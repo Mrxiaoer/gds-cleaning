@@ -1,6 +1,6 @@
 package com.cloud.gds.cleaning.service.impl;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	private final CalculateService calculateService;
 	private final DataFieldService dataFieldService;
 	private final DataRuleService dataRuleService;
+	@Value("${file-save.path}")
+	String fileSavePath;
 
 	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
@@ -170,20 +173,20 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		willAnalysisData.setApproximates(approximates);
 
 		//设置待分析数据
-		List<DataFieldValue> willAnalysisList;
+		List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
 		List<JSONObject> objList = new ArrayList<>();
-		if (StrUtil.isBlank(dataField.getMatrixFile())) {
-			//第一次分析
-			willAnalysisList = firstAnalysisList(fieldId);
-		} else {
-			//非首次分析
-			willAnalysisList = notFirstAnalysisList(fieldId);
-
-			DataFieldValue dfv = new DataFieldValue();
-			dfv.setFieldId(fieldId);
-			List<Long> needAnalysisIdList = baseMapper.selectNeedAnalysisIdList(dfv);
-			willAnalysisData.setNeedAnalysisDataId(needAnalysisIdList);
-		}
+		// if (StrUtil.isBlank(dataField.getMatrixFile())) {
+		// 	//第一次分析
+		// 	willAnalysisList = firstAnalysisList(fieldId);
+		// } else {
+		// 	//非首次分析
+		// 	willAnalysisList = notFirstAnalysisList(fieldId);
+		//
+		// 	DataFieldValue dfv = new DataFieldValue();
+		// 	dfv.setFieldId(fieldId);
+		// 	List<Long> needAnalysisIdList = baseMapper.selectNeedAnalysisIdList(dfv);
+		// 	willAnalysisData.setNeedAnalysisDataId(needAnalysisIdList);
+		// }
 		for (DataFieldValue dataFieldValue : willAnalysisList) {
 			if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
 				JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
@@ -201,8 +204,13 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		}
 		willAnalysisData.setData(objList);
 
-		//返回json字符串
-		return JSONUtil.toJsonStr(willAnalysisData);
+		//写入文件
+		String resultPath = fileSavePath + "/test.text";
+		FileWriter fileWriter = new FileWriter(resultPath);
+		fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
+
+		//返回文件路径
+		return resultPath;
 	}
 
 	/**
