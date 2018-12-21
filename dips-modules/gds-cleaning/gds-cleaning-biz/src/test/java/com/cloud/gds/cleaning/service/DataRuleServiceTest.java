@@ -49,12 +49,6 @@ public class DataRuleServiceTest {
 		dataRuleService.save(dataRuleVo);
 	}
 
-	@Test
-	public void selectAll(){
-		List<DataRuleVo> dataRules = DataRuleUtils.listPo2Vo(dataRuleService.selectAll());
-
-		System.out.println(dataRules);
-	}
 
 	@Test
 	public void check(){
