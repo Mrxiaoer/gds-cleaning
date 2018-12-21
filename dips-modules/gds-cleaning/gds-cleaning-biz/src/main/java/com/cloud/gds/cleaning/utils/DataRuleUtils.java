@@ -78,6 +78,11 @@ public class DataRuleUtils {
 		return vos;
 	}
 
+	/**
+	 * 分页数据转换
+	 * @param page
+	 * @return
+	 */
 	public static Page changePage(Page page){
 		List<DataRule> dataRules = page.getRecords();
 		List<DataRulePageVo> vos = new ArrayList<>();
@@ -137,6 +142,16 @@ public class DataRuleUtils {
 			}
 		}
 		return sortedMap;
+	}
+
+	public static List<DataRulePageVo> TakeName(List<DataRule> dataRules){
+		List<DataRulePageVo> vos = new ArrayList<>();
+		for (DataRule dataRule : dataRules){
+			DataRulePageVo dataRulePageVo= new DataRulePageVo();
+			BeanUtils.copyProperties(dataRule, dataRulePageVo);
+			vos.add(dataRulePageVo);
+		}
+		return vos;
 	}
 
 

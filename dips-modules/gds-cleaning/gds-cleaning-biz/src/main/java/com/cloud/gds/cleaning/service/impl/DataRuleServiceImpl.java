@@ -10,6 +10,7 @@ import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.DataRuleService;
+import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -28,20 +29,21 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 
 
 	@Override
-	public List<DataRule> selectAll() {
+	public List<DataRulePageVo> selectAll() {
 		DataRule dataRule = new DataRule();
 		dataRule.setIsDeleted(DataCleanConstant.NO);
-		dataRule.setDeptId(1);
-//		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
+//		dataRule.setDeptId(1);
+		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		List<DataRule> dataRules = this.selectList(new EntityWrapper<>(dataRule));
-		return dataRules;
+		// TODO 返回id与name
+		return DataRuleUtils.TakeName(dataRules);
 	}
 
 	@Override
 	public Boolean deleteById(Long id) {
 		DataRule dataRule = new DataRule();
 		dataRule.setId(id);
-//		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 		dataRule.setIsDeleted(DataCleanConstant.YES);
 		return this.updateById(dataRule);
@@ -62,8 +64,8 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		dataRule.setName(dataRuleVo.getName());
 		// 赋予用户信息
 		dataRule.setCreateTime(LocalDateTime.now());
-//		dataRule.setCreateUser(SecurityUtils.getUser().getId());
-//		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
+		dataRule.setCreateUser(SecurityUtils.getUser().getId());
+		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		return this.insert(dataRule);
 	}
 

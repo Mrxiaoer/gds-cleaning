@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
 import com.cloud.gds.cleaning.api.entity.DataField;
@@ -61,7 +62,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public Boolean update(DataFieldValue dataFieldValue) {
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
-		//		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		return this.updateById(dataFieldValue);
 	}
 
@@ -69,7 +70,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public Boolean deleteById(Long id) {
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setId(id);
-		//		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		return this.updateById(dataFieldValue);
@@ -88,7 +89,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setFieldId(id);
 		dataFieldValue.setFieldValue(params.toString());
-		//        dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
+		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());
 		return this.insert(dataFieldValue);
 	}
@@ -103,7 +104,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			// 组装
 			dataFieldValue.setFieldId(fieldId);
 			dataFieldValue.setFieldValue(map.toString());
-			//            dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
+			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setCreateTime(LocalDateTime.now());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
 			// 添加数据

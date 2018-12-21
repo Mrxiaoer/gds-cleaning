@@ -3,6 +3,7 @@ package com.cloud.gds.cleaning.service;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataRule;
+import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface DataRuleService extends IService<DataRule> {
 	 * 查询规则
 	 * @return
 	 */
-	List<DataRule> selectAll();
+	List<DataRulePageVo> selectAll();
 	/**
 	 * 单独删除数据
 	 * @param id

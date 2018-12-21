@@ -54,15 +54,15 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	@Override
 	public Boolean save(DataField dataField) {
 		dataField.setCreateTime(LocalDateTime.now());
-//		dataField.setCreateUser(SecurityUtils.getUser().getId());
-//		dataField.setDeptId(SecurityUtils.getUser().getDeptId());
-//		dataField.setDeptName(SecurityUtils.getUser().getDeptName());
+		dataField.setCreateUser(SecurityUtils.getUser().getId());
+		dataField.setDeptId(SecurityUtils.getUser().getDeptId());
+		dataField.setDeptName(SecurityUtils.getUser().getDeptName());
 		return this.insert(dataField);
 	}
 
 	@Override
 	public Boolean update(DataField dataField) {
-//		dataField.setModifiedUser(SecurityUtils.getUser().getId());
+		dataField.setModifiedUser(SecurityUtils.getUser().getId());
 		dataField.setModifiedTime(LocalDateTime.now());
 		return this.updateById(dataField);
 	}
@@ -93,8 +93,12 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		}else if (!"".equals(dataField.getRuleId())){
 			DataRuleVo oneVo = DataRuleUtils.po2Vo(dataRuleService.selectById(dataField.getRuleId()));
 			DataRuleVo twoVo =DataRuleUtils.po2Vo(dataRuleService.selectById(ruleId));
-			SortedMap<String,String> one = DataRuleUtils.changeSortedMap(oneVo.getDetail());
-			SortedMap<String,String> two = DataRuleUtils.changeSortedMap(twoVo.getDetail());
+			SortedMap<String,String> one = oneVo.getDetail() != null ? DataRuleUtils.changeSortedMap(oneVo.getDetail()) : null;
+			SortedMap<String,String> two = twoVo.getDetail() != null ? DataRuleUtils.changeSortedMap(twoVo.getDetail()) : null;
+			// 如果规则其中一个是空的即可更新规则
+			if (two == null || one == null){
+				return true;
+			}
 			return CommonUtils.checkSortedMap(one,two);
 		}
 		return true;

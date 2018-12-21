@@ -95,10 +95,10 @@ public class DataRuleController {
 	@PostMapping("/update")
 	public R update(@RequestBody DataRuleVo dataRuleVo) {
 		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
-//		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 		// 如果规则的百分比更新,矩阵文件名称也进行清空
-		dataFieldService.updateMatrixFile(dataRuleVo.getDetail().isEmpty() ? 0 : dataRuleVo.getId());
+		dataFieldService.updateMatrixFile(dataRuleVo.getDetail()==null ? 0 : dataRuleVo.getId());
 		return new R<>(dataRuleService.updateById(dataRule));
 	}
 

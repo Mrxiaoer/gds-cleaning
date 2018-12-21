@@ -51,7 +51,7 @@ spring:
       - id: gds-cleaning
         uri: lb://gds-cleaning
         predicates:
-        - Path=/cleaning/**
+        - Path=/dataclean/**
 security:
   encode:
     # 前端密码密钥，必须16位
