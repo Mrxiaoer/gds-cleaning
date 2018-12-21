@@ -88,14 +88,15 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	public Boolean checkRule(Long id, Long ruleId) {
 		DataField dataField = this.selectById(id);
 		// 如果前后2次的规则id相同就不处理
-		if (ruleId.equals(dataField.getRuleId()) || (dataRuleService.selectById(ruleId).getParams() == null)){
+		if (ruleId.equals(dataField.getRuleId())){
 			return true;
 		}else if (!"".equals(dataField.getRuleId())){
 			DataRuleVo oneVo = DataRuleUtils.po2Vo(dataRuleService.selectById(dataField.getRuleId()));
 			DataRuleVo twoVo =DataRuleUtils.po2Vo(dataRuleService.selectById(ruleId));
-			SortedMap<String,String> one = DataRuleUtils.changeSortedMap(oneVo.getDetail());
+			SortedMap<String,String> one = oneVo.getDetail() != null ? DataRuleUtils.changeSortedMap(oneVo.getDetail()) : null;
 			SortedMap<String,String> two = twoVo.getDetail() != null ? DataRuleUtils.changeSortedMap(twoVo.getDetail()) : null;
-			if (two == null){
+			// 如果规则其中一个是空的即可更新规则
+			if (two == null || one == null){
 				return true;
 			}
 			return CommonUtils.checkSortedMap(one,two);
