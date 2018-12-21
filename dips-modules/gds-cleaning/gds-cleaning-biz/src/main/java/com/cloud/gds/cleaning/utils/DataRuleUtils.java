@@ -45,8 +45,10 @@ public class DataRuleUtils {
 	 */
 	public static DataRuleVo po2Vo(DataRule dataRule) {
 		DataRuleVo vo = new DataRuleVo();
-		BeanUtils.copyProperties(dataRule, vo);
-		vo.setDetail(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
+		if (dataRule != null){
+			BeanUtils.copyProperties(dataRule, vo);
+			vo.setDetail(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
+		}
 		return vo;
 	}
 
@@ -117,7 +119,7 @@ public class DataRuleUtils {
 
 		ArrayList<LabelVo> list = new ArrayList<>();
 		List<DataSetVo> dataSetVos = dataRuleVo.getDetail();
-		if (dataSetVos.size() > 0){
+		if (dataSetVos != null){
 			for (DataSetVo vo : dataSetVos){
 				LabelVo labelVo = new LabelVo();
 				labelVo.setLabel(vo.getLabel());

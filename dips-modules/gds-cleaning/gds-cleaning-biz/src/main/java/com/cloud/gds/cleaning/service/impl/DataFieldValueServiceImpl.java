@@ -3,6 +3,7 @@ package com.cloud.gds.cleaning.service.impl;
 import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -88,7 +89,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public Boolean save(Long id, JSONObject params) {
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setFieldId(id);
-		dataFieldValue.setFieldValue(params.toString());
+		dataFieldValue.setFieldValue(JSON.toJSONString(params));
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());
 		return this.insert(dataFieldValue);

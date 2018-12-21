@@ -52,14 +52,12 @@ public class DataPoolController {
 		CommonUtils.PiPei pp = CommonUtils.createPP();
 		List<String> eqList = new ArrayList<>();
 		eqList.add("fieldId");
-		eqList.add("remark");
 		pp.setEq(eqList);
 		//		List<String> likelist = new ArrayList<>();
 		//		likelist.add("");
 		//		pp.setLike(likelist);
 		Wrapper<DataFieldValue> wrapper = CommonUtils.pagePart(params, pp, new DataFieldValue());
-		Page page = dataFieldValueService
-			.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)), wrapper));
+		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)), wrapper));
 		return new R<>(page);
 	}
 
@@ -85,7 +83,7 @@ public class DataPoolController {
 	 * @return
 	 */
 	@PostMapping("/create/{id}")
-	public R save(@RequestBody JSONObject params, @RequestParam("fieldId") Long id) {
+	public R save(@RequestBody JSONObject params, @PathVariable("id") Long id) {
 		return new R<>(dataFieldValueService.save(id, params));
 	}
 

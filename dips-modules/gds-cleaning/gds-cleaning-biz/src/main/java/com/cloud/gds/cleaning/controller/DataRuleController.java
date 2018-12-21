@@ -73,8 +73,8 @@ public class DataRuleController {
 		return new R(dataRuleService.selectAll());
 	}
 
-	@GetMapping("/key")
-	public R getKey(@RequestParam Long id){
+	@GetMapping("/key/{id}")
+	public R getKey(@PathVariable("id") Long id){
 		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
 		return new R(DataRuleUtils.convet(dataRuleVo));
 	}
