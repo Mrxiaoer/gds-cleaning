@@ -28,5 +28,10 @@ public class OtherTest {
 		System.out.println(JSONUtil.isJsonObj("{'name':2}"));
 		// JSONUtil.parseObj("",false);
 	}
-
+	@Test
+	public void xxx() {
+		Integer i = 1;
+		Integer j = 1;
+		System.out.println(i.equals(j));
+	}
 }

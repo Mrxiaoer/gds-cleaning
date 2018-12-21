@@ -84,6 +84,12 @@ public class DataField extends Model<DataField> {
 	@JsonIgnore
 	private String matrixFile;
 
+	/**
+	 * 是否需要重新分析
+	 */
+	@JsonIgnore
+	private Integer needReanalysis;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

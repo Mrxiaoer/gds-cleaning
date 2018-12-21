@@ -173,6 +173,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		willAnalysisData.setWeights(weights);
 		willAnalysisData.setApproximates(approximates);
 
+		willAnalysisData.setNeedReanalysis(dataField.getNeedReanalysis());
 		//设置待分析数据
 		List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
 		List<JSONObject> objList = new ArrayList<>();
@@ -206,7 +207,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		willAnalysisData.setData(objList);
 
 		//写入文件
-		String resultPath = fileSavePath + "/test.text";
+		String resultPath = fileSavePath + "/"+fieldId+".text";
 		FileWriter fileWriter = new FileWriter(resultPath);
 		fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
 

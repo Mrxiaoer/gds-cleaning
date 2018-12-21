@@ -46,15 +46,13 @@ public class WillAnalysisData {
 	 * 例："similarity":{"nameEn":{"xm":0.5,"mz":0.8},"nameCn":{"姓名":0.6,"名字":0.8}}
 	 */
 	Map<String, Map<String, Float>> similarity;
-
-	/**
-	 * 需要分析的数据id
-	 */
-	List<Long> needAnalysisDataId;
-
 	/**
 	 * 待分析数据
 	 */
 	List<JSONObject> data;
+	/**
+	 * 是否需要重新分析
+	 */
+	Integer needReanalysis;
 
 }

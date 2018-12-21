@@ -109,10 +109,10 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		if ( !ruleId.equals(DataCleanConstant.ZERO )){
 			List<DataField> list = this.selectByRuleId(ruleId);
 			for (DataField dataField : list){
-				if ( !dataField.getMatrixFile().isEmpty()){
+				if ( dataField.getNeedReanalysis().equals(DataCleanConstant.NO)){
 					DataField q = new DataField();
 					q.setId(dataField.getId());
-					q.setMatrixFile("");
+					q.setNeedReanalysis(DataCleanConstant.YES);
 					this.updateById(q);
 				}
 			}
