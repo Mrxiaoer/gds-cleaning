@@ -69,8 +69,7 @@ public class DataPoolController {
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-		DataFieldValue dataFieldValue = dataFieldValueService
-			.selectOne(new EntityWrapper<DataFieldValue>().eq("id", id).eq("is_deleted", DataCleanConstant.NO));
+		DataFieldValue dataFieldValue = dataFieldValueService.selectOne(new EntityWrapper<DataFieldValue>().eq("id", id).eq("is_deleted", DataCleanConstant.NO));
 		DataPoolVo dataPoolVo = DataPoolUtils.entity2Vo(dataFieldValue);
 		return new R<>(dataPoolVo);
 	}

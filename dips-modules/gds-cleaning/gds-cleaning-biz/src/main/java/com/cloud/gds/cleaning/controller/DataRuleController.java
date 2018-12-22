@@ -98,7 +98,7 @@ public class DataRuleController {
 		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 		// 如果规则的百分比更新,矩阵文件名称也进行清空
-		dataFieldService.updateMatrixFile(dataRuleVo.getDetail()==null ? 0 : dataRuleVo.getId());
+		dataFieldService.updateNeedReanalysis(dataRuleVo.getDetail()==null ? 0 : dataRuleVo.getId());
 		return new R<>(dataRuleService.updateById(dataRule));
 	}
 

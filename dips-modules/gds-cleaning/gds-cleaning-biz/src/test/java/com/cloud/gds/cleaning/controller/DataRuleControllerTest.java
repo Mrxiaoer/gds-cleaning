@@ -37,7 +37,7 @@ public class DataRuleControllerTest {
 		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
 //		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
-		dataFieldService.updateMatrixFile(dataRuleVo.getDetail()== null ? 0 : dataRuleVo.getId());
+		dataFieldService.updateNeedReanalysis(dataRuleVo.getDetail()== null ? 0 : dataRuleVo.getId());
 
 
 	}

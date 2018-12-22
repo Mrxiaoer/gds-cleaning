@@ -105,7 +105,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	}
 
 	@Override
-	public Boolean updateMatrixFile(Long ruleId) {
+	public Boolean updateNeedReanalysis(Long ruleId) {
 		if ( !ruleId.equals(DataCleanConstant.ZERO )){
 			List<DataField> list = this.selectByRuleId(ruleId);
 			for (DataField dataField : list){

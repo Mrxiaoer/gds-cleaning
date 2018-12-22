@@ -70,5 +70,5 @@ public interface DataFieldService extends IService<DataField> {
 	 * @param ruleId
 	 * @return
 	 */
-	Boolean updateMatrixFile(Long ruleId);
+	Boolean updateNeedReanalysis(Long ruleId);
 }

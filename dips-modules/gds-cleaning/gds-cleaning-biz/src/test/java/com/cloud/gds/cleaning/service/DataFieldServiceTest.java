@@ -101,7 +101,7 @@ public class DataFieldServiceTest {
 
 	@Test
 	public void updateMatrixFile(){
-		dataFieldService.updateMatrixFile(5L);
+		dataFieldService.updateNeedReanalysis(5L);
 	}
 
 
