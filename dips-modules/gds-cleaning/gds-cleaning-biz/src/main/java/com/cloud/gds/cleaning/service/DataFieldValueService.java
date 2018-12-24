@@ -17,9 +17,9 @@ import java.util.Set;
  */
 public interface DataFieldValueService extends IService<DataFieldValue> {
 
+	Boolean updateJson(Long id,Map<String,Object> map);
 	/**
 	 * 更新数据
-	 *
 	 * @param dataFieldValue
 	 * @return
 	 */
@@ -27,7 +27,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 单独删除
-	 *
 	 * @param id
 	 * @return
 	 */
@@ -35,14 +34,12 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 批量删除
-	 *
 	 * @param ids
 	 */
 	Boolean deleteByIds(Set<Long> ids);
 
 	/**
 	 * 保存单一数据
-	 *
 	 * @param id
 	 * @param params
 	 * @return

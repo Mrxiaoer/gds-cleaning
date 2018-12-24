@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import hammerlab.iterator.map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,14 +90,14 @@ public class DataPoolController {
 
 	/**
 	 * 修改
-	 *
-	 * @param dataPoolVo
-	 * @return R
+	 * @param id
+	 * @param map
+	 * @return
 	 */
-	@PostMapping("/update")
-	public R update(@RequestBody DataPoolVo dataPoolVo) {
-		DataFieldValue dataFieldValue = DataPoolUtils.vo2Entity(dataPoolVo);
-		dataFieldValueService.update(dataFieldValue);
+	@PostMapping("/update/{id}")
+	public R update(@PathVariable("id")Long id,@RequestBody Map<String,Object>map) {
+
+		dataFieldValueService.updateJson(id,map);
 		return new R<>(Boolean.TRUE);
 	}
 

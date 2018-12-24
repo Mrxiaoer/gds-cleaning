@@ -61,6 +61,16 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
+	public Boolean updateJson(Long id, Map<String, Object> map) {
+		DataFieldValue dataFieldValue = new DataFieldValue();
+		dataFieldValue.setId(id);
+		dataFieldValue.setFieldValue(JSON.toJSONString(map));
+		dataFieldValue.setModifiedTime(LocalDateTime.now());
+		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+		return this.updateById(dataFieldValue);
+	}
+
+	@Override
 	public Boolean update(DataFieldValue dataFieldValue) {
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());

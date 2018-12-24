@@ -11,6 +11,7 @@ import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataRuleUtils;
+import com.sun.xml.internal.bind.v2.TODO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +65,8 @@ public class DataRuleController {
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
 		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
-		SecurityUtils.getUser();
+//		SecurityUtils.getUser();
+//		TODO 规则权重转化
 		return new R<>(dataRuleVo);
 	}
 
