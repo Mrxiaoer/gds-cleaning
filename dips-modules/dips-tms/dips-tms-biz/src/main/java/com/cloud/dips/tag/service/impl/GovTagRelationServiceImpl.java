@@ -13,6 +13,7 @@ import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.dips.tag.api.entity.GovTag;
 import com.cloud.dips.tag.api.entity.GovTagRelation;
 import com.cloud.dips.tag.api.entity.GovTagRelationType;
+import com.cloud.dips.tag.api.vo.GovTagRelationVO;
 import com.cloud.dips.tag.mapper.GovTagRelationMapper;
 import com.cloud.dips.tag.service.GovTagRelationService;
 import com.cloud.dips.tag.service.GovTagRelationTypeService;
@@ -121,6 +122,11 @@ public class GovTagRelationServiceImpl extends ServiceImpl<GovTagRelationMapper,
 			}	
 		}
 		return this.delete(e1);
+	}
+
+	@Override
+	public List<GovTagRelationVO> getTags(Integer relationId, String node,String fob) {
+		return baseMapper.getTags(relationId, node,fob);
 	}
 
 }

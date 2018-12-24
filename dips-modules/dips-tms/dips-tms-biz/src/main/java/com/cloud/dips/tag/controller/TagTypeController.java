@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,9 +70,9 @@ public class TagTypeController {
 	
 
 	@SysLog("删除标签分类")
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('gov_tagType_del')")
-	@ApiOperation(value = "删除标签分类", notes = "删除标签分类",httpMethod="DELETE")
+	@ApiOperation(value = "删除标签分类", notes = "删除标签分类",httpMethod="POST")
 	public R<Boolean> tagTypeDel(@PathVariable Integer id) {
 		GovTagType govTagType = service.selectById(id);
 		if(govTagType==null){

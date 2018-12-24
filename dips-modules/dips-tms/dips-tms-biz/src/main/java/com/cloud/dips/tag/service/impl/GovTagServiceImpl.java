@@ -3,7 +3,6 @@ package com.cloud.dips.tag.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +10,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.util.Query;
+import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.tag.api.entity.GovTag;
 import com.cloud.dips.tag.api.entity.GovTagFunction;
 import com.cloud.dips.tag.api.entity.GovTagModificationRecord;
@@ -57,23 +57,11 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 		Object fob = query.getCondition().get("fob");
 		String tagname="";
 		if(name!=null){
-			tagname=escapeExprSpecialWord(name.toString());
+			tagname=SpecialStringUtil.escapeExprSpecialWord(name.toString());
 		}
 		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid,levelid,status,enable,fob));
 		return query;
 	}
-	
-public String escapeExprSpecialWord(String keyword) {
-        if (StringUtils.isNotEmpty(keyword)) {
-            String[] fbsArr = { "\\","$","(",")","*","+",".","[", "]","?","^","{","}","|","'","%" };
-            for (String key : fbsArr) {
-                if (keyword.contains(key)) {
-                    keyword = keyword.replace(key, "\\" + key);
-                }
-            }
-        }
-        return keyword;
-    }
 	
 	/**
 	 * 通过ID查询标签

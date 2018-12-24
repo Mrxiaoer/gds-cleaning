@@ -13,6 +13,8 @@ import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -45,12 +47,14 @@ public class SysDict implements Serializable {
 	 */
 	@TableField("number")
 	@NotBlank(message="字典编码不能为空")
+	@Length(max=60,message="字典编码过长")
 	private String number;
 	/**
 	 * 字典名称
 	 */
 	@TableField("name")
 	@NotBlank(message="字典名称不能为空")
+	@Length(max=60,message="字典名称过长")
 	private String name;
 
 	/**

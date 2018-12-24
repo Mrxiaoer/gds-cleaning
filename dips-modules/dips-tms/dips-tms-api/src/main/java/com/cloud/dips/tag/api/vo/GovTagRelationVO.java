@@ -1,6 +1,7 @@
 package com.cloud.dips.tag.api.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Data;
 
@@ -27,6 +28,7 @@ public class GovTagRelationVO implements Serializable{
 	
 	private String typeName;
 	
+	private List<CommonVO> tagList;
 
 	private String node;
 

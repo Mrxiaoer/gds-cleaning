@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -136,9 +135,9 @@ public class TagController {
 	 * @return R
 	 */
 	@SysLog("删除标签")
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('gov_tag_del')")
-	@ApiOperation(value = "删除标签", notes = "根据ID删除标签: params{标签ID: tagId}",httpMethod="DELETE")
+	@ApiOperation(value = "删除标签", notes = "根据ID删除标签: params{标签ID: tagId}",httpMethod="POST")
 	public R<Boolean> tagDel(@PathVariable Integer id) {
 		GovTag govTag = service.selectById(id);
 		if(govTag==null){
@@ -278,6 +277,7 @@ public class TagController {
 		}
 	}
 	
+	@SysLog("批量删除标签")
 	@PostMapping("/delete")
 	@PreAuthorize("@pms.hasPermission('gov_tag_del')")
 	@ApiOperation(value = "批量删除标签", notes = "批量删除标签", httpMethod = "POST")

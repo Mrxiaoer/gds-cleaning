@@ -5,11 +5,9 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.R;
+import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.log.annotation.SysLog;
 import com.cloud.dips.tag.api.dto.GovTagLevelDTO;
 import com.cloud.dips.tag.api.entity.GovTag;
@@ -62,28 +61,16 @@ public class TagLevelController {
 		EntityWrapper<GovTagLevel> e=new EntityWrapper<GovTagLevel>();
 		String name=params.getOrDefault("levelname", "").toString();
 		if(StrUtil.isNotBlank(name)){
-			e.like("name",  escapeExprSpecialWord(name));
+			e.like("name",  SpecialStringUtil.escapeExprSpecialWord(name));
 		}
 		return service.selectPage(p,e);
 	}
 	
-	public String escapeExprSpecialWord(String keyword) {
-        if (StringUtils.isNotEmpty(keyword)) {
-            String[] fbsArr = { "\\","$","(",")","*","+",".","[", "]","?","^","{","}","|","'","%" };
-            for (String key : fbsArr) {
-                if (keyword.contains(key)) {
-                    keyword = keyword.replace(key, "\\" + key);
-                }
-            }
-        }
-        return keyword;
-    }
-	
 
 	@SysLog("删除标签级别")
-	@DeleteMapping("/{id}")
+	@PostMapping("/delete/{id}")
 	@PreAuthorize("@pms.hasPermission('gov_tagLevel_del')")
-	@ApiOperation(value = "删除标签级别", notes = "删除标签级别",httpMethod="DELETE")
+	@ApiOperation(value = "删除标签级别", notes = "删除标签级别",httpMethod="POST")
 	public R<Boolean> tagLevelDel(@PathVariable Integer id) {
 		GovTagLevel govTagLevel = service.selectById(id);
 		if(govTagLevel==null){

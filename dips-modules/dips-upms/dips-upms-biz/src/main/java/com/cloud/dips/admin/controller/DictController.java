@@ -83,6 +83,20 @@ public class DictController {
 		}
 	}
 	
+	@GetMapping("/check")
+	@ApiOperation(value = "字典验证", notes = "字典验证",httpMethod="GET")
+	public R<Boolean> check(@RequestParam String number) {
+		EntityWrapper<SysDict> e=new EntityWrapper<SysDict>();
+		e.eq("number", number);
+		Integer i=service.selectCount(e);
+			if(i<1){
+				return new R<Boolean>(Boolean.TRUE,"编码可用");
+			}else{
+				return new R<Boolean>(Boolean.FALSE,"编码已存在");
+			}
+	}
+	
+	
 	@GetMapping("/all_list")
 	@ApiOperation(value = "查询所有字典", notes = "查询所有字典",httpMethod="GET")
 	public List<DictVO> allList() {

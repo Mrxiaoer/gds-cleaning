@@ -1,7 +1,7 @@
 package com.cloud.dips.tag.controller;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.cloud.dips.common.core.excel.ExcelUtil;
+import com.cloud.dips.common.core.excel.ImportExcelUntil;
 import com.cloud.dips.common.core.util.R;
+import com.cloud.dips.common.core.util.TemplateUtils;
 import com.cloud.dips.common.security.service.DipsUser;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.dips.tag.api.entity.GovTag;
@@ -34,8 +36,6 @@ import com.cloud.dips.tag.api.entity.GovTagLevel;
 import com.cloud.dips.tag.api.entity.GovTagType;
 import com.cloud.dips.tag.api.vo.CommonVO;
 import com.cloud.dips.tag.api.vo.GovTagVO;
-import com.cloud.dips.common.core.excel.ExcelUtil;
-import com.cloud.dips.common.core.excel.ImportExcelUntil;
 import com.cloud.dips.tag.service.GovTagLevelService;
 import com.cloud.dips.tag.service.GovTagMergeRecordService;
 import com.cloud.dips.tag.service.GovTagService;
@@ -193,12 +193,11 @@ public class ExcelController {
     @PostMapping("/model_download")
     @ApiOperation(value = "模板下载", notes = "模板下载", httpMethod = "POST")
     public ResponseEntity<byte[]> modeldownload() throws IOException {
-    	String path = this.getClass().getResource("/models/tagmodel.xlsx").getPath();    	
+    	InputStream in  =  this.getClass().getResourceAsStream("/models/tagmodel.xlsx"); 	
     	HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData("attachment", "tagmodel.xlsx");
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(path)),
-            headers, HttpStatus.CREATED);
+        return new ResponseEntity<byte[]>(TemplateUtils.toByteArray(in),headers, HttpStatus.CREATED);
 	}
 
 }
