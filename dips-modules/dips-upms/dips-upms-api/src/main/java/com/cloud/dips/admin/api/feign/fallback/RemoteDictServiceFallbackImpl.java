@@ -50,4 +50,10 @@ public class RemoteDictServiceFallbackImpl implements RemoteDictService {
 		return null;
 	}
 
+	@Override
+	public List<DictVO> getAllMap() {
+		log.error("feign 查询字典信息失败:{}", cause);
+		return null;
+	}
+
 }
