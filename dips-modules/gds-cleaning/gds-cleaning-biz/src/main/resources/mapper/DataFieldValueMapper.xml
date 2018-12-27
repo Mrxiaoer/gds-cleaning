@@ -44,4 +44,36 @@
 		WHERE field_id = #{dataFieldValue.fieldId} AND is_deleted = 0
 	</select>
 
+	<select id="gainCleanData" parameterType="java.lang.Long" resultMap="dataFieldValueMap">
+		SELECT
+			*
+		FROM
+			dataclean_data_field_value
+		WHERE
+			id IN (
+				SELECT DISTINCT
+					(base_id)
+				FROM
+					dataclean_analysis_result
+				WHERE
+					field_id = #{fieldId}
+			)
+	</select>
+
+	<select id="gainDetails" parameterType="java.lang.Long" resultMap="dataFieldValueMap">
+		SELECT
+			*
+		FROM
+			dataclean_data_field_value
+		WHERE
+			id IN (
+				SELECT
+					compare_id
+				FROM
+					dataclean_analysis_result
+				WHERE
+					base_id = #{id}
+			)
+	</select>
+
 </mapper>

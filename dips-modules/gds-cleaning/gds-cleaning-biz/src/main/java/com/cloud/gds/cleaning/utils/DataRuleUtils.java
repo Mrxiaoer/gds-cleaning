@@ -33,6 +33,11 @@ public class DataRuleUtils {
 		DataRule entity = new DataRule();
 		BeanUtils.copyProperties(dataRuleVo, entity);
 		if (dataRuleVo.getDetail() != null){
+			for (DataSetVo dataSetVo : dataRuleVo.getDetail()){
+				if (dataSetVo.getWeight() != null){
+					dataSetVo.setWeight(dataSetVo.getWeight()/100);
+				}
+			}
 			entity.setParams(DataRuleUtils.dataSet2String(dataRuleVo.getDetail()));
 		}
 		return entity;
@@ -48,6 +53,12 @@ public class DataRuleUtils {
 		if (dataRule != null){
 			BeanUtils.copyProperties(dataRule, vo);
 			vo.setDetail(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
+			for (DataSetVo dataSetVo : vo.getDetail()){
+				if (dataSetVo != null){
+					dataSetVo.setWeight(dataSetVo.getWeight()*100);
+				}
+			}
+
 		}
 		return vo;
 	}

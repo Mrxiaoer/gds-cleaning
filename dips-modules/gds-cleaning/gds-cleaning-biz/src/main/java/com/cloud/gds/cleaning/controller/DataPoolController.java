@@ -89,14 +89,13 @@ public class DataPoolController {
 	}
 
 	/**
-	 * 修改
+	 * 修改fieldValue
 	 * @param id
 	 * @param map
 	 * @return
 	 */
 	@PostMapping("/update/{id}")
 	public R update(@PathVariable("id")Long id,@RequestBody Map<String,Object>map) {
-
 		dataFieldValueService.updateJson(id,map);
 		return new R<>(Boolean.TRUE);
 	}

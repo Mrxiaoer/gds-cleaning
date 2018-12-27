@@ -17,13 +17,27 @@ import java.util.Set;
  */
 public interface DataFieldValueService extends IService<DataFieldValue> {
 
-	Boolean updateJson(Long id,Map<String,Object> map);
 	/**
-	 * 更新数据
-	 * @param dataFieldValue
+	 * 获取清洗完的数据
+	 * @param fieldId
 	 * @return
 	 */
-	Boolean update(DataFieldValue dataFieldValue);
+	List<DataFieldValue> gainCleanData(Long fieldId);
+
+	/**
+	 * 清洗接口数据明细
+	 * @param id
+	 * @return
+	 */
+	List<DataFieldValue> gainDetails(Long id);
+
+	/**
+	 * 修改fieldValue
+	 * @param id
+	 * @param map
+	 * @return
+	 */
+	Boolean updateJson(Long id,Map<String,Object> map);
 
 	/**
 	 * 单独删除

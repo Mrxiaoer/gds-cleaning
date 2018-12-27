@@ -23,4 +23,8 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 
 	List<Long> selectNeedAnalysisIdList(@Param("dataFieldValue") DataFieldValue dataFieldValue);
 
+	List<DataFieldValue> gainCleanData(Long fieldId);
+
+	List<DataFieldValue> gainDetails(Long id);
+
 }

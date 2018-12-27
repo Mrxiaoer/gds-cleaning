@@ -44,9 +44,6 @@ public class ResultSetController {
 		eqList.add("fieldId");
 		eqList.add("remark");
 		pp.setEq(eqList);
-//		List<String> likelist = new ArrayList<>();
-//		likelist.add("");
-//		pp.setLike(likelist);
 		Wrapper<DataFieldValue> wrapper = CommonUtils.pagePart(params,pp,new DataFieldValue());
 		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper.eq("be_cleaned_id", DataCleanConstant.NO)));
 

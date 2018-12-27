@@ -66,7 +66,7 @@ public class DataRuleController {
 	public R info(@PathVariable("id") Long id) {
 		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
 //		SecurityUtils.getUser();
-//		TODO 规则权重转化
+//		TODO 规则权重转化 已解决待对调
 		return new R<>(dataRuleVo);
 	}
 

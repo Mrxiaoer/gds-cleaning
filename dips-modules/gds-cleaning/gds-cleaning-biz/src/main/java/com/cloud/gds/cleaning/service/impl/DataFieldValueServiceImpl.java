@@ -49,15 +49,29 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	private final CalculateService calculateService;
 	private final DataFieldService dataFieldService;
 	private final DataRuleService dataRuleService;
+	private final DataFieldValueMapper dataFieldValueMapper;
 	@Value("${file-save.path}")
 	String fileSavePath;
 
 	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-		DataRuleService dataRuleService) {
+		DataRuleService dataRuleService,DataFieldValueMapper dataFieldValueMapper) {
 		this.calculateService = calculateService;
 		this.dataFieldService = dataFieldService;
 		this.dataRuleService = dataRuleService;
+		this.dataFieldValueMapper = dataFieldValueMapper;
+	}
+
+
+	@Override
+	public List<DataFieldValue> gainCleanData(Long fieldId) {
+		List<DataFieldValue> dataFieldValues = dataFieldValueMapper.gainCleanData(fieldId);
+		return dataFieldValues;
+	}
+
+	@Override
+	public List<DataFieldValue> gainDetails(Long id) {
+		return dataFieldValueMapper.gainDetails(id);
 	}
 
 	@Override
@@ -65,13 +79,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setId(id);
 		dataFieldValue.setFieldValue(JSON.toJSONString(map));
-		dataFieldValue.setModifiedTime(LocalDateTime.now());
-		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
-		return this.updateById(dataFieldValue);
-	}
-
-	@Override
-	public Boolean update(DataFieldValue dataFieldValue) {
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		return this.updateById(dataFieldValue);

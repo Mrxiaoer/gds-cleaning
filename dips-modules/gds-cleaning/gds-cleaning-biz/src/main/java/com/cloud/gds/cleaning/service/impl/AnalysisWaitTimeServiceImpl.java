@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.service.AnalysisWaitTimeService;
+import org.springframework.stereotype.Service;
 
 /**
  * 分析等待时间接口实现
@@ -12,6 +13,7 @@ import com.cloud.gds.cleaning.service.AnalysisWaitTimeService;
  * @Email : lolilijve@gmail.com
  * @Date : 2018-12-12
  */
+@Service
 public class AnalysisWaitTimeServiceImpl extends ServiceImpl<DataFieldMapper, DataField> implements
 	AnalysisWaitTimeService {
 
