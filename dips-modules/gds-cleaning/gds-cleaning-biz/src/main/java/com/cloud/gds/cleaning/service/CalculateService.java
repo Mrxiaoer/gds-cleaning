@@ -7,9 +7,10 @@ package com.cloud.gds.cleaning.service;
 public interface CalculateService {
 
 	/**
-	 * 计算相似度
-	 * @param str
+	 * 聚类分析及相似度计算接口
+	 * @param analysisType	分析类型
+	 * @param jsonFileUrl	json文件路径
 	 * @return
 	 */
-	public String Similarity(String str);
+	public String Similarity(Integer analysisType, String jsonFileUrl);
 }
