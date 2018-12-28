@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataField;
+import com.cloud.gds.cleaning.api.vo.DataFieldVo;
 
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,13 @@ public interface DataFieldService extends IService<DataField> {
 	 * @return
 	 */
 	List<DataField> selectByRuleIds(Set<Long> ruleIds);
+
+	/**
+	 * 根据清洗池id查询
+	 * @param id
+	 * @return
+	 */
+	DataFieldVo queryById(Long id);
 
 	/**
 	 * 保存

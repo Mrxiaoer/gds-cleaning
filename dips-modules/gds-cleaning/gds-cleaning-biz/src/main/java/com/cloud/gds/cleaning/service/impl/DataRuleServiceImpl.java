@@ -8,10 +8,13 @@ import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
+import com.cloud.gds.cleaning.api.vo.LabelVo;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
+import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,16 +30,41 @@ import java.util.Set;
 @Service("dataFieldService")
 public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> implements DataRuleService {
 
+	@Autowired
+	DataFieldService dataFieldService;
+
+	@Override
+	public DataRuleVo queryById(Long id) {
+		return DataRuleUtils.po2Vo(this.selectById(id));
+	}
 
 	@Override
 	public List<DataRulePageVo> selectAll() {
 		DataRule dataRule = new DataRule();
 		dataRule.setIsDeleted(DataCleanConstant.NO);
-//		dataRule.setDeptId(1);
 		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		List<DataRule> dataRules = this.selectList(new EntityWrapper<>(dataRule));
-		// TODO 返回id与name
+		//返回id与name
 		return DataRuleUtils.TakeName(dataRules);
+	}
+
+	@Override
+	public ArrayList<LabelVo> gainDynamicKey(Long id) {
+		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(this.selectById(id));
+		return DataRuleUtils.convet(dataRuleVo);
+	}
+
+	@Override
+	public Boolean customUpdate(DataRuleVo dataRuleVo) {
+		// 赋值相关信息
+		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedTime(LocalDateTime.now());
+
+		// 如果规则的百分比更新,s是否需要重新分析更新
+		dataFieldService.updateNeedReanalysis(dataRuleVo.getDetail()==null ? 0 : dataRuleVo.getId());
+
+		return this.updateById(dataRule);
 	}
 
 	@Override
@@ -51,9 +79,12 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 
 	@Override
 	public Boolean deleteByIds(Set<Long> ids) {
-		for (Long id : ids){
-			this.deleteById(id);
-		}
+
+		DataRule dataRule = new DataRule();
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedTime(LocalDateTime.now());
+		dataRule.setIsDeleted(DataCleanConstant.YES);
+		this.update(dataRule, new EntityWrapper<DataRule>().in("id", ids));
 		return true;
 	}
 
@@ -64,6 +95,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		dataRule.setName(dataRuleVo.getName());
 		// 赋予用户信息
 		dataRule.setCreateTime(LocalDateTime.now());
+		dataRule.setModifiedTime(LocalDateTime.now());
 		dataRule.setCreateUser(SecurityUtils.getUser().getId());
 		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		return this.insert(dataRule);

@@ -1,5 +1,7 @@
 package com.cloud.gds.cleaning.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -9,6 +11,7 @@ import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import org.junit.Test;
@@ -139,5 +142,14 @@ public class DataFieldValueServiceTest {
 	public void getAnalysisData(){
 		String a = dataFieldValueService.getAnalysisData(3L);
 		System.out.println(a);
+	}
+
+	@Test
+	public void listJson(){
+    	String str = "[{\"id\":1,\"group\":[{\"id\":1,\"similarity\":1},{\"id\":2,\"similarity\":0.709008778084403}]},{\"id\":1525,\"group\":[{\"id\":1525,\"similarity\":1},{\"id\":1526,\"similarity\":0.7328392218049825},{\"id\":1601,\"similarity\":0.795443077662214},{\"id\":1611,\"similarity\":0.795443077662214},{\"id\":1725,\"similarity\":0.5546353317889164},{\"id\":2077,\"similarity\":0.691628594788375},{\"id\":2078,\"similarity\":0.6820620141175615},{\"id\":2079,\"similarity\":0.6858237655151436},{\"id\":2081,\"similarity\":0.5946353317889165},{\"id\":2657,\"similarity\":0.82}]},{\"id\":2667,\"group\":[{\"id\":2667,\"similarity\":1},{\"id\":2668,\"similarity\":0.9},{\"id\":2669,\"similarity\":0.7},{\"id\":2670,\"similarity\":0.7499999999999999}]}]";
+		List<ResultJsonVo> list = JSON.parseArray(str, ResultJsonVo.class);
+		System.out.println(list);
+
+
 	}
 }

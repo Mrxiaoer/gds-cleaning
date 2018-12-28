@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
+import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +27,13 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	List<DataFieldValue> gainCleanData(Long fieldId);
 
 	/**
+	 * 根据id查询
+	 * @param id
+	 * @return
+	 */
+	DataPoolVo queryById(Long id);
+
+	/**
 	 * 清洗接口数据明细
 	 * @param id
 	 * @return
@@ -32,7 +41,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	List<DataFieldValue> gainDetails(Long id);
 
 	/**
-	 * 修改fieldValue
+	 * 修改结果集字段
 	 * @param id
 	 * @param map
 	 * @return

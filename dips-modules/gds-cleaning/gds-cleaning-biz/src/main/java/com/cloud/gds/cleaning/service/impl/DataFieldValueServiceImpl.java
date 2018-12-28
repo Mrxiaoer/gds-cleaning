@@ -49,17 +49,18 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	private final CalculateService calculateService;
 	private final DataFieldService dataFieldService;
 	private final DataRuleService dataRuleService;
-	private final DataFieldValueMapper dataFieldValueMapper;
 	@Value("${file-save.path}")
 	String fileSavePath;
 
 	@Autowired
+	DataFieldValueMapper dataFieldValueMapper;
+
+	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-		DataRuleService dataRuleService,DataFieldValueMapper dataFieldValueMapper) {
+		DataRuleService dataRuleService) {
 		this.calculateService = calculateService;
 		this.dataFieldService = dataFieldService;
 		this.dataRuleService = dataRuleService;
-		this.dataFieldValueMapper = dataFieldValueMapper;
 	}
 
 
@@ -67,6 +68,12 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public List<DataFieldValue> gainCleanData(Long fieldId) {
 		List<DataFieldValue> dataFieldValues = dataFieldValueMapper.gainCleanData(fieldId);
 		return dataFieldValues;
+	}
+
+	@Override
+	public DataPoolVo queryById(Long id) {
+		DataFieldValue dataFieldValue = this.selectById(id);
+		return DataPoolUtils.entity2Vo(dataFieldValue);
 	}
 
 	@Override
@@ -96,10 +103,12 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public Boolean deleteByIds(Set<Long> ids) {
-		for (Long id : ids) {
-			this.deleteById(id);
-		}
-		return true;
+
+		DataFieldValue dataFieldValue = new DataFieldValue();
+		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
+		dataFieldValue.setModifiedTime(LocalDateTime.now());
+		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id",ids ));
 	}
 
 	@Override
@@ -281,7 +290,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			+ "\"名字\":0.8}},\"data\":[{\"id\":1,\"length\":10,\"type\":1,\"nameEn\":\"xm\",\"nameCn\":\"姓名\"},"
 			+ "{\"id\":2,\"length\":18,\"type\":2,\"nameEn\":\"sfz\",\"nameCn\":\"身份证\"},{\"id\":3,\"length\":1,"
 			+ "\"type\":3,\"nameEn\":\"sex\",\"nameCn\":\"性别\"}]}";
-		String simResult = calculateService.Similarity(str);
+		String simResult = calculateService.Similarity(DataCleanConstant.QUICK_ANALYSIS,"dddd");
 		System.out.println(simResult);
 	}
 

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 清洗规则
+ * 清洗规则池
  *
  * @author lolilijve
  * @date 2018-11-22 10:59:36
@@ -55,6 +55,7 @@ public class DataRuleController {
 		Wrapper<DataRule> wrapper = CommonUtils.pagePart(params,pp,new DataRule());
 		Page page = DataRuleUtils.changePage(dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper));
 
+		//@todo 放入service
 		return new R<>(page);
 	}
 
@@ -64,21 +65,26 @@ public class DataRuleController {
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
-//		SecurityUtils.getUser();
-//		TODO 规则权重转化 已解决待对调
-		return new R<>(dataRuleVo);
+		return new R<>(dataRuleService.queryById(id));
 	}
 
+	/**
+	 * 查询部门规则
+	 * @return
+	 */
 	@GetMapping("/list")
 	public R selectAll(){
-		return new R(dataRuleService.selectAll());
+		return new R<>(dataRuleService.selectAll());
 	}
 
+	/**
+	 * 获取规则动态参数
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/key/{id}")
 	public R getKey(@PathVariable("id") Long id){
-		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(id));
-		return new R(DataRuleUtils.convet(dataRuleVo));
+		return new R<>(dataRuleService.gainDynamicKey(id));
 	}
 
 	/**
@@ -96,12 +102,7 @@ public class DataRuleController {
 	 */
 	@PostMapping("/update")
 	public R update(@RequestBody DataRuleVo dataRuleVo) {
-		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
-		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
-		dataRule.setModifiedTime(LocalDateTime.now());
-		// 如果规则的百分比更新,矩阵文件名称也进行清空
-		dataFieldService.updateNeedReanalysis(dataRuleVo.getDetail()==null ? 0 : dataRuleVo.getId());
-		return new R<>(dataRuleService.updateById(dataRule));
+		return new R<>(dataRuleService.customUpdate(dataRuleVo));
 	}
 
 	/**

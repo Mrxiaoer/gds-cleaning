@@ -62,17 +62,11 @@ public class CleanPoolController {
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-
-		DataFieldVo dataFieldVo = new DataFieldVo();
-		DataField dataField = dataFieldService.selectById(id);
-		BeanUtils.copyProperties(dataField, dataFieldVo);
-		dataFieldVo.setRuleName((dataField.getRuleId() == 0) ? null : (dataRuleService.selectById(dataField.getRuleId()).getName()));
-
-		return new R<>(dataFieldVo);
+		return new R<>(dataFieldService.queryById(id));
 	}
 
 	/**
-	 * 保存<规则名称信息>
+	 * 保存
 	 * @return R
 	 */
 	@PostMapping("/create")

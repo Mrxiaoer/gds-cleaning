@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 用户规则Vo
+ * 根据单条用户规则id查询规则具体vo
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com

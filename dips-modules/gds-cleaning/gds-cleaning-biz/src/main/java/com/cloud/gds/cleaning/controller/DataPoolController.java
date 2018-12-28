@@ -71,9 +71,7 @@ public class DataPoolController {
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-		DataFieldValue dataFieldValue = dataFieldValueService.selectOne(new EntityWrapper<DataFieldValue>().eq("id", id).eq("is_deleted", DataCleanConstant.NO));
-		DataPoolVo dataPoolVo = DataPoolUtils.entity2Vo(dataFieldValue);
-		return new R<>(dataPoolVo);
+		return new R<>(dataFieldValueService.queryById(id));
 	}
 
 	/**
@@ -96,31 +94,27 @@ public class DataPoolController {
 	 */
 	@PostMapping("/update/{id}")
 	public R update(@PathVariable("id")Long id,@RequestBody Map<String,Object>map) {
-		dataFieldValueService.updateJson(id,map);
-		return new R<>(Boolean.TRUE);
+		return new R<>(dataFieldValueService.updateJson(id,map));
 	}
 
 	/**
 	 * 单独删除
-	 *
 	 * @param id
 	 * @return
 	 */
 	@PostMapping("/delete/{id}")
 	public R delete(@PathVariable("id") Long id) {
-		return new R(dataFieldValueService.deleteById(id));
+		return new R<>(dataFieldValueService.deleteById(id));
 	}
 
 	/**
 	 * 批量删除
-	 *
 	 * @param ids
 	 * @return
 	 */
 	@PostMapping("/ids")
 	public R deleteT(@RequestBody Set<Long> ids) {
-		dataFieldValueService.deleteByIds(ids);
-		return new R<>();
+		return new R<>(dataFieldValueService.deleteByIds(ids));
 	}
 
 }

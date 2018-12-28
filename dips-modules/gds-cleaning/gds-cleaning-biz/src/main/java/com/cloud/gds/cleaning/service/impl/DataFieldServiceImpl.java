@@ -5,14 +5,17 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataField;
+import com.cloud.gds.cleaning.api.vo.DataFieldVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataRuleUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import scala.annotation.meta.field;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,6 +55,15 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	}
 
 	@Override
+	public DataFieldVo queryById(Long id) {
+		DataFieldVo dataFieldVo = new DataFieldVo();
+		DataField dataField = this.selectById(id);
+		BeanUtils.copyProperties(dataField, dataFieldVo);
+		dataFieldVo.setRuleName((dataField.getRuleId() == 0) ? null : (dataRuleService.selectById(dataField.getRuleId()).getName()));
+		return dataFieldVo;
+	}
+
+	@Override
 	public Boolean save(DataField dataField) {
 		dataField.setCreateTime(LocalDateTime.now());
 		dataField.setCreateUser(SecurityUtils.getUser().getId());
@@ -72,16 +84,19 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		DataField field = new DataField();
 		field.setId(id);
 		field.setIsDeleted(DataCleanConstant.YES);
+		field.setModifiedTime(LocalDateTime.now());
+		field.setModifiedUser(SecurityUtils.getUser().getId());
 		// TODO 主表删除之后子表是否已进行删除？
 		return this.update(field);
 	}
 
 	@Override
 	public Boolean deleteByIds(Set<Long> ids) {
-		for (Long id : ids){
-			this.deleteById(id);
-		}
-		return true;
+		DataField dataField = new DataField();
+		dataField.setIsDeleted(DataCleanConstant.YES);
+		dataField.setModifiedTime(LocalDateTime.now());
+		dataField.setModifiedUser(SecurityUtils.getUser().getId());
+		return this.update(dataField, new EntityWrapper<DataField>().in("id", ids));
 	}
 
 	@Override

@@ -1,11 +1,12 @@
 package com.cloud.gds.cleaning.service;
 
-import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
+import com.cloud.gds.cleaning.api.vo.LabelVo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,10 +19,30 @@ import java.util.Set;
 public interface DataRuleService extends IService<DataRule> {
 
 	/**
+	 * 根据id查询规则信息
+	 * @param id
+	 * @return
+	 */
+	DataRuleVo queryById(Long id);
+	/**
 	 * 查询规则
 	 * @return
 	 */
 	List<DataRulePageVo> selectAll();
+
+	/**
+	 * 根据规则id获取动态参数
+	 * @param id
+	 * @return
+	 */
+	ArrayList<LabelVo> gainDynamicKey(Long id);
+
+	/**
+	 * 自定义更新规则信息
+	 * @param dataRuleVo
+	 * @return
+	 */
+	Boolean customUpdate(DataRuleVo dataRuleVo);
 	/**
 	 * 单独删除数据
 	 * @param id
@@ -33,7 +54,6 @@ public interface DataRuleService extends IService<DataRule> {
 	 * @param ids
 	 */
 	Boolean deleteByIds(Set<Long> ids);
-
 	/**
 	 * 保存
 	 * @param dataRuleVo
