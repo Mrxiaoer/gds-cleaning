@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *
+ * Copyright (c) 2018-2025, ZB All rights reserved.
+ *
+ * Author: ZB
+ *
+ */
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.dips.tag.mapper.GovTagTypeRelationMapper">
+	<!-- Vo结果集 -->
+	<resultMap id="govTagTypeVoResultMap" type="com.cloud.dips.tag.api.vo.GovTagTypeVO">
+		<result column="typeId" property="typeId"/>
+		<result column="parentId" property="parentId"/>
+		<result column="name" property="name"/>
+		<collection property="parentVo" select="selectParentType" column="parentId" />
+	</resultMap>
+	
+	<select id="selectTagTypes" resultMap="govTagTypeVoResultMap">
+		SELECT
+			tt.id AS typeId,
+			tt.parent_id AS parentId,
+			tt.name AS name
+		FROM
+			gov_tag_type_relation AS ttr
+			LEFT JOIN gov_tag_type AS tt ON tt.id = ttr.type_id
+		WHERE
+			ttr.tag_id = #{tagId}
+	</select>
+	<select id="selectParentType" resultMap="govTagTypeVoResultMap">
+		SELECT
+			tt.id AS typeId,
+			tt.parent_id AS parentId,
+			tt.name AS name
+		FROM
+			gov_tag_type AS tt
+		WHERE
+			tt.id = #{parentId}
+	</select>
+
+</mapper>

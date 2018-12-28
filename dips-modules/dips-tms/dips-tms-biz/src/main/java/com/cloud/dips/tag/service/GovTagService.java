@@ -47,7 +47,7 @@ public interface GovTagService extends IService<GovTag> {
 	 * 
 	 * @return
 	 */
-	GovTag save(GovTag govTag);
+	GovTag save(GovTag govTag,List<Integer> typeIds);
 	
 	/**
 	 * 根据标签名称查标签

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.cloud.dips.common.core.constant.CommonConstant;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.tag.api.entity.GovTag;
@@ -20,6 +19,7 @@ import com.cloud.dips.tag.mapper.GovTagMapper;
 import com.cloud.dips.tag.service.GovTagFunctionService;
 import com.cloud.dips.tag.service.GovTagModificationRecordService;
 import com.cloud.dips.tag.service.GovTagService;
+import com.cloud.dips.tag.service.GovTagTypeRelationService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +37,8 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 	private GovTagFunctionService govTagFunctionService;
 	@Autowired
 	private GovTagModificationRecordService recordService;
+	@Autowired
+	private GovTagTypeRelationService govTagTypeRelationService;
 	
 
 	/**
@@ -59,7 +61,11 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 		if(name!=null){
 			tagname=SpecialStringUtil.escapeExprSpecialWord(name.toString());
 		}
-		query.setRecords(mapper.selectGovTagVoPage(query, tagname,typeid,levelid,status,enable,fob));
+		List<GovTagVO> list=mapper.selectGovTagVoPage(query, tagname,typeid,levelid,status,enable,fob);
+		for(GovTagVO bean:list){
+			bean.addTypeNames();
+		}
+		query.setRecords(list);
 		return query;
 	}
 	
@@ -97,13 +103,13 @@ public class GovTagServiceImpl extends ServiceImpl<GovTagMapper, GovTag>
 	 * @return
 	 */
 	@Override
-	public GovTag save(GovTag govTag) {
-		govTag.setSystem(CommonConstant.SYSTEM_NAME);
+	public GovTag save(GovTag govTag,List<Integer> typeIds) {
 		GovTagFunction govTagFunction=govTagFunctionService.getByNumber("tagReview");
 		if(govTagFunction!=null && govTagFunction.getEnable()==1){
 			govTag.setStatus(0);
 		}
 		this.insert(govTag);
+		govTagTypeRelationService.saveTagTypeRelation(govTag.getTagId(), typeIds);
 		GovTagModificationRecord record=new GovTagModificationRecord();
 		record.setCreatorId(govTag.getCreatorId());
 		record.setTagId(govTag.getTagId());
