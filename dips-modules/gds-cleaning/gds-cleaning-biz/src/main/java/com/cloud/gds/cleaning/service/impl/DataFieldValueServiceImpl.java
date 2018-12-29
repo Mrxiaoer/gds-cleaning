@@ -236,7 +236,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		willAnalysisData.setData(objList);
 
 		//写入文件
-		String resultPath = fileSavePath + "/"+fieldId+".text";
+		String resultPath = fileSavePath + "/"+fieldId+".txt";
 		FileWriter fileWriter = new FileWriter(resultPath);
 		fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
 
