@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.cleaning.mapper.AnalysisResultMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap id="dataFieldMap" type="com.cloud.gds.cleaning.api.entity.AnalysisResult">
+		<result column="field_id" property="fieldId"/>
+		<result column="base_id" property="baseId"/>
+		<result column="compare_id" property="compareId"/>
+		<result column="similarity" property="similarity"/>
+	</resultMap>
+
+
+</mapper>

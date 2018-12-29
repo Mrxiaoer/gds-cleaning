@@ -18,6 +18,10 @@
 		<result column="be_cleaned_id" property="beCleanedId"/>
 	</resultMap>
 
+	<sql id="DataPoolAnalysis">
+		id,similarity,field_id,field_value,create_time,modified_time,create_user,modified_user,is_deleted,state,remark,be_cleaned_id
+	</sql>
+
 	<update id="deleteByIds">
 		UPDATE dataclean_data_field_value
 		<set>
@@ -74,6 +78,28 @@
 				WHERE
 					base_id = #{id}
 			)
+	</select>
+
+	<select id="新写接口">
+		SELECT
+		<include refid="DataPoolAnalysis"/>
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					dataclean_data_field_value
+				WHERE
+					id IN (
+						SELECT
+							compare_id
+						FROM
+							dataclean_analysis_result
+						WHERE
+							base_id = 1
+					)
+			) a
+		LEFT JOIN dataclean_analysis_result ON a.field_id = dataclean_analysis_result.compare_id
 	</select>
 
 </mapper>

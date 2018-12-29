@@ -8,9 +8,11 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
+import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+import com.cloud.gds.cleaning.api.vo.GroupVo;
 import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
@@ -18,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -144,11 +147,27 @@ public class DataFieldValueServiceTest {
 		System.out.println(a);
 	}
 
+	@Autowired
+	AnalysisResultService analysisResultService;
+
 	@Test
 	public void listJson(){
     	String str = "[{\"id\":1,\"group\":[{\"id\":1,\"similarity\":1},{\"id\":2,\"similarity\":0.709008778084403}]},{\"id\":1525,\"group\":[{\"id\":1525,\"similarity\":1},{\"id\":1526,\"similarity\":0.7328392218049825},{\"id\":1601,\"similarity\":0.795443077662214},{\"id\":1611,\"similarity\":0.795443077662214},{\"id\":1725,\"similarity\":0.5546353317889164},{\"id\":2077,\"similarity\":0.691628594788375},{\"id\":2078,\"similarity\":0.6820620141175615},{\"id\":2079,\"similarity\":0.6858237655151436},{\"id\":2081,\"similarity\":0.5946353317889165},{\"id\":2657,\"similarity\":0.82}]},{\"id\":2667,\"group\":[{\"id\":2667,\"similarity\":1},{\"id\":2668,\"similarity\":0.9},{\"id\":2669,\"similarity\":0.7},{\"id\":2670,\"similarity\":0.7499999999999999}]}]";
 		List<ResultJsonVo> list = JSON.parseArray(str, ResultJsonVo.class);
 		System.out.println(list);
+		Long fileId = 1L;
+		List<AnalysisResult> analysisResults = new ArrayList<>();
+		for (ResultJsonVo jsonVo : list) {
+			for (GroupVo vo : jsonVo.getGroup()) {
+				AnalysisResult result = new AnalysisResult();
+				result.setFieldId(fileId);
+				result.setBaseId(jsonVo.getId());
+				result.setCompareId(vo.getId());
+				result.setSimilarity(vo.getSimilarity());
+				analysisResults.add(result);
+			}
+		}
+		analysisResultService.insertBatch(analysisResults);
 
 
 	}

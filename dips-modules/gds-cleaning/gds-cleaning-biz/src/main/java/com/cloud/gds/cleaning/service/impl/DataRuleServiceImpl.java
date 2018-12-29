@@ -61,7 +61,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 
-		// 如果规则的百分比更新,s是否需要重新分析更新
+		// 如果规则的百分比更新,是否需要重新分析更新
 		dataFieldService.updateNeedReanalysis(dataRuleVo.getDetail()==null ? 0 : dataRuleVo.getId());
 
 		return this.updateById(dataRule);

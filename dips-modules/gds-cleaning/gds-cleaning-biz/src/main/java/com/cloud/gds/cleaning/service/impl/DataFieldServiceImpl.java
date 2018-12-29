@@ -101,6 +101,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 
 	@Override
 	public Boolean checkRule(Long id, Long ruleId) {
+		// todo 判断数据池中是否有数据
 		DataField dataField = this.selectById(id);
 		// 如果前后2次的规则id相同就不处理
 		if (ruleId.equals(dataField.getRuleId())){

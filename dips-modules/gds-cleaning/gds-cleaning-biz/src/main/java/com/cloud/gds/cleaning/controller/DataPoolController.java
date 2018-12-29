@@ -1,31 +1,20 @@
 package com.cloud.gds.cleaning.controller;
 
 import cn.hutool.json.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
-import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
-import com.cloud.gds.cleaning.utils.DataPoolUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import hammerlab.iterator.map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 导入数据的内容
@@ -75,10 +64,9 @@ public class DataPoolController {
 	}
 
 	/**
-	 * 保存
-	 *
-	 * @param params
-	 * @param id
+	 * 保存 数据池信息
+	 * @param params 数据
+	 * @param id 清洗池id
 	 * @return
 	 */
 	@PostMapping("/create/{id}")

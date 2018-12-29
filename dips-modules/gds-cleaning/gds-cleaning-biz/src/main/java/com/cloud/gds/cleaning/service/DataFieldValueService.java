@@ -20,7 +20,7 @@ import java.util.Set;
 public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
-	 * 获取清洗完的数据
+	 * 分析结果默认中心数据显示
 	 * @param fieldId
 	 * @return
 	 */
@@ -96,9 +96,10 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * 获取待分析数据
 	 *
 	 * @param id 数据集id
+	 * @param threshold 阀值
 	 * @return String JSON字符串
 	 */
-	String getAnalysisData(Long fieldId);
+	String getAnalysisData(Long fieldId,Float threshold);
 
 }
 

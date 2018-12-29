@@ -83,6 +83,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public Boolean updateJson(Long id, Map<String, Object> map) {
+		// todo 修改->先删再增
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setId(id);
 		dataFieldValue.setFieldValue(JSON.toJSONString(map));
@@ -125,19 +126,20 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Transactional(rollbackFor = Exception.class)
 	public void saveAll(Long fieldId, List<Map<String, Object>> maps) {
 
+
 		// 循环插入数据库相关信息
 		for (Map<String, Object> map : maps) {
 			DataFieldValue dataFieldValue = new DataFieldValue();
 			// 组装
 			dataFieldValue.setFieldId(fieldId);
-			dataFieldValue.setFieldValue(map.toString());
-			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setCreateTime(LocalDateTime.now());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
+			dataFieldValue.setFieldValue(map.toString());
+			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			// 添加数据
 			this.insert(dataFieldValue);
 		}
-
+//		this.insertBatch();
 	}
 
 	@Override
@@ -167,7 +169,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public String getAnalysisData(Long fieldId) {
+	public String getAnalysisData(Long fieldId,Float threshold) {
 
 		DataField dataField = new DataField();
 		dataField.setId(fieldId);
@@ -179,7 +181,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		WillAnalysisData willAnalysisData = new WillAnalysisData();
 		//设置阀值
-		willAnalysisData.setThreshold(0.8F);
+		willAnalysisData.setThreshold(threshold);
 		//设置字段名，权重，字段是否近似
 		List<DataSetVo> list = JSONUtil.parseArray(dataRule.getParams()).toList(DataSetVo.class);
 		List<String> params = new ArrayList<>(4);

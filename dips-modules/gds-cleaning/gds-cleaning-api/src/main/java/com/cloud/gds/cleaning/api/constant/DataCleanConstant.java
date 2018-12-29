@@ -17,11 +17,33 @@ public interface DataCleanConstant {
 
 	Long ONE = 1L;
 
-	//快速分析
+	/**
+	 * 快速分析
+	 */
 	Integer QUICK_ANALYSIS = 1;
 
-	//深度分析
+	/**
+	 * 深度分析
+	 */
 	Integer DEEP_ANALYSIS = 2;
+
+	/**
+	 * 分析状态 0、未分析
+ 	 */
+	Integer NO_ANALYSIS = 0;
+	/**
+	 * 分析状态 1、正在分析
+	 */
+	Integer BEING_ANALYSIS = 1;
+	/**
+	 * 分析状态 2、已分析
+	 */
+	Integer DONE_ANALYSIS = 2;
+	/**
+	 * 分析状态 3、分析出错
+	 */
+	Integer ERROR_ANALYSIS = 3;
+
 
 
 }

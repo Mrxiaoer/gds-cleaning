@@ -5,12 +5,10 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.entity.DataField;
-import com.cloud.gds.cleaning.api.vo.DataFieldVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,7 +78,7 @@ public class CleanPoolController {
 	 */
 	@PostMapping("/update")
 	public R update(@RequestBody DataField dataField) {
-		if (!"".equals(dataField.getRuleId())){
+		if (dataField.getRuleId() != null){
 			Boolean flag = dataFieldService.checkRule(dataField.getId(),dataField.getRuleId());
 			if (flag){
 				return new R<>(dataFieldService.update(dataField));

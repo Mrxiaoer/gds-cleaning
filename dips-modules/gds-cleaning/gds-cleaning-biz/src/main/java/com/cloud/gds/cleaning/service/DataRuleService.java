@@ -25,7 +25,7 @@ public interface DataRuleService extends IService<DataRule> {
 	 */
 	DataRuleVo queryById(Long id);
 	/**
-	 * 查询规则
+	 * 查询所有规则
 	 * @return
 	 */
 	List<DataRulePageVo> selectAll();
@@ -38,7 +38,7 @@ public interface DataRuleService extends IService<DataRule> {
 	ArrayList<LabelVo> gainDynamicKey(Long id);
 
 	/**
-	 * 自定义更新规则信息
+	 * 由于规则百分比更新，进行清洗池分析状态更新
 	 * @param dataRuleVo
 	 * @return
 	 */
@@ -55,7 +55,7 @@ public interface DataRuleService extends IService<DataRule> {
 	 */
 	Boolean deleteByIds(Set<Long> ids);
 	/**
-	 * 保存
+	 * 保存规则基本信息
 	 * @param dataRuleVo
 	 * @return
 	 */
