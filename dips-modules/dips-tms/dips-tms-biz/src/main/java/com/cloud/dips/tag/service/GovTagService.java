@@ -41,10 +41,9 @@ public interface GovTagService extends IService<GovTag> {
 	 */
 	Boolean deleteGovTagById(GovTag govTag);
 	/**
-	 * 保存标签
-	 * 
+	 * 新增标签
 	 * @param govTag
-	 * 
+	 * @param typeIds 分类id集合
 	 * @return
 	 */
 	GovTag save(GovTag govTag,List<Integer> typeIds);

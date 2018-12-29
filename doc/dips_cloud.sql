@@ -541,20 +541,33 @@ CREATE TABLE `gov_tag` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '标签创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   `refers` int(11) NOT NULL DEFAULT '0' COMMENT '标签应用次数',
-  `order_num` tinyint(4) NOT NULL COMMENT '标签优先级',
-  `type_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '标签分类',
+  `order_num` tinyint(4) NOT NULL DEFAULT '0' COMMENT '标签优先级',
   `level_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '标签级别',
-  `views` int(11) NOT NULL COMMENT '标签浏览量',
-  `description` varchar(255) NOT NULL COMMENT '标签介绍',
+  `views` int(11) NOT NULL DEFAULT '0' COMMENT '标签浏览量',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '标签介绍',
   `creator_id` bigint(20) NOT NULL COMMENT '标签创建者',
-  `system` varchar(80) NOT NULL COMMENT '所属系统',
+  `system` varchar(80) NOT NULL DEFAULT '' COMMENT '所属系统',
   `status` int(1) NOT NULL DEFAULT '1' COMMENT '标签状态',
   `enable` int(1) NOT NULL DEFAULT '1' COMMENT '标签启用',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COMMENT='标签表';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COMMENT='标签表';
 
 -- ----------------------------
 -- Records of gov_tag
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `gov_tag_type_relation`
+-- ----------------------------
+DROP TABLE IF EXISTS `gov_tag_type_relation`;
+CREATE TABLE `gov_tag_type_relation` (
+  `tag_id` bigint(20) NOT NULL COMMENT '标签ID',
+  `type_id` bigint(20) NOT NULL COMMENT '标签分类ID',
+  PRIMARY KEY (`tag_id`,`type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='标签与标签分类关联表';
+
+-- ----------------------------
+-- Records of gov_tag_type_relation
 -- ----------------------------
 
 -- ----------------------------

@@ -18,6 +18,11 @@ import com.cloud.dips.tag.api.vo.GovTagTypeVO;
  */
 public interface GovTagTypeRelationMapper extends BaseMapper<GovTagTypeRelation> {
 	
+	/**
+	 * 获取标签分类vo集合
+	 * @param tagId
+	 * @return
+	 */
 	public List<GovTagTypeVO> selectTagTypes(@Param("tagId") String tagId);
 
 }

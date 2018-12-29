@@ -146,7 +146,7 @@ public class TagController {
 		GovTag govTag = service.selectById(id);
 		govTagTypeRelationService.deleteById(id);
 		if(govTag==null){
-			return new R<>(false);
+			return new R<Boolean>(Boolean.FALSE);
 		}else{
 				govTagDescriptionService.deleteByTagId(govTag.getTagId());
 				govTagRelationService.deleteById(govTag.getTagId());
@@ -157,7 +157,7 @@ public class TagController {
 				EntityWrapper<GovTagMergeRecord> em=new EntityWrapper<GovTagMergeRecord>();
 				em.eq("tag_id", govTag.getTagId()).or().eq("merge_id", govTag.getTagId());
 				mergeRecordService.delete(em);
-				return new R<>(service.deleteGovTagById(govTag));
+				return new R<Boolean>(service.deleteGovTagById(govTag));
 		}
 	}
 	
@@ -184,9 +184,9 @@ public class TagController {
 			params.put("node", "tag");
 			params.put("tagKeyWords", tagKeyWords.toString());
 			relationService.saveTagRelation(params);
-			return new R<>(Boolean.TRUE);
+			return new R<Boolean>(Boolean.TRUE);
 		}else{
-			return new R<>(Boolean.FALSE,"标签已存在");
+			return new R<Boolean>(Boolean.FALSE,"标签已存在");
 		}
 		
 	}	
@@ -200,8 +200,12 @@ public class TagController {
 	@ApiOperation(value = "更新标签浏览量", notes = "更新标签浏览量", httpMethod = "POST")
 	public R<Boolean> tagViews(@PathVariable Integer id) {
 		GovTag govTag = service.selectById(id);
-		govTag.setViews(govTag.getViews()+1);
-		return new R<>(service.updateById(govTag));
+		if(govTag==null){
+			return new R<Boolean>(Boolean.FALSE,"标签不存在");	
+		}else{
+			govTag.setViews(govTag.getViews()+1);
+			return new R<Boolean>(service.updateById(govTag));	
+		}
 	}
 	
 	@SysLog("更新标签")

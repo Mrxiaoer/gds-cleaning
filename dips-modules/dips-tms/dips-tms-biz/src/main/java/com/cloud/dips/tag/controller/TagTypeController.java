@@ -95,7 +95,7 @@ public class TagTypeController {
 	public R<Boolean> saveTagType(@Valid @RequestBody GovTagTypeDTO govTagTypeDto) {
 			GovTagType govTagType = new GovTagType();
 			BeanUtils.copyProperties(govTagTypeDto, govTagType);
-			return new R<>(service.insert(govTagType));
+			return new R<Boolean>(service.insert(govTagType));
 	}
 	
 	@SysLog("更新标签分类")
@@ -105,7 +105,7 @@ public class TagTypeController {
 	public R<Boolean> updateTagType(@RequestBody GovTagTypeDTO govTagTypeDto) {
 		GovTagType govTagType = service.selectById(govTagTypeDto.getTypeId());
 		BeanUtils.copyProperties(govTagTypeDto, govTagType);
-		return new R<>(service.updateAllColumnById(govTagType));
+		return new R<Boolean>(service.updateAllColumnById(govTagType));
 	}
 	
 }
