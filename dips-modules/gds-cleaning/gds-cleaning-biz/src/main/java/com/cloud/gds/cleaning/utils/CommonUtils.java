@@ -48,11 +48,10 @@ public class CommonUtils {
 	 * 分页片段
 	 *
 	 * @param params
-	 * @param t
 	 * @param <T>
 	 * @return
 	 */
-	public static <T> Wrapper<T> pagePart(PageParam<T> params, T t) {
+	public static <T> Wrapper<T> pagePart(PageParam<T> params) {
 
 		Wrapper<T> wrapper = new EntityWrapper<T>();
 

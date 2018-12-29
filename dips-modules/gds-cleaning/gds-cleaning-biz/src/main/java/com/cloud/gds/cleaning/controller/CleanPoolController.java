@@ -54,7 +54,7 @@ public class CleanPoolController {
 	@ApiOperation(value = "查看列表", notes = "根据条件获取列表")
 	public R page(@RequestBody PageParam<DataField> params) {
 
-		Wrapper<DataField> wrapper = CommonUtils.pagePart(params, new DataField());
+		Wrapper<DataField> wrapper = CommonUtils.pagePart(params);
 		Page page = dataFieldService.selectPage(params, wrapper);
 
 		return new R<>(page);
