@@ -66,8 +66,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public List<DataFieldValue> gainCleanData(Long fieldId) {
-		List<DataFieldValue> dataFieldValues = dataFieldValueMapper.gainCleanData(fieldId);
-		return dataFieldValues;
+		return dataFieldValueMapper.gainCleanData(fieldId);
 	}
 
 	@Override
@@ -79,6 +78,11 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public List<DataFieldValue> gainDetails(Long id) {
 		return dataFieldValueMapper.gainDetails(id);
+	}
+
+	@Override
+	public List<DataFieldValue> selectByfieldId(Long fieldId) {
+		return this.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.NO));
 	}
 
 	@Override
@@ -113,9 +117,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	public Boolean save(Long id, JSONObject params) {
+	public Boolean save(Long fieldId, JSONObject params) {
 		DataFieldValue dataFieldValue = new DataFieldValue();
-		dataFieldValue.setFieldId(id);
+		dataFieldValue.setFieldId(fieldId);
 		dataFieldValue.setFieldValue(JSON.toJSONString(params));
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());

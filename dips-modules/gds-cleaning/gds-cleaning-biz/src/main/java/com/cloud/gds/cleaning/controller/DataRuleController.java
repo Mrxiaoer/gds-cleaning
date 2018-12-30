@@ -88,7 +88,7 @@ public class DataRuleController {
 	}
 
 	/**
-	 * 保存<规则名称信息>
+	 * 保存 规则名称信息
 	 * @return R
 	 */
 	@PostMapping("/create")
@@ -129,6 +129,7 @@ public class DataRuleController {
 	 */
 	@PostMapping("/delete")
 	public R deleteT(@RequestBody Set<Long> ids){
+		// 判断规则中是否有一条被使用过
 		if (dataFieldService.selectByRuleIds(ids).size() > 0){
 			return new R(new RuntimeException("规则已被选择，请先取消后再删除!"));
 		}else {

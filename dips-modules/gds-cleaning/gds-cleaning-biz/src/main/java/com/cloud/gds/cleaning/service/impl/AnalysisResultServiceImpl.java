@@ -60,7 +60,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
 			dataFieldService.update(dataField);
 		}else {
-			// 算法分析前先将分析结果表中对应数据删除 todo 考虑是否如此使用
+			// 算法分析前先将分析结果表中对应数据删除
 			 this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 
 			// 算法分析返回结果->entity

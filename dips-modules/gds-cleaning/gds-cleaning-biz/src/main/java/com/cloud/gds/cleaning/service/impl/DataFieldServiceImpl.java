@@ -9,6 +9,7 @@ import com.cloud.gds.cleaning.api.vo.DataFieldVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.service.DataFieldService;
+import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataRuleUtils;
@@ -35,6 +36,9 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 
 	@Autowired
 	DataRuleService dataRuleService;
+
+	@Autowired
+	DataFieldValueService dataFieldValueService;
 
 	@Override
 	public List<DataField> selectByRuleId(Long ruleId) {
@@ -86,7 +90,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		field.setIsDeleted(DataCleanConstant.YES);
 		field.setModifiedTime(LocalDateTime.now());
 		field.setModifiedUser(SecurityUtils.getUser().getId());
-		// TODO 主表删除之后子表是否已进行删除？
+		// TODO 主表删除之后子表是否已进行删除,暂时不进行处理
 		return this.update(field);
 	}
 
@@ -101,22 +105,26 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 
 	@Override
 	public Boolean checkRule(Long id, Long ruleId) {
-		// todo 判断数据池中是否有数据
 		DataField dataField = this.selectById(id);
-		// 如果前后2次的规则id相同就不处理
-		if (ruleId.equals(dataField.getRuleId())){
-			return true;
-		}else if (!"".equals(dataField.getRuleId())){
-			DataRuleVo oneVo = DataRuleUtils.po2Vo(dataRuleService.selectById(dataField.getRuleId()));
-			DataRuleVo twoVo =DataRuleUtils.po2Vo(dataRuleService.selectById(ruleId));
-			SortedMap<String,String> one = oneVo.getDetail() != null ? DataRuleUtils.changeSortedMap(oneVo.getDetail()) : null;
-			SortedMap<String,String> two = twoVo.getDetail() != null ? DataRuleUtils.changeSortedMap(twoVo.getDetail()) : null;
-			// 如果规则其中一个是空的即可更新规则
-			if (two == null || one == null){
-				return true;
+		// 数据池数据为空, 规则可换
+		if (dataFieldValueService.selectByfieldId(id).size() > 0) {
+			// 原先规则为空,规则可以换
+			if (dataField.getRuleId() != null) {
+				DataRuleVo oldVo = DataRuleUtils.po2Vo(dataRuleService.selectById(dataField.getRuleId()));
+				DataRuleVo newVo = DataRuleUtils.po2Vo(dataRuleService.selectById(ruleId));
+				SortedMap<String, String> old = oldVo.getDetail() != null ? DataRuleUtils.changeSortedMap(oldVo.getDetail()) : null;
+				SortedMap<String, String> fresh = newVo.getDetail() != null ? DataRuleUtils.changeSortedMap(newVo.getDetail()) : null;
+				// 如果规则前后2个规则中参数为空,可更新规则
+				if (old == null){
+					return true;
+				}
+				if (fresh == null) {
+					return false;
+				}
+				return CommonUtils.checkSortedMap(old, fresh);
 			}
-			return CommonUtils.checkSortedMap(one,two);
 		}
+
 		return true;
 	}
 

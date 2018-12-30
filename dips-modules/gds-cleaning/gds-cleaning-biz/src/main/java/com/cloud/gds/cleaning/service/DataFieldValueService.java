@@ -41,6 +41,13 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	List<DataFieldValue> gainDetails(Long id);
 
 	/**
+	 * 根据清洗池id查询
+	 * @param fieldId 清洗池id
+	 * @return 数据池集合
+	 */
+	List<DataFieldValue> selectByfieldId(Long fieldId);
+
+	/**
 	 * 修改结果集字段
 	 * @param id
 	 * @param map
@@ -63,11 +70,11 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 保存单一数据
-	 * @param id
-	 * @param params
+	 * @param fieldId 清洗池id
+	 * @param params 数据信息
 	 * @return
 	 */
-	Boolean save(Long id, JSONObject params);
+	Boolean save(Long fieldId, JSONObject params);
 
 	/**
 	 * excel工具导数据保存到数据库
@@ -95,7 +102,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	/**
 	 * 获取待分析数据
 	 *
-	 * @param id 数据集id
+	 * @param fieldId 数据集id
 	 * @param threshold 阀值
 	 * @return String JSON字符串
 	 */

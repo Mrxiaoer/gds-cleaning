@@ -53,9 +53,9 @@ public class DataPoolController {
 	}
 
 	/**
-	 * 根据id查询
+	 * 根据数据池id查询
 	 *
-	 * @param id
+	 * @param id 数据池id
 	 * @return R
 	 */
 	@GetMapping("/{id}")
