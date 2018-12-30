@@ -16,7 +16,6 @@
 		<result column="create_user" property="createUser"/>
 		<result column="modified_user" property="modifiedUser"/>
 		<result column="is_deleted" property="isDeleted"/>
-		<result column="remark" property="remark"/>
 		<result column="analyse_state" property="analyseState"/>
 		<result column="matrix_file" property="matrixFile"/>
 		<result column="need_reanalysis" property="needReanalysis"/>

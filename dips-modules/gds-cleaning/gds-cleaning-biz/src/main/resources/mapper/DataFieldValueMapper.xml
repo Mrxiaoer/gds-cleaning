@@ -14,7 +14,6 @@
 		<result column="modified_user" property="modifiedUser"/>
 		<result column="is_deleted" property="isDeleted"/>
 		<result column="state" property="state"/>
-		<result column="remark" property="remark"/>
 		<result column="be_cleaned_id" property="beCleanedId"/>
 	</resultMap>
 
@@ -29,7 +28,6 @@
 	a.modified_user,
 	a.is_deleted,
 	a.state,
-	a.remark,
 	a.be_cleaned_id
 	</sql>
 

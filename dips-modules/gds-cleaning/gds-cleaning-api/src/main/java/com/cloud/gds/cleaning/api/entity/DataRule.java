@@ -59,10 +59,6 @@ public class DataRule extends Model<DataRule> {
 	 */
 	private Integer state;
 	/**
-	 * 备注
-	 */
-	private String remark;
-	/**
 	 * 数据来源
 	 */
 	private Integer deptId;

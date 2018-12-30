@@ -14,7 +14,6 @@
 		<result column="modified_user" property="modifiedUser"/>
 		<result column="is_deleted" property="isDeleted"/>
 		<result column="state" property="state"/>
-		<result column="remark" property="remark"/>
 		<result column="dept_id" property="deptId"/>
 	</resultMap>
 

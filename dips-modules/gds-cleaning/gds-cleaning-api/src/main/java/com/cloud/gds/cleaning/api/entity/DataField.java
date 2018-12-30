@@ -71,10 +71,6 @@ public class DataField extends Model<DataField> {
 	@JsonIgnore
 	private Integer isDeleted;
 	/**
-	 * 备注(备用)
-	 */
-	private String remark;
-	/**
 	 * 分析状态（0、未分析 1、正在分析 2、已分析 3、分析出错）
 	 */
 	private Integer analyseState;

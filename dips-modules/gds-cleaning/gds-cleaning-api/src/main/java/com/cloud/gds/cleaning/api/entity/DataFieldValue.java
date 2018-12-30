@@ -59,10 +59,6 @@ public class DataFieldValue extends Model<DataFieldValue> {
 	 */
 	private Integer state;
 	/**
-	 * 备注
-	 */
-	private String remark;
-	/**
 	 * 被某条数据清洗掉的id
 	 */
 	private Long beCleanedId;
