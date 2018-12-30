@@ -17,8 +17,13 @@ import org.apache.commons.lang.StringUtils;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class PageParam<T> extends Page<T> {
-
+	/**
+	 * eq数据集
+	 */
 	private List<String> eq;
+	/**
+	 * like数据集
+	 */
 	private List<String> like;
 
 }

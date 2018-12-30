@@ -25,9 +25,5 @@ public class DataPoolVo {
 	 * 导入数据的字段内容（json格式）
 	 */
 	private JSONObject fieldValue;
-	/**
-	 * 备注
-	 */
-	private String remark;
 
 }

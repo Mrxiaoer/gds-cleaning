@@ -3,7 +3,7 @@ package com.cloud.gds.cleaning.api.vo;
 import lombok.Data;
 
 /**
- * 用户数据vo
+ * 数据池Vo
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com

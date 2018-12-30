@@ -8,12 +8,14 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.Query;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
+import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
 import com.cloud.gds.cleaning.api.vo.GroupVo;
 import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
+import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import org.junit.Test;
@@ -163,7 +165,16 @@ public class DataFieldValueServiceTest {
 			}
 		}
 		analysisResultService.insertBatch(analysisResults);
-
-
 	}
+
+	@Autowired
+	DataFieldValueMapper dataFieldValueMapper;
+
+	@Test
+	public void selectDataPool(){
+		Long id = 1L;
+		List<DataPoolAnalysis> list = dataFieldValueMapper.selectDataPool(id);
+		System.out.println(list);
+	}
+
 }

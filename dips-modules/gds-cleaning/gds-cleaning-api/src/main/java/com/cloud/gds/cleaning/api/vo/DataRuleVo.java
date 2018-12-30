@@ -33,10 +33,6 @@ public class DataRuleVo {
 	 */
 	private Integer state;
 	/**
-	 * 备注
-	 */
-	private String remark;
-	/**
 	 * 数据来源
 	 */
 	private Long deptId;

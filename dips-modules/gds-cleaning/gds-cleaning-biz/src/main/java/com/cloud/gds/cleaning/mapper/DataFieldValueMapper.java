@@ -1,6 +1,7 @@
 package com.cloud.gds.cleaning.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -34,5 +35,7 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 	 * @return
 	 */
 	List<DataFieldValue> gainDetails(Long id);
+
+	List<DataPoolAnalysis> selectDataPool(Long id);
 
 }

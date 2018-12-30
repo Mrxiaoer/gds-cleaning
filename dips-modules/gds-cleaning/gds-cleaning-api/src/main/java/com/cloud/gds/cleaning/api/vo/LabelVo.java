@@ -10,8 +10,13 @@ import lombok.Data;
 @Data
 public class LabelVo {
 
+	/**
+	 * 标签
+	 */
 	private String label;
-
+	/**
+	 * 属性
+	 */
 	private String prop;
 
 }

@@ -14,8 +14,13 @@ import java.util.List;
 @Data
 public class ResultJsonVo {
 
+	/**
+	 * 中心数据id
+	 */
 	private Long id;
-
+	/**
+	 * 卫星数据集
+	 */
 	private List<GroupVo> group;
 
 }

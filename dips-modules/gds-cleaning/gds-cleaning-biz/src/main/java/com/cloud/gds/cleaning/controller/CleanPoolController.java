@@ -66,6 +66,7 @@ public class CleanPoolController {
 	 * @return R
 	 */
 	@GetMapping("/{id}")
+	@ApiOperation(value = "查询", notes = "根据清洗池主键查询")
 	public R info(@PathVariable("id") Long id) {
 		return new R<>(dataFieldService.queryById(id));
 	}
@@ -76,6 +77,7 @@ public class CleanPoolController {
 	 * @return R
 	 */
 	@PostMapping("/create")
+	@ApiOperation(value = "保存", notes = "保存清洗池数据")
 	public R save(@RequestBody DataField dataField) {
 		return new R<>(dataFieldService.save(dataField));
 	}
@@ -86,6 +88,7 @@ public class CleanPoolController {
 	 * @return R
 	 */
 	@PostMapping("/update")
+	@ApiOperation(value = "更新", notes = "更新清洗池数据")
 	public R update(@RequestBody DataField dataField) {
 		if (dataField.getRuleId() != null) {
 			Boolean flag = dataFieldService.checkRule(dataField.getId(), dataField.getRuleId());
@@ -105,6 +108,7 @@ public class CleanPoolController {
 	 * @return
 	 */
 	@PostMapping("/delete/{id}")
+	@ApiOperation(value = "单删", notes = "根据清洗池主键删除")
 	public R delete(@PathVariable("id") Long id) {
 		if (dataFieldService.deleteById(id)) {
 			return new R<>(true);
@@ -120,6 +124,7 @@ public class CleanPoolController {
 	 * @return
 	 */
 	@PostMapping("/delete")
+	@ApiOperation(value = "批量删除", notes = "根据清洗池主键批量删除")
 	public R deleteByIds(@RequestBody Set<Long> ids) {
 		return new R<>(dataFieldService.deleteByIds(ids));
 	}

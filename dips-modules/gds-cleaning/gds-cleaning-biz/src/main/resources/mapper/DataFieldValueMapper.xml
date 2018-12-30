@@ -19,7 +19,18 @@
 	</resultMap>
 
 	<sql id="DataPoolAnalysis">
-		id,similarity,field_id,field_value,create_time,modified_time,create_user,modified_user,is_deleted,state,remark,be_cleaned_id
+	a.id,
+	b.similarity,
+	a.field_id,
+	a.field_value,
+	a.create_time,
+	a.modified_time,
+	a.create_user,
+	a.modified_user,
+	a.is_deleted,
+	a.state,
+	a.remark,
+	a.be_cleaned_id
 	</sql>
 
 	<update id="deleteByIds">
@@ -80,7 +91,7 @@
 			)
 	</select>
 
-	<select id="新写接口">
+	<select id="selectDataPool" resultType="com.cloud.gds.cleaning.api.dto.DataPoolAnalysis">
 		SELECT
 		<include refid="DataPoolAnalysis"/>
 		FROM
@@ -96,10 +107,10 @@
 						FROM
 							dataclean_analysis_result
 						WHERE
-							base_id = 1
+							base_id = #{id}
 					)
 			) a
-		LEFT JOIN dataclean_analysis_result ON a.field_id = dataclean_analysis_result.compare_id
+		LEFT JOIN dataclean_analysis_result b ON a.id = b.compare_id
 	</select>
 
 </mapper>
