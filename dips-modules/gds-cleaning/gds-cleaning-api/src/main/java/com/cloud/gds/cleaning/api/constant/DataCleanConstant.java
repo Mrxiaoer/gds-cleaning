@@ -29,7 +29,7 @@ public interface DataCleanConstant {
 
 	/**
 	 * 分析状态 0、未分析
- 	 */
+	 */
 	Integer NO_ANALYSIS = 0;
 	/**
 	 * 分析状态 1、正在分析
@@ -44,6 +44,8 @@ public interface DataCleanConstant {
 	 */
 	Integer ERROR_ANALYSIS = 3;
 
+	String PAGE = "page";
 
+	String LIMIT = "limit";
 
 }

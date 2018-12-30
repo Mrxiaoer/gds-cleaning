@@ -6,10 +6,17 @@ import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.entity.AttributeMatch;
 import com.cloud.gds.cleaning.service.AttributeMatchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 属性
@@ -18,7 +25,7 @@ import java.util.Map;
  * @date 2018-11-27 09:27:28
  */
 @RestController
-@RequestMapping("/attributematch")
+@RequestMapping("/attribute_match")
 public class AttributeMatchController {
 
 	private final AttributeMatchService attributeMatchService;
@@ -45,8 +52,7 @@ public class AttributeMatchController {
 	 */
 	@GetMapping("/{id}")
 	public R info(@PathVariable("id") Long id) {
-		AttributeMatch attributeMatch = attributeMatchService.selectById(id);
-		return new R<>(attributeMatch);
+		return new R<>(attributeMatchService.selectById(id));
 	}
 
 	/**
@@ -68,8 +74,7 @@ public class AttributeMatchController {
 	 */
 	@PutMapping
 	public R update(@RequestBody AttributeMatch attributeMatch) {
-		attributeMatchService.updateById(attributeMatch);
-		return new R<>(Boolean.TRUE);
+		return new R<>(attributeMatchService.updateById(attributeMatch));
 	}
 
 	/**
