@@ -2,10 +2,8 @@ package com.cloud.gds.cleaning.controller;
 
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.service.AnalysisResultService;
-import com.cloud.gds.cleaning.service.CalculateService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
-import hammerlab.iterator.group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +48,7 @@ public class DataAnalysisController {
 	 * @param fieldId
 	 * @return
 	 */
-	@GetMapping("/clean")
+	@GetMapping("/center_data")
 	public R gainCleanData(@RequestParam Long fieldId){
 		return new R<>(DataPoolUtils.listEntity2Vo(dataFieldValueService.gainCleanData(fieldId)));
 	}
@@ -68,7 +66,7 @@ public class DataAnalysisController {
 	/**
 	 * 手动过滤
 	 * @param params
-	 * params 中必须包含baseId、compareId
+	 * params
 	 * @return
 	 */
 	@PostMapping("/manual/filter")

@@ -22,9 +22,17 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 	List<DataFieldValue> selectByCleanIds(@Param("ids") Set<Long> ids);
 
 	List<Long> selectNeedAnalysisIdList(@Param("dataFieldValue") DataFieldValue dataFieldValue);
-
+	/**
+	 * 分析结果默认中心数据显示
+	 * @param fieldId
+	 * @return
+	 */
 	List<DataFieldValue> gainCleanData(Long fieldId);
-
+	/**
+	 * 清洗接口数据明细
+	 * @param id
+	 * @return
+	 */
 	List<DataFieldValue> gainDetails(Long id);
 
 }

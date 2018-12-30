@@ -24,7 +24,7 @@ public interface DataFieldService extends IService<DataField> {
 	List<DataField> selectByRuleId(Long ruleId);
 
 	/**
-	 * 根据多规则查询是否被使用
+	 * 根据多规则查询那些清洗池中使用过
 	 * @param ruleIds
 	 * @return
 	 */
@@ -66,15 +66,15 @@ public interface DataFieldService extends IService<DataField> {
 	Boolean deleteByIds(Set<Long> ids);
 
 	/**
-	 * 即将更新的规则ruleId、id
-	 * @param id
-	 * @param ruleId
+	 * 检测规则是否可以更换
+	 * @param id 清洗池id
+	 * @param ruleId 选择的规则id
 	 * @return
 	 */
 	Boolean checkRule(Long id, Long ruleId);
 
 	/**
-	 * 根据规则id清空matrixFile
+	 * 根据规则id更新是否需要重新分析
 	 * @param ruleId
 	 * @return
 	 */

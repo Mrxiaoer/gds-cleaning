@@ -108,5 +108,18 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	String getAnalysisData(Long fieldId,Float threshold);
 
+	/**
+	 * 清空数据
+	 * @param fieldId 清洗池id
+	 * @return 是否已清空缓冲标记
+	 */
+	Boolean clear(Long fieldId);
+
+	/**
+	 * 清空缓冲数据
+	 * @param fieldId 清洗池id
+	 * @return
+	 */
+	Boolean clearBuffer(Long fieldId);
 }
 

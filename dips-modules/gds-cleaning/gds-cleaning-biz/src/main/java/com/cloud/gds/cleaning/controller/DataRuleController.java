@@ -52,11 +52,11 @@ public class DataRuleController {
 		List<String> likelist = new ArrayList<>();
 		likelist.add("name");
 		pp.setLike(likelist);
-		Wrapper<DataRule> wrapper = CommonUtils.pagePart(params,pp,new DataRule());
-		Page page = DataRuleUtils.changePage(dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper));
+//		Wrapper<DataRule> wrapper = CommonUtils.pagePart(params);
+//		Page page = DataRuleUtils.changePage(dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper));
 
 		//@todo 放入service
-		return new R<>(page);
+		return new R<>();
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class DataRuleController {
 	}
 
 	/**
-	 * 修改
+	 * 修改 规则信息
 	 * @return R
 	 */
 	@PostMapping("/update")

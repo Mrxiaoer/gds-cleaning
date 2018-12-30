@@ -124,9 +124,9 @@ public class DataFieldValueServiceTest {
 //		list.clear();
 //		list.add("");
 //		pp.setLike(list);
-		Wrapper<DataFieldValue> entityWrapper = CommonUtils.pagePart(params,pp,new DataFieldValue());
+//		Wrapper<DataFieldValue> entityWrapper = CommonUtils.pagePart(params,pp,new DataFieldValue());
 
-		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)),entityWrapper));
+//		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)),entityWrapper));
 	}
 
 	@Test
@@ -141,11 +141,6 @@ public class DataFieldValueServiceTest {
     	dataFieldValueService.saveAll(2L,maps );
 	}
 
-	@Test
-	public void getAnalysisData(){
-		String a = dataFieldValueService.getAnalysisData(3L);
-		System.out.println(a);
-	}
 
 	@Autowired
 	AnalysisResultService analysisResultService;

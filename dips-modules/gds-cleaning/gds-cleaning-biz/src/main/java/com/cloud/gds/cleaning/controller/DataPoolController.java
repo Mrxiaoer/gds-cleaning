@@ -47,9 +47,9 @@ public class DataPoolController {
 		//		List<String> likelist = new ArrayList<>();
 		//		likelist.add("");
 		//		pp.setLike(likelist);
-		Wrapper<DataFieldValue> wrapper = CommonUtils.pagePart(params, pp, new DataFieldValue());
-		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)), wrapper));
-		return new R<>(page);
+//		Wrapper<DataFieldValue> wrapper = CommonUtils.pagePart(params, pp, new DataFieldValue());
+//		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils.map2map(params)), wrapper));
+		return new R<>();
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class DataPoolController {
 	 * @return
 	 */
 	@PostMapping("/ids")
-	public R deleteT(@RequestBody Set<Long> ids) {
+	public R deleteByIds(@RequestBody Set<Long> ids) {
 		return new R<>(dataFieldValueService.deleteByIds(ids));
 	}
 

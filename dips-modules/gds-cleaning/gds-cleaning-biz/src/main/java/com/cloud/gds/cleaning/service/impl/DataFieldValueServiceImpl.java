@@ -248,6 +248,18 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return resultPath;
 	}
 
+	@Override
+	public Boolean clear(Long fieldId) {
+		// 由于结果集中有对比清洗前数据,如果需导入不同状态数据需要->清空数据池
+		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId));
+	}
+
+	@Override
+	public Boolean clearBuffer(Long fieldId) {
+		// 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓冲清除->清缓冲
+		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.YES));
+	}
+
 	/**
 	 * 未分析或需要重新分析的数据
 	 *

@@ -120,7 +120,7 @@ public class CleanPoolController {
 	 * @return
 	 */
 	@PostMapping("/delete")
-	public R deleteT(@RequestBody Set<Long> ids) {
+	public R deleteByIds(@RequestBody Set<Long> ids) {
 		return new R<>(dataFieldService.deleteByIds(ids));
 	}
 
