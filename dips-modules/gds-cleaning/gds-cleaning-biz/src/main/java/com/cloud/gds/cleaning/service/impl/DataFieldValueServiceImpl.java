@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper, DataFieldValue> implements
 	DataFieldValueService {
 
+	private final DataFieldValueMapper dataFieldValueMapper;
 	private final CalculateService calculateService;
 	private final DataFieldService dataFieldService;
 	private final DataRuleService dataRuleService;
@@ -53,16 +54,13 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	String fileSavePath;
 
 	@Autowired
-	DataFieldValueMapper dataFieldValueMapper;
-
-	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-		DataRuleService dataRuleService) {
+		DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper) {
 		this.calculateService = calculateService;
 		this.dataFieldService = dataFieldService;
 		this.dataRuleService = dataRuleService;
+		this.dataFieldValueMapper = dataFieldValueMapper;
 	}
-
 
 	@Override
 	public List<DataFieldValue> gainCleanData(Long fieldId) {
@@ -82,7 +80,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public List<DataFieldValue> selectByfieldId(Long fieldId) {
-		return this.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.NO));
+		return this.selectList(
+			new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.NO));
 	}
 
 	@Override
@@ -92,6 +91,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setId(id);
 		dataFieldValue.setFieldValue(JSON.toJSONString(map));
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
+		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		return this.updateById(dataFieldValue);
 	}
@@ -100,6 +100,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public Boolean deleteById(Long id) {
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setId(id);
+		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
@@ -110,10 +111,11 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public Boolean deleteByIds(Set<Long> ids) {
 
 		DataFieldValue dataFieldValue = new DataFieldValue();
+		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
-		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id",ids ));
+		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id", ids));
 	}
 
 	@Override
@@ -121,6 +123,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setFieldId(fieldId);
 		dataFieldValue.setFieldValue(JSON.toJSONString(params));
+		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());
 		return this.insert(dataFieldValue);
@@ -130,7 +133,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Transactional(rollbackFor = Exception.class)
 	public void saveAll(Long fieldId, List<Map<String, Object>> maps) {
 
-
 		// 循环插入数据库相关信息
 		for (Map<String, Object> map : maps) {
 			DataFieldValue dataFieldValue = new DataFieldValue();
@@ -139,20 +141,22 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setCreateTime(LocalDateTime.now());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
 			dataFieldValue.setFieldValue(map.toString());
+			assert SecurityUtils.getUser() != null;
 			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			// 添加数据
 			this.insert(dataFieldValue);
 		}
-//		this.insertBatch();
+		//		this.insertBatch();
 	}
 
 	@Override
-	public Page pagePo2Vo(Page page) {
+	public Page pagePo2Vo(Page<DataFieldValue> page) {
 		// 转化page中数据变成前端可用的vo
 		List<DataPoolVo> vo = DataPoolUtils.listEntity2Vo(page.getRecords());
-		page.setRecords(vo);
+		Page<DataPoolVo> voPage = new Page<>();
+		voPage.setRecords(vo);
 
-		return page;
+		return voPage;
 	}
 
 	@Override
@@ -173,7 +177,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public String getAnalysisData(Long fieldId,Float threshold) {
+	public String getAnalysisData(Long fieldId, Float threshold) {
 
 		DataField dataField = new DataField();
 		dataField.setId(fieldId);
@@ -210,18 +214,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		//设置待分析数据
 		List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
 		List<JSONObject> objList = new ArrayList<>();
-		// if (StrUtil.isBlank(dataField.getMatrixFile())) {
-		// 	//第一次分析
-		// 	willAnalysisList = firstAnalysisList(fieldId);
-		// } else {
-		// 	//非首次分析
-		// 	willAnalysisList = notFirstAnalysisList(fieldId);
-		//
-		// 	DataFieldValue dfv = new DataFieldValue();
-		// 	dfv.setFieldId(fieldId);
-		// 	List<Long> needAnalysisIdList = baseMapper.selectNeedAnalysisIdList(dfv);
-		// 	willAnalysisData.setNeedAnalysisDataId(needAnalysisIdList);
-		// }
 		for (DataFieldValue dataFieldValue : willAnalysisList) {
 			if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
 				JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
@@ -240,7 +232,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		willAnalysisData.setData(objList);
 
 		//写入文件
-		String resultPath = fileSavePath + "/"+fieldId+".txt";
+		String resultPath = fileSavePath + "/" + fieldId + ".txt";
 		FileWriter fileWriter = new FileWriter(resultPath);
 		fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
 
@@ -257,7 +249,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public Boolean clearBuffer(Long fieldId) {
 		// 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓冲清除->清缓冲
-		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.YES));
+		return this.delete(
+			new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.YES));
 	}
 
 	/**
@@ -308,7 +301,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			+ "\"名字\":0.8}},\"data\":[{\"id\":1,\"length\":10,\"type\":1,\"nameEn\":\"xm\",\"nameCn\":\"姓名\"},"
 			+ "{\"id\":2,\"length\":18,\"type\":2,\"nameEn\":\"sfz\",\"nameCn\":\"身份证\"},{\"id\":3,\"length\":1,"
 			+ "\"type\":3,\"nameEn\":\"sex\",\"nameCn\":\"性别\"}]}";
-		String simResult = calculateService.Similarity(DataCleanConstant.QUICK_ANALYSIS,"dddd");
+		String simResult = calculateService.similarity(DataCleanConstant.QUICK_ANALYSIS, "dddd");
 		System.out.println(simResult);
 	}
 

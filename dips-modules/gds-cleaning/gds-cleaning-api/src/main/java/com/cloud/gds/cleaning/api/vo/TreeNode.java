@@ -13,7 +13,7 @@ import java.util.List;
 public class TreeNode {
 	protected Long id;
 	protected Long pid;
-	protected List<TreeNode> children = new ArrayList<TreeNode>();
+	protected List<TreeNode> children = new ArrayList<>();
 
 	public void add(TreeNode node) {
 		children.add(node);

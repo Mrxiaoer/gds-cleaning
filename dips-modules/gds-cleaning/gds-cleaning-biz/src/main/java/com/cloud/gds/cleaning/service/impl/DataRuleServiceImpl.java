@@ -45,7 +45,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		List<DataRule> dataRules = this.selectList(new EntityWrapper<>(dataRule));
 		//返回id与name
-		return DataRuleUtils.TakeName(dataRules);
+		return DataRuleUtils.takeName(dataRules);
 	}
 
 	@Override

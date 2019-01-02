@@ -89,7 +89,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @param page
 	 * @return
 	 */
-	Page pagePo2Vo(Page page);
+	Page pagePo2Vo(Page<DataFieldValue> page);
 
 	/**
 	 * 清洗前后数据比较差异并输出

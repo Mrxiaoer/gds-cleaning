@@ -13,13 +13,11 @@ import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.CalculateService;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @Author : yaonuan
@@ -27,23 +25,25 @@ import java.util.Map;
  * @Date : 2018-12-28
  */
 @Service
-public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper, AnalysisResult>
-	implements AnalysisResultService {
+public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper, AnalysisResult> implements
+	AnalysisResultService {
+
+	private final DataFieldService dataFieldService;
+	private final DataFieldValueService dataFieldValueService;
+	private final CalculateService calculateService;
 
 	@Autowired
-	DataFieldService dataFieldService;
-
-	@Autowired
-	DataFieldValueService dataFieldValueService;
-
-	@Autowired
-	CalculateService calculateService;
-
+	public AnalysisResultServiceImpl(DataFieldService dataFieldService, DataFieldValueService dataFieldValueService,
+		CalculateService calculateService) {
+		this.dataFieldService = dataFieldService;
+		this.dataFieldValueService = dataFieldValueService;
+		this.calculateService = calculateService;
+	}
 
 	@Override
 	public void dataAnalysis(Long fieldId, Float threshold, Integer degree) {
 		// 分析程度degree  1、快速分析 2、深度分析
-		String fileUrl = dataFieldValueService.getAnalysisData(fieldId,threshold);
+		String fileUrl = dataFieldValueService.getAnalysisData(fieldId, threshold);
 
 		//  更新清洗池中分析状态->正在分析
 		DataField dataField = new DataField();
@@ -52,16 +52,16 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		dataFieldService.update(dataField);
 
 		//  数据分析接口
-		String result =  calculateService.Similarity(degree, fileUrl);
+		String result = calculateService.similarity(degree, fileUrl);
 
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
-		if ("None".equals(result)){
+		if ("None".equals(result)) {
 			// 失败
 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
 			dataFieldService.update(dataField);
-		}else {
+		} else {
 			// 算法分析前先将分析结果表中对应数据删除
-			 this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
+			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 
 			// 算法分析返回结果->entity
 			List<ResultJsonVo> list = JSON.parseArray(result, ResultJsonVo.class);

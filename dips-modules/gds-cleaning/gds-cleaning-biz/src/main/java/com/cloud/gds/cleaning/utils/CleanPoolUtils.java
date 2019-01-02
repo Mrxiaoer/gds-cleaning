@@ -9,6 +9,4 @@ package com.cloud.gds.cleaning.utils;
  */
 public class CleanPoolUtils {
 
-
-
 }
