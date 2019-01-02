@@ -1,12 +1,6 @@
 package com.cloud.gds.cleaning.controller;
 
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.R;
-import com.cloud.dips.common.core.util.SpecialStringUtil;
-import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
-import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,39 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/result_set")
 public class ResultSetController {
 
-	final DataFieldValueService dataFieldValueService;
+	private final DataFieldValueService dataFieldValueService;
 
 	@Autowired
 	public ResultSetController(
 		DataFieldValueService dataFieldValueService) {this.dataFieldValueService = dataFieldValueService;}
 
 	/**
-	 * 分页
+	 * 结果集详情分页
 	 *
 	 * @param params
 	 * @return
 	 */
 	@GetMapping("/page")
-	public Page<DataFieldValue> page(@RequestParam Map<String, Object> params) {
-		// todo 内移->service
-		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
-		Page<DataFieldValue> p = new Page<>();
-		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
-		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
-		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
-		p.setAsc(isAsc);
-		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
-		String name = params.getOrDefault("fieldValue", "").toString();
-		if (StrUtil.isNotBlank(name)) {
-			e.like("field_value", SpecialStringUtil.escapeExprSpecialWord(name));
-		}
-		e.eq("is_deleted", DataCleanConstant.NO);
-		return dataFieldValueService.selectPage(p, e);
-	}
-
-	public Page selectPage(@RequestParam Map<String, Object> params) {
-
-		return null;
+	public R page(@RequestParam Map<String, Object> params) {
+		return new R<>(dataFieldValueService.queryPage(params));
 	}
 
 	/**

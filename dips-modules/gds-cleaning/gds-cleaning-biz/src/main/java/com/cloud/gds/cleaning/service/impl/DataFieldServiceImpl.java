@@ -1,7 +1,10 @@
 package com.cloud.gds.cleaning.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataField;
@@ -16,6 +19,7 @@ import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import org.springframework.beans.BeanUtils;
@@ -39,6 +43,23 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	public DataFieldServiceImpl(DataRuleService dataRuleService, DataFieldValueService dataFieldValueService) {
 		this.dataRuleService = dataRuleService;
 		this.dataFieldValueService = dataFieldValueService;
+	}
+
+	@Override
+	public Page<DataField> queryPage(Map<String, Object> params) {
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataField> p = new Page<DataField>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataField> e = new EntityWrapper<DataField>();
+		String name = params.getOrDefault("name", "").toString();
+		if (StrUtil.isNotBlank(name)) {
+			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
+		}
+		e.eq("is_deleted", DataCleanConstant.NO);
+		return this.selectPage(p, e);
 	}
 
 	@Override

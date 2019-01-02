@@ -1,27 +1,15 @@
 package com.cloud.gds.cleaning.controller;
 
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.entity.DataField;
-import com.cloud.gds.cleaning.api.vo.PageParam;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
-import com.cloud.gds.cleaning.utils.CommonUtils;
 import io.swagger.annotations.ApiOperation;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 清洗池
@@ -52,12 +40,8 @@ public class CleanPoolController {
 	 */
 	@GetMapping("/page")
 	@ApiOperation(value = "查看列表", notes = "根据条件获取列表")
-	public R page(@RequestBody PageParam<DataField> params) {
-
-		Wrapper<DataField> wrapper = CommonUtils.pagePart(params);
-		Page page = dataFieldService.selectPage(params, wrapper);
-
-		return new R<>(page);
+	public R page(@RequestBody Map<String,Object> params) {
+		return new R<>(dataFieldService.queryPage(params));
 	}
 
 	/**

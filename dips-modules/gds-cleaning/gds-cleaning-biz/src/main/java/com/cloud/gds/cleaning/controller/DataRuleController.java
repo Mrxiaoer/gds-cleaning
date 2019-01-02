@@ -4,10 +4,7 @@ import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
-import com.cloud.gds.cleaning.utils.CommonUtils;
 import io.swagger.annotations.ApiOperation;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,23 +36,13 @@ public class DataRuleController {
 	}
 
 	/**
-	 * 分页
+	 * 规则名称分页
 	 * 参数要求：page、limit、name
 	 */
 	@GetMapping("/page")
 	@ApiOperation(value = "查看列表", notes = "根据条件获取列表")
 	public R page(@RequestParam Map<String, Object> params) {
-
-		CommonUtils.PiPei pp = CommonUtils.createPP();
-		List<String> likelist = new ArrayList<>();
-		likelist.add("name");
-		pp.setLike(likelist);
-		//		Wrapper<DataRule> wrapper = CommonUtils.pagePart(params);
-		//		Page page = DataRuleUtils.changePage(dataRuleService.selectPage(new Query<>(CommonUtils.map2map
-		// (params)),wrapper));
-
-		//@todo 放入service
-		return new R<>();
+		return new R<>(dataRuleService.queryPage(params));
 	}
 
 	/**

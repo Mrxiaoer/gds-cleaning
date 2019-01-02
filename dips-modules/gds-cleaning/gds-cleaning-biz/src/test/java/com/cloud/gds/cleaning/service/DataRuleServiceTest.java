@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
@@ -19,13 +20,6 @@ public class DataRuleServiceTest {
 
 	@Autowired
 	DataRuleService dataRuleService;
-
-	@Test
-	public void selectPage() {
-		Map<String,Object> map = new HashMap<>();
-//		Page page = dataRuleService.selectPage(map);
-//		System.out.println(page.getRecords());
-	}
 
 	@Test
 	public void deleteById() {
@@ -91,5 +85,17 @@ public class DataRuleServiceTest {
 			return false;
 		}
 		return true;
+	}
+
+	@Test
+	public void queryPage(){
+		Map<String,Object>  map = new HashMap<>();
+		map.put("page", 1);
+		map.put("limit", 10);
+		map.put("isAsc", true);
+//		map.put("name", "小二");
+		Page page = dataRuleService.queryPage(map);
+		System.out.println(page);
+
 	}
 }

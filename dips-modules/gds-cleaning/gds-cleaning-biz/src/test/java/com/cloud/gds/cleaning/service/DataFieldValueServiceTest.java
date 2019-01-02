@@ -83,21 +83,6 @@ public class DataFieldValueServiceTest {
     }
 
     @Test
-    public void pagePo2Vo() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("page", 1);
-        //		params.put("limit", 8);
-        //		params.put("field_id", 2);
-        System.out.print(params.get("fieldId"));
-        Page<DataFieldValue> page = dataFieldValueService
-                .selectPage(new Query<>(CommonUtils.map2map(params)), new EntityWrapper<DataFieldValue>());
-        // po -> vo
-        Page page2 = dataFieldValueService.pagePo2Vo(page);
-
-        System.out.println(page2);
-    }
-
-    @Test
     public void deleteByIds() {
         Set<Long> ids = new HashSet<>();
         ids.add(3L);

@@ -12,16 +12,18 @@ public interface DataCleanConstant {
 	Integer YES = 1;
 
 	Integer NO = 0;
-
+	/**
+	 * 长整类0
+	 */
 	Long ZERO = 0L;
-
+	/**
+	 * 长整类1
+	 */
 	Long ONE = 1L;
-
 	/**
 	 * 快速分析
 	 */
 	Integer QUICK_ANALYSIS = 1;
-
 	/**
 	 * 深度分析
 	 */
@@ -43,9 +45,13 @@ public interface DataCleanConstant {
 	 * 分析状态 3、分析出错
 	 */
 	Integer ERROR_ANALYSIS = 3;
-
+	/**
+	 * 分页参数page
+	 */
 	String PAGE = "page";
-
+	/**
+	 * 分页参数LIMIT
+	 */
 	String LIMIT = "limit";
 
 }
