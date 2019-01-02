@@ -37,6 +37,10 @@ public class AnalysisResult extends Model<AnalysisResult> {
 	 * 相似度
 	 */
 	private Double similarity;
+	/**
+	 * 是否人工操作(0、自动 1、人工)
+	 */
+	private Integer isManual;
 
 	/**
 	 * 主键值

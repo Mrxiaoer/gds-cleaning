@@ -41,14 +41,14 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 
 	@Override
 	public Page<DataField> queryPage(Map<String, Object> params) {
-		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
-		Page<DataField> p=new Page<DataField>();
+		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataField> p = new Page<DataField>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
 		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
 		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
 		p.setAsc(isAsc);
-		EntityWrapper<DataField> e=new EntityWrapper<DataField>();
-		String name=params.getOrDefault("name", "").toString();
+		EntityWrapper<DataField> e = new EntityWrapper<DataField>();
+		String name = params.getOrDefault("name", "").toString();
 		if(StrUtil.isNotBlank(name)){
 			e.like("name",  SpecialStringUtil.escapeExprSpecialWord(name));
 		}

@@ -33,6 +33,15 @@ public class ResultSetController {
 		return new R<>(dataFieldValueService.queryPage(params));
 	}
 
+	public R contrastBefore(Map<String,Object> params){
+
+		return new R();
+	}
+
+
+	public R contrastAfter(){
+		return new R();
+	}
 
 	/**
 	 * 清空数据

@@ -9,6 +9,7 @@
 		<result column="base_id" property="baseId"/>
 		<result column="compare_id" property="compareId"/>
 		<result column="similarity" property="similarity"/>
+		<result column="is_manual" property="isManual"/>
 	</resultMap>
 
 

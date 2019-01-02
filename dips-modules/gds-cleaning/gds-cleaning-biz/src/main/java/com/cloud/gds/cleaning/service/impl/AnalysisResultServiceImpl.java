@@ -16,10 +16,7 @@ import com.cloud.gds.cleaning.service.DataFieldValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author : yaonuan
@@ -43,12 +40,14 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	@Override
 	public void dataAnalysis(Long fieldId, Float threshold, Integer degree) {
 		// 分析程度degree  1、快速分析 2、深度分析
+		// 由于前端传过来的阀值是100作为基数,因此需要转化
 		String fileUrl = dataFieldValueService.getAnalysisData(fieldId,threshold);
 
 		//  更新清洗池中分析状态->正在分析
 		DataField dataField = new DataField();
 		dataField.setId(fieldId);
 		dataField.setAnalyseState(DataCleanConstant.BEING_ANALYSIS);
+		dataField.setThreshold(threshold);
 		dataFieldService.update(dataField);
 
 		//  数据分析接口
@@ -90,6 +89,20 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	public Boolean manualFilter(Map<String, Object> params) {
 
 		return null;
+	}
+
+	@Override
+	public boolean deleteAllById(Long id) {
+		AnalysisResult before1 = new AnalysisResult();
+		before1.setBaseId(id);
+		AnalysisResult before2 = new AnalysisResult();
+		before2.setCompareId(id);
+		return this.delete(new EntityWrapper<>(before1)) && this.delete(new EntityWrapper<>(before2));
+	}
+
+	@Override
+	public boolean deleteAllByIds(Set<Long> ids) {
+		return this.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids)) &&this.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids));
 	}
 
 }

@@ -19,12 +19,10 @@ import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
-import com.cloud.gds.cleaning.service.CalculateService;
-import com.cloud.gds.cleaning.service.DataFieldService;
-import com.cloud.gds.cleaning.service.DataFieldValueService;
-import com.cloud.gds.cleaning.service.DataRuleService;
+import com.cloud.gds.cleaning.service.*;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +57,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	DataFieldValueMapper dataFieldValueMapper;
 
 	@Autowired
+	AnalysisResultService analysisResultService;
+
+	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
 		DataRuleService dataRuleService) {
 		this.calculateService = calculateService;
@@ -68,19 +69,41 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public Page<DataFieldValue> queryPage(Map<String, Object> params) {
-		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
-		Page<DataFieldValue> p=new Page<DataFieldValue>();
+		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p = new Page<DataFieldValue>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
 		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
 		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
 		p.setAsc(isAsc);
-		EntityWrapper<DataFieldValue> e=new EntityWrapper<DataFieldValue>();
-		String name=params.getOrDefault("fieldId", "").toString();
-		if(StrUtil.isNotBlank(name)){
-			e.like("field_id",  SpecialStringUtil.escapeExprSpecialWord(name));
+		EntityWrapper<DataFieldValue> e = new EntityWrapper<DataFieldValue>();
+		String fieldId = params.getOrDefault("fieldId", "").toString();
+		if(StrUtil.isNotBlank(fieldId)){
+			e.like("field_id",  SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		e.eq("is_deleted", DataCleanConstant.NO);
 		return this.selectPage(p,e);
+	}
+
+	@Override
+	public Page contrastBeforePage(Map<String, Object> params) {
+		// 获取分页信息
+		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p = new Page<DataFieldValue>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataFieldValue> e = new EntityWrapper<DataFieldValue>();
+		String fieldId = params.getOrDefault("fieldId", "").toString();
+		if(StrUtil.isNotBlank(fieldId)){
+			e.like("field_id",  SpecialStringUtil.escapeExprSpecialWord(fieldId));
+		}
+		// 查询当前清洗池信息
+		DataField dataField = dataFieldService.selectById((Long) params.get("fieldId"));
+		// 获取规则中百分比
+		DataRuleVo dataRuleVo = dataRuleService.queryById(dataField.getRuleId());
+
+		return null;
 	}
 
 	@Override
@@ -123,6 +146,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
+		// 删除数据时需要删除分析结果表中相关数据
+		analysisResultService.deleteAllById(id);
 		return this.updateById(dataFieldValue);
 	}
 
@@ -133,6 +158,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
+		// 删除数据时需要删除分析结果表中相关数据
+		analysisResultService.deleteAllByIds(ids);
 		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id",ids ));
 	}
 

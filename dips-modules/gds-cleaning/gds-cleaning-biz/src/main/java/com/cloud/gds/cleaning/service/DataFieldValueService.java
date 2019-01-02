@@ -27,6 +27,13 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	Page<DataFieldValue> queryPage(Map<String, Object> params);
 
 	/**
+	 * 对比前数据分页
+	 * @param params
+	 * @return
+	 */
+	Page contrastBeforePage(Map<String, Object> params);
+
+	/**
 	 * 分析结果默认中心数据显示
 	 * @param fieldId
 	 * @return

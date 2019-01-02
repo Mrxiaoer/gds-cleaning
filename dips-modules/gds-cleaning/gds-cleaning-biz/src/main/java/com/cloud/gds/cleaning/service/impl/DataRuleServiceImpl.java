@@ -39,13 +39,13 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 	@Override
 	public Page queryPage(Map<String, Object> params) {
 
-		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
-		Page<DataRule> p=new Page<DataRule>();
+		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataRule> p = new Page<DataRule>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
 		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
 		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
 		p.setAsc(isAsc);
-		EntityWrapper<DataRule> e=new EntityWrapper<DataRule>();
+		EntityWrapper<DataRule> e = new EntityWrapper<DataRule>();
 		String name=params.getOrDefault("name", "").toString();
 		if(StrUtil.isNotBlank(name)){
 			e.like("name",  SpecialStringUtil.escapeExprSpecialWord(name));
@@ -83,7 +83,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 	@Override
 	public ArrayList<LabelVo> gainDynamicKey(Long id) {
 		DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(this.selectById(id));
-		return DataRuleUtils.convet(dataRuleVo);
+		return DataRuleUtils.convey(dataRuleVo);
 	}
 
 	@Override

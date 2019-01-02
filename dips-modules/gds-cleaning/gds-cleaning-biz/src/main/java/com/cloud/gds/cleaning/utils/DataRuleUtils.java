@@ -108,7 +108,7 @@ public class DataRuleUtils {
 	 * @param dataRuleVo
 	 * @return
 	 */
-	public static ArrayList<LabelVo> convet(DataRuleVo dataRuleVo){
+	public static ArrayList<LabelVo> convey(DataRuleVo dataRuleVo){
 
 		ArrayList<LabelVo> list = new ArrayList<>();
 		List<DataSetVo> dataSetVos = dataRuleVo.getDetail();

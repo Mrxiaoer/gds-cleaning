@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 算法结果分析
@@ -28,5 +29,19 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 * @return
 	 */
 	Boolean manualFilter(Map<String,Object> params);
+
+	/**
+	 * 根据id删除中心、卫星相关分析结果集
+	 * @param id
+	 * @return
+	 */
+	boolean deleteAllById(Long id);
+
+	/**
+	 * 根据ids删除中心、卫星相关分析结果集
+	 * @param ids
+	 * @return
+	 */
+	boolean deleteAllByIds(Set<Long> ids);
 
 }

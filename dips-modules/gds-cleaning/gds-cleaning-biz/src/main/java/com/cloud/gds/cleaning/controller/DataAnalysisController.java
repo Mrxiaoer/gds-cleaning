@@ -37,10 +37,8 @@ public class DataAnalysisController {
 	 */
 	@GetMapping("/set/threshold")
 	public void setThreshold(@RequestParam Long fieldId,@RequestParam Float threshold,@RequestParam Integer degree){
-
 		// python分析数据
-		analysisResultService.dataAnalysis(fieldId,threshold ,degree );
-
+		analysisResultService.dataAnalysis(fieldId,(threshold/100),degree );
 	}
 
 	/**

@@ -85,6 +85,10 @@ public class DataField extends Model<DataField> {
 	 */
 	@JsonIgnore
 	private Integer needReanalysis;
+	/**
+	 * 阀值
+	 */
+	private Float threshold;
 
 	@Override
 	protected Serializable pkVal() {

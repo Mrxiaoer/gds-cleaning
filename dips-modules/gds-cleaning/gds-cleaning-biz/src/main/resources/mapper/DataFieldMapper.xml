@@ -19,6 +19,7 @@
 		<result column="analyse_state" property="analyseState"/>
 		<result column="matrix_file" property="matrixFile"/>
 		<result column="need_reanalysis" property="needReanalysis"/>
+		<result column="threshold" property="threshold"/>
 	</resultMap>
 
 
