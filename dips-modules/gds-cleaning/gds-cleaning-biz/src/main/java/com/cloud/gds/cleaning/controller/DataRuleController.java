@@ -1,24 +1,13 @@
 package com.cloud.gds.cleaning.controller;
 
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
-import com.cloud.dips.common.security.util.SecurityUtils;
-import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
-import com.cloud.gds.cleaning.utils.CommonUtils;
-import com.cloud.gds.cleaning.utils.DataRuleUtils;
-import com.sun.xml.internal.bind.v2.TODO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,22 +30,13 @@ public class DataRuleController {
 	public DataFieldService dataFieldService;
 
 	/**
-	 * 分页
+	 * 规则名称分页
 	 * 参数要求：page、limit、name
 	 */
 	@GetMapping("/page")
 	@ApiOperation(value = "查看列表", notes = "根据条件获取列表")
 	public R page(@RequestParam Map<String, Object> params) {
-
-		CommonUtils.PiPei pp = CommonUtils.createPP();
-		List<String> likelist = new ArrayList<>();
-		likelist.add("name");
-		pp.setLike(likelist);
-//		Wrapper<DataRule> wrapper = CommonUtils.pagePart(params);
-//		Page page = DataRuleUtils.changePage(dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),wrapper));
-
-		//@todo 放入service
-		return new R<>();
+		return new R<>(dataRuleService.queryPage(params));
 	}
 
 	/**

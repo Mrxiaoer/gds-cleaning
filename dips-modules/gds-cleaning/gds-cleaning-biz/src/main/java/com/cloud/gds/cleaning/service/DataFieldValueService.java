@@ -20,6 +20,13 @@ import java.util.Set;
 public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
+	 * 结果集分页
+	 * @param params
+	 * @return
+	 */
+	Page<DataFieldValue> queryPage(Map<String, Object> params);
+
+	/**
 	 * 分析结果默认中心数据显示
 	 * @param fieldId
 	 * @return
@@ -83,13 +90,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	void saveAll(Long fieldId, List<Map<String, Object>> maps);
 
-	/**
-	 * page po 2 vo
-	 *
-	 * @param page
-	 * @return
-	 */
-	Page pagePo2Vo(Page page);
 
 	/**
 	 * 清洗前后数据比较差异并输出

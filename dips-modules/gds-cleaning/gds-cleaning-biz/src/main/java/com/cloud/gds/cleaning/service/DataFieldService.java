@@ -1,10 +1,12 @@
 package com.cloud.gds.cleaning.service;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.vo.DataFieldVo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,6 +17,13 @@ import java.util.Set;
  * @Date : 2018-12-07
  */
 public interface DataFieldService extends IService<DataField> {
+
+	/**
+	 * 清洗池分页
+	 * @param params
+	 * @return
+	 */
+	Page<DataField> queryPage(Map<String,Object> params);
 
 	/**
 	 * 根据规则id查询

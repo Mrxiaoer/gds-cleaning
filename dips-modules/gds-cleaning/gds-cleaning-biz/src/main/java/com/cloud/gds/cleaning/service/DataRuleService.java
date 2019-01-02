@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
@@ -8,6 +9,7 @@ import com.cloud.gds.cleaning.api.vo.LabelVo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -18,6 +20,12 @@ import java.util.Set;
  */
 public interface DataRuleService extends IService<DataRule> {
 
+	/**
+	 * 规则分页查询
+	 * @param params
+	 * @return
+	 */
+	Page queryPage(Map<String,Object> params);
 	/**
 	 * 根据id查询规则信息
 	 * @param id

@@ -1,8 +1,10 @@
 package com.cloud.gds.cleaning.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataRule;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,6 +35,35 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 
 	@Autowired
 	DataFieldService dataFieldService;
+
+	@Override
+	public Page queryPage(Map<String, Object> params) {
+
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataRule> p=new Page<DataRule>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataRule> e=new EntityWrapper<DataRule>();
+		String name=params.getOrDefault("name", "").toString();
+		if(StrUtil.isNotBlank(name)){
+			e.like("name",  SpecialStringUtil.escapeExprSpecialWord(name));
+		}
+		e.eq("is_deleted", DataCleanConstant.NO);
+		Page page = this.selectPage(p,e);
+		if (page.getRecords() != null){
+			List<DataRule> dataRules = page.getRecords();
+			List<DataRulePageVo> vos = new ArrayList<>();
+			for (DataRule dataRule : dataRules){
+				DataRulePageVo dataRulePageVo = new DataRulePageVo();
+				BeanUtils.copyProperties(dataRule, dataRulePageVo );
+				vos.add(dataRulePageVo);
+			}
+			page.setRecords(vos);
+		}
+		return page;
+	}
 
 	@Override
 	public DataRuleVo queryById(Long id) {

@@ -2,7 +2,6 @@ package com.cloud.gds.cleaning.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
@@ -89,23 +88,6 @@ public class DataRuleUtils {
 			vos.add(vo);
 		}
 		return vos;
-	}
-
-	/**
-	 * 分页数据转换
-	 * @param page
-	 * @return
-	 */
-	public static Page changePage(Page page){
-		List<DataRule> dataRules = page.getRecords();
-		List<DataRulePageVo> vos = new ArrayList<>();
-		for (DataRule dataRule : dataRules){
-			DataRulePageVo dataRulePageVo = new DataRulePageVo();
-			BeanUtils.copyProperties(dataRule, dataRulePageVo );
-			vos.add(dataRulePageVo);
-		}
-		page.setRecords(vos);
-		return page;
 	}
 
 	/**

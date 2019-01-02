@@ -1,6 +1,7 @@
 package com.cloud.gds.cleaning.service.impl;
 
 import cn.hutool.core.io.file.FileWriter;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
@@ -24,16 +26,17 @@ import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 数据池接口实现类
@@ -63,6 +66,22 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		this.dataRuleService = dataRuleService;
 	}
 
+	@Override
+	public Page<DataFieldValue> queryPage(Map<String, Object> params) {
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p=new Page<DataFieldValue>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataFieldValue> e=new EntityWrapper<DataFieldValue>();
+		String name=params.getOrDefault("fieldId", "").toString();
+		if(StrUtil.isNotBlank(name)){
+			e.like("field_id",  SpecialStringUtil.escapeExprSpecialWord(name));
+		}
+		e.eq("is_deleted", DataCleanConstant.NO);
+		return this.selectPage(p,e);
+	}
 
 	@Override
 	public List<DataFieldValue> gainCleanData(Long fieldId) {
@@ -87,13 +106,14 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public Boolean updateJson(Long id, Map<String, Object> map) {
-		// todo 修改->先删再增
+		// 修改->先删再增
+		this.deleteById(id);
+
 		DataFieldValue dataFieldValue = new DataFieldValue();
-		dataFieldValue.setId(id);
 		dataFieldValue.setFieldValue(JSON.toJSONString(map));
-		dataFieldValue.setModifiedTime(LocalDateTime.now());
-		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
-		return this.updateById(dataFieldValue);
+		dataFieldValue.setCreateTime(LocalDateTime.now());
+		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
+		return this.insert(dataFieldValue);
 	}
 
 	@Override
@@ -144,15 +164,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			this.insert(dataFieldValue);
 		}
 //		this.insertBatch();
-	}
-
-	@Override
-	public Page pagePo2Vo(Page page) {
-		// 转化page中数据变成前端可用的vo
-		List<DataPoolVo> vo = DataPoolUtils.listEntity2Vo(page.getRecords());
-		page.setRecords(vo);
-
-		return page;
 	}
 
 	@Override
