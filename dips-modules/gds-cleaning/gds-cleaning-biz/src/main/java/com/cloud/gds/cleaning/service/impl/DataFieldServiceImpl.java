@@ -33,11 +33,14 @@ import java.util.*;
 @Service
 public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField> implements DataFieldService {
 
-	@Autowired
-	DataRuleService dataRuleService;
+	private final DataRuleService dataRuleService;
+	private final DataFieldValueService dataFieldValueService;
 
 	@Autowired
-	DataFieldValueService dataFieldValueService;
+	public DataFieldServiceImpl(DataRuleService dataRuleService, DataFieldValueService dataFieldValueService) {
+		this.dataRuleService = dataRuleService;
+		this.dataFieldValueService = dataFieldValueService;
+	}
 
 	@Override
 	public Page<DataField> queryPage(Map<String, Object> params) {
@@ -53,7 +56,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 			e.like("name",  SpecialStringUtil.escapeExprSpecialWord(name));
 		}
 		e.eq("is_deleted", DataCleanConstant.NO);
-		return this.selectPage(p,e);
+		return this.selectPage(p, e);
 	}
 
 	@Override
@@ -67,7 +70,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	@Override
 	public List<DataField> selectByRuleIds(Set<Long> ruleIds) {
 		List<DataField> result = new ArrayList<>();
-		for (Long id : ruleIds){
+		for (Long id : ruleIds) {
 			List<DataField> list = this.selectByRuleId(id);
 			result.addAll(list);
 		}
@@ -86,6 +89,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	@Override
 	public Boolean save(DataField dataField) {
 		dataField.setCreateTime(LocalDateTime.now());
+		assert SecurityUtils.getUser() != null;
 		dataField.setCreateUser(SecurityUtils.getUser().getId());
 		dataField.setDeptId(SecurityUtils.getUser().getDeptId());
 		dataField.setDeptName(SecurityUtils.getUser().getDeptName());
@@ -94,6 +98,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 
 	@Override
 	public Boolean update(DataField dataField) {
+		assert SecurityUtils.getUser() != null;
 		dataField.setModifiedUser(SecurityUtils.getUser().getId());
 		dataField.setModifiedTime(LocalDateTime.now());
 		return this.updateById(dataField);
@@ -105,6 +110,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		field.setId(id);
 		field.setIsDeleted(DataCleanConstant.YES);
 		field.setModifiedTime(LocalDateTime.now());
+		assert SecurityUtils.getUser() != null;
 		field.setModifiedUser(SecurityUtils.getUser().getId());
 		// TODO 主表删除之后子表是否已进行删除,暂时不进行处理
 		return this.update(field);
@@ -115,6 +121,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		DataField dataField = new DataField();
 		dataField.setIsDeleted(DataCleanConstant.YES);
 		dataField.setModifiedTime(LocalDateTime.now());
+		assert SecurityUtils.getUser() != null;
 		dataField.setModifiedUser(SecurityUtils.getUser().getId());
 		return this.update(dataField, new EntityWrapper<DataField>().in("id", ids));
 	}
@@ -131,7 +138,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 				SortedMap<String, String> old = oldVo.getDetail() != null ? DataRuleUtils.changeSortedMap(oldVo.getDetail()) : null;
 				SortedMap<String, String> fresh = newVo.getDetail() != null ? DataRuleUtils.changeSortedMap(newVo.getDetail()) : null;
 				// 如果规则前后2个规则中参数为空,可更新规则
-				if (old == null){
+				if (old == null) {
 					return true;
 				}
 				if (fresh == null) {
@@ -146,10 +153,10 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 
 	@Override
 	public Boolean updateNeedReanalysis(Long ruleId) {
-		if ( !ruleId.equals(DataCleanConstant.ZERO )){
+		if (!ruleId.equals(DataCleanConstant.ZERO)) {
 			List<DataField> list = this.selectByRuleId(ruleId);
-			for (DataField dataField : list){
-				if ( dataField.getNeedReanalysis().equals(DataCleanConstant.NO)){
+			for (DataField dataField : list) {
+				if (dataField.getNeedReanalysis().equals(DataCleanConstant.NO)) {
 					DataField q = new DataField();
 					q.setId(dataField.getId());
 					q.setNeedReanalysis(DataCleanConstant.YES);

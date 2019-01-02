@@ -3,11 +3,10 @@ package com.cloud.gds.cleaning.mapper;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Set;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 导入数据的内容
@@ -20,17 +19,21 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 
 	int deleteByIds(@Param("ids") Set<Long> ids);
 
-	List<DataFieldValue> selectByCleanIds(@Param("ids") Set<Long> ids);
+	// List<DataFieldValue> selectByCleanIds(@Param("ids") Set<Long> ids);
 
-	List<Long> selectNeedAnalysisIdList(@Param("dataFieldValue") DataFieldValue dataFieldValue);
+	// List<Long> selectNeedAnalysisIdList(@Param("dataFieldValue") DataFieldValue dataFieldValue);
+
 	/**
 	 * 分析结果默认中心数据显示
+	 *
 	 * @param fieldId
 	 * @return
 	 */
 	List<DataFieldValue> gainCleanData(Long fieldId);
+
 	/**
 	 * 清洗接口数据明细
+	 *
 	 * @param id
 	 * @return
 	 */

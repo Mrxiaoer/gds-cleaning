@@ -5,11 +5,16 @@ import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 清洗规则池
@@ -21,13 +26,14 @@ import java.util.Set;
 @RequestMapping("/data_rule")
 public class DataRuleController {
 
+	private final DataFieldService dataFieldService;
 	private final DataRuleService dataRuleService;
 
 	@Autowired
-	public DataRuleController(DataRuleService dataFieldService) {this.dataRuleService = dataFieldService;}
-
-	@Autowired
-	public DataFieldService dataFieldService;
+	public DataRuleController(DataRuleService dataRuleService, DataFieldService dataFieldService) {
+		this.dataRuleService = dataRuleService;
+		this.dataFieldService = dataFieldService;
+	}
 
 	/**
 	 * 规则名称分页
@@ -41,6 +47,7 @@ public class DataRuleController {
 
 	/**
 	 * 根据id查询
+	 *
 	 * @return R
 	 */
 	@GetMapping("/{id}")
@@ -50,25 +57,28 @@ public class DataRuleController {
 
 	/**
 	 * 查询部门规则
+	 *
 	 * @return
 	 */
 	@GetMapping("/list")
-	public R selectAll(){
+	public R selectAll() {
 		return new R<>(dataRuleService.selectAll());
 	}
 
 	/**
 	 * 获取规则动态参数
+	 *
 	 * @param id
 	 * @return
 	 */
 	@GetMapping("/key/{id}")
-	public R getKey(@PathVariable("id") Long id){
+	public R getKey(@PathVariable("id") Long id) {
 		return new R<>(dataRuleService.gainDynamicKey(id));
 	}
 
 	/**
 	 * 保存 规则名称信息
+	 *
 	 * @return R
 	 */
 	@PostMapping("/create")
@@ -78,6 +88,7 @@ public class DataRuleController {
 
 	/**
 	 * 修改 规则信息
+	 *
 	 * @return R
 	 */
 	@PostMapping("/update")
@@ -87,32 +98,34 @@ public class DataRuleController {
 
 	/**
 	 * 单独删除一条
+	 *
 	 * @param id
 	 * @return
 	 */
 	@PostMapping("/delete/{id}")
 	public R delete(@PathVariable("id") Long id) {
 		// 判断该规则其他地方是否使用过
-		if (dataFieldService.selectByRuleId(id).size() > 0){
+		if (dataFieldService.selectByRuleId(id).size() > 0) {
 			return new R(new RuntimeException("规则已被选择，请先取消后再删除!"));
-		}else if (dataRuleService.deleteById(id)){
+		} else if (dataRuleService.deleteById(id)) {
 			return new R<>(true);
-		}else {
+		} else {
 			return new R(new RuntimeException("删除失败!"));
 		}
 	}
 
 	/**
 	 * 批量删除
+	 *
 	 * @param ids
 	 * @return
 	 */
 	@PostMapping("/delete")
-	public R deleteT(@RequestBody Set<Long> ids){
+	public R deleteT(@RequestBody Set<Long> ids) {
 		// 判断规则中是否有一条被使用过
-		if (dataFieldService.selectByRuleIds(ids).size() > 0){
+		if (dataFieldService.selectByRuleIds(ids).size() > 0) {
 			return new R(new RuntimeException("规则已被选择，请先取消后再删除!"));
-		}else {
+		} else {
 			return new R<>(dataRuleService.deleteByIds(ids));
 		}
 	}

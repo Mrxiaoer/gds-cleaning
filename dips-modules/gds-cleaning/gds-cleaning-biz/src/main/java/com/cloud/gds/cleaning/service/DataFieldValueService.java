@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +20,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 结果集分页
+	 *
 	 * @param params
 	 * @return
 	 */
@@ -35,6 +35,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 分析结果默认中心数据显示
+	 *
 	 * @param fieldId
 	 * @return
 	 */
@@ -42,6 +43,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 根据id查询
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -49,6 +51,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 清洗接口数据明细
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -56,6 +59,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 根据清洗池id查询
+	 *
 	 * @param fieldId 清洗池id
 	 * @return 数据池集合
 	 */
@@ -63,14 +67,16 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 修改结果集字段
+	 *
 	 * @param id
 	 * @param map
 	 * @return
 	 */
-	Boolean updateJson(Long id,Map<String,Object> map);
+	Boolean updateJson(Long id, Map<String, Object> map);
 
 	/**
 	 * 单独删除
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -78,14 +84,16 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 批量删除
+	 *
 	 * @param ids
 	 */
 	Boolean deleteByIds(Set<Long> ids);
 
 	/**
 	 * 保存单一数据
+	 *
 	 * @param fieldId 清洗池id
-	 * @param params 数据信息
+	 * @param params  数据信息
 	 * @return
 	 */
 	Boolean save(Long fieldId, JSONObject params);
@@ -96,7 +104,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @param maps
 	 */
 	void saveAll(Long fieldId, List<Map<String, Object>> maps);
-
 
 	/**
 	 * 清洗前后数据比较差异并输出
@@ -109,14 +116,15 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	/**
 	 * 获取待分析数据
 	 *
-	 * @param fieldId 数据集id
+	 * @param fieldId   数据集id
 	 * @param threshold 阀值
 	 * @return String JSON字符串
 	 */
-	String getAnalysisData(Long fieldId,Float threshold);
+	String getAnalysisData(Long fieldId, Float threshold);
 
 	/**
 	 * 清空数据
+	 *
 	 * @param fieldId 清洗池id
 	 * @return 是否已清空缓冲标记
 	 */
@@ -124,9 +132,11 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 清空缓冲数据
+	 *
 	 * @param fieldId 清洗池id
 	 * @return
 	 */
 	Boolean clearBuffer(Long fieldId);
+
 }
 

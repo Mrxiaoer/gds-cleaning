@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import org.springframework.beans.BeanUtils;
 
 /**
  * 数据规则utils
@@ -25,16 +26,17 @@ public class DataRuleUtils {
 
 	/**
 	 * 规则 vo 2 po
+	 *
 	 * @param dataRuleVo
 	 * @return
 	 */
 	public static DataRule vo2po(DataRuleVo dataRuleVo) {
 		DataRule entity = new DataRule();
 		BeanUtils.copyProperties(dataRuleVo, entity);
-		if (dataRuleVo.getDetail() != null){
-			for (DataSetVo dataSetVo : dataRuleVo.getDetail()){
-				if (dataSetVo.getWeight() != null){
-					dataSetVo.setWeight(dataSetVo.getWeight()/100);
+		if (dataRuleVo.getDetail() != null) {
+			for (DataSetVo dataSetVo : dataRuleVo.getDetail()) {
+				if (dataSetVo.getWeight() != null) {
+					dataSetVo.setWeight(dataSetVo.getWeight() / 100);
 				}
 			}
 			entity.setParams(DataRuleUtils.dataSet2String(dataRuleVo.getDetail()));
@@ -44,17 +46,18 @@ public class DataRuleUtils {
 
 	/**
 	 * 规则 po 2 vo
+	 *
 	 * @param dataRule
 	 * @return
 	 */
 	public static DataRuleVo po2Vo(DataRule dataRule) {
 		DataRuleVo vo = new DataRuleVo();
-		if (dataRule != null){
+		if (dataRule != null) {
 			BeanUtils.copyProperties(dataRule, vo);
 			vo.setDetail(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
-			for (DataSetVo dataSetVo : vo.getDetail()){
-				if (dataSetVo != null){
-					dataSetVo.setWeight(dataSetVo.getWeight()*100);
+			for (DataSetVo dataSetVo : vo.getDetail()) {
+				if (dataSetVo != null) {
+					dataSetVo.setWeight(dataSetVo.getWeight() * 100);
 				}
 			}
 
@@ -64,12 +67,13 @@ public class DataRuleUtils {
 
 	/**
 	 * list vo 2 po
+	 *
 	 * @param list
 	 * @return
 	 */
 	public static List<DataRule> listVo2Po(List<DataRuleVo> list) {
 		List<DataRule> entitys = new ArrayList<>();
-		for (DataRuleVo vo : list){
+		for (DataRuleVo vo : list) {
 			DataRule entity = DataRuleUtils.vo2po(vo);
 			entitys.add(entity);
 		}
@@ -78,12 +82,13 @@ public class DataRuleUtils {
 
 	/**
 	 * list po 2 v0
+	 *
 	 * @param list
 	 * @return
 	 */
 	public static List<DataRuleVo> listPo2Vo(List<DataRule> list) {
 		List<DataRuleVo> vos = new ArrayList<>();
-		for (DataRule entity : list){
+		for (DataRule entity : list) {
 			DataRuleVo vo = DataRuleUtils.po2Vo(entity);
 			vos.add(vo);
 		}
@@ -92,12 +97,13 @@ public class DataRuleUtils {
 
 	/**
 	 * 前端vo显示的时候转json
+	 *
 	 * @param list
 	 * @return
 	 */
-	public static String dataSet2String(List<DataSetVo> list){
+	private static String dataSet2String(List<DataSetVo> list) {
 		List<String> a = new ArrayList<>();
-		for (DataSetVo vo : list){
+		for (DataSetVo vo : list) {
 			a.add(JSONObject.toJSONString(vo));
 		}
 		return a.toString();
@@ -105,6 +111,7 @@ public class DataRuleUtils {
 
 	/**
 	 * 取出规则的名称
+	 *
 	 * @param dataRuleVo
 	 * @return
 	 */
@@ -112,8 +119,8 @@ public class DataRuleUtils {
 
 		ArrayList<LabelVo> list = new ArrayList<>();
 		List<DataSetVo> dataSetVos = dataRuleVo.getDetail();
-		if (dataSetVos != null){
-			for (DataSetVo vo : dataSetVos){
+		if (dataSetVos != null) {
+			for (DataSetVo vo : dataSetVos) {
 				LabelVo labelVo = new LabelVo();
 				labelVo.setLabel(vo.getLabel());
 				labelVo.setProp(vo.getProp());
@@ -126,23 +133,24 @@ public class DataRuleUtils {
 
 	/**
 	 * dataSetVos 转换成 SortedMap
+	 *
 	 * @param dataSetVos
 	 * @return
 	 */
-	public static SortedMap<String,String> changeSortedMap(List<DataSetVo> dataSetVos){
-		SortedMap<String,String> sortedMap = new TreeMap<>();
-		for (DataSetVo vo : dataSetVos){
-			if (vo.getLabel() != "" || vo.getLabel().trim()!=""){
+	public static SortedMap<String, String> changeSortedMap(List<DataSetVo> dataSetVos) {
+		SortedMap<String, String> sortedMap = new TreeMap<>();
+		for (DataSetVo vo : dataSetVos) {
+			if (!"".equals(vo.getLabel()) || "".equals(vo.getLabel().trim())) {
 				sortedMap.put(vo.getLabel(), vo.getLabel());
 			}
 		}
 		return sortedMap;
 	}
 
-	public static List<DataRulePageVo> TakeName(List<DataRule> dataRules){
+	public static List<DataRulePageVo> takeName(List<DataRule> dataRules) {
 		List<DataRulePageVo> vos = new ArrayList<>();
-		for (DataRule dataRule : dataRules){
-			DataRulePageVo dataRulePageVo= new DataRulePageVo();
+		for (DataRule dataRule : dataRules) {
+			DataRulePageVo dataRulePageVo = new DataRulePageVo();
 			BeanUtils.copyProperties(dataRule, dataRulePageVo);
 			vos.add(dataRulePageVo);
 		}

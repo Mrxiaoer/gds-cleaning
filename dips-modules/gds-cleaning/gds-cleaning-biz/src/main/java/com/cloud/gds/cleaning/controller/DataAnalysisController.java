@@ -22,21 +22,27 @@ import java.util.Map;
 @RequestMapping(value = "/analysis")
 public class DataAnalysisController {
 
-	@Autowired
-	DataFieldValueService dataFieldValueService;
-
-	@Autowired
-	AnalysisResultService analysisResultService;
+	private final DataFieldValueService dataFieldValueService;
+	private final AnalysisResultService analysisResultService;
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@Autowired
+	public DataAnalysisController(DataFieldValueService dataFieldValueService,
+		AnalysisResultService analysisResultService) {
+		this.dataFieldValueService = dataFieldValueService;
+		this.analysisResultService = analysisResultService;
+	}
+
 	/**
 	 * 设置阀值
+	 *
 	 * @param fieldId
 	 * @param threshold
 	 */
 	@GetMapping("/set/threshold")
-	public void setThreshold(@RequestParam Long fieldId,@RequestParam Float threshold,@RequestParam Integer degree){
+	public void setThreshold(@RequestParam Long fieldId, @RequestParam Float threshold, @RequestParam Integer degree) {
+
 		// python分析数据
 		analysisResultService.dataAnalysis(fieldId,(threshold/100),degree );
 	}
@@ -47,31 +53,31 @@ public class DataAnalysisController {
 	 * @return
 	 */
 	@GetMapping("/center_data")
-	public R gainCleanData(@RequestParam Long fieldId){
+	public R gainCleanData(@RequestParam Long fieldId) {
 		return new R<>(DataPoolUtils.listEntity2Vo(dataFieldValueService.gainCleanData(fieldId)));
 	}
 
 	/**
 	 * 数据明细
+	 *
 	 * @param id
 	 * @return
 	 */
 	@GetMapping("/details")
-	public R gainDetails(@RequestParam Long id){
+	public R gainDetails(@RequestParam Long id) {
 		return new R<>(DataPoolUtils.listEntity2Vo(dataFieldValueService.gainDetails(id)));
 	}
 
 	/**
 	 * 手动过滤
-	 * @param params
-	 * params
+	 *
+	 * @param params params
 	 * @return
 	 */
 	@PostMapping("/manual/filter")
-	public R manualFilter(@RequestBody Map<String,Object> params){
+	public R manualFilter(@RequestBody Map<String, Object> params) {
 
 		return new R();
 	}
-
 
 }

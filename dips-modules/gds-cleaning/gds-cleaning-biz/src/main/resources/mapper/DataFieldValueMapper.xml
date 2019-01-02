@@ -18,17 +18,17 @@
 	</resultMap>
 
 	<sql id="DataPoolAnalysis">
-	a.id,
-	b.similarity,
-	a.field_id,
-	a.field_value,
-	a.create_time,
-	a.modified_time,
-	a.create_user,
-	a.modified_user,
-	a.is_deleted,
-	a.state,
-	a.be_cleaned_id
+		a.id,
+		b.similarity,
+		a.field_id,
+		a.field_value,
+		a.create_time,
+		a.modified_time,
+		a.create_user,
+		a.modified_user,
+		a.is_deleted,
+		a.state,
+		a.be_cleaned_id
 	</sql>
 
 	<update id="deleteByIds">
@@ -42,73 +42,42 @@
 		</foreach>
 	</update>
 
-	<select id="selectByCleanIds" resultMap="dataFieldValueMap">
-		SELECT * FROM dataclean_data_field_value WHERE be_cleaned_id IN
-		<foreach close=")" collection="ids" item="id" open="(" separator=",">
-			#{id}
-		</foreach>
-	</select>
-
-	<select id="selectNeedAnalysisIdList" resultType="java.lang.Long">
-		SELECT
-			id
-		FROM
-			dataclean_data_field_value
-		WHERE field_id = #{dataFieldValue.fieldId} AND is_deleted = 0
-	</select>
-
 	<select id="gainCleanData" parameterType="java.lang.Long" resultMap="dataFieldValueMap">
-		SELECT
-			*
+		SELECT *
 		FROM
 			dataclean_data_field_value
-		WHERE
-			id IN (
-				SELECT DISTINCT
-					(base_id)
-				FROM
-					dataclean_analysis_result
-				WHERE
-					field_id = #{fieldId}
-			)
+		WHERE id IN
+		      (SELECT DISTINCT (base_id)
+		       FROM
+			       dataclean_analysis_result
+		       WHERE field_id = #{fieldId})
 	</select>
 
 	<select id="gainDetails" parameterType="java.lang.Long" resultMap="dataFieldValueMap">
-		SELECT
-			*
+		SELECT *
 		FROM
 			dataclean_data_field_value
-		WHERE
-			id IN (
-				SELECT
-					compare_id
-				FROM
-					dataclean_analysis_result
-				WHERE
-					base_id = #{id}
-			)
+		WHERE id IN
+		      (SELECT compare_id
+		       FROM
+			       dataclean_analysis_result
+		       WHERE base_id = #{id})
 	</select>
 
 	<select id="selectDataPool" resultType="com.cloud.gds.cleaning.api.dto.DataPoolAnalysis">
 		SELECT
 		<include refid="DataPoolAnalysis"/>
 		FROM
-			(
-				SELECT
-					*
-				FROM
-					dataclean_data_field_value
-				WHERE
-					id IN (
-						SELECT
-							compare_id
-						FROM
-							dataclean_analysis_result
-						WHERE
-							base_id = #{id}
-					)
-			) a
-		LEFT JOIN dataclean_analysis_result b ON a.id = b.compare_id
+			(SELECT *
+			 FROM
+				 dataclean_data_field_value
+			 WHERE id IN
+			       (SELECT compare_id
+			        FROM
+				        dataclean_analysis_result
+			        WHERE base_id = #{id})) a
+				LEFT JOIN dataclean_analysis_result b
+				ON a.id = b.compare_id
 	</select>
 
 </mapper>

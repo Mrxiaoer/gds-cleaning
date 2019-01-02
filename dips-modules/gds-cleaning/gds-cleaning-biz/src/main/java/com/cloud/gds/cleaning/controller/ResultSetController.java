@@ -20,16 +20,20 @@ import java.util.Map;
 @RequestMapping("/result_set")
 public class ResultSetController {
 
+	private final DataFieldValueService dataFieldValueService;
+
 	@Autowired
-	DataFieldValueService dataFieldValueService;
+	public ResultSetController(
+		DataFieldValueService dataFieldValueService) {this.dataFieldValueService = dataFieldValueService;}
 
 	/**
 	 * 结果集详情分页
+	 *
 	 * @param params
 	 * @return
 	 */
 	@GetMapping("/page")
-	public R page(@RequestParam Map<String, Object> params){
+	public R page(@RequestParam Map<String, Object> params) {
 		return new R<>(dataFieldValueService.queryPage(params));
 	}
 
@@ -46,27 +50,25 @@ public class ResultSetController {
 	/**
 	 * 清空数据
 	 * 由于结果集中有对比清洗前数据,如果需导入不同状态数据需要->清空数据池
+	 *
 	 * @param fieldId 清洗池id
 	 * @return
 	 */
 	@GetMapping("/clear")
-	public R clear(@RequestParam Long fieldId){
+	public R clear(@RequestParam Long fieldId) {
 		return new R<>(dataFieldValueService.clear(fieldId));
 	}
 
 	/**
 	 * 清缓冲
 	 * 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓冲清除
+	 *
 	 * @param fieldId
 	 * @return
 	 */
 	@GetMapping("/clear_buffer")
-	public R clearBuffer(@RequestParam Long fieldId){
+	public R clearBuffer(@RequestParam Long fieldId) {
 		return new R<>(dataFieldValueService.clearBuffer(fieldId));
 	}
-
-
-
-
 
 }

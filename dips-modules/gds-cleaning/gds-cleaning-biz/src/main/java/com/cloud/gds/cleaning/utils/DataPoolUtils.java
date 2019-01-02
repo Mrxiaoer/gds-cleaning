@@ -3,10 +3,9 @@ package com.cloud.gds.cleaning.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
-import org.springframework.beans.BeanUtils;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.BeanUtils;
 
 /**
  * 清洗池常用方法
@@ -19,16 +18,17 @@ public class DataPoolUtils {
 
 	/**
 	 * string格式的enity转json格式的vo
+	 *
 	 * @param dataFieldValue
 	 * @return
 	 */
 	public static DataPoolVo entity2Vo(DataFieldValue dataFieldValue) {
 		DataPoolVo vo = new DataPoolVo();
 		// String 2 json object
-		JSONObject myJson  = JSONObject.parseObject(dataFieldValue.getFieldValue());
+		JSONObject myJson = JSONObject.parseObject(dataFieldValue.getFieldValue());
 
 		// 赋值
-		BeanUtils.copyProperties(dataFieldValue,vo);
+		BeanUtils.copyProperties(dataFieldValue, vo);
 		vo.setFieldValue(myJson);
 
 		return vo;
@@ -36,6 +36,7 @@ public class DataPoolUtils {
 
 	/**
 	 * json格式的vo转string格式的entity
+	 *
 	 * @param dataPoolVo
 	 * @return
 	 */
@@ -52,9 +53,9 @@ public class DataPoolUtils {
 		return entity;
 	}
 
-
 	/**
 	 * list po 2 vo
+	 *
 	 * @param dataFieldValues
 	 * @return
 	 */
@@ -62,7 +63,7 @@ public class DataPoolUtils {
 
 		List<DataPoolVo> vos = new ArrayList<>();
 
-		for (DataFieldValue temp : dataFieldValues){
+		for (DataFieldValue temp : dataFieldValues) {
 
 			DataPoolVo vo = DataPoolUtils.entity2Vo(temp);
 			vos.add(vo);
@@ -71,9 +72,9 @@ public class DataPoolUtils {
 		return vos;
 	}
 
-
 	/**
 	 * list vo 2 po
+	 *
 	 * @param dataPoolVos
 	 * @return
 	 */
@@ -81,7 +82,7 @@ public class DataPoolUtils {
 
 		List<DataFieldValue> entitys = new ArrayList<>();
 
-		for (DataPoolVo temp : dataPoolVos){
+		for (DataPoolVo temp : dataPoolVos) {
 
 			DataFieldValue entity = DataPoolUtils.vo2Entity(temp);
 			entitys.add(entity);
@@ -89,4 +90,5 @@ public class DataPoolUtils {
 		}
 		return entitys;
 	}
+
 }

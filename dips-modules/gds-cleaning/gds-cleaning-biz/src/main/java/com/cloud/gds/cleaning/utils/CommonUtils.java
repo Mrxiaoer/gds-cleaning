@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import lombok.Data;
@@ -85,9 +86,7 @@ public class CommonUtils {
 	 */
 	public static Boolean checkSortedMap(SortedMap<String, String> one, SortedMap<String, String> two) {
 		Set<Map.Entry<String, String>> es = one.entrySet();
-		Iterator<Map.Entry<String, String>> it = es.iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+		for (Entry<String, String> entry : es) {
 			String k = (String) entry.getKey();
 			if (two.containsKey(k)) {
 				two.remove(k);
@@ -95,10 +94,7 @@ public class CommonUtils {
 				return false;
 			}
 		}
-		if (two.size() > 0) {
-			return false;
-		}
-		return true;
+		return two.size() <= 0;
 	}
 
 	public static PiPei createPP(){
