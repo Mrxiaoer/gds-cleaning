@@ -1,9 +1,9 @@
 package com.cloud.gds.cleaning.service;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.time.LocalTime;
+import java.util.Random;
 import org.junit.Test;
 
 /**
@@ -54,11 +54,6 @@ public class OtherTest {
 	}
 
 	@Test
-	public void xxxx() {
-		System.out.println(StrUtil.isNotBlank(null));
-	}
-
-	@Test
 	public void Test() {
 		Integer a = new Integer(200);
 		Integer b = new Integer(200);
@@ -76,6 +71,14 @@ public class OtherTest {
 		System.out.println("基本类型和new出的对象   equal判断" + (a.equals(d)));
 		System.out.println("基本类型和自动装箱的对象   ==判断" + (d == c));
 		System.out.println("基本类型和自动装箱的对象   equal判断" + (c.equals(d)));
+	}
+
+	@Test
+	public void random() {
+		Random r = new Random(1000);
+		for (int i = 1; i <= 4; i++) {
+			System.out.println("第" + i + "次:" + r.nextInt());
+		}
 	}
 
 }
