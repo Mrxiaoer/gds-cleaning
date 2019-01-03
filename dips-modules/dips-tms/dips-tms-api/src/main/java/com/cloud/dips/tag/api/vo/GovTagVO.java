@@ -100,6 +100,7 @@ public class GovTagVO implements Serializable{
     public void addTypeObjs() {
     	this.typeObjs=new LinkedList<CommonVO>();
     	for(GovTagTypeVO typeVo:typeVos){
+    		if(typeVo!=null){
         	CommonVO bean=new CommonVO();
         	bean.setCommonId(typeVo.getTypeId());
     		StringBuilder typeName=new StringBuilder(typeVo.getName());
@@ -110,6 +111,7 @@ public class GovTagVO implements Serializable{
         	}
         	bean.setCommonName(typeName.toString());
         	typeObjs.add(bean);
+    		}
     	}
     }
 	
@@ -118,6 +120,7 @@ public class GovTagVO implements Serializable{
     public void addTypeNames() {
     	this.typeNames=new LinkedList<String>();
     	for(GovTagTypeVO typeVo:typeVos){
+    		if(typeVo!=null){
     		StringBuilder typeName=new StringBuilder(typeVo.getName());
     		typeVo=typeVo.getParentVo();
         	while(typeVo!=null){
@@ -125,6 +128,7 @@ public class GovTagVO implements Serializable{
         		typeVo=typeVo.getParentVo();
         	}
         	typeNames.add(typeName.toString());
+    		}
     	}
     }
 	
