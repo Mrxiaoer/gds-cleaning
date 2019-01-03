@@ -8,7 +8,7 @@ import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataRule;
-import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
+import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
@@ -54,11 +54,11 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		Page page = this.selectPage(p,e);
 		if (page.getRecords() != null){
 			List<DataRule> dataRules = page.getRecords();
-			List<DataRulePageVo> vos = new ArrayList<>();
+			List<BaseVo> vos = new ArrayList<>();
 			for (DataRule dataRule : dataRules) {
-				DataRulePageVo dataRulePageVo = new DataRulePageVo();
-				BeanUtils.copyProperties(dataRule, dataRulePageVo);
-				vos.add(dataRulePageVo);
+				BaseVo baseVo = new BaseVo();
+				BeanUtils.copyProperties(dataRule, baseVo);
+				vos.add(baseVo);
 			}
 			page.setRecords(vos);
 		}
@@ -71,7 +71,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 	}
 
 	@Override
-	public List<DataRulePageVo> selectAll() {
+	public List<BaseVo> selectAll() {
 		DataRule dataRule = new DataRule();
 		dataRule.setIsDeleted(DataCleanConstant.NO);
 		assert SecurityUtils.getUser() != null;
@@ -92,7 +92,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		// 赋值相关信息
 		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
 		assert SecurityUtils.getUser() != null;
-		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+//		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 
 		// 如果规则的百分比更新,是否需要重新分析更新

@@ -4,8 +4,10 @@ import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
+import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,10 +30,19 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 
 	/**
 	 * 对比前数据分页
+	 *
 	 * @param params
 	 * @return
 	 */
-	Page contrastBeforePage(Map<String, Object> params);
+	Page<BaseVo> contrastBeforePage(Map<String, Object> params);
+
+	/**
+	 * 对比后数据分页
+	 *
+	 * @param params
+	 * @return
+	 */
+	Page<BaseVo> contrastAfterPage(Map<String, Object> params);
 
 	/**
 	 * 分析结果默认中心数据显示

@@ -1,6 +1,8 @@
 package com.cloud.gds.cleaning.controller;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.R;
+import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import java.util.Map;
 
 /**
  * 结果集
+ *
  * @Author : yaonuan
  * @Email : 806039077@qq.com
  * @Date : 2018-12-19
@@ -24,7 +27,9 @@ public class ResultSetController {
 
 	@Autowired
 	public ResultSetController(
-		DataFieldValueService dataFieldValueService) {this.dataFieldValueService = dataFieldValueService;}
+		DataFieldValueService dataFieldValueService) {
+		this.dataFieldValueService = dataFieldValueService;
+	}
 
 	/**
 	 * 结果集详情分页
@@ -37,13 +42,33 @@ public class ResultSetController {
 		return new R<>(dataFieldValueService.queryPage(params));
 	}
 
-	public R contrastBefore(Map<String,Object> params){
-
-		return new R();
+	/**
+	 * 对比详情前数据
+	 *
+	 * @param params
+	 * @return
+	 */
+	@GetMapping("/contrast_before")
+	public R contrastBefore(Map<String, Object> params) {
+		Page<BaseVo> page = dataFieldValueService.contrastBeforePage(params);
+		return new R<>(page);
 	}
 
+	/**
+	 * 对比详情后数据
+	 *
+	 * @param params
+	 * @return
+	 */
+	@GetMapping("/contrast_after")
+	public R contrastAfter(Map<String, Object> params) {
+		Page<BaseVo> page = dataFieldValueService.contrastAfterPage(params);
+		return new R<>(page);
+	}
 
-	public R contrastAfter(){
+	@GetMapping("/cleaning_item")
+	public R cleaningItem(@RequestParam Long id){
+
 		return new R();
 	}
 

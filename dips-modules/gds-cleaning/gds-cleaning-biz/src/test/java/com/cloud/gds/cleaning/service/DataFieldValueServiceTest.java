@@ -162,4 +162,11 @@ public class DataFieldValueServiceTest {
 		System.out.println(list);
 	}
 
+	@Test
+	public void contrastBeforePage(){
+		Map<String, Object> map = new HashMap<>();
+		map.put("fieldId", 4L);
+		dataFieldValueService.contrastBeforePage(map);
+	}
+
 }

@@ -33,14 +33,22 @@ import java.util.*;
 @Service
 public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField> implements DataFieldService {
 
-	private final DataRuleService dataRuleService;
-	private final DataFieldValueService dataFieldValueService;
-
+//	private final DataRuleService dataRuleService;
+//	private DataFieldValueService dataFieldValueService;
+//
+//	@Autowired
+//	public DataFieldServiceImpl(DataRuleService dataRuleService) {
+//		this.dataRuleService = dataRuleService;
+//	}
+//
+//	@Autowired
+//	private void setDataFieldValueService(DataFieldValueService dataFieldValueService) {
+//		this.dataFieldValueService = dataFieldValueService;
+//	}
 	@Autowired
-	public DataFieldServiceImpl(DataRuleService dataRuleService, DataFieldValueService dataFieldValueService) {
-		this.dataRuleService = dataRuleService;
-		this.dataFieldValueService = dataFieldValueService;
-	}
+	DataRuleService dataRuleService;
+	@Autowired
+	DataFieldValueService dataFieldValueService;
 
 	@Override
 	public Page<DataField> queryPage(Map<String, Object> params) {
@@ -52,8 +60,8 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		p.setAsc(isAsc);
 		EntityWrapper<DataField> e = new EntityWrapper<DataField>();
 		String name = params.getOrDefault("name", "").toString();
-		if(StrUtil.isNotBlank(name)){
-			e.like("name",  SpecialStringUtil.escapeExprSpecialWord(name));
+		if (StrUtil.isNotBlank(name)) {
+			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
 		}
 		e.eq("is_deleted", DataCleanConstant.NO);
 		return this.selectPage(p, e);

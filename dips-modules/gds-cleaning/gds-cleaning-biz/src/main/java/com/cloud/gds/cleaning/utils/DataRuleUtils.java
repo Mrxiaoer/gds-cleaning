@@ -3,7 +3,7 @@ package com.cloud.gds.cleaning.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.gds.cleaning.api.entity.DataRule;
-import com.cloud.gds.cleaning.api.vo.DataRulePageVo;
+import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.springframework.beans.BeanUtils;
 
 /**
  * 数据规则utils
@@ -147,12 +146,12 @@ public class DataRuleUtils {
 		return sortedMap;
 	}
 
-	public static List<DataRulePageVo> takeName(List<DataRule> dataRules) {
-		List<DataRulePageVo> vos = new ArrayList<>();
+	public static List<BaseVo> takeName(List<DataRule> dataRules) {
+		List<BaseVo> vos = new ArrayList<>();
 		for (DataRule dataRule : dataRules) {
-			DataRulePageVo dataRulePageVo = new DataRulePageVo();
-			BeanUtils.copyProperties(dataRule, dataRulePageVo);
-			vos.add(dataRulePageVo);
+			BaseVo baseVo = new BaseVo();
+			BeanUtils.copyProperties(dataRule, baseVo);
+			vos.add(baseVo);
 		}
 		return vos;
 	}

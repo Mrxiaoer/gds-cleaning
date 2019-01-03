@@ -17,13 +17,11 @@ import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
-import com.cloud.gds.cleaning.api.vo.DataRuleVo;
-import com.cloud.gds.cleaning.api.vo.DataSetVo;
+import com.cloud.gds.cleaning.api.vo.*;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.service.*;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -59,7 +57,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-		DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper) {
+									 DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper) {
 		this.calculateService = calculateService;
 		this.dataFieldService = dataFieldService;
 		this.dataRuleService = dataRuleService;
@@ -68,41 +66,113 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public Page<DataFieldValue> queryPage(Map<String, Object> params) {
-		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
-		Page<DataFieldValue> p = new Page<DataFieldValue>();
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p = new Page<>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
 		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
 		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
 		p.setAsc(isAsc);
-		EntityWrapper<DataFieldValue> e = new EntityWrapper<DataFieldValue>();
+		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
-		if(StrUtil.isNotBlank(fieldId)){
-			e.like("field_id",  SpecialStringUtil.escapeExprSpecialWord(fieldId));
+		if (StrUtil.isNotBlank(fieldId)) {
+			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		e.eq("is_deleted", DataCleanConstant.NO);
-		return this.selectPage(p,e);
+		return this.selectPage(p, e);
 	}
 
 	@Override
-	public Page contrastBeforePage(Map<String, Object> params) {
+	public Page<BaseVo> contrastBeforePage(Map<String, Object> params) {
 		// 获取分页信息
-		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
-		Page<DataFieldValue> p = new Page<DataFieldValue>();
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p = new Page<>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
 		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
 		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
 		p.setAsc(isAsc);
-		EntityWrapper<DataFieldValue> e = new EntityWrapper<DataFieldValue>();
+		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
-		if(StrUtil.isNotBlank(fieldId)){
-			e.like("field_id",  SpecialStringUtil.escapeExprSpecialWord(fieldId));
+		if (StrUtil.isNotBlank(fieldId)) {
+			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
+		Page<DataFieldValue> page = this.selectPage(p, e);
+
 		// 查询当前清洗池信息
 		DataField dataField = dataFieldService.selectById((Long) params.get("fieldId"));
-		// 获取规则中百分比
+		// 获取规则中百分比最高的字段
 		DataRuleVo dataRuleVo = dataRuleService.queryById(dataField.getRuleId());
+		List<DataSetVo> list = dataRuleVo.getDetail();
+		DataSetVo resultSet = list != null ? list.get(0) : new DataSetVo();
+		for (DataSetVo dataSetVo : list) {
+			if (dataSetVo.getWeight() > resultSet.getWeight()) {
+				BeanUtils.copyProperties(dataSetVo, resultSet);
+			}
+		}
+		// 重新构造赋值分页信息
+		Page<BaseVo> page2 = new Page<>();
+		BeanUtils.copyProperties(page, page2);
+		List<BaseVo> baseVos = new ArrayList<>();
 
-		return null;
+		List<DataPoolVo> dataPool = DataPoolUtils.listEntity2Vo(page.getRecords());
+		for (DataPoolVo dataPoolVo : dataPool) {
+			BaseVo baseVo = new BaseVo();
+			baseVo.setId(dataPoolVo.getId());
+			Map<String, Object> dataPoolMap = dataPoolVo.getFieldValue();
+			baseVo.setName(dataPoolMap.get(resultSet.getProp()).toString());
+
+			baseVos.add(baseVo);
+		}
+		page2.setRecords(baseVos);
+
+		return page2;
+	}
+
+	@Override
+	public Page<BaseVo> contrastAfterPage(Map<String, Object> params) {
+		// 获取分页信息
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p = new Page<>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
+		String fieldId = params.getOrDefault("fieldId", "").toString();
+		if (StrUtil.isNotBlank(fieldId)) {
+			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+		}
+		e.eq("is_deleted", DataCleanConstant.NO);
+		Page<DataFieldValue> page = this.selectPage(p, e);
+
+		// 查询当前清洗池信息
+		DataField dataField = dataFieldService.selectById((Long) params.get("fieldId"));
+		// 获取规则中百分比最高的字段
+		DataRuleVo dataRuleVo = dataRuleService.queryById(dataField.getRuleId());
+		List<DataSetVo> list = dataRuleVo.getDetail();
+		DataSetVo resultSet = list != null ? list.get(0) : new DataSetVo();
+		for (DataSetVo dataSetVo : list) {
+			if (dataSetVo.getWeight() > resultSet.getWeight()) {
+				BeanUtils.copyProperties(dataSetVo, resultSet);
+			}
+		}
+		// 重新构造赋值分页信息
+		Page<BaseVo> page2 = new Page<>();
+		BeanUtils.copyProperties(page, page2);
+		List<BaseVo> baseVos = new ArrayList<>();
+
+		List<DataPoolVo> dataPool = DataPoolUtils.listEntity2Vo(page.getRecords());
+		// 组件前端动态数据
+		for (DataPoolVo vo : dataPool) {
+			BaseVo baseVo = new BaseVo();
+			baseVo.setId(vo.getId());
+			Map<String, Object> dataPoolMap = vo.getFieldValue();
+			baseVo.setName(dataPoolMap.get(resultSet.getProp()).toString());
+
+			baseVos.add(baseVo);
+		}
+		page2.setRecords(baseVos);
+
+		return page2;
 	}
 
 	@Override
@@ -162,7 +232,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		// 删除数据时需要删除分析结果表中相关数据
 		analysisResultService.deleteAllByIds(ids);
-		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id",ids ));
+		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id", ids));
 	}
 
 	@Override
@@ -214,7 +284,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public String getAnalysisData(Long fieldId,Float threshold) {
+	public String getAnalysisData(Long fieldId, Float threshold) {
 
 		DataField dataField = new DataField();
 		dataField.setId(fieldId);
@@ -326,6 +396,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		return needAnalysisList;
 	}
+
 
 	/**
 	 * 调用清洗相似度计算

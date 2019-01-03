@@ -10,7 +10,7 @@ import lombok.Data;
  * @Date : 2018-12-07
  */
 @Data
-public class DataRulePageVo {
+public class BaseVo {
 	private static final long serialVersionUID = 1L;
 
 	/**
