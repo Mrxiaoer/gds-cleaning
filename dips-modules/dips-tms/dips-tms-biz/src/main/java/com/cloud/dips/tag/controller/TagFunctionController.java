@@ -61,9 +61,9 @@ public class TagFunctionController {
 	public R<Boolean> tagFunctionDel(@PathVariable Integer id) {
 		GovTagFunction bean = service.selectById(id);
 		if(bean==null){
-			return new R<>(false,"功能不存在！");
+			return new R<Boolean>(false,"功能不存在！");
 		}else{
-			return new R<>(service.deleteById(bean.getId()));
+			return new R<Boolean>(service.deleteById(bean.getId()));
 		}
 	}
 	
@@ -73,7 +73,7 @@ public class TagFunctionController {
 	public R<Boolean> save(@Valid @RequestBody GovTagFunction govTagFunction) {
 			GovTagFunction bean=new GovTagFunction();
 			BeanUtils.copyProperties(govTagFunction, bean);
-			return new R<>(service.insert(bean));
+			return new R<Boolean>(service.insert(bean));
 	}
 	
 	@SysLog("更新标签功能")
@@ -85,7 +85,7 @@ public class TagFunctionController {
 			return new R<>(false,"功能不存在！");
 		}else{
 			BeanUtils.copyProperties(govTagFunction, bean);
-			return new R<>(service.updateById(bean));	
+			return new R<Boolean>(service.updateById(bean));	
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class TagFunctionController {
 	public R<Boolean> updateEnable(@PathVariable Integer id) {
 		GovTagFunction bean = service.selectById(id);
 		if(bean==null){
-			return new R<>(false,"功能不存在！");
+			return new R<Boolean>(false,"功能不存在！");
 		}else{
 			Integer enable=1;
 			if(bean.getEnable()==1){
@@ -102,7 +102,7 @@ public class TagFunctionController {
 			}
 			EntityWrapper<GovTagFunction> e=new EntityWrapper<GovTagFunction>();
 			e.eq("id", bean.getId());
-			return new R<>(service.updateForSet("enable = "+enable, e));	
+			return new R<Boolean>(service.updateForSet("enable = "+enable, e));	
 		}
 	}
 	

@@ -74,12 +74,12 @@ public class TagLevelController {
 	public R<Boolean> tagLevelDel(@PathVariable Integer id) {
 		GovTagLevel govTagLevel = service.selectById(id);
 		if(govTagLevel==null){
-			return new R<>(false);
+			return new R<Boolean>(false);
 		}else{
 				EntityWrapper<GovTag> e=new EntityWrapper<GovTag>();
 				e.where( "level_id = {0}", govTagLevel.getLevelId());
 				govTagService.updateForSet("level_id=0", e);
-				return new R<>(service.deleteById(govTagLevel.getLevelId()));
+				return new R<Boolean>(service.deleteById(govTagLevel.getLevelId()));
 		}
 	}
 	
@@ -90,7 +90,7 @@ public class TagLevelController {
 	public R<Boolean> saveTagLevel(@Valid @RequestBody GovTagLevelDTO govTagLevelDto) {
 			GovTagLevel govTagLevel = new GovTagLevel();
 			BeanUtils.copyProperties(govTagLevelDto, govTagLevel);
-			return new R<>(service.insert(govTagLevel));
+			return new R<Boolean>(service.insert(govTagLevel));
 	}
 	
 	@SysLog("更新标签级别")
@@ -100,7 +100,7 @@ public class TagLevelController {
 	public R<Boolean> updateTagLevel(@RequestBody GovTagLevelDTO govTagLevelDto) {
 		GovTagLevel govTagLevel = service.selectById(govTagLevelDto.getLevelId());
 		BeanUtils.copyProperties(govTagLevelDto, govTagLevel);
-		return new R<>(service.updateById(govTagLevel));
+		return new R<Boolean>(service.updateById(govTagLevel));
 	}
 	
 }

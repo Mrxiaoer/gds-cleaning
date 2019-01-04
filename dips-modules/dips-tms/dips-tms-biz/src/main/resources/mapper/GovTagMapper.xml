@@ -19,7 +19,6 @@
 		<result column="update_time" property="updateTime"/>
 		<result column="refers" property="refers"/>
 		<result column="order_num" property="orderNum"/>
-		<result column="type_id" property="typeId"/>
 		<result column="level_id" property="levelId"/>
 		<result column="views" property="views"/>
 		<result column="description" property="description"/>
@@ -37,7 +36,6 @@
 		<result column="update_time" property="updateTime"/>
 		<result column="refers" property="refers"/>
 		<result column="order_num" property="orderNum"/>
-		<result column="type_id" property="typeId"/>
 		<result column="level_id" property="levelId"/>
 		<result column="levelName" property="levelName"/>
 		<result column="views" property="views"/>
@@ -46,7 +44,7 @@
 		<result column="system" property="system"/>
 		<result column="status" property="status"/>
 		<result column="enable" property="enable"/>
-		<collection property="typeVo" select="selectTagType" column="type_id" />
+		<collection property="typeVos" select="com.cloud.dips.tag.mapper.GovTagTypeRelationMapper.selectTagTypes" column="id" />
 		<collection property="tagList" select="selectTagList" column="id" />
 	</resultMap>
 	<select id="selectGovTagVoById" resultMap="govTagVoResultMap">
@@ -57,7 +55,6 @@
             `tag`.update_time,
             `tag`.refers,
             `tag`.order_num,
-            `tag`.type_id,
             `tag`.level_id,
             l.name AS levelName,
             `tag`.views,
@@ -80,7 +77,7 @@
 		<result column="refers" property="refers"/>
 		<result column="levelName" property="levelName"/>
 		<result column="status" property="status"/>
-		<collection property="typeVo" select="selectTagType" column="type_id" />
+		<collection property="typeVos" select="com.cloud.dips.tag.mapper.GovTagTypeRelationMapper.selectTagTypes" column="id" />
 	</resultMap>
 	<select id="selectGovTagVoPage" resultMap="govTagVoPageResultMap">
 		SELECT
@@ -88,19 +85,21 @@
             `tag`.name,
             `tag`.update_time,
             `tag`.refers,
-            `tag`.type_id,
             l.name AS levelName,
             `tag`.status
         FROM
             gov_tag AS `tag`
             LEFT JOIN gov_tag_level AS l ON l.id = `tag`.level_id
+            <if test="typeid != null and typeid != ''">
+            LEFT JOIN gov_tag_type_relation AS ttr ON ttr.tag_id = `tag`.id
+            </if>
         WHERE
         	1 = 1
         <if test="tagname != null and tagname != ''">
 			and `tag`.name LIKE CONCAT('%',#{tagname},'%')
 		</if>
         <if test="typeid != null and typeid != ''">
-			and `tag`.type_id = #{typeid}
+			and ttr.type_id = #{typeid}
 		</if>
         <if test="levelid != null and levelid != ''">
 			and `tag`.level_id = #{levelid}
@@ -126,9 +125,9 @@
 		<result column="views" property="views"/>
 		<result column="system" property="system"/>
 		<result column="levelName" property="levelName"/>
-		<result column="typeName" property="typeName"/>
 		<result column="status" property="status"/>
 		<collection property="tagList" select="selectTagList" column="id" />
+		<collection property="typeVos" select="com.cloud.dips.tag.mapper.GovTagTypeRelationMapper.selectTagTypes" column="id" />
 	</resultMap>
 	<select id="getAllTag" resultMap="govTagVoListResultMap">
 		SELECT
@@ -140,12 +139,10 @@
             `tag`.system,
             `tag`.description,
             l.name AS levelName,
-            t.name AS typeName,
             `tag`.status
         FROM
             gov_tag AS `tag`
             LEFT JOIN gov_tag_level AS l ON l.id = `tag`.level_id
-            LEFT JOIN gov_tag_type AS t ON t.id = `tag`.type_id
        ORDER BY
        		`tag`.id     
     </select>
@@ -174,32 +171,7 @@
             tr.relation_id = #{id}
             and tr.node = 'tag'
     </select>
-	
-	<resultMap id="govTagTypeVoResultMap" type="com.cloud.dips.tag.api.vo.GovTagTypeVO">
-		<id column="id" property="typeId"/>
-		<result column="parent_id" property="parentId"/>
-		<result column="name" property="name"/>
-		<collection property="parentVo" select="selectParentType" column="parent_id" />
-	</resultMap>
-	<select id="selectTagType" resultMap="govTagTypeVoResultMap">
-		SELECT
-			*
-		FROM
-			gov_tag_type AS t
-		WHERE
-			t.id = #{type_id}
-	</select>
-	<select id="selectParentType" resultMap="govTagTypeVoResultMap">
-		SELECT
-			*
-		FROM
-			gov_tag_type AS t
-		WHERE
-			t.id = #{parent_id}
-	</select>
 
-	
-	
 
 <resultMap type="com.cloud.dips.tag.api.vo.MapVO" id="countTypeMap">
 		<result column="name" property="key"/>
@@ -211,10 +183,10 @@
 			t.name AS name,
 			count(*) AS value
 		FROM
-			gov_tag AS tag
-		    LEFT JOIN gov_tag_type AS t ON t.id = `tag`.type_id
+			gov_tag_type_relation AS ttr
+		    LEFT JOIN gov_tag_type AS t ON t.id = ttr.type_id
 		GROUP BY
-			tag.type_id
+			ttr.type_id
 	</select>
 	
 	<select id="coutnByDate" resultMap="countTypeMap">

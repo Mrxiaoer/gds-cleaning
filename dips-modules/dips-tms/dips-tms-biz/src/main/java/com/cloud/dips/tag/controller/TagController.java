@@ -36,6 +36,7 @@ import com.cloud.dips.tag.service.GovTagMergeRecordService;
 import com.cloud.dips.tag.service.GovTagModificationRecordService;
 import com.cloud.dips.tag.service.GovTagRelationService;
 import com.cloud.dips.tag.service.GovTagService;
+import com.cloud.dips.tag.service.GovTagTypeRelationService;
 import com.google.common.collect.Maps;
 import com.hankcs.hanlp.HanLP;
 
@@ -68,6 +69,9 @@ public class TagController {
 	@Autowired
 	private GovTagRelationService relationService;
 	
+	@Autowired
+	private GovTagTypeRelationService govTagTypeRelationService;
+	
 	
 	
 	/**
@@ -83,7 +87,7 @@ public class TagController {
 	@ApiOperation(value = "查询标签详情", notes = "根据ID查询标签详情: params{标签ID: id}",httpMethod="GET")
 	public GovTagVO tag(@PathVariable Integer id) {
 		GovTagVO bean=service.selectGovTagVoById(id);
-		bean.addTypeIds();
+		bean.addTypeObjs();
 		return bean;
 	}
 	
@@ -140,8 +144,9 @@ public class TagController {
 	@ApiOperation(value = "删除标签", notes = "根据ID删除标签: params{标签ID: tagId}",httpMethod="POST")
 	public R<Boolean> tagDel(@PathVariable Integer id) {
 		GovTag govTag = service.selectById(id);
+		govTagTypeRelationService.deleteById(id);
 		if(govTag==null){
-			return new R<>(false);
+			return new R<Boolean>(Boolean.FALSE);
 		}else{
 				govTagDescriptionService.deleteByTagId(govTag.getTagId());
 				govTagRelationService.deleteById(govTag.getTagId());
@@ -152,7 +157,7 @@ public class TagController {
 				EntityWrapper<GovTagMergeRecord> em=new EntityWrapper<GovTagMergeRecord>();
 				em.eq("tag_id", govTag.getTagId()).or().eq("merge_id", govTag.getTagId());
 				mergeRecordService.delete(em);
-				return new R<>(service.deleteGovTagById(govTag));
+				return new R<Boolean>(service.deleteGovTagById(govTag));
 		}
 	}
 	
@@ -168,8 +173,7 @@ public class TagController {
 			// 获取当前用户 
 			DipsUser user = SecurityUtils.getUser();
 			govTag.setCreatorId(user.getId());
-			govTag=service.save(govTag);
-	
+			govTag=service.save(govTag,govTagDto.getTypeIds());
 			String[] relationTags=govTagDto.getTagList();
 			StringBuilder tagKeyWords=new StringBuilder();
 			for(String relation:relationTags){
@@ -180,9 +184,9 @@ public class TagController {
 			params.put("node", "tag");
 			params.put("tagKeyWords", tagKeyWords.toString());
 			relationService.saveTagRelation(params);
-			return new R<>(Boolean.TRUE);
+			return new R<Boolean>(Boolean.TRUE);
 		}else{
-			return new R<>(Boolean.FALSE,"标签已存在");
+			return new R<Boolean>(Boolean.FALSE,"标签已存在");
 		}
 		
 	}	
@@ -196,8 +200,12 @@ public class TagController {
 	@ApiOperation(value = "更新标签浏览量", notes = "更新标签浏览量", httpMethod = "POST")
 	public R<Boolean> tagViews(@PathVariable Integer id) {
 		GovTag govTag = service.selectById(id);
-		govTag.setViews(govTag.getViews()+1);
-		return new R<>(service.updateById(govTag));
+		if(govTag==null){
+			return new R<Boolean>(Boolean.FALSE,"标签不存在");	
+		}else{
+			govTag.setViews(govTag.getViews()+1);
+			return new R<Boolean>(service.updateById(govTag));	
+		}
 	}
 	
 	@SysLog("更新标签")
@@ -220,6 +228,7 @@ public class TagController {
 			
 			BeanUtils.copyProperties(govTagDto, govTag);
 			govTag.setUpdateTime(new Date());
+			govTagTypeRelationService.saveTagTypeRelation(govTag.getTagId(), govTagDto.getTypeIds());
 			return new R<Boolean>(service.updateById(govTag));
 		}else{
 			Integer i=service.findByGovTagName(govTagDto.getName());
@@ -244,6 +253,7 @@ public class TagController {
 
 				BeanUtils.copyProperties(govTagDto, govTag);
 				govTag.setUpdateTime(new Date());
+				govTagTypeRelationService.saveTagTypeRelation(govTag.getTagId(), govTagDto.getTypeIds());
 				return new R<Boolean>(service.updateById(govTag));
 			}else{
 				return new R<Boolean>(Boolean.FALSE,"标签已存在！");
@@ -284,6 +294,7 @@ public class TagController {
 	public R<Boolean> delete(@RequestBody List<Integer> ids) {
 		for(Integer id:ids){
 			GovTag govTag = service.selectById(id);
+			govTagTypeRelationService.deleteById(id);
 			if(govTag!=null){
 					govTagDescriptionService.deleteByTagId(govTag.getTagId());
 					govTagRelationService.deleteById(govTag.getTagId());

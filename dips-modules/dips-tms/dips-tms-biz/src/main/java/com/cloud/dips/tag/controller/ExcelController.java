@@ -78,11 +78,16 @@ public class ExcelController {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<GovTagVO> tags=service.getAllTag();
         for(GovTagVO tagvo:tags){
+        	tagvo.addTypeNames();
             Object[] objs = new Object[12];
             objs[0] = tagvo.getTagId();
             objs[1] = tagvo.getName();
             objs[2] = tagvo.getLevelName();
-            objs[3] = tagvo.getTypeName();
+            StrBuilder typeName=new StrBuilder("");
+            for(String str:tagvo.getTypeNames()){
+            	typeName.append(str+",");
+            }
+            objs[3] = typeName.toString();
             objs[4] = tagvo.getDescription();
             objs[5] = tagvo.getSystem();
             if(tagvo.getStatus()==0){
@@ -169,11 +174,14 @@ public class ExcelController {
 			        		GovTag tag=new GovTag();
 			        		tag.setName(strs[0]);
 			        		tag.setLevelId(new Long(levelMap.getOrDefault(strs[1], 0L)).intValue());
-			        		tag.setTypeId(new Long(typeMap.getOrDefault(strs[2], 0L)).intValue());
+			        		List<Integer> typeIds=new ArrayList<Integer>();
+			        		for(String str: strs[2].split(",")){
+			        			typeIds.add(new Long(typeMap.getOrDefault(str, 0L)).intValue());
+			        		}
 			        		tag.setDescription(strs[3]);
 			        		tag.setSystem(strs[4]);
 			        		tag.setCreatorId(user.getId());
-			        		service.save(tag);
+			        		service.save(tag,typeIds);
 			        		success +=1;
 			        	}
 		        		}

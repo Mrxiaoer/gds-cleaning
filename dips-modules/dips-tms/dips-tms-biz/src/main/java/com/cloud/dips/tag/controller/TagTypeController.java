@@ -21,10 +21,10 @@ import com.cloud.dips.common.core.util.Query;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.dips.common.log.annotation.SysLog;
 import com.cloud.dips.tag.api.dto.GovTagTypeDTO;
-import com.cloud.dips.tag.api.entity.GovTag;
 import com.cloud.dips.tag.api.entity.GovTagType;
+import com.cloud.dips.tag.api.entity.GovTagTypeRelation;
 import com.cloud.dips.tag.api.vo.GovTagTypeVO;
-import com.cloud.dips.tag.service.GovTagService;
+import com.cloud.dips.tag.service.GovTagTypeRelationService;
 import com.cloud.dips.tag.service.GovTagTypeService;
 
 import cn.hutool.core.util.StrUtil;
@@ -41,7 +41,7 @@ public class TagTypeController {
 	@Autowired
 	private GovTagTypeService service;
 	@Autowired
-	private GovTagService govTagService;
+	private GovTagTypeRelationService govTagTypeRelationService;
 	
 	
 	@RequestMapping("/list")
@@ -75,16 +75,16 @@ public class TagTypeController {
 	@ApiOperation(value = "删除标签分类", notes = "删除标签分类",httpMethod="POST")
 	public R<Boolean> tagTypeDel(@PathVariable Integer id) {
 		GovTagType govTagType = service.selectById(id);
+		EntityWrapper<GovTagTypeRelation> e=new EntityWrapper<GovTagTypeRelation>();
+		e.eq("type_id",id);
+		govTagTypeRelationService.delete(e);
 		if(govTagType==null){
-			return new R<>(false);
+			return new R<Boolean>(false);
 		}else{
-				EntityWrapper<GovTag> e=new EntityWrapper<GovTag>();
-				e.where( "type_id = {0}", govTagType.getTypeId());
-				govTagService.updateForSet("type_id=0", e);
-				EntityWrapper<GovTagType> e2=new EntityWrapper<GovTagType>();
-				e2.where( "parent_id = {0}", govTagType.getTypeId());
-				service.updateForSet("parent_id="+govTagType.getParentId(), e2);
-				return new R<>(service.deleteById(govTagType.getTypeId()));
+			EntityWrapper<GovTagType> e2=new EntityWrapper<GovTagType>();
+			e2.where( "parent_id = {0}", govTagType.getTypeId());
+			service.updateForSet("parent_id="+govTagType.getParentId(), e2);
+			return new R<Boolean>(service.deleteById(govTagType.getTypeId()));
 		}
 	}
 	
@@ -95,7 +95,7 @@ public class TagTypeController {
 	public R<Boolean> saveTagType(@Valid @RequestBody GovTagTypeDTO govTagTypeDto) {
 			GovTagType govTagType = new GovTagType();
 			BeanUtils.copyProperties(govTagTypeDto, govTagType);
-			return new R<>(service.insert(govTagType));
+			return new R<Boolean>(service.insert(govTagType));
 	}
 	
 	@SysLog("更新标签分类")
@@ -105,7 +105,7 @@ public class TagTypeController {
 	public R<Boolean> updateTagType(@RequestBody GovTagTypeDTO govTagTypeDto) {
 		GovTagType govTagType = service.selectById(govTagTypeDto.getTypeId());
 		BeanUtils.copyProperties(govTagTypeDto, govTagType);
-		return new R<>(service.updateAllColumnById(govTagType));
+		return new R<Boolean>(service.updateAllColumnById(govTagType));
 	}
 	
 }

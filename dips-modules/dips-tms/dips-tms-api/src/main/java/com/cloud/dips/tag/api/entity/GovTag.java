@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.cloud.dips.common.core.constant.CommonConstant;
 
 import lombok.Data;
 
@@ -59,11 +60,6 @@ public class GovTag implements Serializable{
 	@TableField("order_num")
 	private Integer orderNum=1;
 	/**
-	 * 标签分类id
-	 */
-	@TableField("type_id")
-	private Integer typeId=0;
-	/**
 	 * 标签级别id
 	 */
 	@TableField("level_id")
@@ -88,7 +84,7 @@ public class GovTag implements Serializable{
 	 * 所属系统
 	 */
 	@TableField("system")
-	private String system;
+	private String system=CommonConstant.SYSTEM_NAME;
 	/**
 	 * 标签状态 1正常 0待审
 	 */

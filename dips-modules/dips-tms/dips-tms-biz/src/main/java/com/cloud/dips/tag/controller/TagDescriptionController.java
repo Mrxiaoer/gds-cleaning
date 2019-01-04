@@ -47,7 +47,7 @@ public class TagDescriptionController {
 			DipsUser user = SecurityUtils.getUser();
 			govTagDescription.setCreatorId(user.getId());
 			govTagDescription.applyDefaultValue();
-			return new R<>(service.insert(govTagDescription));
+			return new R<Boolean>(service.insert(govTagDescription));
 	}
 
 	@RequestMapping("/page/{tagId}")
@@ -67,9 +67,9 @@ public class TagDescriptionController {
 	public R<Boolean> tagDescriptionDel(@PathVariable Integer id) {
 		GovTagDescription govTagDescription = service.selectById(id);
 		if(govTagDescription==null){
-			return new R<>(false,"描述不存在！");
+			return new R<Boolean>(false,"描述不存在！");
 		}else{
-			return new R<>(service.deleteById(govTagDescription.getDescriptionId()));
+			return new R<Boolean>(service.deleteById(govTagDescription.getDescriptionId()));
 		}
 	}
 	
@@ -79,10 +79,10 @@ public class TagDescriptionController {
 	public R<Boolean> updateTagDescription(@RequestBody GovTagDescription govTagDescription) {
 		GovTagDescription bean = service.selectById(govTagDescription.getDescriptionId());
 		if(bean==null){
-			return new R<>(false,"描述不存在！");
+			return new R<Boolean>(false,"描述不存在！");
 		}else{
 			BeanUtils.copyProperties(govTagDescription, bean);
-			return new R<>(service.updateById(bean));
+			return new R<Boolean>(service.updateById(bean));
 		}
 	}
 	

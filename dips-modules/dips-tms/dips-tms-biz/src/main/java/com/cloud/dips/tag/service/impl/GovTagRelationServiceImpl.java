@@ -87,7 +87,7 @@ public class GovTagRelationServiceImpl extends ServiceImpl<GovTagRelationMapper,
 						DipsUser user = SecurityUtils.getUser();
 						tag.setCreatorId(user.getId());
 						tag.setRefers(1);
-						tag = tagService.save(tag);
+						tag = tagService.save(tag,null);
 						bean.setTagId(tag.getTagId());
 					}
 					EntityWrapper<GovTagRelation> e4 = new EntityWrapper<GovTagRelation>();

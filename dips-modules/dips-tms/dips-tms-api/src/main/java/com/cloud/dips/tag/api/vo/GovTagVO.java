@@ -2,7 +2,6 @@ package com.cloud.dips.tag.api.vo;
 
 import java.beans.Transient;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,14 +43,6 @@ public class GovTagVO implements Serializable{
 	 */
 	private Integer orderNum;
 	/**
-	 * 标签分类id
-	 */
-	private Integer typeId;
-	/**
-	 * 标签分类vo
-	 */
-	private GovTagTypeVO typeVo;
-	/**
 	 * 标签级别id
 	 */
 	private Integer levelId;
@@ -67,10 +58,6 @@ public class GovTagVO implements Serializable{
 	 * 标签介绍
 	 */
 	private String description;
-	/**
-	 * 关联标签
-	 */
-	private String relation;
 	/**
 	 * 创建者ID
 	 */
@@ -100,22 +87,49 @@ public class GovTagVO implements Serializable{
 	/**
 	 * 分类id数组
 	 */
-	private List<Integer> typeIds;
-	
+	private List<CommonVO> typeObjs;
 	/**
 	 * 分类名称
 	 */
-	private String typeName;
+	private List<String> typeNames;
+
+	private List<GovTagTypeVO> typeVos;
 	
 	
     @Transient
-    public void addTypeIds() {
-    	typeIds=new LinkedList<Integer>();
-    	while(typeVo!=null){
-    		typeIds.add(typeVo.getTypeId());
+    public void addTypeObjs() {
+    	this.typeObjs=new LinkedList<CommonVO>();
+    	for(GovTagTypeVO typeVo:typeVos){
+    		if(typeVo!=null){
+        	CommonVO bean=new CommonVO();
+        	bean.setCommonId(typeVo.getTypeId());
+    		StringBuilder typeName=new StringBuilder(typeVo.getName());
     		typeVo=typeVo.getParentVo();
+        	while(typeVo!=null){
+        		typeName.insert(0, typeVo.getName()+"-");
+        		typeVo=typeVo.getParentVo();
+        	}
+        	bean.setCommonName(typeName.toString());
+        	typeObjs.add(bean);
+    		}
     	}
-    	Collections.reverse(typeIds);
+    }
+	
+	
+    @Transient
+    public void addTypeNames() {
+    	this.typeNames=new LinkedList<String>();
+    	for(GovTagTypeVO typeVo:typeVos){
+    		if(typeVo!=null){
+    		StringBuilder typeName=new StringBuilder(typeVo.getName());
+    		typeVo=typeVo.getParentVo();
+        	while(typeVo!=null){
+        		typeName.insert(0, typeVo.getName()+"-");
+        		typeVo=typeVo.getParentVo();
+        	}
+        	typeNames.add(typeName.toString());
+    		}
+    	}
     }
 	
 }

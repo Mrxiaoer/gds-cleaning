@@ -12,7 +12,7 @@ import lombok.Data;
 /**
  * 
  * @author ZB
- *
+ *标签关联分类表
  */
 @Data
 @TableName("gov_tag_relation_type")

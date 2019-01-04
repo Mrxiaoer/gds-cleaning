@@ -102,6 +102,17 @@ public class DictController {
 	public List<DictVO> allList() {
 		return service.selectAllDict();
 	}
+	
+	@GetMapping("/all_map")
+	@ApiOperation(value = "查询所有字典", notes = "查询所有字典",httpMethod="GET")
+	public Map<String, List<DictValueVO>> getAllMap() {
+		Map<String, List<DictValueVO>> dictMap = new HashMap<>(0);
+		List<DictVO> sysDict=service.selectAllDict();
+		for (DictVO vo : sysDict) {
+			dictMap.put(vo.getNumber(), dictValueList(vo.getNumber()));
+		}
+		return dictMap;
+	}
 
 	@GetMapping("/map")
 	@ApiOperation(value = "通过字典编码集合查询字典值信息集合", notes = "通过字典编码集合查询字典值信息集合", httpMethod = "GET")
