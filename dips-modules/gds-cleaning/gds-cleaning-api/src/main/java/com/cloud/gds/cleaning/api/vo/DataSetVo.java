@@ -28,7 +28,7 @@ public class DataSetVo {
 	private Float weight;
 
 	/**
-	 * 有无同义
+	 * 有无同义(0、无 1、有)
 	 */
 	private Integer isSynonymous;
 

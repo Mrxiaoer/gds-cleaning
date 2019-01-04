@@ -3,9 +3,11 @@ package com.cloud.gds.cleaning.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
+import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.GroupVo;
 import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
 import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
@@ -16,7 +18,11 @@ import com.cloud.gds.cleaning.service.DataFieldValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author : yaonuan
@@ -33,7 +39,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 	@Autowired
 	public AnalysisResultServiceImpl(DataFieldService dataFieldService, DataFieldValueService dataFieldValueService,
-		CalculateService calculateService) {
+									 CalculateService calculateService) {
 		this.dataFieldService = dataFieldService;
 		this.dataFieldValueService = dataFieldValueService;
 		this.calculateService = calculateService;
@@ -43,7 +49,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	public void dataAnalysis(Long fieldId, Float threshold, Integer degree) {
 		// 分析程度degree  1、快速分析 2、深度分析
 		// 由于前端传过来的阀值是100作为基数,因此需要转化
-		String fileUrl = dataFieldValueService.getAnalysisData(fieldId,threshold);
+		String fileUrl = dataFieldValueService.getAnalysisData(fieldId, threshold);
 
 		//  更新清洗池中分析状态->正在分析
 		DataField dataField = new DataField();
@@ -53,7 +59,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		dataFieldService.update(dataField);
 
 		//  数据分析接口
-		String result = calculateService.similarity(degree, fileUrl);
+		String result = calculateService.analysisSimilarity(degree, fileUrl);
 
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 		if ("None".equals(result)) {
@@ -76,6 +82,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 					q.setBaseId(jsonVo.getId());
 					q.setCompareId(vo.getId());
 					q.setSimilarity(vo.getSimilarity());
+					// 是否手动分析(0、自动 1、手动)
+					q.setIsManual(DataCleanConstant.NO);
 					analysisResults.add(q);
 				}
 			}
@@ -104,7 +112,34 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 	@Override
 	public boolean deleteAllByIds(Set<Long> ids) {
-		return this.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids)) &&this.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids));
+		return this.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids)) && this.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids));
+	}
+
+	@Override
+	public boolean automaticCleaning(Long fieldId) {
+		// 查询相应清洗池的分析结果集
+		List<AnalysisResult> results = this.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
+
+		// 组装待清洗数据
+		List<DataFieldValue> list = new ArrayList<>();
+		for (AnalysisResult analysisResult : results) {
+			if (analysisResult.getBaseId().equals(analysisResult.getCompareId())) {
+				results.remove(analysisResult);
+				continue;
+			}
+			DataFieldValue dataFieldValue = new DataFieldValue();
+			dataFieldValue.setId(analysisResult.getCompareId());
+			dataFieldValue.setBeCleanedId(analysisResult.getBaseId());
+			// 由于数据被清洗了,对数据进行删除状态的更新
+			dataFieldValue.setIsDeleted(DataCleanConstant.NO);
+			assert SecurityUtils.getUser() != null;
+			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+			dataFieldValue.setModifiedTime(LocalDateTime.now());
+			list.add(dataFieldValue);
+		}
+		// todo 如何把处理过的信息删除
+		// 清洗数据
+		return dataFieldValueService.updateBatchById(list);
 	}
 
 }

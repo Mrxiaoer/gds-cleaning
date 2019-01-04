@@ -98,4 +98,13 @@ public class DataRuleServiceTest {
 		System.out.println(page);
 
 	}
+
+	@Test
+	public void gainUpperPower(){
+
+		Long ruleId = 8L;
+		DataSetVo dataSetVo = dataRuleService.gainUpperPower(ruleId);
+		System.out.println(dataSetVo);
+
+	}
 }

@@ -12,8 +12,17 @@ import lombok.Data;
 @Data
 public class FilterParams {
 
+	/**
+	 * 清洗池id
+	 */
 	private Long fileId;
+	/**
+	 * 中心点id
+	 */
 	private Long centerId;
+	/**
+	 * 阀值
+	 */
 	private Float threshold;
 
 }

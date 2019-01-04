@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ public class DataAnalysisController {
 
 	@Autowired
 	public DataAnalysisController(DataFieldValueService dataFieldValueService,
-		AnalysisResultService analysisResultService) {
+								  AnalysisResultService analysisResultService) {
 		this.dataFieldValueService = dataFieldValueService;
 		this.analysisResultService = analysisResultService;
 	}
@@ -42,13 +43,13 @@ public class DataAnalysisController {
 	 */
 	@GetMapping("/set/threshold")
 	public void setThreshold(@RequestParam Long fieldId, @RequestParam Float threshold, @RequestParam Integer degree) {
-
 		// python分析数据
-		analysisResultService.dataAnalysis(fieldId,(threshold/100),degree );
+		analysisResultService.dataAnalysis(fieldId, (threshold / 100), degree);
 	}
 
 	/**
-	 * 分析结果默认中心数据显示
+	 * 分析结果中心数据显示
+	 *
 	 * @param fieldId
 	 * @return
 	 */
@@ -69,15 +70,25 @@ public class DataAnalysisController {
 	}
 
 	/**
-	 * 手动过滤
+	 * 清洗数据(清除接口)
 	 *
-	 * @param params params
+	 * @param params
 	 * @return
 	 */
-	@PostMapping("/manual/filter")
-	public R manualFilter(@RequestBody Map<String, Object> params) {
+	@PostMapping("/clean")
+	public R cleanDate(@RequestBody List<Map<String, Object>> params) {
+		return new R<>(dataFieldValueService.cleanDate(params));
+	}
 
-		return new R();
+	/**
+	 * 自动清洗
+	 *
+	 * @param fieldId
+	 * @return
+	 */
+	public R automaticCleaning(@RequestParam Long fieldId) {
+
+		return new R<>();
 	}
 
 }

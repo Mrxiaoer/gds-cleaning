@@ -14,6 +14,13 @@ public interface CalculateService {
 	 * @param jsonFileUrl  json文件路径
 	 * @return
 	 */
-	String similarity(int analysisType, String jsonFileUrl);
+	String analysisSimilarity(int analysisType, String jsonFileUrl);
+
+	/**
+	 * 根据标准数据过滤计算接口
+	 * @param jsonStr
+	 * @return
+	 */
+	String standardSimilarity(String jsonStr);
 
 }

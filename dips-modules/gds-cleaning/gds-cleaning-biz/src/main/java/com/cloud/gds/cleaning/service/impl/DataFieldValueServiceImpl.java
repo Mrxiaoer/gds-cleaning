@@ -99,15 +99,10 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		// 查询当前清洗池信息
 		DataField dataField = dataFieldService.selectById((Long) params.get("fieldId"));
+
 		// 获取规则中百分比最高的字段
-		DataRuleVo dataRuleVo = dataRuleService.queryById(dataField.getRuleId());
-		List<DataSetVo> list = dataRuleVo.getDetail();
-		DataSetVo resultSet = list != null ? list.get(0) : new DataSetVo();
-		for (DataSetVo dataSetVo : list) {
-			if (dataSetVo.getWeight() > resultSet.getWeight()) {
-				BeanUtils.copyProperties(dataSetVo, resultSet);
-			}
-		}
+		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
+
 		// 重新构造赋值分页信息
 		Page<BaseVo> page2 = new Page<>();
 		BeanUtils.copyProperties(page, page2);
@@ -146,15 +141,10 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		// 查询当前清洗池信息
 		DataField dataField = dataFieldService.selectById((Long) params.get("fieldId"));
+
 		// 获取规则中百分比最高的字段
-		DataRuleVo dataRuleVo = dataRuleService.queryById(dataField.getRuleId());
-		List<DataSetVo> list = dataRuleVo.getDetail();
-		DataSetVo resultSet = list != null ? list.get(0) : new DataSetVo();
-		for (DataSetVo dataSetVo : list) {
-			if (dataSetVo.getWeight() > resultSet.getWeight()) {
-				BeanUtils.copyProperties(dataSetVo, resultSet);
-			}
-		}
+		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
+
 		// 重新构造赋值分页信息
 		Page<BaseVo> page2 = new Page<>();
 		BeanUtils.copyProperties(page, page2);
@@ -348,6 +338,27 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
+	public boolean cleanDate(List<Map<String, Object>> params) {
+
+		List<DataFieldValue> list = new ArrayList<>();
+		// 拼装参数进行清洗
+		for (Map<String, Object> map : params) {
+			DataFieldValue dataFieldValue = new DataFieldValue();
+			dataFieldValue.setId(((Integer) map.get("cleanId")).longValue());
+			dataFieldValue.setBeCleanedId(((Integer) map.get("baseId")).longValue());
+			// 由于数据被清洗了,对数据进行删除状态的更新
+			dataFieldValue.setIsDeleted(DataCleanConstant.NO);
+			assert SecurityUtils.getUser() != null;
+			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+			dataFieldValue.setModifiedTime(LocalDateTime.now());
+			// TODO 清洗完之后删除分析结果
+			list.add(dataFieldValue);
+		}
+		// 清洗数据
+		return this.updateBatchById(list);
+	}
+
+	@Override
 	public Boolean clear(Long fieldId) {
 		// 由于结果集中有对比清洗前数据,如果需导入不同状态数据需要->清空数据池
 		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId));
@@ -408,7 +419,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			+ "\"名字\":0.8}},\"data\":[{\"id\":1,\"length\":10,\"type\":1,\"nameEn\":\"xm\",\"nameCn\":\"姓名\"},"
 			+ "{\"id\":2,\"length\":18,\"type\":2,\"nameEn\":\"sfz\",\"nameCn\":\"身份证\"},{\"id\":3,\"length\":1,"
 			+ "\"type\":3,\"nameEn\":\"sex\",\"nameCn\":\"性别\"}]}";
-		String simResult = calculateService.similarity(DataCleanConstant.QUICK_ANALYSIS, "dddd");
+		String simResult = calculateService.analysisSimilarity(DataCleanConstant.QUICK_ANALYSIS, "dddd");
 		System.out.println(simResult);
 	}
 

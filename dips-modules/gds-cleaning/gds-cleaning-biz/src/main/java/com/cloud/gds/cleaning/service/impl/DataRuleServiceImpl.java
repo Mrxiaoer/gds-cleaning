@@ -10,6 +10,7 @@ import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
+import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.DataFieldService;
@@ -47,12 +48,12 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		p.setAsc(isAsc);
 		EntityWrapper<DataRule> e = new EntityWrapper<DataRule>();
 		String name = params.getOrDefault("name", "").toString();
-		if(StrUtil.isNotBlank(name)){
-			e.like("name",  SpecialStringUtil.escapeExprSpecialWord(name));
+		if (StrUtil.isNotBlank(name)) {
+			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
 		}
 		e.eq("is_deleted", DataCleanConstant.NO);
-		Page page = this.selectPage(p,e);
-		if (page.getRecords() != null){
+		Page page = this.selectPage(p, e);
+		if (page.getRecords() != null) {
 			List<DataRule> dataRules = page.getRecords();
 			List<BaseVo> vos = new ArrayList<>();
 			for (DataRule dataRule : dataRules) {
@@ -92,7 +93,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		// 赋值相关信息
 		DataRule dataRule = DataRuleUtils.vo2po(dataRuleVo);
 		assert SecurityUtils.getUser() != null;
-//		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
 
 		// 如果规则的百分比更新,是否需要重新分析更新
@@ -136,6 +137,39 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		dataRule.setCreateUser(SecurityUtils.getUser().getId());
 		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		return this.insert(dataRule);
+	}
+
+	@Override
+	public DataSetVo gainUpperPower(Long ruleId) {
+
+		// 获取规则相应信息
+		DataRuleVo dataRuleVo = this.queryById(ruleId);
+		// 取规则参数集合转model
+		List<DataSetVo> list = dataRuleVo.getDetail();
+		// 先赋第一个model作为基础数
+		DataSetVo resultSet = list != null ? list.get(0) : new DataSetVo();
+		// 如何判断那些是同义,那些没有
+		for (DataSetVo dataSetVo : list) {
+			// 判断基础数是否有同义,基础数据无同义
+			if (resultSet.getIsSynonymous().equals(DataCleanConstant.NO)){
+				// 对比model存在同义
+				if (dataSetVo.getIsSynonymous().equals(DataCleanConstant.YES)){
+					BeanUtils.copyProperties(dataSetVo, resultSet);
+				}else {
+					if (dataSetVo.getWeight() > resultSet.getWeight()) {
+						BeanUtils.copyProperties(dataSetVo, resultSet);
+					}
+				}
+			}else {
+				// 如果对比前后数据都存在同义
+				if (dataSetVo.getIsSynonymous().equals(DataCleanConstant.YES)){
+					if (dataSetVo.getWeight() > resultSet.getWeight()) {
+						BeanUtils.copyProperties(dataSetVo, resultSet);
+					}
+				}
+			}
+		}
+		return resultSet;
 	}
 
 }

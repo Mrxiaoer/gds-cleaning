@@ -44,4 +44,12 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 */
 	boolean deleteAllByIds(Set<Long> ids);
 
+	/**
+	 * 自动清洗
+	 *
+	 * @param fieldId
+	 * @return
+	 */
+	boolean automaticCleaning(Long fieldId);
+
 }

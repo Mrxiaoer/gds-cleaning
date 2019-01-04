@@ -134,6 +134,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	String getAnalysisData(Long fieldId, Float threshold);
 
 	/**
+	 * 手动清洗数据
+	 *
+	 * @param params
+	 * @return
+	 */
+	boolean cleanDate(List<Map<String, Object>> params);
+
+	/**
 	 * 清空数据
 	 *
 	 * @param fieldId 清洗池id

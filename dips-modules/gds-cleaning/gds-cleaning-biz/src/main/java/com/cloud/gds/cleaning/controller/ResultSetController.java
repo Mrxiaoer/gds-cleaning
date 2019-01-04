@@ -66,8 +66,14 @@ public class ResultSetController {
 		return new R<>(page);
 	}
 
+	/**
+	 * 清洗项
+	 *
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/cleaning_item")
-	public R cleaningItem(@RequestParam Long id){
+	public R cleaningItem(@RequestParam Long id) {
 
 		return new R();
 	}
