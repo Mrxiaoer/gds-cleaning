@@ -13,6 +13,7 @@ import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
+import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
@@ -98,7 +99,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
-		DataField dataField = dataFieldService.selectById((Long) params.get("fieldId"));
+		DataField dataField = dataFieldService.selectById( Long.valueOf(String.valueOf(params.get("fieldId"))));
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
@@ -140,7 +141,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
-		DataField dataField = dataFieldService.selectById((Long) params.get("fieldId"));
+		DataField dataField = dataFieldService.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
@@ -167,7 +168,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public List<DataFieldValue> gainCleanData(Long fieldId) {
-		return dataFieldValueMapper.gainCleanData(fieldId);
+//		return dataFieldValueMapper.gainCleanData(fieldId);
+		return null;
 	}
 
 	@Override
@@ -343,16 +345,22 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		List<DataFieldValue> list = new ArrayList<>();
 		// 拼装参数进行清洗
 		for (Map<String, Object> map : params) {
+			// 组装value中要清洗的相应数据信息
 			DataFieldValue dataFieldValue = new DataFieldValue();
-			dataFieldValue.setId(((Integer) map.get("cleanId")).longValue());
-			dataFieldValue.setBeCleanedId(((Integer) map.get("baseId")).longValue());
+			dataFieldValue.setId(Long.valueOf(String.valueOf(map.get("cleanId"))));
+			dataFieldValue.setBeCleanedId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			// 由于数据被清洗了,对数据进行删除状态的更新
 			dataFieldValue.setIsDeleted(DataCleanConstant.NO);
 			assert SecurityUtils.getUser() != null;
 			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
-			// TODO 清洗完之后删除分析结果
 			list.add(dataFieldValue);
+
+			// 如数据被清洗,分析结果中相应的记录需要删除
+			AnalysisResult q = new AnalysisResult();
+			q.setBaseId(Long.valueOf(String.valueOf(map.get("baseId"))));
+			q.setCompareId(Long.valueOf(String.valueOf(map.get("cleanId"))));
+			analysisResultService.delete(new EntityWrapper<>(q));
 		}
 		// 清洗数据
 		return this.updateBatchById(list);

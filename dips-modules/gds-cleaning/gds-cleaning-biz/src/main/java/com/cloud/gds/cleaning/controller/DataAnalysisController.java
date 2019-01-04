@@ -4,6 +4,7 @@ import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,6 @@ public class DataAnalysisController {
 	private final DataFieldValueService dataFieldValueService;
 	private final AnalysisResultService analysisResultService;
 
-	Logger logger = LoggerFactory.getLogger(this.getClass());
-
 	@Autowired
 	public DataAnalysisController(DataFieldValueService dataFieldValueService,
 								  AnalysisResultService analysisResultService) {
@@ -42,6 +41,7 @@ public class DataAnalysisController {
 	 * @param threshold
 	 */
 	@GetMapping("/set/threshold")
+	@ApiOperation(value = "设置阀值", notes = "设置阀值")
 	public void setThreshold(@RequestParam Long fieldId, @RequestParam Float threshold, @RequestParam Integer degree) {
 		// python分析数据
 		analysisResultService.dataAnalysis(fieldId, (threshold / 100), degree);
@@ -54,6 +54,7 @@ public class DataAnalysisController {
 	 * @return
 	 */
 	@GetMapping("/center_data")
+	@ApiOperation(value = "分析结果中心数据显示", notes = "分析结果中心数据显示")
 	public R gainCleanData(@RequestParam Long fieldId) {
 		return new R<>(DataPoolUtils.listEntity2Vo(dataFieldValueService.gainCleanData(fieldId)));
 	}
@@ -65,6 +66,7 @@ public class DataAnalysisController {
 	 * @return
 	 */
 	@GetMapping("/details")
+	@ApiOperation(value = "数据明细", notes = "数据明细")
 	public R gainDetails(@RequestParam Long id) {
 		return new R<>(DataPoolUtils.listEntity2Vo(dataFieldValueService.gainDetails(id)));
 	}
@@ -86,9 +88,9 @@ public class DataAnalysisController {
 	 * @param fieldId
 	 * @return
 	 */
+	@GetMapping("/automatic_cleaning")
 	public R automaticCleaning(@RequestParam Long fieldId) {
-
-		return new R<>();
+		return new R<>(analysisResultService.automaticCleaning(fieldId));
 	}
 
 }

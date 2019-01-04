@@ -51,6 +51,7 @@ public class DataRuleController {
 	 * @return R
 	 */
 	@GetMapping("/{id}")
+	@ApiOperation(value = "查看单一数据", notes = "根据id查询规则相关信息")
 	public R info(@PathVariable("id") Long id) {
 		return new R<>(dataRuleService.queryById(id));
 	}
@@ -61,6 +62,7 @@ public class DataRuleController {
 	 * @return
 	 */
 	@GetMapping("/list")
+	@ApiOperation(value = "查看规则", notes = "查询所有规则")
 	public R selectAll() {
 		return new R<>(dataRuleService.selectAll());
 	}
@@ -72,6 +74,7 @@ public class DataRuleController {
 	 * @return
 	 */
 	@GetMapping("/key/{id}")
+	@ApiOperation(value = "查看规则动态参数", notes = "根据规则id获取规则动态参数")
 	public R getKey(@PathVariable("id") Long id) {
 		return new R<>(dataRuleService.gainDynamicKey(id));
 	}
@@ -82,6 +85,7 @@ public class DataRuleController {
 	 * @return R
 	 */
 	@PostMapping("/create")
+	@ApiOperation(value = "保存", notes = "保存规则信息")
 	public R save(@RequestBody DataRuleVo dataRuleVo) {
 		return new R<>(dataRuleService.save(dataRuleVo));
 	}
@@ -92,6 +96,7 @@ public class DataRuleController {
 	 * @return R
 	 */
 	@PostMapping("/update")
+	@ApiOperation(value = "修改", notes = "修改规则信息")
 	public R update(@RequestBody DataRuleVo dataRuleVo) {
 		return new R<>(dataRuleService.customUpdate(dataRuleVo));
 	}
@@ -103,6 +108,7 @@ public class DataRuleController {
 	 * @return
 	 */
 	@PostMapping("/delete/{id}")
+	@ApiOperation(value = "单删", notes = "根据id删除规则")
 	public R delete(@PathVariable("id") Long id) {
 		// 判断该规则其他地方是否使用过
 		if (dataFieldService.selectByRuleId(id).size() > 0) {
@@ -121,6 +127,7 @@ public class DataRuleController {
 	 * @return
 	 */
 	@PostMapping("/delete")
+	@ApiOperation(value = "批删", notes = "根据ids批量删除")
 	public R deleteT(@RequestBody Set<Long> ids) {
 		// 判断规则中是否有一条被使用过
 		if (dataFieldService.selectByRuleIds(ids).size() > 0) {

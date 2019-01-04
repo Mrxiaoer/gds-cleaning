@@ -17,6 +17,14 @@
 		<result column="be_cleaned_id" property="beCleanedId"/>
 	</resultMap>
 
+	<resultMap id="CenterData" type="com.cloud.gds.cleaning.api.vo.CenterData">
+		<result column="field_value" property="fieldValue"/>
+		<result column="base_id" property="id"/>
+		<!--<result column="field_id" property="fieldId"/>-->
+		<result column="is_manual" property="isManual"/>
+		<result column="count" property="count"/>
+	</resultMap>
+
 	<sql id="DataPoolAnalysis">
 		a.id,
 		b.similarity,
@@ -42,15 +50,24 @@
 		</foreach>
 	</update>
 
-	<select id="gainCleanData" parameterType="java.lang.Long" resultMap="dataFieldValueMap">
-		SELECT *
+	<select id="gainCleanData" parameterType="java.lang.Long" resultMap="CenterData">
+		SELECT
+			tab1.*, tab2.field_value
 		FROM
-			dataclean_data_field_value
-		WHERE id IN
-		      (SELECT DISTINCT (base_id)
-		       FROM
-			       dataclean_analysis_result
-		       WHERE field_id = #{fieldId})
+			(
+				SELECT
+					base_id,
+
+					is_manual,
+					COUNT(base_id) AS count
+				FROM
+					dataclean_analysis_result
+				WHERE
+					field_id = #{fieldId}
+				GROUP BY
+					base_id
+			) tab1
+		LEFT JOIN dataclean_data_field_value tab2 ON tab1.base_id = tab2.id
 	</select>
 
 	<select id="gainDetails" parameterType="java.lang.Long" resultMap="dataFieldValueMap">

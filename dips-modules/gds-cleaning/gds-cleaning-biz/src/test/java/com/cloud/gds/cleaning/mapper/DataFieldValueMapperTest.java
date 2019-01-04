@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.mapper;
 
 import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
+import com.cloud.gds.cleaning.api.vo.CenterData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class DataFieldValueMapperTest {
 	@Test
 	public void gainCleanData() {
 		Long field = 1L;
-		List<DataFieldValue> dataFieldValues = dataFieldValueMapper.gainCleanData(field);
-		System.out.println(dataFieldValues);
+		List<CenterData> centerData = dataFieldValueMapper.gainCleanData(field);
+		System.out.println(centerData);
 	}
 }

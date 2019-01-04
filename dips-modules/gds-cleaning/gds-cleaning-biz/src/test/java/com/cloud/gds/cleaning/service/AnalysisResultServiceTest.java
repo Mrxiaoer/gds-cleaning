@@ -1,6 +1,5 @@
 package com.cloud.gds.cleaning.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -12,9 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import sun.plugin.com.BeanClass;
 
-import java.math.BigInteger;
 import java.util.*;
 
 
@@ -24,23 +21,25 @@ public class AnalysisResultServiceTest {
 
 	@Autowired
 	AnalysisResultService service;
+	@Autowired
+	DataFieldValueService dataFieldValueService;
 
 	@Test
-	public void delete(){
+	public void delete() {
 		Long fieldId = 2L;
 		Boolean flag = service.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 		System.out.println(flag);
 	}
 
 	@Test
-	public void deleteAllById(){
+	public void deleteAllById() {
 		Long id = 77L;
 		boolean flag = service.deleteAllById(id);
 		System.out.println(flag);
 	}
 
 	@Test
-	public void deleteAllByIds(){
+	public void deleteAllByIds() {
 		Set<Long> ids = new HashSet<>();
 		ids.add(66L);
 		ids.add(77L);
@@ -48,19 +47,16 @@ public class AnalysisResultServiceTest {
 		System.out.println(flag);
 	}
 
-	@Autowired
-	DataFieldValueService dataFieldValueService;
-
 	@Test
-	public void cleanData(){
+	public void cleanData() {
 		String string = "[{\"baseId\":1,\"cleanId\":3},{\"baseId\":1,\"cleanId\":4},{\"baseId\":2,\"cleanId\":3}]";
 		JSONArray jsonArray = JSONArray.parseArray(string);
 //		List<Map<String,Object>> list = JSONObject.parseArray(jsonArray, );
 		System.out.println(jsonArray);
 		List<DataFieldValue> list = new ArrayList<>();
-		for (Object object : jsonArray){
+		for (Object object : jsonArray) {
 			System.out.println(object);
-			Map<String,Object> map = (Map<String, Object>) JSONObject.parse(object.toString());
+			Map<String, Object> map = (Map<String, Object>) JSONObject.parse(object.toString());
 			System.out.println(map);
 			DataFieldValue dataFieldValue = new DataFieldValue();
 			dataFieldValue.setId(((Integer) map.get("cleanId")).longValue());
@@ -71,8 +67,9 @@ public class AnalysisResultServiceTest {
 		dataFieldValueService.updateBatchById(list);
 	}
 
-	public void automaticCleaning(){
 
+
+	public void automaticCleaning() {
 
 
 	}

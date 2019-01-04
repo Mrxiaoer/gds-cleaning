@@ -5,6 +5,8 @@ import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import java.util.List;
 import java.util.Set;
+
+import com.cloud.gds.cleaning.api.vo.CenterData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,7 +31,7 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 	 * @param fieldId
 	 * @return
 	 */
-	List<DataFieldValue> gainCleanData(Long fieldId);
+	List<CenterData> gainCleanData(Long fieldId);
 
 	/**
 	 * 清洗接口数据明细

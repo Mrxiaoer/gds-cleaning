@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,7 @@ public class ResultSetController {
 	 * @return
 	 */
 	@GetMapping("/page")
+	@ApiOperation(value = "分页", notes = "结果集详情分页")
 	public R page(@RequestParam Map<String, Object> params) {
 		return new R<>(dataFieldValueService.queryPage(params));
 	}
@@ -49,7 +51,8 @@ public class ResultSetController {
 	 * @return
 	 */
 	@GetMapping("/contrast_before")
-	public R contrastBefore(Map<String, Object> params) {
+	@ApiOperation(value = "对比前详情分页", notes = "对比详情前数据")
+	public R contrastBefore(@RequestParam Map<String, Object> params) {
 		Page<BaseVo> page = dataFieldValueService.contrastBeforePage(params);
 		return new R<>(page);
 	}
@@ -61,7 +64,8 @@ public class ResultSetController {
 	 * @return
 	 */
 	@GetMapping("/contrast_after")
-	public R contrastAfter(Map<String, Object> params) {
+	@ApiOperation(value = "对比后详情分页", notes = "对比详情后数据")
+	public R contrastAfter(@RequestParam Map<String, Object> params) {
 		Page<BaseVo> page = dataFieldValueService.contrastAfterPage(params);
 		return new R<>(page);
 	}
@@ -73,6 +77,7 @@ public class ResultSetController {
 	 * @return
 	 */
 	@GetMapping("/cleaning_item")
+	@ApiOperation(value = "清洗项", notes = "清洗项详情")
 	public R cleaningItem(@RequestParam Long id) {
 
 		return new R();
@@ -86,6 +91,7 @@ public class ResultSetController {
 	 * @return
 	 */
 	@GetMapping("/clear")
+	@ApiOperation(value = "清空数据", notes = "清空数据")
 	public R clear(@RequestParam Long fieldId) {
 		return new R<>(dataFieldValueService.clear(fieldId));
 	}
@@ -98,6 +104,7 @@ public class ResultSetController {
 	 * @return
 	 */
 	@GetMapping("/clear_buffer")
+	@ApiOperation(value = "清缓冲", notes = "清缓冲")
 	public R clearBuffer(@RequestParam Long fieldId) {
 		return new R<>(dataFieldValueService.clearBuffer(fieldId));
 	}

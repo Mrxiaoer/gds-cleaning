@@ -137,9 +137,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
 			list.add(dataFieldValue);
 		}
-		// todo 如何把处理过的信息删除
-		// 清洗数据
-		return dataFieldValueService.updateBatchById(list);
+		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
+		return dataFieldValueService.updateBatchById(list) && this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 	}
 
 }
