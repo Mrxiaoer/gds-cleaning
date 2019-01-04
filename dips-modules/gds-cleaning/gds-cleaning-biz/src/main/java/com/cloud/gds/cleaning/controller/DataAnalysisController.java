@@ -56,7 +56,7 @@ public class DataAnalysisController {
 	@GetMapping("/center_data")
 	@ApiOperation(value = "分析结果中心数据显示", notes = "分析结果中心数据显示")
 	public R gainCleanData(@RequestParam Long fieldId) {
-		return new R<>(DataPoolUtils.listEntity2Vo(dataFieldValueService.gainCleanData(fieldId)));
+		return new R<>(dataFieldValueService.gainCleanData(fieldId));
 	}
 
 	/**

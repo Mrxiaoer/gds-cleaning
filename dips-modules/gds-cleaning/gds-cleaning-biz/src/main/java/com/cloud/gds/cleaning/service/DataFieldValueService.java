@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.BaseVo;
+import com.cloud.gds.cleaning.api.vo.CenterData;
 import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
 import com.cloud.gds.cleaning.api.vo.DataPoolVo;
 
@@ -26,7 +27,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @param params
 	 * @return
 	 */
-	Page<DataFieldValue> queryPage(Map<String, Object> params);
+	Page<DataPoolVo> queryPage(Map<String, Object> params);
 
 	/**
 	 * 对比前数据分页
@@ -50,7 +51,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @param fieldId
 	 * @return
 	 */
-	List<DataFieldValue> gainCleanData(Long fieldId);
+	List<CenterData> gainCleanData(Long fieldId);
 
 	/**
 	 * 根据id查询

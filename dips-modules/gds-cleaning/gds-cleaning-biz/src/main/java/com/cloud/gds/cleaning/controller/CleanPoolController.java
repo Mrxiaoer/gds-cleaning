@@ -40,7 +40,7 @@ public class CleanPoolController {
 	 */
 	@GetMapping("/page")
 	@ApiOperation(value = "查看列表", notes = "根据条件获取列表")
-	public R page(@RequestBody Map<String,Object> params) {
+	public R page(@RequestParam Map<String,Object> params) {
 		return new R<>(dataFieldService.queryPage(params));
 	}
 

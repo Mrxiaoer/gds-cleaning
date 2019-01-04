@@ -66,7 +66,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	public Page<DataFieldValue> queryPage(Map<String, Object> params) {
+	public Page<DataPoolVo> queryPage(Map<String, Object> params) {
 		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
 		Page<DataFieldValue> p = new Page<>();
 		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
@@ -79,7 +79,12 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		e.eq("is_deleted", DataCleanConstant.NO);
-		return this.selectPage(p, e);
+		Page<DataFieldValue> page1 = this.selectPage(p, e);
+		Page<DataPoolVo> page2 = new Page<>();
+		BeanUtils.copyProperties(page1, page2);
+		page2.setRecords(DataPoolUtils.listEntity2Vo(page1.getRecords()));
+
+		return page2;
 	}
 
 	@Override
@@ -99,7 +104,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
-		DataField dataField = dataFieldService.selectById( Long.valueOf(String.valueOf(params.get("fieldId"))));
+		DataField dataField = dataFieldService.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
@@ -167,9 +172,24 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	public List<DataFieldValue> gainCleanData(Long fieldId) {
-//		return dataFieldValueMapper.gainCleanData(fieldId);
-		return null;
+	public List<CenterData> gainCleanData(Long fieldId) {
+		// todo 2019-1-4 17:19:01
+		// field_value需要取其中比例"较高"的一项,因此需要重新组装中心数据回显
+		List<CenterData> list = dataFieldValueMapper.gainCleanData(fieldId);
+
+		// 获取规则中比较最高的一项
+		DataSetVo dataSetVo = dataRuleService.gainUpperPower(dataFieldService.selectById(fieldId).getRuleId());
+
+		// 取field_value值
+		if (list != null){
+			for (CenterData centerData : list){
+				// field_value,字符串转map取要的数据
+				com.alibaba.fastjson.JSONObject myJson = com.alibaba.fastjson.JSONObject.parseObject(centerData.getFieldValue());
+				Map<String,Object> map = (Map<String, Object>) myJson;
+				centerData.setFieldValue(map.get(dataSetVo.getProp()).toString());
+			}
+		}
+		return list;
 	}
 
 	@Override

@@ -169,4 +169,10 @@ public class DataFieldValueServiceTest {
 		dataFieldValueService.contrastBeforePage(map);
 	}
 
+	@Test
+	public void gainCleanData(){
+
+		Long fieldId = 1L;
+		dataFieldValueService.gainCleanData(fieldId);
+	}
 }

@@ -39,7 +39,7 @@ public class ResultSetController {
 	 * @return
 	 */
 	@GetMapping("/page")
-	@ApiOperation(value = "分页", notes = "结果集详情分页")
+	@ApiOperation(value = "结果集详情分页", notes = "结果集详情分页")
 	public R page(@RequestParam Map<String, Object> params) {
 		return new R<>(dataFieldValueService.queryPage(params));
 	}
@@ -50,7 +50,7 @@ public class ResultSetController {
 	 * @param params
 	 * @return
 	 */
-	@GetMapping("/contrast_before")
+	@GetMapping("/before_comparison")
 	@ApiOperation(value = "对比前详情分页", notes = "对比详情前数据")
 	public R contrastBefore(@RequestParam Map<String, Object> params) {
 		Page<BaseVo> page = dataFieldValueService.contrastBeforePage(params);
@@ -63,7 +63,7 @@ public class ResultSetController {
 	 * @param params
 	 * @return
 	 */
-	@GetMapping("/contrast_after")
+	@GetMapping("/after_comparison")
 	@ApiOperation(value = "对比后详情分页", notes = "对比详情后数据")
 	public R contrastAfter(@RequestParam Map<String, Object> params) {
 		Page<BaseVo> page = dataFieldValueService.contrastAfterPage(params);
