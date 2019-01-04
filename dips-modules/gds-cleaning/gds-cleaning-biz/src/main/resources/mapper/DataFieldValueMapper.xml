@@ -68,6 +68,8 @@
 					base_id
 			) tab1
 		LEFT JOIN dataclean_data_field_value tab2 ON tab1.base_id = tab2.id
+		ORDER BY
+			count DESC
 	</select>
 
 	<select id="gainDetails" parameterType="java.lang.Long" resultMap="dataFieldValueMap">

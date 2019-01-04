@@ -78,6 +78,7 @@ public class DataAnalysisController {
 	 * @return
 	 */
 	@PostMapping("/clean")
+	@ApiOperation(value = "清洗数据", notes = "清洗数据")
 	public R cleanDate(@RequestBody List<Map<String, Object>> params) {
 		return new R<>(dataFieldValueService.cleanDate(params));
 	}
@@ -89,6 +90,7 @@ public class DataAnalysisController {
 	 * @return
 	 */
 	@GetMapping("/automatic_cleaning")
+	@ApiOperation(value = "自动清洗", notes = "根据fieldId自动清洗数据")
 	public R automaticCleaning(@RequestParam Long fieldId) {
 		return new R<>(analysisResultService.automaticCleaning(fieldId));
 	}
