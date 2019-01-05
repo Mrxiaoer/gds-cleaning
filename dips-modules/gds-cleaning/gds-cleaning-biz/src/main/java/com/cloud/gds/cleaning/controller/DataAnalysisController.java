@@ -35,14 +35,13 @@ public class DataAnalysisController {
 	/**
 	 * 设置阀值
 	 *
-	 * @param fieldId
-	 * @param threshold
+	 * @param params 其中包括：fieldId  threshold 阀值 degree快速、深度
 	 */
-	@GetMapping("/set/threshold")
+	@PostMapping("/set/threshold")
 	@ApiOperation(value = "设置阀值", notes = "设置阀值")
-	public void setThreshold(@RequestParam Long fieldId, @RequestParam Float threshold, @RequestParam Integer degree) {
+	public void setThreshold(@RequestBody Map<String,Object> params) {
 		// python分析数据
-		analysisResultService.dataAnalysis(fieldId, (threshold / 100), degree);
+		analysisResultService.dataAnalysis(params);
 	}
 
 	/**

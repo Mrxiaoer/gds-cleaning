@@ -89,22 +89,22 @@ public class ResultSetController {
 	 * @param fieldId 清洗池id
 	 * @return
 	 */
-	@GetMapping("/clear")
+	@GetMapping("/clear/{fieldId}")
 	@ApiOperation(value = "清空数据", notes = "清空数据")
-	public R clear(@RequestParam Long fieldId) {
+	public R clear(@PathVariable("fieldId") Long fieldId) {
 		return new R<>(dataFieldValueService.clear(fieldId));
 	}
 
 	/**
-	 * 清缓冲
-	 * 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓冲清除
+	 * 清缓存
+	 * 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓存清除
 	 *
 	 * @param fieldId
 	 * @return
 	 */
-	@GetMapping("/clear_buffer")
-	@ApiOperation(value = "清缓冲", notes = "清缓冲")
-	public R clearBuffer(@RequestParam Long fieldId) {
+	@GetMapping("/clear_buffer/{fieldId}")
+	@ApiOperation(value = "清缓存", notes = "清缓存")
+	public R clearBuffer(@PathVariable("fieldId") Long fieldId) {
 		return new R<>(dataFieldValueService.clearBuffer(fieldId));
 	}
 

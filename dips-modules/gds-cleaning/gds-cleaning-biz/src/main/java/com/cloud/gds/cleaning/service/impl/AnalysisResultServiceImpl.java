@@ -46,7 +46,10 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	}
 
 	@Override
-	public void dataAnalysis(Long fieldId, Float threshold, Integer degree) {
+	public void dataAnalysis(Map<String, Object> params) {
+		Long fieldId = Long.valueOf(String.valueOf(params.get("fieldId")));
+		Float threshold = Float.parseFloat(params.get("threshold").toString())/100;
+		Integer degree = (Integer) params.get("degree");
 		// 分析程度degree  1、快速分析 2、深度分析
 		// 由于前端传过来的阀值是100作为基数,因此需要转化
 		String fileUrl = dataFieldValueService.getAnalysisData(fieldId, threshold);

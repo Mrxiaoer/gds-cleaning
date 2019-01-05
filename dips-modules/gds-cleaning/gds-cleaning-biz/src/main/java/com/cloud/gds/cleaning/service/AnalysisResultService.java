@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
+import org.apache.xmlbeans.impl.jam.mutable.MPackage;
 
 import java.util.List;
 import java.util.Map;
@@ -18,11 +19,9 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 
 	/**
 	 * python 调用算法结果处理
-	 * @param fieldId
-	 * @param threshold
-	 * @param degree
+	 * @param params
 	 */
-	void dataAnalysis(Long fieldId,Float threshold,Integer degree);
+	void dataAnalysis(Map<String,Object> params);
 
 	/**
 	 * 根据id删除中心、卫星相关分析结果集
