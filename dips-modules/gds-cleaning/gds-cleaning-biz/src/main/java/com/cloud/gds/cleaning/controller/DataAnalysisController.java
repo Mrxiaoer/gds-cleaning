@@ -52,7 +52,7 @@ public class DataAnalysisController {
 	 * @return
 	 */
 	@GetMapping("/center_data")
-	@ApiOperation(value = "分析结果中心数据显示", notes = "分析结果中心数据显示")
+	@ApiOperation(value = "中心数据显示", notes = "分析结果中心数据显示")
 	public R gainCleanData(@RequestParam Long fieldId) {
 		return new R<>(dataFieldValueService.gainCleanData(fieldId));
 	}
@@ -76,6 +76,7 @@ public class DataAnalysisController {
 	 * @return
 	 */
 	@GetMapping("center_to_satellite")
+	@ApiOperation(value = "中心数据显示带相似度", notes = "中心数据显示带相似度")
 	public R centerToSatellite(@RequestParam(value = "fieldId") Long id) {
 		return new R<>(dataFieldValueService.centerToSatellite(id));
 	}
@@ -103,5 +104,26 @@ public class DataAnalysisController {
 	public R automaticCleaning(@RequestParam Long fieldId) {
 		return new R<>(analysisResultService.automaticCleaning(fieldId));
 	}
+
+
+	@PostMapping("/filter_method_one")
+	public R filterMethodOne(@RequestBody Map<String,Object> params){
+
+		return new R<>();
+	}
+
+	@PostMapping("/filter_method_two")
+	public R filterMethodTwo(@RequestBody Map<String,Object> params){
+
+		return new R<>();
+	}
+
+	@PostMapping("/filter_method_three")
+	public R filterMethodThree(@RequestBody Map<String,Object> params){
+
+		return new R<>();
+	}
+
+
 
 }

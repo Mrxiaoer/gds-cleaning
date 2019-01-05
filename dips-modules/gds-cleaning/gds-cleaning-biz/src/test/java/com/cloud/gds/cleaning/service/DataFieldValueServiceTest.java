@@ -179,4 +179,12 @@ public class DataFieldValueServiceTest {
 		List<DARVo> darVos = dataFieldValueService.centerToSatellite(fieldId);
 		System.out.println(darVos);
 	}
+
+	@Test
+	public void cleaningItem(){
+		Long beCleanedId = 12L;
+		List<CleanItem> list=dataFieldValueService.cleaningItem(beCleanedId);
+		System.out.println(list);
+
+	}
 }

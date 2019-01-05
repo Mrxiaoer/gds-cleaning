@@ -95,11 +95,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		}
 	}
 
-	@Override
-	public Boolean manualFilter(Map<String, Object> params) {
-
-		return null;
-	}
 
 	@Override
 	public boolean deleteAllById(Long id) {

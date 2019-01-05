@@ -15,13 +15,13 @@ public class CleanItem {
 	/**
 	 * 参数
 	 */
-	private String label;
+	private Long id;
 	/**
 	 * 数值
 	 */
-	private String value;
+	private String label;
 	/**
-	 * 子级
+	 * 子节点是否存在(0、有 1、无)
 	 */
-	private List<CleanItem> children;
+	private Boolean isLeaf;
 }

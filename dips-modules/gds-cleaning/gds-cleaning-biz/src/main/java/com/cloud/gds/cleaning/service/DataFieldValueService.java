@@ -3,7 +3,6 @@ package com.cloud.gds.cleaning.service;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
-import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.*;
 
@@ -163,6 +162,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @return
 	 */
 	Boolean clearBuffer(Long fieldId);
+
+	/**
+	 * 根据被数据清洗掉的id查询清洗的数据
+	 *
+	 * @param beCleanedId
+	 * @return
+	 */
+	List<CleanItem> cleaningItem(Long beCleanedId);
 
 }
 

@@ -14,7 +14,7 @@ import lombok.Data;
 public class DataPoolVo {
 
 	/**
-	 *
+	 * id
 	 */
 	private Long id;
 	/**

@@ -214,6 +214,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			DARVo darVo = new DARVo();
 			BeanUtils.copyProperties(result, darVo);
 			darVo.setFieldValue(com.alibaba.fastjson.JSONObject.parseObject(result.getFieldValue()));
+			// 百分比转换
+			darVo.setSimilarity(darVo.getSimilarity()*100);
 			darVos.add(darVo);
 		}
 		return darVos;
@@ -412,6 +414,36 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public Boolean clearBuffer(Long fieldId) {
 		// 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓冲清除->清缓冲
 		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.YES));
+	}
+
+	@Override
+	public List<CleanItem> cleaningItem(Long beCleanedId) {
+		// todo 2019-1-5 10:21:38
+		// 查询规则比较高的项
+		Long fieldId = dataFieldValueMapper.selectById(beCleanedId).getFieldId();
+		Long ruleId = dataFieldService.selectById(fieldId).getRuleId();
+		DataSetVo dataSetVo = dataRuleService.gainUpperPower(ruleId);
+
+		// 查询被清洗掉的数据
+		List<DataFieldValue> baseDate = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", beCleanedId));
+
+		// po 转vo主要是把string字段转成json字段
+		List<DataPoolVo> dataPools = DataPoolUtils.listEntity2Vo(baseDate);
+
+		// 组装返回结果集
+		List<CleanItem> baseVos = new ArrayList<>();
+		for (DataPoolVo result : dataPools){
+			CleanItem b = new CleanItem();
+			b.setId(result.getId());
+			Map<String, Object> map = result.getFieldValue();
+			b.setLabel(map.get(dataSetVo.getProp()).toString());
+			// 查询是否存在子叶
+			List<DataFieldValue> leafs = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
+			b.setIsLeaf(!!leafs.isEmpty());
+
+			baseVos.add(b);
+		}
+		return baseVos;
 	}
 
 	/**

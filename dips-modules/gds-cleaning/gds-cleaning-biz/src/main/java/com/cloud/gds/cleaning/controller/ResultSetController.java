@@ -3,14 +3,13 @@ package com.cloud.gds.cleaning.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.vo.BaseVo;
+import com.cloud.gds.cleaning.api.vo.CleanItem;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,11 +75,11 @@ public class ResultSetController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/cleaning_item")
+	@GetMapping("/cleaning_item/{id}")
 	@ApiOperation(value = "清洗项", notes = "清洗项详情")
-	public R cleaningItem(@RequestParam Long id) {
-
-		return new R();
+	public List<CleanItem> cleaningItem(@PathVariable("id") Long id) {
+		List<CleanItem> list = dataFieldValueService.cleaningItem(id);
+		return list;
 	}
 
 	/**

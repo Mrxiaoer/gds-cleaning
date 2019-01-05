@@ -12,10 +12,21 @@ import lombok.Data;
 @Data
 public class CenterData {
 
+	/**
+	 * 主键id
+	 */
 	private Long id;
-//	private Long fieldId;
+	/**
+	 * 操作方式(1、自动 2、人工)
+	 */
 	private Long isManual;
+	/**
+	 * 统计个数
+	 */
 	private Long count;
+	/**
+	 * 内容
+	 */
 	private String fieldValue;
 
 }
