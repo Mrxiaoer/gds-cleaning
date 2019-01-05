@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
+import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
@@ -173,7 +174,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public List<CenterData> gainCleanData(Long fieldId) {
-		// todo 2019-1-4 17:19:01
 		// field_value需要取其中比例"较高"的一项,因此需要重新组装中心数据回显
 		List<CenterData> list = dataFieldValueMapper.gainCleanData(fieldId);
 
@@ -201,6 +201,22 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public List<DataFieldValue> gainDetails(Long id) {
 		return dataFieldValueMapper.gainDetails(id);
+	}
+
+	@Override
+	public List<DARVo> centerToSatellite(Long centerId) {
+		// 根据中心Id->卫星数据信息
+		List<DataPoolAnalysis> list = dataFieldValueMapper.selectDataPool(centerId);
+		List<DARVo> darVos = new ArrayList<>();
+
+		// DataPoolAnalysis 转 DARVo
+		for (DataPoolAnalysis result : list){
+			DARVo darVo = new DARVo();
+			BeanUtils.copyProperties(result, darVo);
+			darVo.setFieldValue(com.alibaba.fastjson.JSONObject.parseObject(result.getFieldValue()));
+			darVos.add(darVo);
+		}
+		return darVos;
 	}
 
 	@Override

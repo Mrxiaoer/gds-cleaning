@@ -87,16 +87,16 @@
 		SELECT
 		<include refid="DataPoolAnalysis"/>
 		FROM
-			(SELECT *
-			 FROM
-				 dataclean_data_field_value
-			 WHERE id IN
-			       (SELECT compare_id
-			        FROM
-				        dataclean_analysis_result
-			        WHERE base_id = #{id})) a
-				LEFT JOIN dataclean_analysis_result b
-				ON a.id = b.compare_id
+			(
+				SELECT
+					compare_id,
+					similarity
+				FROM
+					dataclean_analysis_result
+				WHERE
+					base_id = 11
+			) b
+		LEFT JOIN dataclean_data_field_value a ON b.compare_id = a.id
 	</select>
 
 </mapper>

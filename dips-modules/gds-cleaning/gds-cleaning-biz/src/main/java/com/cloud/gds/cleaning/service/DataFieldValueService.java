@@ -3,11 +3,9 @@ package com.cloud.gds.cleaning.service;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
+import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.vo.BaseVo;
-import com.cloud.gds.cleaning.api.vo.CenterData;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+import com.cloud.gds.cleaning.api.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -68,6 +66,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @return
 	 */
 	List<DataFieldValue> gainDetails(Long id);
+
+	/**
+	 * 根据中心数据的Id查看卫星数据信息
+	 *
+	 * @param centerId
+	 * @return
+	 */
+	List<DARVo> centerToSatellite(Long centerId);
 
 	/**
 	 * 根据清洗池id查询

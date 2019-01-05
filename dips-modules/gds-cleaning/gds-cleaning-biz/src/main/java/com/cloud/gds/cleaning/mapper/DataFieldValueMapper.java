@@ -3,12 +3,12 @@ package com.cloud.gds.cleaning.mapper;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import java.util.List;
-import java.util.Set;
-
 import com.cloud.gds.cleaning.api.vo.CenterData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * 导入数据的内容
@@ -41,6 +41,12 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 	 */
 	List<DataFieldValue> gainDetails(Long id);
 
+	/**
+	 * 根据中心数据id重新卫星数据百分比
+	 *
+	 * @param id
+	 * @return
+	 */
 	List<DataPoolAnalysis> selectDataPool(Long id);
 
 }

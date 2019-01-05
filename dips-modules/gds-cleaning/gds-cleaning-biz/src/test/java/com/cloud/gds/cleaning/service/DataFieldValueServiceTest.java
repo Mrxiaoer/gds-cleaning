@@ -11,10 +11,7 @@ import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
-import com.cloud.gds.cleaning.api.vo.GroupVo;
-import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
+import com.cloud.gds.cleaning.api.vo.*;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
@@ -157,7 +154,7 @@ public class DataFieldValueServiceTest {
 
 	@Test
 	public void selectDataPool(){
-		Long id = 1L;
+		Long id = 11L;
 		List<DataPoolAnalysis> list = dataFieldValueMapper.selectDataPool(id);
 		System.out.println(list);
 	}
@@ -174,5 +171,12 @@ public class DataFieldValueServiceTest {
 
 		Long fieldId = 1L;
 		dataFieldValueService.gainCleanData(fieldId);
+	}
+
+	@Test
+	public void centerToSatellite(){
+		Long fieldId = 11L;
+		List<DARVo> darVos = dataFieldValueService.centerToSatellite(fieldId);
+		System.out.println(darVos);
 	}
 }

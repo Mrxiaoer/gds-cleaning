@@ -5,8 +5,6 @@ import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,8 +65,19 @@ public class DataAnalysisController {
 	 */
 	@GetMapping("/details")
 	@ApiOperation(value = "数据明细", notes = "数据明细")
-	public R gainDetails(@RequestParam Long id) {
+	public R gainDetails(@RequestParam(value = "fieldId") Long id) {
 		return new R<>(DataPoolUtils.listEntity2Vo(dataFieldValueService.gainDetails(id)));
+	}
+
+	/**
+	 * 根据中心数据查看卫星数据的百分比
+	 *
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("center_to_satellite")
+	public R centerToSatellite(@RequestParam(value = "fieldId") Long id) {
+		return new R<>(dataFieldValueService.centerToSatellite(id));
 	}
 
 	/**

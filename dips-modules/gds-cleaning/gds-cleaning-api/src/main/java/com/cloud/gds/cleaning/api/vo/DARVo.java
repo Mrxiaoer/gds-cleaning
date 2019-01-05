@@ -4,14 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 /**
- * 导入数据的内容
+ * 分析结果池Vo
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com
- * @Date : 2018-11-28
+ * @Date : 2018-12-30
  */
 @Data
-public class DataPoolVo {
+public class DARVo {
 
 	/**
 	 *
@@ -22,8 +22,12 @@ public class DataPoolVo {
 	 */
 	private Long fieldId;
 	/**
-	 * 数据的字段内容（json格式）
+	 * 导入数据的字段内容（json格式）
 	 */
 	private JSONObject fieldValue;
+	/**
+	 * 相似度
+	 */
+	private Double similarity;
 
 }
