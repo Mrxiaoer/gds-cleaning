@@ -266,7 +266,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	public Boolean save(Long fieldId, JSONObject params) {
+	public Boolean save(Long fieldId, com.alibaba.fastjson.JSONObject params) {
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setFieldId(fieldId);
 		dataFieldValue.setFieldValue(JSON.toJSONString(params));
@@ -418,7 +418,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public List<CleanItem> cleaningItem(Long beCleanedId) {
-		// todo 2019-1-5 10:21:38
 		// 查询规则比较高的项
 		Long fieldId = dataFieldValueMapper.selectById(beCleanedId).getFieldId();
 		Long ruleId = dataFieldService.selectById(fieldId).getRuleId();

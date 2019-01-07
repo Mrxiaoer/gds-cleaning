@@ -1,18 +1,17 @@
 package com.cloud.gds.cleaning.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
+import hammerlab.iterator.map;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * 数据规则utils
@@ -23,7 +22,7 @@ import java.util.TreeMap;
  */
 public class DataRuleUtils {
 
-	/**
+	/**db
 	 * 规则 vo 2 po
 	 *
 	 * @param dataRuleVo
@@ -156,5 +155,21 @@ public class DataRuleUtils {
 		return vos;
 	}
 
+	public static SortedMap<String, String> strToSortedMap(String str){
+		SortedMap<String, String> sortedMap = new TreeMap<>();
+		Map<String,Object> map = JSON.parseObject(str);
+		// map 转sortmap
+		Iterator<String> it = map.keySet().iterator();
+		while (it.hasNext()){
+			String key = (String)it.next();
+			String value = map.get(key).toString();
+			String temp = "";
+			if( null != value){
+				temp = value.trim();
+			}
+			sortedMap.put(key, temp);
+		}
+		return sortedMap;
+	}
 
 }

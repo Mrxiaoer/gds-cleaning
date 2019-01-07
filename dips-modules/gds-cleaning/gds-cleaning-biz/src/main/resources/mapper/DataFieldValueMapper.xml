@@ -94,7 +94,7 @@
 				FROM
 					dataclean_analysis_result
 				WHERE
-					base_id = 11
+					base_id = #{id}
 			) b
 		LEFT JOIN dataclean_data_field_value a ON b.compare_id = a.id
 	</select>

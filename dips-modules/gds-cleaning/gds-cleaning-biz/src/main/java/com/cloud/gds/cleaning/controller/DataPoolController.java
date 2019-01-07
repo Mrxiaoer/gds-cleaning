@@ -1,6 +1,6 @@
 package com.cloud.gds.cleaning.controller;
 
-import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +24,9 @@ public class DataPoolController {
 
 	@Autowired
 	public DataPoolController(
-		DataFieldValueService dataFieldValueService) {this.dataFieldValueService = dataFieldValueService;}
+		DataFieldValueService dataFieldValueService) {
+		this.dataFieldValueService = dataFieldValueService;
+	}
 
 	/**
 	 * 分页
@@ -52,8 +54,9 @@ public class DataPoolController {
 
 	/**
 	 * 保存 数据池信息
+	 *
 	 * @param params 数据
-	 * @param id 清洗池id
+	 * @param id     清洗池id
 	 * @return
 	 */
 	@PostMapping("/create/{id}")
@@ -64,18 +67,20 @@ public class DataPoolController {
 
 	/**
 	 * 修改fieldValue
+	 *
 	 * @param id
 	 * @param map
 	 * @return
 	 */
 	@PostMapping("/update/{id}")
 	@ApiOperation(value = "更新", notes = "修改fieldValue")
-	public R update(@PathVariable("id")Long id,@RequestBody Map<String,Object>map) {
-		return new R<>(dataFieldValueService.updateJson(id,map));
+	public R update(@PathVariable("id") Long id, @RequestBody Map<String, Object> map) {
+		return new R<>(dataFieldValueService.updateJson(id, map));
 	}
 
 	/**
 	 * 单独删除
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -87,6 +92,7 @@ public class DataPoolController {
 
 	/**
 	 * 批量删除
+	 *
 	 * @param ids
 	 * @return
 	 */

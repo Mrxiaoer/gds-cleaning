@@ -1,9 +1,11 @@
 package com.cloud.gds.cleaning.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
+import com.cloud.gds.cleaning.api.dto.FilterParams;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DARVo;
@@ -76,6 +78,25 @@ public class AnalysisResultServiceTest {
 		List<DARVo> list = service.centerFiltration(centerId, screenSize);
 		System.out.println(list);
 
+	}
+	@Test
+	public void modelToJosnStr(){
+
+		FilterParams filterParams = new FilterParams();
+		filterParams.setFileId(1L);
+		filterParams.setCenterId(2L);
+		filterParams.setThreshold(80f / 100);
+
+		// 封装过滤参数model 转jsonstring
+		String jsonStr = JSON.toJSONString(filterParams);
+		System.out.println(jsonStr);
+	}
+
+	@Test
+	public void test(){
+		String str = "{\"xiao\":111,\"city\":222}";
+		Map<String,Object> map = JSON.parseObject(str);
+		System.out.println(map);
 	}
 
 }

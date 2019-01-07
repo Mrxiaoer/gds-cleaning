@@ -2,19 +2,16 @@ package com.cloud.gds.cleaning.controller;
 
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
+import com.cloud.gds.cleaning.api.vo.LabelVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 清洗规则池
@@ -75,8 +72,8 @@ public class DataRuleController {
 	 */
 	@GetMapping("/key/{id}")
 	@ApiOperation(value = "查看规则动态参数", notes = "根据规则id获取规则动态参数")
-	public R getKey(@PathVariable("id") Long id) {
-		return new R<>(dataRuleService.gainDynamicKey(id));
+	public List<LabelVo> getKey(@PathVariable("id") Long id) {
+		return dataRuleService.gainDynamicKey(id);
 	}
 
 	/**

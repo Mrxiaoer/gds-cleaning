@@ -1,6 +1,9 @@
 package com.cloud.gds.cleaning.controller;
 
 import com.cloud.dips.common.core.util.R;
+import com.cloud.gds.cleaning.api.dto.DataDto;
+import com.cloud.gds.cleaning.api.vo.CenterData;
+import com.cloud.gds.cleaning.api.vo.DARVo;
 import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
@@ -39,7 +42,7 @@ public class DataAnalysisController {
 	 */
 	@PostMapping("/set/threshold")
 	@ApiOperation(value = "设置阀值", notes = "设置阀值")
-	public void setThreshold(@RequestBody Map<String,Object> params) {
+	public void setThreshold(@RequestBody Map<String, Object> params) {
 		// python分析数据
 		analysisResultService.dataAnalysis(params);
 	}
@@ -50,10 +53,10 @@ public class DataAnalysisController {
 	 * @param fieldId
 	 * @return
 	 */
-	@GetMapping("/center_data")
+	@GetMapping("/center_data/{fieldId}")
 	@ApiOperation(value = "中心数据显示", notes = "分析结果中心数据显示")
-	public R gainCleanData(@RequestParam Long fieldId) {
-		return new R<>(dataFieldValueService.gainCleanData(fieldId));
+	public List<CenterData> gainCleanData(@PathVariable Long fieldId) {
+		return dataFieldValueService.gainCleanData(fieldId);
 	}
 
 	/**
@@ -74,10 +77,10 @@ public class DataAnalysisController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("center_to_satellite")
+	@GetMapping("center_to_satellite/{centerId}")
 	@ApiOperation(value = "中心数据显示带相似度", notes = "中心数据显示带相似度")
-	public R centerToSatellite(@RequestParam(value = "fieldId") Long id) {
-		return new R<>(dataFieldValueService.centerToSatellite(id));
+	public List<DARVo> centerToSatellite(@PathVariable(value = "centerId") Long id) {
+		return dataFieldValueService.centerToSatellite(id);
 	}
 
 	/**
@@ -98,42 +101,50 @@ public class DataAnalysisController {
 	 * @param fieldId
 	 * @return
 	 */
-	@GetMapping("/automatic_cleaning")
+	@GetMapping("/automatic_cleaning/{fieldId}")
 	@ApiOperation(value = "自动清洗", notes = "根据fieldId自动清洗数据")
-	public R automaticCleaning(@RequestParam Long fieldId) {
+	public R automaticCleaning(@PathVariable Long fieldId) {
 		return new R<>(analysisResultService.automaticCleaning(fieldId));
 	}
 
 
 	/**
 	 * 根据中心数据过滤
+	 *
 	 * @param params include centerId、screenSize
 	 * @return
 	 */
 	@PostMapping("/filter_method_one")
-	public R filterMethodOne(@RequestBody Map<String,Object> params){
+	public List<DARVo> filterMethodOne(@RequestBody Map<String, Object> params) {
 		Long centerId = Long.valueOf(String.valueOf(params.get("centerId")));
 		Float screenSize = Float.parseFloat(params.get("screenSize").toString());
-		return new R<>(analysisResultService.centerFiltration(centerId, screenSize));
+		return analysisResultService.centerFiltration(centerId, screenSize);
 	}
 
 	/**
 	 * 根据非中心数据过滤
+	 *
 	 * @param params
 	 * @return
 	 */
 	@PostMapping("/filter_method_two")
-	public R filterMethodTwo(@RequestBody Map<String,Object> params){
-		// todo 非中心过滤
-		return new R<>();
+	public List<DARVo> filterMethodTwo(@RequestBody Map<String, Object> params) {
+		Long nonCentral = Long.valueOf(String.valueOf(params.get("nonCentral")));
+		Float screenSize = Float.parseFloat(params.get("screenSize").toString());
+		return analysisResultService.nonCentralFiltration(nonCentral, screenSize);
 	}
 
 	@PostMapping("/filter_method_three")
-	public R filterMethodThree(@RequestBody Map<String,Object> params){
+	public R filterMethodThree(@RequestBody Map<String, Object> params) {
 		// todo 重新定义过滤
 		return new R<>();
 	}
 
+	@PostMapping("/filter_method")
+	public List<DARVo> filterMethod(@RequestBody DataDto dataDto) {
+		// todo 2019-1-7 16:05:12
+		return analysisResultService.filterMethod(dataDto);
+	}
 
 
 }

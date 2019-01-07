@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
+import com.cloud.gds.cleaning.api.dto.DataDto;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
+import com.cloud.gds.cleaning.api.dto.FilterParams;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
@@ -18,15 +20,14 @@ import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.CalculateService;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
+import com.cloud.gds.cleaning.utils.CommonUtils;
+import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author : yaonuan
@@ -58,7 +59,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		Float threshold = Float.parseFloat(params.get("threshold").toString()) / 100;
 		Integer degree = (Integer) params.get("degree");
 		// 分析程度degree  1、快速分析 2、深度分析
-		// 由于前端传过来的阀值是100作为基数,因此需要转化
 		String fileUrl = dataFieldValueService.getAnalysisData(fieldId, threshold);
 
 		//  更新清洗池中分析状态->正在分析
@@ -80,28 +80,35 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			// 算法分析前先将分析结果表中对应数据删除
 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 
-			// 算法分析返回结果->entity
-			List<ResultJsonVo> list = JSON.parseArray(result, ResultJsonVo.class);
-
-			// 结果存入数据库
-			List<AnalysisResult> analysisResults = new ArrayList<>();
-			for (ResultJsonVo jsonVo : list) {
-				for (GroupVo vo : jsonVo.getGroup()) {
-					AnalysisResult q = new AnalysisResult();
-					q.setFieldId(fieldId);
-					q.setBaseId(jsonVo.getId());
-					q.setCompareId(vo.getId());
-					q.setSimilarity(vo.getSimilarity());
-					// 是否手动分析(0、自动 1、手动)
-					q.setIsManual(DataCleanConstant.NO);
-					analysisResults.add(q);
-				}
+//			// 算法分析返回结果->entity
+//			List<ResultJsonVo> list = JSON.parseArray(result, ResultJsonVo.class);
+//
+//			// 结果存入数据库
+//			List<AnalysisResult> analysisResults = new ArrayList<>();
+//			for (ResultJsonVo jsonVo : list) {
+//				for (GroupVo vo : jsonVo.getGroup()) {
+//					AnalysisResult q = new AnalysisResult();
+//					q.setFieldId(fieldId);
+//					q.setBaseId(jsonVo.getId());
+//					q.setCompareId(vo.getId());
+//					q.setSimilarity(vo.getSimilarity());
+//					// 是否手动分析(0、自动 1、手动)
+//					q.setIsManual(DataCleanConstant.NO);
+//					analysisResults.add(q);
+//				}
+//			}
+//			this.insertBatch(analysisResults);
+			// 算法分析返回结果,存入数据库
+			boolean flag = this.jsonStrSave(fieldId, result, DataCleanConstant.NO);
+			if (flag) {
+				// 成功
+				dataField.setAnalyseState(DataCleanConstant.DONE_ANALYSIS);
+				dataFieldService.update(dataField);
+			} else {
+				// 出错
+				dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
+				dataFieldService.update(dataField);
 			}
-			this.insertBatch(analysisResults);
-
-			// 成功
-			dataField.setAnalyseState(DataCleanConstant.DONE_ANALYSIS);
-			dataFieldService.update(dataField);
 		}
 	}
 
@@ -122,6 +129,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 	@Override
 	public boolean automaticCleaning(Long fieldId) {
+		// todo 无数据500
 		// 查询相应清洗池的分析结果集
 		List<AnalysisResult> results = this.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 
@@ -149,7 +157,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	@Override
 	public List<DARVo> centerFiltration(Long centerId, Float screenSize) {
 		// 根据中心id与滤网大小查询滤出来的数据
-		List<DataPoolAnalysis> results = dataFieldValueMapper.centerFiltration(centerId, screenSize);
+		List<DataPoolAnalysis> results = dataFieldValueMapper.centerFiltration(centerId, screenSize / 100);
 
 		List<DARVo> darVos = new ArrayList<>();
 
@@ -166,16 +174,110 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	}
 
 	@Override
-	public List<DARVo> nonCentralFiltration(Map<String, Object> params) {
-		// 解析前端参数
-		Long nonCentral = Long.valueOf(String.valueOf(params.get("nonCentral")));
-		Float screenSize = Float.parseFloat(params.get("screenSize").toString());
+	public List<DARVo> nonCentralFiltration(Long nonCentral, Float screenSize) {
+		// 获取当前数据主表是那一个
+		DataFieldValue dataFieldValue = dataFieldValueService.selectById(nonCentral);
 
-		//
-		DataField dataField = dataFieldService.selectById(1);
+		// 封装过滤参数
+		FilterParams filterParams = new FilterParams();
+		filterParams.setFileId(nonCentral);
+		filterParams.setCenterId(dataFieldValue.getFieldId());
+		filterParams.setThreshold(screenSize / 100);
 
+		// 封装过滤参数model 转jsonStr
+		String jsonStr = JSON.toJSONString(filterParams);
 
-		return null;
+		// python 取过滤数据信息
+		String resultJosn = calculateService.standardSimilarity(jsonStr);
+
+		// 结果数据插入数据库中
+		this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.YES);
+
+		// 取数据滤网大的数据
+		List<DARVo> list = this.centerFiltration(nonCentral, screenSize);
+
+		return list;
+	}
+
+	@Override
+	public List<DARVo> centerPointFiltration(DataDto dataDto) {
+		// 插入新数据
+		DataFieldValue value = new DataFieldValue();
+		value.setFieldId(dataDto.getFieldId());
+		value.setFieldValue(dataDto.getFieldValue().toJSONString());
+		assert SecurityUtils.getUser() != null;
+		value.setCreateUser(SecurityUtils.getUser().getId());
+		value.setCreateTime(LocalDateTime.now());
+		dataFieldValueService.insert(value);
+
+		DataField dataField = dataFieldService.selectById(dataDto.getFieldId());
+
+		String fileUrl = dataFieldValueService.getAnalysisData(dataDto.getFieldId(), dataField.getThreshold());
+
+		// 重新聚类
+		String result = calculateService.analysisSimilarity(DataCleanConstant.QUICK_ANALYSIS, fileUrl);
+
+		// 判断分析是否成功(分析正确返回json数据,错误返回None)
+		if ("None".equals(result)) {
+			// 失败
+			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
+			dataFieldService.update(dataField);
+		} else {
+			// 算法分析前先将分析结果表中对应数据删除
+			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", dataDto.getFieldId()));
+
+			// 算法分析返回结果,存入数据库
+			boolean flag = this.jsonStrSave(dataDto.getFieldId(), result, DataCleanConstant.NO);
+		}
+		// 根据标准数据过滤计算接口
+		List<DARVo> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
+		return list;
+	}
+
+	@Override
+	public List<DARVo> filterMethod(DataDto dataDto) {
+		// 判断数据是否修改过
+		List<DARVo> list = new ArrayList<>();
+		SortedMap<String, String> one = DataRuleUtils.strToSortedMap(dataDto.getFieldValue().toJSONString());
+		// todo 2019-1-7 16:08:57
+		SortedMap<String, String> two = DataRuleUtils.strToSortedMap(dataFieldValueMapper.selectById(dataDto.getId()).getFieldValue());
+		Boolean flag = CommonUtils.checkSortedMap(one, two);
+		// 如果返回正确证明未修改
+		if (flag) {
+			if (dataDto.getSimilarity() == 100) {
+				// 中心数据清洗
+				list = this.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
+			} else {
+				list = this.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
+			}
+		} else {
+			list = this.centerPointFiltration(dataDto);
+		}
+		return list;
+	}
+
+	private Boolean jsonStrSave(Long fieldId, String result, Integer isManual) {
+
+		// 算法分析返回结果->entity
+		List<ResultJsonVo> list = JSON.parseArray(result, ResultJsonVo.class);
+
+		// 结果存入数据库
+		List<AnalysisResult> analysisResults = new ArrayList<>();
+		for (ResultJsonVo jsonVo : list) {
+			for (GroupVo vo : jsonVo.getGroup()) {
+				AnalysisResult q = new AnalysisResult();
+				q.setFieldId(fieldId);
+				q.setBaseId(jsonVo.getId());
+				q.setCompareId(vo.getId());
+				q.setSimilarity(vo.getSimilarity());
+				// 是否手动分析(0、自动 1、手动)
+				q.setIsManual(isManual);
+				analysisResults.add(q);
+			}
+		}
+		this.insertBatch(analysisResults);
+
+		return true;
 	}
 
 }
