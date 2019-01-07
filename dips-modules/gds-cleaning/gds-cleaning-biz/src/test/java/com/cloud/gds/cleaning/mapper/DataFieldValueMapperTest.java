@@ -1,7 +1,7 @@
 package com.cloud.gds.cleaning.mapper;
 
 import com.cloud.gds.cleaning.GdsCleaningApplication;
-import com.cloud.gds.cleaning.api.entity.DataFieldValue;
+import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.vo.CenterData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,5 +24,13 @@ public class DataFieldValueMapperTest {
 		Long field = 1L;
 		List<CenterData> centerData = dataFieldValueMapper.gainCleanData(field);
 		System.out.println(centerData);
+	}
+
+	@Test
+	public void centerFiltration() {
+		Long id = 11L;
+		Float screenSize = 0.8f;
+		List<DataPoolAnalysis> list = dataFieldValueMapper.centerFiltration(id, screenSize);
+		System.out.println(list);
 	}
 }

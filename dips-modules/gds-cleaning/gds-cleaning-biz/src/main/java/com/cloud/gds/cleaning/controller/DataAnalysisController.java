@@ -105,21 +105,32 @@ public class DataAnalysisController {
 	}
 
 
+	/**
+	 * 根据中心数据过滤
+	 * @param params include centerId、screenSize
+	 * @return
+	 */
 	@PostMapping("/filter_method_one")
 	public R filterMethodOne(@RequestBody Map<String,Object> params){
-
-		return new R<>();
+		Long centerId = Long.valueOf(String.valueOf(params.get("centerId")));
+		Float screenSize = Float.parseFloat(params.get("screenSize").toString());
+		return new R<>(analysisResultService.centerFiltration(centerId, screenSize));
 	}
 
+	/**
+	 * 根据非中心数据过滤
+	 * @param params
+	 * @return
+	 */
 	@PostMapping("/filter_method_two")
 	public R filterMethodTwo(@RequestBody Map<String,Object> params){
-
+		// todo 非中心过滤
 		return new R<>();
 	}
 
 	@PostMapping("/filter_method_three")
 	public R filterMethodThree(@RequestBody Map<String,Object> params){
-
+		// todo 重新定义过滤
 		return new R<>();
 	}
 

@@ -5,16 +5,20 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
+import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
+import com.cloud.gds.cleaning.api.vo.DARVo;
 import com.cloud.gds.cleaning.api.vo.GroupVo;
 import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
 import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
+import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.CalculateService;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +42,9 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	private final CalculateService calculateService;
 
 	@Autowired
+	DataFieldValueMapper dataFieldValueMapper;
+
+	@Autowired
 	public AnalysisResultServiceImpl(DataFieldService dataFieldService, DataFieldValueService dataFieldValueService,
 									 CalculateService calculateService) {
 		this.dataFieldService = dataFieldService;
@@ -48,7 +55,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	@Override
 	public void dataAnalysis(Map<String, Object> params) {
 		Long fieldId = Long.valueOf(String.valueOf(params.get("fieldId")));
-		Float threshold = Float.parseFloat(params.get("threshold").toString())/100;
+		Float threshold = Float.parseFloat(params.get("threshold").toString()) / 100;
 		Integer degree = (Integer) params.get("degree");
 		// 分析程度degree  1、快速分析 2、深度分析
 		// 由于前端传过来的阀值是100作为基数,因此需要转化
@@ -137,6 +144,38 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		}
 		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
 		return dataFieldValueService.updateBatchById(list) && this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
+	}
+
+	@Override
+	public List<DARVo> centerFiltration(Long centerId, Float screenSize) {
+		// 根据中心id与滤网大小查询滤出来的数据
+		List<DataPoolAnalysis> results = dataFieldValueMapper.centerFiltration(centerId, screenSize);
+
+		List<DARVo> darVos = new ArrayList<>();
+
+		// DataPoolAnalysis 转 DARVo
+		for (DataPoolAnalysis result : results) {
+			DARVo darVo = new DARVo();
+			BeanUtils.copyProperties(result, darVo);
+			darVo.setFieldValue(com.alibaba.fastjson.JSONObject.parseObject(result.getFieldValue()));
+			// 百分比转换
+			darVo.setSimilarity(darVo.getSimilarity() * 100);
+			darVos.add(darVo);
+		}
+		return darVos;
+	}
+
+	@Override
+	public List<DARVo> nonCentralFiltration(Map<String, Object> params) {
+		// 解析前端参数
+		Long nonCentral = Long.valueOf(String.valueOf(params.get("nonCentral")));
+		Float screenSize = Float.parseFloat(params.get("screenSize").toString());
+
+		//
+		DataField dataField = dataFieldService.selectById(1);
+
+
+		return null;
 	}
 
 }

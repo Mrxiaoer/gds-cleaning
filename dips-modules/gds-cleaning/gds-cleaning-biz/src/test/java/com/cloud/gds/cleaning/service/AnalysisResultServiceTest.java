@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
+import com.cloud.gds.cleaning.api.vo.DARVo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,9 +69,12 @@ public class AnalysisResultServiceTest {
 	}
 
 
-
-	public void automaticCleaning() {
-
+	@Test
+	public void centerFiltration() {
+		Long centerId = 11L;
+		Float screenSize = 0.7f;
+		List<DARVo> list = service.centerFiltration(centerId, screenSize);
+		System.out.println(list);
 
 	}
 

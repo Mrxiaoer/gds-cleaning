@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
+import com.cloud.gds.cleaning.api.vo.DARVo;
 import org.apache.xmlbeans.impl.jam.mutable.MPackage;
 
 import java.util.List;
@@ -45,6 +46,20 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 */
 	boolean automaticCleaning(Long fieldId);
 
-//	List<>
+	/**
+	 * 根据中心数据过滤
+	 * @param centerId 中心id
+	 * @param screenSize 滤网大小
+	 * @return
+	 */
+	List<DARVo> centerFiltration(Long centerId,Float screenSize);
+
+	/**
+	 * 非中心数据过滤
+	 * @param nonCentral
+	 * @param screenSize
+	 * @return
+	 */
+	List<DARVo> nonCentralFiltration(Map<String,Object> params);
 
 }

@@ -99,4 +99,20 @@
 		LEFT JOIN dataclean_data_field_value a ON b.compare_id = a.id
 	</select>
 
+	<select id="centerFiltration" resultType="com.cloud.gds.cleaning.api.dto.DataPoolAnalysis">
+		SELECT
+		<include refid="DataPoolAnalysis"/>
+		FROM
+			(
+				SELECT
+					compare_id,
+					similarity
+				FROM
+					dataclean_analysis_result
+				WHERE
+					base_id = #{centerId} AND similarity > #{screenSize}
+			) b
+		LEFT JOIN dataclean_data_field_value a ON b.compare_id = a.id
+	</select>
+
 </mapper>
