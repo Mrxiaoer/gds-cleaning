@@ -181,11 +181,11 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataSetVo dataSetVo = dataRuleService.gainUpperPower(dataFieldService.selectById(fieldId).getRuleId());
 
 		// 取field_value值
-		if (list != null){
-			for (CenterData centerData : list){
+		if (list != null) {
+			for (CenterData centerData : list) {
 				// field_value,字符串转map取要的数据
 				com.alibaba.fastjson.JSONObject myJson = com.alibaba.fastjson.JSONObject.parseObject(centerData.getFieldValue());
-				Map<String,Object> map = (Map<String, Object>) myJson;
+				Map<String, Object> map = (Map<String, Object>) myJson;
 				centerData.setFieldValue(map.get(dataSetVo.getProp()).toString());
 			}
 		}
@@ -210,12 +210,12 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		List<DARVo> darVos = new ArrayList<>();
 
 		// DataPoolAnalysis 转 DARVo
-		for (DataPoolAnalysis result : list){
+		for (DataPoolAnalysis result : list) {
 			DARVo darVo = new DARVo();
 			BeanUtils.copyProperties(result, darVo);
 			darVo.setFieldValue(com.alibaba.fastjson.JSONObject.parseObject(result.getFieldValue()));
 			// 百分比转换
-			darVo.setSimilarity(darVo.getSimilarity()*100);
+			darVo.setSimilarity(darVo.getSimilarity() * 100);
 			darVos.add(darVo);
 		}
 		return darVos;
@@ -388,7 +388,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setId(Long.valueOf(String.valueOf(map.get("cleanId"))));
 			dataFieldValue.setBeCleanedId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			// 由于数据被清洗了,对数据进行删除状态的更新
-			dataFieldValue.setIsDeleted(DataCleanConstant.NO);
+			dataFieldValue.setIsDeleted(DataCleanConstant.YES);
 			assert SecurityUtils.getUser() != null;
 			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
@@ -431,7 +431,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		// 组装返回结果集
 		List<CleanItem> baseVos = new ArrayList<>();
-		for (DataPoolVo result : dataPools){
+		for (DataPoolVo result : dataPools) {
 			CleanItem b = new CleanItem();
 			b.setId(result.getId());
 			Map<String, Object> map = result.getFieldValue();
