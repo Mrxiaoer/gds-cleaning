@@ -2,17 +2,23 @@ package com.cloud.gds.cleaning.service;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+@SpringBootTest(classes = GdsCleaningApplication.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class CalculateTest {
 	@Test
 	public void PythonTest() {
 		Long time1=System.currentTimeMillis();
-		String jsonFileUrl = "/usr/local/data-cleaning/drs_element_1226.json";
+		String jsonFileUrl = "/usr/local/data-cleaning/12.json";
 		String result = null;
 		String[] arguments = null;
 		//配置python算法程序文件路径，python环境驱动并填入json文件所在路径

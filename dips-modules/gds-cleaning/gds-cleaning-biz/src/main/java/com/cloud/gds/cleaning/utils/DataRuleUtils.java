@@ -22,7 +22,8 @@ import java.util.*;
  */
 public class DataRuleUtils {
 
-	/**db
+	/**
+	 * db
 	 * 规则 vo 2 po
 	 *
 	 * @param dataRuleVo
@@ -52,10 +53,12 @@ public class DataRuleUtils {
 		DataRuleVo vo = new DataRuleVo();
 		if (dataRule != null) {
 			BeanUtils.copyProperties(dataRule, vo);
-			vo.setDetail(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
-			for (DataSetVo dataSetVo : vo.getDetail()) {
-				if (dataSetVo != null) {
-					dataSetVo.setWeight(dataSetVo.getWeight() * 100);
+			if (dataRule.getParams() != null) {
+				vo.setDetail(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
+				for (DataSetVo dataSetVo : vo.getDetail()) {
+					if (dataSetVo != null) {
+						dataSetVo.setWeight(dataSetVo.getWeight() * 100);
+					}
 				}
 			}
 
@@ -113,7 +116,7 @@ public class DataRuleUtils {
 	 * @param dataRuleVo
 	 * @return
 	 */
-	public static ArrayList<LabelVo> convey(DataRuleVo dataRuleVo){
+	public static ArrayList<LabelVo> convey(DataRuleVo dataRuleVo) {
 
 		ArrayList<LabelVo> list = new ArrayList<>();
 		List<DataSetVo> dataSetVos = dataRuleVo.getDetail();
@@ -155,16 +158,16 @@ public class DataRuleUtils {
 		return vos;
 	}
 
-	public static SortedMap<String, String> strToSortedMap(String str){
+	public static SortedMap<String, String> strToSortedMap(String str) {
 		SortedMap<String, String> sortedMap = new TreeMap<>();
-		Map<String,Object> map = JSON.parseObject(str);
+		Map<String, Object> map = JSON.parseObject(str);
 		// map 转sortmap
 		Iterator<String> it = map.keySet().iterator();
-		while (it.hasNext()){
-			String key = (String)it.next();
+		while (it.hasNext()) {
+			String key = (String) it.next();
 			String value = map.get(key).toString();
 			String temp = "";
-			if( null != value){
+			if (null != value) {
 				temp = value.trim();
 			}
 			sortedMap.put(key, temp);

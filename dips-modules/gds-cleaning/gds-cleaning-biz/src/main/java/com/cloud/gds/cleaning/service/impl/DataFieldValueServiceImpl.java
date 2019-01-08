@@ -229,9 +229,11 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public Boolean updateJson(Long id, Map<String, Object> map) {
 		// 修改->先删再增
+		DataFieldValue q = this.selectById(id);
 		this.deleteById(id);
 
 		DataFieldValue dataFieldValue = new DataFieldValue();
+		dataFieldValue.setFieldId(q.getFieldId());
 		dataFieldValue.setFieldValue(JSON.toJSONString(map));
 		dataFieldValue.setCreateTime(LocalDateTime.now());
 		assert SecurityUtils.getUser() != null;
@@ -369,7 +371,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		willAnalysisData.setData(objList);
 
 		//写入文件
-		String resultPath = fileSavePath + "/" + fieldId + ".txt";
+		String resultPath = fileSavePath + "/" + fieldId + ".json";
 		FileWriter fileWriter = new FileWriter(resultPath);
 		fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
 
