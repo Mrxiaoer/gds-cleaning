@@ -51,10 +51,11 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 
 	/**
 	 * 根据id与滤网大小查询数据
+	 *
 	 * @param centerId
 	 * @param screenSize
 	 * @return
 	 */
-	List<DataPoolAnalysis> centerFiltration(@Param("centerId") Long centerId,@Param("screenSize") Float screenSize);
+	List<DataPoolAnalysis> centerFiltration(@Param("centerId") Long centerId, @Param("screenSize") Float screenSize);
 
 }

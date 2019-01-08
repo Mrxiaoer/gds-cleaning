@@ -114,36 +114,56 @@ public class DataAnalysisController {
 	 * @param params include centerId、screenSize
 	 * @return
 	 */
-	@PostMapping("/filter_method_one")
-	public List<DARVo> filterMethodOne(@RequestBody Map<String, Object> params) {
-		Long centerId = Long.valueOf(String.valueOf(params.get("centerId")));
-		Float screenSize = Float.parseFloat(params.get("screenSize").toString());
-		return analysisResultService.centerFiltration(centerId, screenSize);
+	@PostMapping("/filter_method_center")
+	@ApiOperation(value = "根据中心数据过滤", notes = "根据中心数据过滤")
+	public List<DARVo> centerFiltration(@RequestBody DataDto dataDto) {
+		return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
 	}
 
 	/**
 	 * 根据非中心数据过滤
 	 *
-	 * @param params
+	 * @param dataDto
 	 * @return
 	 */
-	@PostMapping("/filter_method_two")
-	public List<DARVo> filterMethodTwo(@RequestBody Map<String, Object> params) {
-		Long nonCentral = Long.valueOf(String.valueOf(params.get("nonCentral")));
-		Float screenSize = Float.parseFloat(params.get("screenSize").toString());
-		return analysisResultService.nonCentralFiltration(nonCentral, screenSize);
+	@PostMapping("/filter_method_non_center")
+	@ApiOperation(value = "根据非中心数据过滤", notes = "根据非中心数据过滤")
+	public List<DARVo> nonCentralFiltration(@RequestBody DataDto dataDto) {
+		return analysisResultService.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
 	}
 
-	@PostMapping("/filter_method_three")
-	public R filterMethodThree(@RequestBody Map<String, Object> params) {
-		// todo 重新定义过滤
-		return new R<>();
+	/**
+	 * 自定义中心过滤
+	 *
+	 * @param dataDto
+	 * @return
+	 */
+	@PostMapping("/filter_method_new_center")
+	@ApiOperation(value = "自定义中心过滤", notes = "自定义中心过滤")
+	public List<DARVo> newCenterPointFiltration(@RequestBody DataDto dataDto) {
+		return analysisResultService.centerPointFiltration(dataDto);
 	}
 
+	/**
+	 * 整体过滤接口、此接口数据不完善
+	 *
+	 * @param dataDto
+	 * @return
+	 */
 	@PostMapping("/filter_method")
-	public List<DARVo> filterMethod(@RequestBody DataDto dataDto) {
-		// todo 2019-1-7 16:05:12
-		return analysisResultService.filterMethod(dataDto);
+	@ApiOperation(value = "数据过滤", notes = "此接口有问题")
+	public List<DARVo> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
+		if ("center".equals(type)) {
+			System.out.println("请求中心数据接口");
+			return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
+		} else if ("non_center".equals(type)) {
+			System.out.println("请求非中心数据接口");
+			return analysisResultService.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
+		} else if ("new_center".equals(type)) {
+			System.out.println("请求新中心数据接口");
+			return analysisResultService.centerPointFiltration(dataDto);
+		}
+		return null;
 	}
 
 

@@ -110,7 +110,7 @@
 				FROM
 					dataclean_analysis_result
 				WHERE
-					base_id = #{centerId} AND similarity > #{screenSize}
+					base_id = #{centerId} AND similarity &gt; #{screenSize}
 			) b
 		LEFT JOIN dataclean_data_field_value a ON b.compare_id = a.id
 	</select>

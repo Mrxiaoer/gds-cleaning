@@ -239,7 +239,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		// 判断数据是否修改过
 		List<DARVo> list = new ArrayList<>();
 		SortedMap<String, String> one = DataRuleUtils.strToSortedMap(dataDto.getFieldValue().toJSONString());
-		// todo 2019-1-7 16:08:57
 		SortedMap<String, String> two = DataRuleUtils.strToSortedMap(dataFieldValueMapper.selectById(dataDto.getId()).getFieldValue());
 		Boolean flag = CommonUtils.checkSortedMap(one, two);
 		// 如果返回正确证明未修改
