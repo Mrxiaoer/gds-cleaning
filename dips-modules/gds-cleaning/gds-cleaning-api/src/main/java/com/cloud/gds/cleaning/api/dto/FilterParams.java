@@ -15,7 +15,7 @@ public class FilterParams {
 	/**
 	 * 清洗池id
 	 */
-	private Long fileId;
+	private String fileId;
 	/**
 	 * 中心点id
 	 */

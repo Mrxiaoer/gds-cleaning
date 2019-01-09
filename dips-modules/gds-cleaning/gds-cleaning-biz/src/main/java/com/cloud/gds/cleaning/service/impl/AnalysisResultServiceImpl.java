@@ -70,8 +70,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		dataFieldService.update(dataField);
 
 		//  数据分析接口
-//		String result = calculateService.analysisSimilarity(degree, fileUrl);
-		String result = null;
+		String result = calculateService.analysisSimilarity(degree, fileUrl);
+		//String result = null;
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 		if ("None".equals(result)) {
 			// 失败
@@ -172,7 +172,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		// 封装过滤参数
 		FilterParams filterParams = new FilterParams();
-		filterParams.setFileId(nonCentral);
+		filterParams.setFileId(nonCentral.toString());
 		filterParams.setCenterId(dataFieldValue.getFieldId());
 		filterParams.setThreshold(screenSize / 100);
 
@@ -183,7 +183,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		String resultJosn = calculateService.standardSimilarity(jsonStr);
 
 		// todo 解决resultJosn 2019-1-9 11:07:10
-		if (!"None".equals(jsonStr)) {
+		if (!"None".equals(resultJosn)) {
 			// 结果数据不为空插入数据库中
 			if (StrUtil.isNotBlank(resultJosn)) {
 				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.YES);

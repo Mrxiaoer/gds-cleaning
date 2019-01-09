@@ -83,7 +83,7 @@ public class AnalysisResultServiceTest {
 	public void modelToJosnStr(){
 
 		FilterParams filterParams = new FilterParams();
-		filterParams.setFileId(1L);
+		filterParams.setFileId("1");
 		filterParams.setCenterId(2L);
 		filterParams.setThreshold(80f / 100);
 
