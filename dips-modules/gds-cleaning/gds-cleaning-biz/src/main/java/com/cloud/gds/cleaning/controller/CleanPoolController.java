@@ -79,7 +79,7 @@ public class CleanPoolController {
 			if (flag) {
 				return new R<>(dataFieldService.update(dataField));
 			} else {
-				return new R(new RuntimeException("规则选择错误!"));
+				return new R(new RuntimeException("规则更换失败，请检查规则是否符合数据要求!"));
 			}
 		}
 		return new R<>(dataFieldService.update(dataField));
