@@ -90,7 +90,12 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 			if (flag) {
 				// 成功
-				dataField.setAnalyseState(DataCleanConstant.DONE_ANALYSIS);
+				if (degree.equals(DataCleanConstant.DONE_QUICK_ANALYSIS)){
+					dataField.setAnalyseState(DataCleanConstant.DONE_QUICK_ANALYSIS);
+				}else {
+					dataField.setAnalyseState(DataCleanConstant.DONE_DEEP_ANALYSIS);
+				}
+
 				dataFieldService.update(dataField);
 			} else {
 				// 出错
@@ -180,8 +185,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		// python 取过滤数据信息
 		String resultJosn = calculateService.standardSimilarity(jsonStr);
-
-		// todo 解决resultJosn 2019-1-9 11:07:10
+		// python返回结果判断是否有值,是否有集类
 		if (!"None".equals(resultJosn)) {
 			// 结果数据不为空插入数据库中
 			if (StrUtil.isNotBlank(resultJosn)) {
@@ -213,7 +217,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		String fileUrl = dataFieldValueService.getAnalysisData(dataDto.getFieldId(), dataField.getThreshold());
 
 		// 重新聚类
-		String result = calculateService.analysisSimilarity(DataCleanConstant.QUICK_ANALYSIS, fileUrl);
+		String result = calculateService.analysisSimilarity(DataCleanConstant.DEEP_ANALYSIS, fileUrl);
 
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 		if ("None".equals(result)) {

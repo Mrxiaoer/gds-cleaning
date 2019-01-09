@@ -124,7 +124,7 @@ public class DataRuleController {
 	 * @return
 	 */
 	@PostMapping("/delete")
-	@ApiOperation(value = "批删", notes = "根据ids批量删除")
+	@ApiOperation(value = "批量删除", notes = "根据ids批量删除")
 	public R deleteT(@RequestBody Set<Long> ids) {
 		// 判断规则中是否有一条被使用过
 		if (dataFieldService.selectByRuleIds(ids).size() > 0) {

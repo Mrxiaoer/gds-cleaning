@@ -38,13 +38,17 @@ public interface DataCleanConstant {
 	 */
 	Integer BEING_ANALYSIS = 1;
 	/**
-	 * 分析状态 2、已分析
+	 * 分析状态 2、完成快速分析
 	 */
-	Integer DONE_ANALYSIS = 2;
+	Integer DONE_QUICK_ANALYSIS = 2;
 	/**
 	 * 分析状态 3、分析出错
 	 */
 	Integer ERROR_ANALYSIS = 3;
+	/**
+	 * 分析状态 4、完成深度分析
+	 */
+	Integer DONE_DEEP_ANALYSIS = 4;
 	/**
 	 * 分页参数page
 	 */

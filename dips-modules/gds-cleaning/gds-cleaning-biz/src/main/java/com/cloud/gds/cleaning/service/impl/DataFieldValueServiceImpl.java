@@ -180,8 +180,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		// 获取规则中比较最高的一项
 		DataSetVo dataSetVo = dataRuleService.gainUpperPower(dataFieldService.selectById(fieldId).getRuleId());
 
-		// 取field_value值
-		if (list != null) {
+		// 取field_value值,先判断list是否有值
+		if (list != null && list.size() != 0) {
 			for (CenterData centerData : list) {
 				// field_value,字符串转map取要的数据
 				com.alibaba.fastjson.JSONObject myJson = com.alibaba.fastjson.JSONObject.parseObject(centerData.getFieldValue());
@@ -409,6 +409,10 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public Boolean clear(Long fieldId) {
 		// 由于结果集中有对比清洗前数据,如果需导入不同状态数据需要->清空数据池
+		DataField field = new DataField();
+		field.setId(fieldId);
+		field.setAnalyseState(DataCleanConstant.NO_ANALYSIS);
+		dataFieldService.update(field);
 		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId));
 	}
 

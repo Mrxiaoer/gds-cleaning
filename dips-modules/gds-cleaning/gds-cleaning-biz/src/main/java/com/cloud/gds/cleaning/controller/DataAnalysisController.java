@@ -42,9 +42,10 @@ public class DataAnalysisController {
 	 */
 	@PostMapping("/set/threshold")
 	@ApiOperation(value = "设置阀值", notes = "设置阀值")
-	public void setThreshold(@RequestBody Map<String, Object> params) {
+	public R setThreshold(@RequestBody Map<String, Object> params) {
 		// python分析数据
 		analysisResultService.dataAnalysis(params);
+		return new R();
 	}
 
 	/**
@@ -108,41 +109,41 @@ public class DataAnalysisController {
 	}
 
 
-	/**
-	 * 根据中心数据过滤
-	 *
-	 * @param params include centerId、screenSize
-	 * @return
-	 */
-	@PostMapping("/filter_method_center")
-	@ApiOperation(value = "根据中心数据过滤", notes = "根据中心数据过滤")
-	public List<DARVo> centerFiltration(@RequestBody DataDto dataDto) {
-		return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
-	}
-
-	/**
-	 * 根据非中心数据过滤
-	 *
-	 * @param dataDto
-	 * @return
-	 */
-	@PostMapping("/filter_method_non_center")
-	@ApiOperation(value = "根据非中心数据过滤", notes = "根据非中心数据过滤")
-	public List<DARVo> nonCentralFiltration(@RequestBody DataDto dataDto) {
-		return analysisResultService.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
-	}
-
-	/**
-	 * 自定义中心过滤
-	 *
-	 * @param dataDto
-	 * @return
-	 */
-	@PostMapping("/filter_method_new_center")
-	@ApiOperation(value = "自定义中心过滤", notes = "自定义中心过滤")
-	public List<DARVo> newCenterPointFiltration(@RequestBody DataDto dataDto) {
-		return analysisResultService.centerPointFiltration(dataDto);
-	}
+//	/**
+//	 * 根据中心数据过滤
+//	 *
+//	 * @param params include centerId、screenSize
+//	 * @return
+//	 */
+//	@PostMapping("/filter_method_center")
+//	@ApiOperation(value = "根据中心数据过滤", notes = "根据中心数据过滤")
+//	public List<DARVo> centerFiltration(@RequestBody DataDto dataDto) {
+//		return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
+//	}
+//
+//	/**
+//	 * 根据非中心数据过滤
+//	 *
+//	 * @param dataDto
+//	 * @return
+//	 */
+//	@PostMapping("/filter_method_non_center")
+//	@ApiOperation(value = "根据非中心数据过滤", notes = "根据非中心数据过滤")
+//	public List<DARVo> nonCentralFiltration(@RequestBody DataDto dataDto) {
+//		return analysisResultService.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
+//	}
+//
+//	/**
+//	 * 自定义中心过滤
+//	 *
+//	 * @param dataDto
+//	 * @return
+//	 */
+//	@PostMapping("/filter_method_new_center")
+//	@ApiOperation(value = "自定义中心过滤", notes = "自定义中心过滤")
+//	public List<DARVo> newCenterPointFiltration(@RequestBody DataDto dataDto) {
+//		return analysisResultService.centerPointFiltration(dataDto);
+//	}
 
 	/**
 	 * 整体过滤接口、此接口数据不完善
