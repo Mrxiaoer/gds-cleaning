@@ -171,8 +171,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		// 封装过滤参数
 		FilterParams filterParams = new FilterParams();
-		filterParams.setFileId(nonCentral.toString());
-		filterParams.setCenterId(dataFieldValue.getFieldId());
+		filterParams.setFileId(dataFieldValue.getFieldId().toString());
+		filterParams.setCenterId(nonCentral);
 		filterParams.setThreshold(screenSize / 100);
 
 		// 封装过滤参数model 转jsonStr
@@ -185,6 +185,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		if (!"None".equals(resultJosn)) {
 			// 结果数据不为空插入数据库中
 			if (StrUtil.isNotBlank(resultJosn)) {
+				//  删除旧中心值
+				this.delete(new EntityWrapper<AnalysisResult>().eq("base_id", nonCentral));
 				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.YES);
 			}
 		}

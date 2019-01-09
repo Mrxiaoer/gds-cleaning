@@ -50,7 +50,7 @@ public class CalculateTest {
 	@Test
 	public void PythonTest2() {
 		Long time1=System.currentTimeMillis();
-		String jsonStr = "{\"centerId\":12,\"fileId\":28,\"threshold\":0.6}";
+		String jsonStr = "{\"centerId\":\"12\",\"fileId\":28,\"threshold\":0.6}";
 		String result = null;
 		String[] arguments = null;
 		//配置python算法程序文件路径，python环境驱动并填入json
