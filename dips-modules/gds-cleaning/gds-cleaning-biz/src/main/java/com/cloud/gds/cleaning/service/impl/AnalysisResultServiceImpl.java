@@ -122,23 +122,22 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		// 组装待清洗数据
 		List<DataFieldValue> list = new ArrayList<>();
-		if (list.size() == DataCleanConstant.NO) {
+		if (results.size() == DataCleanConstant.NO) {
 			return true;
 		}
 		for (AnalysisResult analysisResult : results) {
-			if (analysisResult.getBaseId().equals(analysisResult.getCompareId())) {
-				results.remove(analysisResult);
-				continue;
+			if (!analysisResult.getBaseId().equals(analysisResult.getCompareId())) {
+				DataFieldValue dataFieldValue = new DataFieldValue();
+				dataFieldValue.setId(analysisResult.getCompareId());
+				dataFieldValue.setBeCleanedId(analysisResult.getBaseId());
+				dataFieldValue.setFieldId(analysisResult.getFieldId());
+				// 由于数据被清洗了,对数据进行删除状态的更新
+				dataFieldValue.setIsDeleted(DataCleanConstant.YES);
+				assert SecurityUtils.getUser() != null;
+				dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+				dataFieldValue.setModifiedTime(LocalDateTime.now());
+				list.add(dataFieldValue);
 			}
-			DataFieldValue dataFieldValue = new DataFieldValue();
-			dataFieldValue.setId(analysisResult.getCompareId());
-			dataFieldValue.setBeCleanedId(analysisResult.getBaseId());
-			// 由于数据被清洗了,对数据进行删除状态的更新
-			dataFieldValue.setIsDeleted(DataCleanConstant.NO);
-			assert SecurityUtils.getUser() != null;
-			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
-			dataFieldValue.setModifiedTime(LocalDateTime.now());
-			list.add(dataFieldValue);
 		}
 		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
 		return dataFieldValueService.updateBatchById(list) && this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
