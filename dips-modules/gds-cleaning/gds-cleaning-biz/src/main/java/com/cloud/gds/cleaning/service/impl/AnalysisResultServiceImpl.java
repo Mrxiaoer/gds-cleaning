@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -69,8 +70,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		dataFieldService.update(dataField);
 
 		//  数据分析接口
-		String result = calculateService.analysisSimilarity(degree, fileUrl);
-
+//		String result = calculateService.analysisSimilarity(degree, fileUrl);
+		String result = null;
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 		if ("None".equals(result)) {
 			// 失败
@@ -80,26 +81,13 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			// 算法分析前先将分析结果表中对应数据删除
 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 
-//			// 算法分析返回结果->entity
-//			List<ResultJsonVo> list = JSON.parseArray(result, ResultJsonVo.class);
-//
-//			// 结果存入数据库
-//			List<AnalysisResult> analysisResults = new ArrayList<>();
-//			for (ResultJsonVo jsonVo : list) {
-//				for (GroupVo vo : jsonVo.getGroup()) {
-//					AnalysisResult q = new AnalysisResult();
-//					q.setFieldId(fieldId);
-//					q.setBaseId(jsonVo.getId());
-//					q.setCompareId(vo.getId());
-//					q.setSimilarity(vo.getSimilarity());
-//					// 是否手动分析(0、自动 1、手动)
-//					q.setIsManual(DataCleanConstant.NO);
-//					analysisResults.add(q);
-//				}
-//			}
-//			this.insertBatch(analysisResults);
-			// 算法分析返回结果,存入数据库
-			boolean flag = this.jsonStrSave(fieldId, result, DataCleanConstant.NO);
+			// 算法分析未集类,不进行处理
+			boolean flag = true;
+			if (StrUtil.isNotBlank(result)) {
+				// 算法分析返回结果,存入数据库
+				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.NO);
+			}
+
 			if (flag) {
 				// 成功
 				dataField.setAnalyseState(DataCleanConstant.DONE_ANALYSIS);
@@ -129,12 +117,14 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 	@Override
 	public boolean automaticCleaning(Long fieldId) {
-		// todo 无数据500
 		// 查询相应清洗池的分析结果集
 		List<AnalysisResult> results = this.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 
 		// 组装待清洗数据
 		List<DataFieldValue> list = new ArrayList<>();
+		if (list.size() == DataCleanConstant.NO) {
+			return true;
+		}
 		for (AnalysisResult analysisResult : results) {
 			if (analysisResult.getBaseId().equals(analysisResult.getCompareId())) {
 				results.remove(analysisResult);
@@ -160,7 +150,9 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		List<DataPoolAnalysis> results = dataFieldValueMapper.centerFiltration(centerId, screenSize / 100);
 
 		List<DARVo> darVos = new ArrayList<>();
-
+		if (results.size() == DataCleanConstant.NO) {
+			return darVos;
+		}
 		// DataPoolAnalysis 转 DARVo
 		for (DataPoolAnalysis result : results) {
 			DARVo darVo = new DARVo();
@@ -190,8 +182,13 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		// python 取过滤数据信息
 		String resultJosn = calculateService.standardSimilarity(jsonStr);
 
-		// 结果数据插入数据库中
-		this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.YES);
+		// todo 解决resultJosn 2019-1-9 11:07:10
+		if (!"None".equals(jsonStr)) {
+			// 结果数据不为空插入数据库中
+			if (StrUtil.isNotBlank(resultJosn)) {
+				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.YES);
+			}
+		}
 
 		// 取数据滤网大的数据
 		List<DARVo> list = this.centerFiltration(nonCentral, screenSize);
