@@ -15,6 +15,7 @@ import com.cloud.gds.cleaning.api.vo.*;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -124,7 +125,7 @@ public class DataFieldValueServiceTest {
     	map.put("age",24 );
     	maps.add(map);
     	maps.add(map);
-    	dataFieldValueService.saveAll(2L,maps );
+//    	dataFieldValueService.saveAll(2L,maps );
 	}
 
 
@@ -188,5 +189,81 @@ public class DataFieldValueServiceTest {
 		List<CleanItem> list=dataFieldValueService.cleaningItem(beCleanedId);
 		System.out.println(list);
 
+	}
+
+	@Test
+	public void inJson(){
+		String jsonstr = "[\n" +
+			"{\n" +
+			"\"id\":1,\n" +
+			"\"name_cn\":\"单位账号\",\n" +
+			"\"name_en\":\"dwzh\",\n" +
+			"\"datat_first\":1,\n" +
+			"\"datat_second\":0,\n" +
+			"\"data_descn\":null,\n" +
+			"\"data_length\":\"20\",\n" +
+			"\"info_id\":1,\n" +
+			"\"imputation_id\":0,\n" +
+			"\"object_type\":0,\n" +
+			"\"dept_id\":60,\n" +
+			"\"is_dict\":0,\n" +
+			"\"defaults\":null,\n" +
+			"\"share_type\":2,\n" +
+			"\"share_condition\":\"4\",\n" +
+			"\"share_first\":1,\n" +
+			"\"share_second\":null,\n" +
+			"\"is_open\":0,\n" +
+			"\"open_condition\":null,\n" +
+			"\"is_pk\":0,\n" +
+			"\"is_null\":0,\n" +
+			"\"renew_cycle\":1,\n" +
+			"\"is_collect\":1,\n" +
+			"\"source\":0,\n" +
+			"\"state\":1,\n" +
+			"\"create_by\":1,\n" +
+			"\"update_by\":1,\n" +
+			"\"create_date\":\"2018\\/8\\/20 17:21:39\",\n" +
+			"\"update_date\":\"2018\\/8\\/20 17:21:39\",\n" +
+			"\"area_id\":1\n" +
+			"},\n" +
+			"{\n" +
+			"\"id\":2,\n" +
+			"\"name_cn\":\"单位名称\",\n" +
+			"\"name_en\":\"dwmc\",\n" +
+			"\"datat_first\":1,\n" +
+			"\"datat_second\":0,\n" +
+			"\"data_descn\":null,\n" +
+			"\"data_length\":\"30\",\n" +
+			"\"info_id\":1,\n" +
+			"\"imputation_id\":0,\n" +
+			"\"object_type\":0,\n" +
+			"\"dept_id\":60,\n" +
+			"\"is_dict\":0,\n" +
+			"\"defaults\":null,\n" +
+			"\"share_type\":2,\n" +
+			"\"share_condition\":\"4\",\n" +
+			"\"share_first\":1,\n" +
+			"\"share_second\":null,\n" +
+			"\"is_open\":0,\n" +
+			"\"open_condition\":null,\n" +
+			"\"is_pk\":0,\n" +
+			"\"is_null\":0,\n" +
+			"\"renew_cycle\":1,\n" +
+			"\"is_collect\":1,\n" +
+			"\"source\":0,\n" +
+			"\"state\":1,\n" +
+			"\"create_by\":1,\n" +
+			"\"update_by\":1,\n" +
+			"\"create_date\":\"2018\\/8\\/20 17:21:39\",\n" +
+			"\"update_date\":\"2018\\/8\\/20 17:21:39\",\n" +
+			"\"area_id\":1\n" +
+			"}]";
+
+		JSONArray jsons = JSONArray.parseArray(jsonstr);
+for (Object json:jsons){
+	String str = JSON.toJSONString(json);
+	System.out.println(str);
+}
+//		dataFieldValueService.jsonapi();
 	}
 }

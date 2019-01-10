@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.dips.common.core.util.R;
+import com.cloud.gds.cleaning.api.dto.InputJsonList;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,5 +102,16 @@ public class DataPoolController {
 	public R deleteByIds(@RequestBody Set<Long> ids) {
 		return new R<>(dataFieldValueService.deleteByIds(ids));
 	}
+
+
+	@PostMapping("/api")
+	public R jsonapi(Long id, @RequestBody InputJsonList inputJsonList) {
+
+//		inputJsonList.getRECORDS()
+		// todo 2019-1-10 09:53:15
+		dataFieldValueService.saveAll(id, inputJsonList.getRecords());
+		return new R();
+	}
+
 
 }

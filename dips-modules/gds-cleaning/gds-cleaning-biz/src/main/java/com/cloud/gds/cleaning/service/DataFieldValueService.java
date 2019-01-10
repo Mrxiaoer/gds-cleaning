@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -118,9 +119,10 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	/**
 	 * excel工具导数据保存到数据库
 	 *
-	 * @param maps
+	 * @param fieldId
+	 * @param fieldValues
 	 */
-	void saveAll(Long fieldId, List<Map<String, Object>> maps);
+	void saveAll(Long fieldId, List<Map<String,Object>> fieldValues);
 
 	/**
 	 * 清洗前后数据比较差异并输出
@@ -171,5 +173,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	List<CleanItem> cleaningItem(Long beCleanedId);
 
+	void jsonapi(List<Map<String, Object>> params);
 }
 
