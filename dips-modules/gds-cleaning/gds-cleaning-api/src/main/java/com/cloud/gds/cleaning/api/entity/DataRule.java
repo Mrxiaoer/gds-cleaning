@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @TableName("dataclean_data_rule")
 public class DataRule extends Model<DataRule> {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 3833596374166897617L;
 	/**
 	 * id
 	 */

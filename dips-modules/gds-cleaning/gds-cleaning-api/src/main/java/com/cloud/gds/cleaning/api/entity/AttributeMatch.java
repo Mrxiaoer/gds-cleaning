@@ -20,8 +20,7 @@ import java.time.LocalDateTime;
 @TableName("dataclean_attribute_match")
 public class AttributeMatch extends Model<AttributeMatch> {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 2939121445918004569L;
 	/**
 	 * id
 	 */

@@ -2,10 +2,9 @@ package com.cloud.gds.cleaning.api.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
 
 /**
  * 分析结果
@@ -19,8 +18,7 @@ import java.io.Serializable;
 @TableName("dataclean_analysis_result")
 public class AnalysisResult extends Model<AnalysisResult> {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 4674961419049560149L;
 	/**
 	 * 主表id
 	 */
@@ -49,4 +47,5 @@ public class AnalysisResult extends Model<AnalysisResult> {
 	protected Serializable pkVal() {
 		return this.fieldId + "_" + this.baseId + "_" + this.compareId;
 	}
+
 }

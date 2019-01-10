@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @TableName("dataclean_data_field_value")
 public class DataFieldValue extends Model<DataFieldValue> {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 9060298478238526564L;
 	/**
 	 * 
 	 */

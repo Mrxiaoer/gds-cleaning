@@ -2,6 +2,8 @@ package com.cloud.gds.cleaning.service;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalTime;
 import java.util.Random;
 import org.junit.Test;
@@ -79,6 +81,25 @@ public class OtherTest {
 		for (int i = 1; i <= 4; i++) {
 			System.out.println("第" + i + "次:" + r.nextInt());
 		}
+	}
+
+	@Test
+	public void HTMLEncoding() {
+		String url = "https://hei-ha.oss-cn-beijing.aliyuncs"
+			+ ".com/file/20190104/%E5%9C%A8%E7%BA%BF%E9%A2%84%E8%A7%88%E6%B5%8B"
+			+ "%E8%AF%95.docx?Expires=1546570089&OSSAccessKeyId=TMP"
+			+ ".AQFjEfOj9O8mY87VRqHzv1cgAgKuqufDJlhZPL9iHKhrr9nXvFnITdPHJf1-ADAtAhQOvg9AHXubg_YgYD"
+			+ "-3huq7fAFsBgIVAOdM3jwMH_Kl5XOc9bnpuY89bqlE&Signature=%2FBexsDyAnbuE49vO07DC1iZKpjE%3D";
+
+		String result = "https://view.officeapps.live.com/op/view.aspx?src=";
+
+		try {
+			result += URLEncoder.encode(url, "ASCII");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(result);
 	}
 
 }

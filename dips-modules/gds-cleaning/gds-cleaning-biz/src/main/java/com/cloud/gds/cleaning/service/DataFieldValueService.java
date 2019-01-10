@@ -4,9 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.vo.*;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.cloud.gds.cleaning.api.vo.BaseVo;
+import com.cloud.gds.cleaning.api.vo.CenterData;
+import com.cloud.gds.cleaning.api.vo.CleanItem;
+import com.cloud.gds.cleaning.api.vo.DARVo;
+import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
+import com.cloud.gds.cleaning.api.vo.DataPoolVo;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -122,7 +125,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @param fieldId
 	 * @param fieldValues
 	 */
-	void saveAll(Long fieldId, List<Map<String,Object>> fieldValues);
+	void saveAll(Long fieldId, List<Map<String, Object>> fieldValues);
 
 	/**
 	 * 清洗前后数据比较差异并输出
@@ -174,5 +177,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	List<CleanItem> cleaningItem(Long beCleanedId);
 
 	void jsonapi(List<Map<String, Object>> params);
+
 }
 

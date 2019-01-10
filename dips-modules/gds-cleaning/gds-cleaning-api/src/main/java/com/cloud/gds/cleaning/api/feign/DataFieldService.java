@@ -14,7 +14,7 @@ import java.util.Map;
  * @Email : 1042703214@qq.com
  * @Date : 2018-11-22
  */
-@FeignClient(value = "dna-dataclean", fallbackFactory = DataFieldServiceFallbackFactory.class)
+@FeignClient(value = "gds-cleaning", fallbackFactory = DataFieldServiceFallbackFactory.class)
 public interface DataFieldService {
 
 	/**
@@ -32,7 +32,7 @@ public interface DataFieldService {
 	 * @param id Long
 	 * @return R
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("/clean_pool/{id}")
 	R info(@PathVariable("id") Long id);
 
 	/**
@@ -60,6 +60,6 @@ public interface DataFieldService {
 	 * @return R
 	 */
 	@DeleteMapping("/{id}")
-	R delete(@PathVariable Long id);
+	R delete(@PathVariable("id") Long id);
 
 }
