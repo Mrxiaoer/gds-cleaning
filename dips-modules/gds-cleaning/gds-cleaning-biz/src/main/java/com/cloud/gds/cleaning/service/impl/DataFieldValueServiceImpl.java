@@ -79,7 +79,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		if (StrUtil.isNotBlank(fieldId)) {
 			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
-		e.eq("is_deleted", DataCleanConstant.NO);
+		e.eq("is_deleted", DataCleanConstant.FALSE);
 		Page<DataFieldValue> page1 = this.selectPage(p, e);
 		Page<DataPoolVo> page2 = new Page<>();
 		BeanUtils.copyProperties(page1, page2);
@@ -109,6 +109,10 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
+		// todo 规则未选择不处理 2019-1-10 15:36:32
+		if (resultSet.getProp() == null) {
+			return null;
+		}
 
 		// 重新构造赋值分页信息
 		Page<BaseVo> page2 = new Page<>();
@@ -143,7 +147,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		if (StrUtil.isNotBlank(fieldId)) {
 			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
-		e.eq("is_deleted", DataCleanConstant.NO);
+		e.eq("is_deleted", DataCleanConstant.FALSE);
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
@@ -159,6 +163,10 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		List<DataPoolVo> dataPool = DataPoolUtils.listEntity2Vo(page.getRecords());
 		// 组件前端动态数据
+		// todo 规则未选择不处理 2019-1-10 15:36:32
+		if (resultSet.getProp() == null) {
+			return null;
+		}
 		for (DataPoolVo vo : dataPool) {
 			BaseVo baseVo = new BaseVo();
 			baseVo.setId(vo.getId());
@@ -223,7 +231,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public List<DataFieldValue> selectByfieldId(Long fieldId) {
-		return this.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.NO));
+		return this.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
 	}
 
 	@Override
@@ -247,7 +255,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setId(id);
 		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
-		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
+		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		// 删除数据时需要删除分析结果表中相关数据
 		analysisResultService.deleteAllById(id);
@@ -260,7 +268,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
-		dataFieldValue.setIsDeleted(DataCleanConstant.YES);
+		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		// 删除数据时需要删除分析结果表中相关数据
 		analysisResultService.deleteAllByIds(ids);
@@ -281,7 +289,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 //	@Transactional(rollbackFor = Exception.class)
 	public void saveAll(Long fieldId, List<Map<String, Object>> fieldValues) {
-		// todo 主池新建问题
 		// 循环插入数据库相关信息
 		List<DataFieldValue> list = new ArrayList<>();
 		LocalDateTime localDateTime = LocalDateTime.now();
@@ -293,7 +300,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setCreateTime(localDateTime);
 			dataFieldValue.setFieldValue(JSON.toJSONString(map));
 			assert SecurityUtils.getUser() != null;
-//			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
+			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			// 添加数据
 //			this.insert(dataFieldValue);
 			list.add(dataFieldValue);
@@ -305,7 +312,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public List<DataFieldValueTree> compareDifference(Long id) {
 		DataFieldValue dfv = new DataFieldValue();
 		dfv.setFieldId(id);
-		dfv.setIsDeleted(DataCleanConstant.NO);
+		dfv.setIsDeleted(DataCleanConstant.FALSE);
 		List<DataFieldValue> allData = baseMapper.selectList(new EntityWrapper<>(dfv));
 
 		List<DataFieldValueTree> treeList = allData.stream().map(value -> {
@@ -393,7 +400,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setId(Long.valueOf(String.valueOf(map.get("cleanId"))));
 			dataFieldValue.setBeCleanedId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			// 由于数据被清洗了,对数据进行删除状态的更新
-			dataFieldValue.setIsDeleted(DataCleanConstant.YES);
+			dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 			assert SecurityUtils.getUser() != null;
 			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
@@ -422,7 +429,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public Boolean clearBuffer(Long fieldId) {
 		// 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓冲清除->清缓冲
-		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.YES));
+		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.TRUE));
 	}
 
 	@Override
@@ -463,7 +470,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Transactional(rollbackFor = Exception.class)
 	public List<DataFieldValue> firstAnalysisList(Long fieldId) {
 		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
-			.eq("is_deleted", DataCleanConstant.NO);
+			.eq("is_deleted", DataCleanConstant.FALSE);
 
 		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
 		DataFieldValue dataFieldValue = new DataFieldValue();
@@ -482,7 +489,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Transactional(rollbackFor = Exception.class)
 	public List<DataFieldValue> notFirstAnalysisList(Long fieldId) {
 		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
-			.eq("is_deleted", DataCleanConstant.NO).eq("state", 0);
+			.eq("is_deleted", DataCleanConstant.FALSE).eq("state", 0);
 
 		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
 		DataFieldValue dataFieldValue = new DataFieldValue();

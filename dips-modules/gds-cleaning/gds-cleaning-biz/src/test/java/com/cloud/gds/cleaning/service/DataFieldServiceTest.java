@@ -83,7 +83,7 @@ public class DataFieldServiceTest {
 			}
 		}
 		Page page = dataRuleService.selectPage(new Query<>(CommonUtils.map2map(params)),
-			ew.eq("is_deleted", DataCleanConstant.NO));
+			ew.eq("is_deleted", DataCleanConstant.FALSE));
 
 		System.out.print(page);
 	}

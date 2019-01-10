@@ -33,18 +33,6 @@ import java.util.*;
 @Service
 public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField> implements DataFieldService {
 
-//	private final DataRuleService dataRuleService;
-//	private DataFieldValueService dataFieldValueService;
-//
-//	@Autowired
-//	public DataFieldServiceImpl(DataRuleService dataRuleService) {
-//		this.dataRuleService = dataRuleService;
-//	}
-//
-//	@Autowired
-//	private void setDataFieldValueService(DataFieldValueService dataFieldValueService) {
-//		this.dataFieldValueService = dataFieldValueService;
-//	}
 	@Autowired
 	DataRuleService dataRuleService;
 	@Autowired
@@ -68,7 +56,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		if (StrUtil.isNotBlank(name)) {
 			e.like("method_name", SpecialStringUtil.escapeExprSpecialWord(methodName));
 		}
-		e.eq("is_deleted", DataCleanConstant.NO);
+		e.eq("is_deleted", DataCleanConstant.FALSE);
 		return this.selectPage(p, e);
 	}
 
@@ -76,7 +64,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	public List<DataField> selectByRuleId(Long ruleId) {
 		DataField dataField = new DataField();
 		dataField.setRuleId(ruleId);
-		dataField.setIsDeleted(DataCleanConstant.NO);
+		dataField.setIsDeleted(DataCleanConstant.FALSE);
 		return this.selectList(new EntityWrapper<>(dataField));
 	}
 
@@ -96,6 +84,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		DataField dataField = this.selectById(id);
 		BeanUtils.copyProperties(dataField, dataFieldVo);
 		dataFieldVo.setRuleName((dataField.getRuleId() == 0) ? null : (dataRuleService.selectById(dataField.getRuleId()).getName()));
+		dataFieldVo.setRuleId(dataFieldVo.getRuleId() == 0 ? null : dataFieldVo.getRuleId());
 		return dataFieldVo;
 	}
 
@@ -121,7 +110,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	public Boolean deleteById(Long id) {
 		DataField field = new DataField();
 		field.setId(id);
-		field.setIsDeleted(DataCleanConstant.YES);
+		field.setIsDeleted(DataCleanConstant.TRUE);
 		field.setModifiedTime(LocalDateTime.now());
 		assert SecurityUtils.getUser() != null;
 		field.setModifiedUser(SecurityUtils.getUser().getId());
@@ -132,7 +121,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	@Override
 	public Boolean deleteByIds(Set<Long> ids) {
 		DataField dataField = new DataField();
-		dataField.setIsDeleted(DataCleanConstant.YES);
+		dataField.setIsDeleted(DataCleanConstant.TRUE);
 		dataField.setModifiedTime(LocalDateTime.now());
 		assert SecurityUtils.getUser() != null;
 		dataField.setModifiedUser(SecurityUtils.getUser().getId());
@@ -169,10 +158,10 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		if (!ruleId.equals(DataCleanConstant.ZERO)) {
 			List<DataField> list = this.selectByRuleId(ruleId);
 			for (DataField dataField : list) {
-				if (dataField.getNeedReanalysis().equals(DataCleanConstant.NO)) {
+				if (dataField.getNeedReanalysis().equals(DataCleanConstant.FALSE)) {
 					DataField q = new DataField();
 					q.setId(dataField.getId());
-					q.setNeedReanalysis(DataCleanConstant.YES);
+					q.setNeedReanalysis(DataCleanConstant.TRUE);
 					this.updateById(q);
 				}
 			}

@@ -74,7 +74,7 @@ public class CommonUtils {
 		}
 		ArrayList<String> coll = new ArrayList<>();
 		coll.add("id");
-		return wrapper.eq("is_deleted", DataCleanConstant.NO).orderAsc(coll);
+		return wrapper.eq("is_deleted", DataCleanConstant.FALSE).orderAsc(coll);
 	}
 
 	/**

@@ -85,7 +85,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			boolean flag = true;
 			if (StrUtil.isNotBlank(result)) {
 				// 算法分析返回结果,存入数据库
-				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.NO);
+				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
 			}
 
 			if (flag) {
@@ -127,7 +127,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		// 组装待清洗数据
 		List<DataFieldValue> list = new ArrayList<>();
-		if (results.size() == DataCleanConstant.NO) {
+		if (results.size() == DataCleanConstant.FALSE) {
 			return true;
 		}
 		for (AnalysisResult analysisResult : results) {
@@ -137,7 +137,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 				dataFieldValue.setBeCleanedId(analysisResult.getBaseId());
 				dataFieldValue.setFieldId(analysisResult.getFieldId());
 				// 由于数据被清洗了,对数据进行删除状态的更新
-				dataFieldValue.setIsDeleted(DataCleanConstant.YES);
+				dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 				assert SecurityUtils.getUser() != null;
 				dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 				dataFieldValue.setModifiedTime(LocalDateTime.now());
@@ -154,7 +154,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		List<DataPoolAnalysis> results = dataFieldValueMapper.centerFiltration(centerId, screenSize / 100);
 
 		List<DARVo> darVos = new ArrayList<>();
-		if (results.size() == DataCleanConstant.NO) {
+		if (results.size() == DataCleanConstant.FALSE) {
 			return darVos;
 		}
 		// DataPoolAnalysis 转 DARVo
@@ -191,7 +191,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			if (StrUtil.isNotBlank(resultJosn)) {
 				//  删除旧中心值
 				this.delete(new EntityWrapper<AnalysisResult>().eq("base_id", nonCentral));
-				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.YES);
+				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.TRUE);
 			}
 		}
 
@@ -229,7 +229,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", dataDto.getFieldId()));
 
 			// 算法分析返回结果,存入数据库
-			boolean flag = this.jsonStrSave(dataDto.getFieldId(), result, DataCleanConstant.NO);
+			boolean flag = this.jsonStrSave(dataDto.getFieldId(), result, DataCleanConstant.FALSE);
 		}
 		// 根据标准数据过滤计算接口
 		List<DARVo> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());

@@ -104,6 +104,13 @@ public class DataPoolController {
 	}
 
 
+	/**
+	 * api导入接口
+	 *
+	 * @param id 主表id
+	 * @param inputJsonList
+	 * @return
+	 */
 	@PostMapping("/api")
 	public R jsonapi(Long id, @RequestBody InputJsonList inputJsonList) {
 

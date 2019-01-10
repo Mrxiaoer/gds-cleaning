@@ -9,9 +9,15 @@ package com.cloud.gds.cleaning.api.constant;
  */
 public interface DataCleanConstant {
 
-	Integer YES = 1;
 
-	Integer NO = 0;
+	/**
+	 * 默认值0 未删除
+	 */
+	Integer FALSE = 0;
+	/**
+	 * 已删除
+	 */
+	Integer TRUE = 1;
 	/**
 	 * 长整类0
 	 */

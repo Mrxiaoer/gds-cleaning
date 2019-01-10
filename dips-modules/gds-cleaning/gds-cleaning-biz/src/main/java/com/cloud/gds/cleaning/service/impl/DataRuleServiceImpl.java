@@ -51,7 +51,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		if (StrUtil.isNotBlank(name)) {
 			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
 		}
-		e.eq("is_deleted", DataCleanConstant.NO);
+		e.eq("is_deleted", DataCleanConstant.FALSE);
 		Page page = this.selectPage(p, e);
 		if (page.getRecords() != null) {
 			List<DataRule> dataRules = page.getRecords();
@@ -74,7 +74,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 	@Override
 	public List<BaseVo> selectAll() {
 		DataRule dataRule = new DataRule();
-		dataRule.setIsDeleted(DataCleanConstant.NO);
+		dataRule.setIsDeleted(DataCleanConstant.FALSE);
 		assert SecurityUtils.getUser() != null;
 		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
 		List<DataRule> dataRules = this.selectList(new EntityWrapper<>(dataRule));
@@ -109,7 +109,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		assert SecurityUtils.getUser() != null;
 		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
-		dataRule.setIsDeleted(DataCleanConstant.YES);
+		dataRule.setIsDeleted(DataCleanConstant.TRUE);
 		return this.updateById(dataRule);
 	}
 
@@ -120,7 +120,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		assert SecurityUtils.getUser() != null;
 		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
 		dataRule.setModifiedTime(LocalDateTime.now());
-		dataRule.setIsDeleted(DataCleanConstant.YES);
+		dataRule.setIsDeleted(DataCleanConstant.TRUE);
 		this.update(dataRule, new EntityWrapper<DataRule>().in("id", ids));
 		return true;
 	}
@@ -149,22 +149,24 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		// 先赋第一个model作为基础数
 		DataSetVo resultSet = list != null ? list.get(0) : new DataSetVo();
 		// 如何判断那些是同义,那些没有
-		for (DataSetVo dataSetVo : list) {
-			// 判断基础数是否有同义,基础数据无同义
-			if (resultSet.getIsSynonymous().equals(DataCleanConstant.NO)){
-				// 对比model存在同义
-				if (dataSetVo.getIsSynonymous().equals(DataCleanConstant.YES)){
-					BeanUtils.copyProperties(dataSetVo, resultSet);
-				}else {
-					if (dataSetVo.getWeight() > resultSet.getWeight()) {
+		if (list != null && list.size() > 0) {
+			for (DataSetVo dataSetVo : list) {
+				// 判断基础数是否有同义,基础数据无同义
+				if (resultSet.getIsSynonymous().equals(DataCleanConstant.FALSE)) {
+					// 对比model存在同义
+					if (dataSetVo.getIsSynonymous().equals(DataCleanConstant.TRUE)) {
 						BeanUtils.copyProperties(dataSetVo, resultSet);
+					} else {
+						if (dataSetVo.getWeight() > resultSet.getWeight()) {
+							BeanUtils.copyProperties(dataSetVo, resultSet);
+						}
 					}
-				}
-			}else {
-				// 如果对比前后数据都存在同义
-				if (dataSetVo.getIsSynonymous().equals(DataCleanConstant.YES)){
-					if (dataSetVo.getWeight() > resultSet.getWeight()) {
-						BeanUtils.copyProperties(dataSetVo, resultSet);
+				} else {
+					// 如果对比前后数据都存在同义
+					if (dataSetVo.getIsSynonymous().equals(DataCleanConstant.TRUE)) {
+						if (dataSetVo.getWeight() > resultSet.getWeight()) {
+							BeanUtils.copyProperties(dataSetVo, resultSet);
+						}
 					}
 				}
 			}
