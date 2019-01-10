@@ -23,7 +23,7 @@ public interface CleanPoolService {
 	 * @param params 参数要求：page、limit、name
 	 * @return R
 	 */
-	@GetMapping("/page")
+	@GetMapping("/clean_pool/page")
 	public R page(@RequestParam Map<String, Object> params);
 
 	/**
@@ -31,7 +31,7 @@ public interface CleanPoolService {
 	 *
 	 * @return R
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("/clean_pool/{id}")
 	public R info(@PathVariable("id") Long id);
 
 	/**
@@ -39,7 +39,7 @@ public interface CleanPoolService {
 	 *
 	 * @return R
 	 */
-	@PostMapping("/create")
+	@PostMapping("/clean_pool/create")
 	public R save(@RequestBody DataField dataField);
 
 	/**
@@ -47,7 +47,7 @@ public interface CleanPoolService {
 	 *
 	 * @return R
 	 */
-	@PostMapping("/update")
+	@PostMapping("/clean_pool/update")
 	public R update(@RequestBody DataField dataField);
 
 	/**
@@ -56,7 +56,7 @@ public interface CleanPoolService {
 	 * @param id
 	 * @return
 	 */
-	@PostMapping("/delete/{id}")
+	@PostMapping("/clean_pool/delete/{id}")
 	public R delete(@PathVariable("id") Long id);
 
 	/**
@@ -65,6 +65,6 @@ public interface CleanPoolService {
 	 * @param ids
 	 * @return
 	 */
-	@PostMapping("/delete")
+	@PostMapping("/clean_pool/delete")
 	public R deleteByIds(@RequestBody Set<Long> ids);
 }

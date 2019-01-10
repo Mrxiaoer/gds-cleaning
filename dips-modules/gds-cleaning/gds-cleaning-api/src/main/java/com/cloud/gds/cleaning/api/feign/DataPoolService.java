@@ -24,7 +24,7 @@ public interface DataPoolService {
 	 *
 	 * @param params
 	 */
-	@GetMapping("/page")
+	@GetMapping("/data_pool/page")
 	public R page(@RequestParam Map<String, Object> params);
 
 	/**
@@ -33,7 +33,7 @@ public interface DataPoolService {
 	 * @param id 数据池id
 	 * @return R
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("/data_pool/{id}")
 	public R info(@PathVariable("id") Long id);
 
 	/**
@@ -43,7 +43,7 @@ public interface DataPoolService {
 	 * @param id     清洗池id
 	 * @return
 	 */
-	@PostMapping("/create/{id}")
+	@PostMapping("/data_pool/create/{id}")
 	public R save(@RequestBody JSONObject params, @PathVariable("id") Long id);
 
 	/**
@@ -53,7 +53,7 @@ public interface DataPoolService {
 	 * @param map
 	 * @return
 	 */
-	@PostMapping("/update/{id}")
+	@PostMapping("/data_pool/update/{id}")
 	public R update(@PathVariable("id") Long id, @RequestBody Map<String, Object> map);
 
 	/**
@@ -62,7 +62,7 @@ public interface DataPoolService {
 	 * @param id
 	 * @return
 	 */
-	@PostMapping("/delete/{id}")
+	@PostMapping("/data_pool/delete/{id}")
 	public R delete(@PathVariable("id") Long id);
 
 	/**
@@ -71,7 +71,7 @@ public interface DataPoolService {
 	 * @param ids
 	 * @return
 	 */
-	@PostMapping("/ids")
+	@PostMapping("/data_pool/ids")
 	public R deleteByIds(@RequestBody Set<Long> ids);
 
 
@@ -82,7 +82,7 @@ public interface DataPoolService {
 	 * @param inputJsonList
 	 * @return
 	 */
-	@PostMapping("/api")
+	@PostMapping("/data_pool/api")
 	public R jsonapi(Long id, @RequestBody InputJsonList inputJsonList);
 
 }

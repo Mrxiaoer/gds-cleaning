@@ -15,7 +15,6 @@ public class CleanPoolServiceFallbackFactory implements FallbackFactory<CleanPoo
 
 	@Override
 	public CleanPoolService create(Throwable throwable) {
-
 		CleanPoolServiceFallbackImpl cleanPoolServiceFallback = new CleanPoolServiceFallbackImpl();
 		cleanPoolServiceFallback.setCause(throwable);
 		return cleanPoolServiceFallback;
