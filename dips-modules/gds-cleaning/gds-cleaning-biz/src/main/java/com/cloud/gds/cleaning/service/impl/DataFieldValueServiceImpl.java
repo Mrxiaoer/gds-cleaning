@@ -454,7 +454,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			b.setLabel(map.get(dataSetVo.getProp()).toString());
 			// 查询是否存在子叶
 			List<DataFieldValue> leafs = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
-			b.setIsLeaf(!!leafs.isEmpty());
+			b.setLeaf(!!leafs.isEmpty());
 
 			baseVos.add(b);
 		}

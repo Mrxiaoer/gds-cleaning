@@ -23,5 +23,5 @@ public class CleanItem {
 	/**
 	 * 子节点是否存在(0、有 1、无)
 	 */
-	private Boolean isLeaf;
+	private Boolean leaf;
 }
