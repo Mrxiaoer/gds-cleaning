@@ -11,6 +11,7 @@
 		<result column="dept_id" property="deptId"/>
 		<result column="dept_name" property="deptName"/>
 		<result column="method_name" property="methodName"/>
+		<result column="method_id" property="methodId"/>
 		<result column="create_time" property="createTime"/>
 		<result column="modified_time" property="modifiedTime"/>
 		<result column="create_user" property="createUser"/>

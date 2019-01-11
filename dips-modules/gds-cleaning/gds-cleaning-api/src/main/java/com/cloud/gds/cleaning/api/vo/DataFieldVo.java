@@ -29,6 +29,10 @@ public class DataFieldVo {
 	 */
 	private String methodName;
 	/**
+	 * 来源方式
+	 */
+	private Integer methodId;
+	/**
 	 * 关联规则id
 	 */
 	private Long ruleId;

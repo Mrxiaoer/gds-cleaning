@@ -52,9 +52,9 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
 		}
 		// 查找来源方式
-		String methodName = params.getOrDefault("methodName", "").toString();
-		if (StrUtil.isNotBlank(name)) {
-			e.like("method_name", SpecialStringUtil.escapeExprSpecialWord(methodName));
+		String methodId = params.getOrDefault("methodId", "").toString();
+		if (StrUtil.isNotBlank(methodId)) {
+			e.eq("method_id", SpecialStringUtil.escapeExprSpecialWord(methodId));
 		}
 		e.eq("is_deleted", DataCleanConstant.FALSE);
 		return this.selectPage(p, e);
