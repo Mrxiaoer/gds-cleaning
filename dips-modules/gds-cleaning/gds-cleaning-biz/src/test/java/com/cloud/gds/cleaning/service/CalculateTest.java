@@ -18,7 +18,7 @@ public class CalculateTest {
 	@Test
 	public void PythonTest() {
 		Long time1=System.currentTimeMillis();
-		String jsonFileUrl = "/usr/local/data-cleaning/12.json";
+		String jsonFileUrl = "/usr/local/data-cleaning/1.json";
 		String result = null;
 		String[] arguments = null;
 		//配置python算法程序文件路径，python环境驱动并填入json文件所在路径
