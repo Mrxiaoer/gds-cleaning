@@ -372,6 +372,11 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 				for (String needDeleteField : needDeleteFields) {
 					jsonObj.remove(needDeleteField);
 				}
+				for (String needField:params){
+					if(!jsonObj.containsKey(needField)){
+						jsonObj.append(needField,null);
+					}
+				}
 				//添加id字段
 				jsonObj.putOnce("id", dataFieldValue.getId());
 
