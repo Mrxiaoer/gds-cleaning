@@ -1,3 +1,11 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.cloud.gds.cleaning.api.feign.fallback.DataFieldServiceFallbackImpl,\
-  com.cloud.gds.cleaning.api.feign.factory.DataFieldServiceFallbackFactory
+com.cloud.gds.cleaning.api.feign.factory.CleanPoolServiceFallbackFactory,\
+ com.cloud.gds.cleaning.api.feign.fallback.CleanPoolServiceFallbackImpl,\
+com.cloud.gds.cleaning.api.feign.factory.DataAnalysisServiceFallbackFactory,\
+ com.cloud.gds.cleaning.api.feign.fallback.DataAnalysisServiceFallbackImpl,\
+com.cloud.gds.cleaning.api.feign.factory.DataPoolServiceFallbackFactory,\
+ com.cloud.gds.cleaning.api.feign.fallback.DataPoolServiceFallbackImpl,\
+com.cloud.gds.cleaning.api.feign.factory.DataRuleServiceFallbackFactory,\
+ com.cloud.gds.cleaning.api.feign.fallback.DataRuleServiceFallbackImpl,\
+com.cloud.gds.cleaning.api.feign.factory.ResultSetServiceFallbackFactory,\
+ com.cloud.gds.cleaning.api.feign.fallback.ResultSetServiceFallbackImpl
