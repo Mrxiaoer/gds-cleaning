@@ -77,7 +77,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
 		if (StrUtil.isNotBlank(fieldId)) {
-			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		e.eq("is_deleted", DataCleanConstant.FALSE);
 		Page<DataFieldValue> page1 = this.selectPage(p, e);
@@ -100,7 +100,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
 		if (StrUtil.isNotBlank(fieldId)) {
-			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
@@ -109,7 +109,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
-		// todo 规则未选择不处理 2019-1-10 15:36:32
 		if (resultSet.getProp() == null) {
 			return null;
 		}
@@ -145,7 +144,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
 		if (StrUtil.isNotBlank(fieldId)) {
-			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		e.eq("is_deleted", DataCleanConstant.FALSE);
 		Page<DataFieldValue> page = this.selectPage(p, e);
@@ -163,7 +162,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		List<DataPoolVo> dataPool = DataPoolUtils.listEntity2Vo(page.getRecords());
 		// 组件前端动态数据
-		// todo 规则未选择不处理 2019-1-10 15:36:32
 		if (resultSet.getProp() == null) {
 			return null;
 		}
