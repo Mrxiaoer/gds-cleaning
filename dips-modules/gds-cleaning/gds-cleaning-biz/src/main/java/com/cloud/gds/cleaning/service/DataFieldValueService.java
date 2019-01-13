@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
@@ -177,6 +178,15 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	List<CleanItem> cleaningItem(Long beCleanedId);
 
 	void jsonapi(List<Map<String, Object>> params);
+
+	/**
+	 * json格式的数据导入
+	 *
+	 * @param fieldId
+	 * @param jsonArray
+	 * @return JSONArray 部分导入失败的数据
+	 */
+	JSONArray dataJsonInput(long fieldId, JSONArray jsonArray);
 
 }
 

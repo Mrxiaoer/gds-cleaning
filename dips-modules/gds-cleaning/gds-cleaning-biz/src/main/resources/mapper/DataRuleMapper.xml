@@ -17,5 +17,16 @@
 		<result column="dept_id" property="deptId"/>
 	</resultMap>
 
+	<select id="selectRuleByFieldId" resultType="com.cloud.gds.cleaning.api.entity.DataRule">
+		SELECT
+			A.*
+		FROM
+			(SELECT rule_id
+			 FROM
+				 dataclean_data_field B
+			 WHERE B.id = #{id})TAB1
+				LEFT JOIN dataclean_data_rule A
+				ON A.id = TAB1.rule_id
+	</select>
 
 </mapper>
