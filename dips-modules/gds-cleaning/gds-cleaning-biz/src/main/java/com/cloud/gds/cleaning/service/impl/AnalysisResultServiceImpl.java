@@ -71,11 +71,12 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		//  数据分析接口
 		String result = calculateService.analysisSimilarity(degree, fileUrl);
-		//String result = null;
+//		String result = null;
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 		if ("None".equals(result)) {
 			// 失败
 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
+			dataField.setNeedReanalysis(DataCleanConstant.TRUE);
 			dataFieldService.update(dataField);
 		} else {
 			// 算法分析前先将分析结果表中对应数据删除
@@ -90,12 +91,13 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 			if (flag) {
 				// 成功
-				if (degree.equals(DataCleanConstant.DONE_QUICK_ANALYSIS)){
+				if (degree.equals(DataCleanConstant.QUICK_ANALYSIS)) {
 					dataField.setAnalyseState(DataCleanConstant.DONE_QUICK_ANALYSIS);
-				}else {
+				} else {
 					dataField.setAnalyseState(DataCleanConstant.DONE_DEEP_ANALYSIS);
 				}
 
+				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
 				dataFieldService.update(dataField);
 			} else {
 				// 出错
