@@ -74,13 +74,4 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 * @return
 	 */
 	List<DARVo> centerPointFiltration(DataDto dataDto);
-
-	/**
-	 * 过滤数据
-	 *
-	 * @param dataDto
-	 * @return
-	 */
-	List<DARVo> filterMethod(DataDto dataDto);
-
 }

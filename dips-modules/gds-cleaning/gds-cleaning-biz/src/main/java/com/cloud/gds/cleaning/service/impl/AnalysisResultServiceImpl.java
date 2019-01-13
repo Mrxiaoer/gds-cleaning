@@ -88,15 +88,9 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 				// 算法分析返回结果,存入数据库
 				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
 			}
-
 			if (flag) {
 				// 成功
-				if (degree.equals(DataCleanConstant.QUICK_ANALYSIS)) {
-					dataField.setAnalyseState(DataCleanConstant.DONE_QUICK_ANALYSIS);
-				} else {
-					dataField.setAnalyseState(DataCleanConstant.DONE_DEEP_ANALYSIS);
-				}
-
+				dataField.setAnalyseState(degree.equals(DataCleanConstant.QUICK_ANALYSIS) ? DataCleanConstant.DONE_QUICK_ANALYSIS : DataCleanConstant.DONE_DEEP_ANALYSIS);
 				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
 				dataFieldService.update(dataField);
 			} else {
@@ -235,27 +229,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		}
 		// 根据标准数据过滤计算接口
 		List<DARVo> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
-		return list;
-	}
-
-	@Override
-	public List<DARVo> filterMethod(DataDto dataDto) {
-		// 判断数据是否修改过
-		List<DARVo> list = new ArrayList<>();
-		SortedMap<String, String> one = DataRuleUtils.strToSortedMap(dataDto.getFieldValue().toJSONString());
-		SortedMap<String, String> two = DataRuleUtils.strToSortedMap(dataFieldValueMapper.selectById(dataDto.getId()).getFieldValue());
-		Boolean flag = CommonUtils.checkSortedMap(one, two);
-		// 如果返回正确证明未修改
-		if (flag) {
-			if (dataDto.getSimilarity() == 100) {
-				// 中心数据清洗
-				list = this.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
-			} else {
-				list = this.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
-			}
-		} else {
-			list = this.centerPointFiltration(dataDto);
-		}
 		return list;
 	}
 

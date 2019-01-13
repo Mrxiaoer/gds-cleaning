@@ -1,16 +1,15 @@
 package com.cloud.gds.cleaning.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.BaseVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
-import hammerlab.iterator.map;
 import org.springframework.beans.BeanUtils;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -55,9 +54,10 @@ public class DataRuleUtils {
 			BeanUtils.copyProperties(dataRule, vo);
 			if (dataRule.getParams() != null) {
 				vo.setDetail(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
+				DecimalFormat df = new DecimalFormat(".00");
 				for (DataSetVo dataSetVo : vo.getDetail()) {
 					if (dataSetVo != null) {
-						dataSetVo.setWeight(dataSetVo.getWeight() * 100);
+						dataSetVo.setWeight(Float.parseFloat(df.format(dataSetVo.getWeight() * 100)));
 					}
 				}
 			}
