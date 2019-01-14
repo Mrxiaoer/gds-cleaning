@@ -6,7 +6,7 @@ jasypt:
 spring:
   redis:
     password:
-    host: 127.0.0.1
+    host: 106.14.176.127
   # Jackson配置
   jackson:
     time-zone: GMT+8
@@ -113,4 +113,3 @@ logging:
   level:
     root: warn
     com.cloud.dips: info
-      

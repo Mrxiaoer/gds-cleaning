@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -21,6 +22,7 @@ import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
 import com.cloud.gds.cleaning.api.vo.*;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
+import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.*;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import org.springframework.beans.BeanUtils;
@@ -30,10 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,23 +46,24 @@ import java.util.stream.Collectors;
 public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper, DataFieldValue> implements
 	DataFieldValueService {
 
+	private final DataRuleMapper dataRuleMapper;
 	private final DataFieldValueMapper dataFieldValueMapper;
 	private final CalculateService calculateService;
 	private final DataFieldService dataFieldService;
 	private final DataRuleService dataRuleService;
 	@Value("${file-save.path}")
 	String fileSavePath;
-
 	@Autowired
 	AnalysisResultService analysisResultService;
 
 	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-									 DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper) {
+									 DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper) {
 		this.calculateService = calculateService;
 		this.dataFieldService = dataFieldService;
 		this.dataRuleService = dataRuleService;
 		this.dataFieldValueMapper = dataFieldValueMapper;
+		this.dataRuleMapper = dataRuleMapper;
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
 		if (StrUtil.isNotBlank(fieldId)) {
-			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		e.eq("is_deleted", DataCleanConstant.FALSE);
 		Page<DataFieldValue> page1 = this.selectPage(p, e);
@@ -100,7 +100,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
 		if (StrUtil.isNotBlank(fieldId)) {
-			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
@@ -109,7 +109,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
-		// todo 规则未选择不处理 2019-1-10 15:36:32
 		if (resultSet.getProp() == null) {
 			return null;
 		}
@@ -145,7 +144,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
 		String fieldId = params.getOrDefault("fieldId", "").toString();
 		if (StrUtil.isNotBlank(fieldId)) {
-			e.like("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
 		}
 		e.eq("is_deleted", DataCleanConstant.FALSE);
 		Page<DataFieldValue> page = this.selectPage(p, e);
@@ -163,7 +162,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 		List<DataPoolVo> dataPool = DataPoolUtils.listEntity2Vo(page.getRecords());
 		// 组件前端动态数据
-		// todo 规则未选择不处理 2019-1-10 15:36:32
 		if (resultSet.getProp() == null) {
 			return null;
 		}
@@ -192,7 +190,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		if (list != null && list.size() != 0) {
 			for (CenterData centerData : list) {
 				// field_value,字符串转map取要的数据
-				com.alibaba.fastjson.JSONObject myJson = com.alibaba.fastjson.JSONObject.parseObject(centerData.getFieldValue());
+				com.alibaba.fastjson.JSONObject myJson = com.alibaba.fastjson.JSONObject
+					.parseObject(centerData.getFieldValue());
 				Map<String, Object> map = (Map<String, Object>) myJson;
 				centerData.setFieldValue(map.get(dataSetVo.getProp()).toString());
 			}
@@ -231,7 +230,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Override
 	public List<DataFieldValue> selectByfieldId(Long fieldId) {
-		return this.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
+		return this.selectList(
+			new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
 	}
 
 	@Override
@@ -244,7 +244,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setFieldId(q.getFieldId());
 		dataFieldValue.setFieldValue(JSON.toJSONString(map));
 		dataFieldValue.setCreateTime(LocalDateTime.now());
-		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		return this.insert(dataFieldValue);
 	}
@@ -253,7 +252,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public Boolean deleteById(Long id) {
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setId(id);
-		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
@@ -266,7 +264,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public Boolean deleteByIds(Set<Long> ids) {
 
 		DataFieldValue dataFieldValue = new DataFieldValue();
-		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
@@ -280,14 +277,21 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataFieldValue dataFieldValue = new DataFieldValue();
 		dataFieldValue.setFieldId(fieldId);
 		dataFieldValue.setFieldValue(JSON.toJSONString(params));
-		assert SecurityUtils.getUser() != null;
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());
+		// 添加数据需将清洗池中的分析状态更换成最原先的状态
+		DataField dataField = dataFieldService.selectById(fieldId);
+		if (!DataCleanConstant.FALSE.equals(dataField.getAnalyseState())) {
+			DataField q = new DataField();
+			q.setId(fieldId);
+			q.setAnalyseState(DataCleanConstant.FALSE);
+			dataFieldService.update(q);
+		}
 		return this.insert(dataFieldValue);
 	}
 
 	@Override
-//	@Transactional(rollbackFor = Exception.class)
+	//	@Transactional(rollbackFor = Exception.class)
 	public void saveAll(Long fieldId, List<Map<String, Object>> fieldValues) {
 		// 循环插入数据库相关信息
 		List<DataFieldValue> list = new ArrayList<>();
@@ -299,10 +303,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setFieldId(fieldId);
 			dataFieldValue.setCreateTime(localDateTime);
 			dataFieldValue.setFieldValue(JSON.toJSONString(map));
-			assert SecurityUtils.getUser() != null;
 			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			// 添加数据
-//			this.insert(dataFieldValue);
+			//			this.insert(dataFieldValue);
 			list.add(dataFieldValue);
 		}
 		this.insertBatch(list);
@@ -406,7 +409,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setBeCleanedId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			// 由于数据被清洗了,对数据进行删除状态的更新
 			dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
-			assert SecurityUtils.getUser() != null;
 			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
 			list.add(dataFieldValue);
@@ -434,7 +436,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Override
 	public Boolean clearBuffer(Long fieldId) {
 		// 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓冲清除->清缓冲
-		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.TRUE));
+		return this.delete(
+			new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.TRUE));
 	}
 
 	@Override
@@ -445,7 +448,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataSetVo dataSetVo = dataRuleService.gainUpperPower(ruleId);
 
 		// 查询被清洗掉的数据
-		List<DataFieldValue> baseDate = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", beCleanedId));
+		List<DataFieldValue> baseDate = dataFieldValueMapper
+			.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", beCleanedId));
 
 		// po 转vo主要是把string字段转成json字段
 		List<DataPoolVo> dataPools = DataPoolUtils.listEntity2Vo(baseDate);
@@ -459,7 +463,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			b.setLabel(map.get(dataSetVo.getProp()).toString());
 			// 查询是否存在子叶
 			List<DataFieldValue> leafs = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
-			b.setLeaf(!!leafs.isEmpty());
+			b.setLeaf(leafs.size() <= 0);
 
 			baseVos.add(b);
 		}
@@ -505,13 +509,78 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	public void jsonapi(List<Map<String, Object>> params) {
-		for (Map<String, Object> param : params) {
-			String string = JSON.toJSON(param).toString();
-			System.out.println(string);
+	public JSONArray dataJsonInput(long fieldId, JSONArray jsonArray) {
+
+		//获取规则
+		String jsonParams = dataRuleMapper.selectRuleByFieldId(fieldId).getParams();
+		JSONArray paramArray = JSONArray.parseArray(jsonParams);
+
+		List<DataSetVo> dl = paramArray.toJavaList(DataSetVo.class);
+		//删除与规则字段不匹配的数据
+		Iterator<Object> iterator = jsonArray.iterator();
+		JSONArray array = new JSONArray();
+		while (iterator.hasNext()) {
+			Object jsonData = iterator.next();
+			if (!checkJsonParams(dl, JSONUtil.parseObj(jsonData))) {
+				array.add(jsonData);
+				iterator.remove();
+			}
 		}
+		//存储正确数据
+		if (!saveAllJson(fieldId, jsonArray)) {
+			throw new RuntimeException("数据保存失败！");
+		}
+
+		//返回错误数据
+		return array;
 	}
 
+	/**
+	 * 检查json数据，与规则字段匹配则返回true
+	 *
+	 * @param dl       规则字段列表
+	 * @param jsonData json数据
+	 * @return
+	 */
+	private Boolean checkJsonParams(List<DataSetVo> dl, JSONObject jsonData) {
+
+		boolean flag = true;
+		List<String> dataKeys = new ArrayList<>();
+		//判断是否包含所有规则中的字段
+		for (DataSetVo dsv : dl) {
+			if (!jsonData.containsKey(dsv.getProp())) {
+				flag = false;
+			}
+			dataKeys.add(dsv.getProp());
+		}
+		//判断是否还包含包含规则以外的字段
+		for (String key : jsonData.keySet()) {
+			if (!dataKeys.contains(key)) {
+				flag = false;
+			}
+		}
+
+		return flag;
+	}
+
+	private boolean saveAllJson(long fieldId, JSONArray jsonArray) {
+		// 循环插入数据库相关信息
+		List<DataFieldValue> list = new ArrayList<>();
+		LocalDateTime nowTime = LocalDateTime.now();
+		for (Object obj : jsonArray) {
+			DataFieldValue dataFieldValue = new DataFieldValue();
+			dataFieldValue.setFieldId(fieldId);
+			dataFieldValue.setCreateTime(nowTime);
+			dataFieldValue.setFieldValue(JSON.toJSONString(obj));
+			if (SecurityUtils.getUser() != null) {
+				dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
+			} else {
+				dataFieldValue.setCreateUser(0);
+			}
+			list.add(dataFieldValue);
+		}
+		return this.insertBatch(list);
+	}
 
 	/**
 	 * 调用清洗相似度计算

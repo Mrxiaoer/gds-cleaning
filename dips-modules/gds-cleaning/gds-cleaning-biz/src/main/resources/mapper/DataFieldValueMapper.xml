@@ -68,7 +68,7 @@
 			) tab1
 		LEFT JOIN dataclean_data_field_value tab2 ON tab1.base_id = tab2.id
 		WHERE
-			tab2.be_cleaned_id = 0
+			tab2.is_deleted = 0
 		ORDER BY
 			count DESC
 	</select>

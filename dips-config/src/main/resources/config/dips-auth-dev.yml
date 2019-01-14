@@ -4,8 +4,8 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
     username: root
-    password: 12345678
+    password: gov@20130528
     #本地数据库
-    url: jdbc:mysql://127.0.0.1:3306/dips_cloud_core?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    #url: jdbc:mysql://127.0.0.1:3306/dips_cloud_core?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
     #测试数据库
-    #url: jdbc:mysql://192.168.12.199:12315/dips_cloud_core?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://115.233.227.46:13308/dips_cloud_core?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false

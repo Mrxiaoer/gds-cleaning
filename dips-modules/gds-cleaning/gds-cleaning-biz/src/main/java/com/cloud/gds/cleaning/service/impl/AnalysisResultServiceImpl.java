@@ -71,11 +71,12 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		//  数据分析接口
 		String result = calculateService.analysisSimilarity(degree, fileUrl);
-		//String result = null;
+//		String result = null;
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 		if ("None".equals(result)) {
 			// 失败
 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
+			dataField.setNeedReanalysis(DataCleanConstant.TRUE);
 			dataFieldService.update(dataField);
 		} else {
 			// 算法分析前先将分析结果表中对应数据删除
@@ -87,15 +88,10 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 				// 算法分析返回结果,存入数据库
 				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
 			}
-
 			if (flag) {
 				// 成功
-				if (degree.equals(DataCleanConstant.DONE_QUICK_ANALYSIS)){
-					dataField.setAnalyseState(DataCleanConstant.DONE_QUICK_ANALYSIS);
-				}else {
-					dataField.setAnalyseState(DataCleanConstant.DONE_DEEP_ANALYSIS);
-				}
-
+				dataField.setAnalyseState(degree.equals(DataCleanConstant.QUICK_ANALYSIS) ? DataCleanConstant.DONE_QUICK_ANALYSIS : DataCleanConstant.DONE_DEEP_ANALYSIS);
+				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
 				dataFieldService.update(dataField);
 			} else {
 				// 出错
@@ -149,13 +145,13 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	}
 
 	@Override
-	public List<DARVo> centerFiltration(Long centerId, Float screenSize) {
+	public Map<String,Object> centerFiltration(Long centerId, Float screenSize) {
 		// 根据中心id与滤网大小查询滤出来的数据
 		List<DataPoolAnalysis> results = dataFieldValueMapper.centerFiltration(centerId, screenSize / 100);
 
 		List<DARVo> darVos = new ArrayList<>();
 		if (results.size() == DataCleanConstant.FALSE) {
-			return darVos;
+			return null;
 		}
 		// DataPoolAnalysis 转 DARVo
 		for (DataPoolAnalysis result : results) {
@@ -166,11 +162,14 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			darVo.setSimilarity(darVo.getSimilarity() * 100);
 			darVos.add(darVo);
 		}
-		return darVos;
+		Map<String,Object> map = new HashMap<>();
+		map.put("centerId", centerId);
+		map.put("list", darVos);
+		return map;
 	}
 
 	@Override
-	public List<DARVo> nonCentralFiltration(Long nonCentral, Float screenSize) {
+	public Map<String,Object> nonCentralFiltration(Long nonCentral, Float screenSize) {
 		// 获取当前数据主表是那一个
 		DataFieldValue dataFieldValue = dataFieldValueService.selectById(nonCentral);
 
@@ -196,13 +195,12 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		}
 
 		// 取数据滤网大的数据
-		List<DARVo> list = this.centerFiltration(nonCentral, screenSize);
-
+		Map<String,Object> list = this.centerFiltration(nonCentral, screenSize);
 		return list;
 	}
 
 	@Override
-	public List<DARVo> centerPointFiltration(DataDto dataDto) {
+	public Map<String,Object> centerPointFiltration(DataDto dataDto) {
 		// 插入新数据
 		DataFieldValue value = new DataFieldValue();
 		value.setFieldId(dataDto.getFieldId());
@@ -226,34 +224,13 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			dataFieldService.update(dataField);
 		} else {
 			// 算法分析前先将分析结果表中对应数据删除
-			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", dataDto.getFieldId()));
+			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", dataDto.getFieldId()).eq("is_manual", DataCleanConstant.FALSE));
 
 			// 算法分析返回结果,存入数据库
 			boolean flag = this.jsonStrSave(dataDto.getFieldId(), result, DataCleanConstant.FALSE);
 		}
 		// 根据标准数据过滤计算接口
-		List<DARVo> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
-		return list;
-	}
-
-	@Override
-	public List<DARVo> filterMethod(DataDto dataDto) {
-		// 判断数据是否修改过
-		List<DARVo> list = new ArrayList<>();
-		SortedMap<String, String> one = DataRuleUtils.strToSortedMap(dataDto.getFieldValue().toJSONString());
-		SortedMap<String, String> two = DataRuleUtils.strToSortedMap(dataFieldValueMapper.selectById(dataDto.getId()).getFieldValue());
-		Boolean flag = CommonUtils.checkSortedMap(one, two);
-		// 如果返回正确证明未修改
-		if (flag) {
-			if (dataDto.getSimilarity() == 100) {
-				// 中心数据清洗
-				list = this.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
-			} else {
-				list = this.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
-			}
-		} else {
-			list = this.centerPointFiltration(dataDto);
-		}
+		Map<String,Object> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
 		return list;
 	}
 
