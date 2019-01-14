@@ -377,7 +377,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 				}
 				for (String needField : params) {
 					if (!jsonObj.containsKey(needField)) {
-						jsonObj.put(needField, null);
+						jsonObj.put(needField, "");
 					}
 				}
 				//添加id字段
