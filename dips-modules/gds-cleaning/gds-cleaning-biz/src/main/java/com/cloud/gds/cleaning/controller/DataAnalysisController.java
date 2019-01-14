@@ -153,7 +153,7 @@ public class DataAnalysisController {
 	 */
 	@PostMapping("/filter_method")
 	@ApiOperation(value = "数据过滤", notes = "此接口有问题")
-	public List<DARVo> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
+	public Map<String,Object> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
 		if ("center".equals(type)) {
 			System.out.println("请求中心数据接口");
 			return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());

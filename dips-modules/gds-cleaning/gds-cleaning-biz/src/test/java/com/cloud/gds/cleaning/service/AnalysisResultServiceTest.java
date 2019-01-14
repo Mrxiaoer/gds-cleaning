@@ -75,7 +75,7 @@ public class AnalysisResultServiceTest {
 	public void centerFiltration() {
 		Long centerId = 11L;
 		Float screenSize = 0.7f;
-		List<DARVo> list = service.centerFiltration(centerId, screenSize);
+		Map<String,Object> list = service.centerFiltration(centerId, screenSize);
 		System.out.println(list);
 
 	}

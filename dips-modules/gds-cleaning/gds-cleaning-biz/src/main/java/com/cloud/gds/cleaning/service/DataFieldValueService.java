@@ -177,8 +177,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	List<CleanItem> cleaningItem(Long beCleanedId);
 
-	void jsonapi(List<Map<String, Object>> params);
-
 	/**
 	 * json格式的数据导入
 	 *

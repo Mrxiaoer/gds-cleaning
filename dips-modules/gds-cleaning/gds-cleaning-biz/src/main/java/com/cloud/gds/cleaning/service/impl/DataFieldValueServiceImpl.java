@@ -20,33 +20,20 @@ import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
-import com.cloud.gds.cleaning.api.vo.BaseVo;
-import com.cloud.gds.cleaning.api.vo.CenterData;
-import com.cloud.gds.cleaning.api.vo.CleanItem;
-import com.cloud.gds.cleaning.api.vo.DARVo;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
-import com.cloud.gds.cleaning.api.vo.DataSetVo;
+import com.cloud.gds.cleaning.api.vo.*;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
-import com.cloud.gds.cleaning.service.AnalysisResultService;
-import com.cloud.gds.cleaning.service.CalculateService;
-import com.cloud.gds.cleaning.service.DataFieldService;
-import com.cloud.gds.cleaning.service.DataFieldValueService;
-import com.cloud.gds.cleaning.service.DataRuleService;
+import com.cloud.gds.cleaning.service.*;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据池接口实现类
@@ -71,7 +58,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-		DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper) {
+									 DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper) {
 		this.calculateService = calculateService;
 		this.dataFieldService = dataFieldService;
 		this.dataRuleService = dataRuleService;
@@ -292,6 +279,14 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setFieldValue(JSON.toJSONString(params));
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());
+		// 添加数据需将清洗池中的分析状态更换成最原先的状态
+		DataField dataField = dataFieldService.selectById(fieldId);
+		if (!DataCleanConstant.FALSE.equals(dataField.getAnalyseState())) {
+			DataField q = new DataField();
+			q.setId(fieldId);
+			q.setAnalyseState(DataCleanConstant.FALSE);
+			dataFieldService.update(q);
+		}
 		return this.insert(dataFieldValue);
 	}
 
@@ -467,9 +462,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			Map<String, Object> map = result.getFieldValue();
 			b.setLabel(map.get(dataSetVo.getProp()).toString());
 			// 查询是否存在子叶
-			List<DataFieldValue> leafs = dataFieldValueMapper
-				.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
-			b.setLeaf(!!leafs.isEmpty());
+			List<DataFieldValue> leafs = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
+			b.setLeaf(leafs.size() <= 0);
 
 			baseVos.add(b);
 		}
@@ -512,14 +506,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		baseMapper.update(dataFieldValue, wrapper);
 
 		return needAnalysisList;
-	}
-
-	@Override
-	public void jsonapi(List<Map<String, Object>> params) {
-		for (Map<String, Object> param : params) {
-			String string = JSON.toJSON(param).toString();
-			System.out.println(string);
-		}
 	}
 
 	@Override

@@ -3,9 +3,7 @@ package com.cloud.gds.cleaning.service;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.dto.DataDto;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
-import com.cloud.gds.cleaning.api.vo.DARVo;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +54,7 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 * @param screenSize 滤网大小
 	 * @return
 	 */
-	List<DARVo> centerFiltration(Long centerId, Float screenSize);
+	Map<String, Object> centerFiltration(Long centerId, Float screenSize);
 
 	/**
 	 * 非中心数据过滤
@@ -65,7 +63,7 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 * @param screenSize
 	 * @return
 	 */
-	List<DARVo> nonCentralFiltration(Long nonCentral, Float screenSize);
+	Map<String, Object> nonCentralFiltration(Long nonCentral, Float screenSize);
 
 	/**
 	 * 新节点分析
@@ -73,5 +71,5 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 * @param dataDto
 	 * @return
 	 */
-	List<DARVo> centerPointFiltration(DataDto dataDto);
+	Map<String, Object> centerPointFiltration(DataDto dataDto);
 }
