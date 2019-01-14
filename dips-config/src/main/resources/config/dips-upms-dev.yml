@@ -13,6 +13,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: gov@20130528
+#    password: 12345678
     #本地数据库
     #url: jdbc:mysql://127.0.0.1:3306/dips_cloud_core?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
     #测试数据库
