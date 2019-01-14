@@ -27,10 +27,6 @@ public class DataFieldVo {
 	/**
 	 * 来源方式
 	 */
-	private String methodName;
-	/**
-	 * 来源方式
-	 */
 	private Integer methodId;
 	/**
 	 * 关联规则id

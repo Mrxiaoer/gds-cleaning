@@ -43,10 +43,6 @@ public class DataField extends Model<DataField> {
 	 */
 	private String deptName;
 	/**
-	 * 来源方式 todo
-	 */
-	private String methodName;
-	/**
 	 * 来源方式
 	 */
 	private Integer methodId;

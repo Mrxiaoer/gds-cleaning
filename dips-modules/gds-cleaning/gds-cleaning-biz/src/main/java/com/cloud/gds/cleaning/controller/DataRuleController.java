@@ -49,8 +49,8 @@ public class DataRuleController {
 	 */
 	@GetMapping("/{id}")
 	@ApiOperation(value = "查看单一数据", notes = "根据id查询规则相关信息")
-	public R info(@PathVariable("id") Long id) {
-		return new R<>(dataRuleService.queryById(id));
+	public DataRuleVo info(@PathVariable("id") Long id) {
+		return dataRuleService.queryById(id);
 	}
 
 	/**
