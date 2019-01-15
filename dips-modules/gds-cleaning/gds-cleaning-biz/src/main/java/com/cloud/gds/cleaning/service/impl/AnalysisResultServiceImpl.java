@@ -187,7 +187,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		// python返回结果判断是否有值,是否有集类
 		if (!"None".equals(resultJosn)) {
 			// 结果数据不为空插入数据库中
-			if (StrUtil.isNotBlank(resultJosn)) {
+			if (StrUtil.isNotBlank(resultJosn) && "[]".equals(resultJosn)) {
 				//  删除旧中心值
 				this.delete(new EntityWrapper<AnalysisResult>().eq("base_id", nonCentral));
 				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.TRUE);
@@ -227,7 +227,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", dataDto.getFieldId()).eq("is_manual", DataCleanConstant.FALSE));
 
 			// 算法分析返回结果,存入数据库
-			//todo
 			boolean flag = true;
 			if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
 				// 算法分析返回结果,存入数据库
@@ -250,7 +249,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	}
 
 	private Boolean jsonStrSave(Long fieldId, String result, Integer isManual) {
-
 		// 算法分析返回结果->entity
 		List<ResultJsonVo> list = JSON.parseArray(result, ResultJsonVo.class);
 
