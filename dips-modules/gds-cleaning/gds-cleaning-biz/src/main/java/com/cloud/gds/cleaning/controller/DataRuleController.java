@@ -109,11 +109,15 @@ public class DataRuleController {
 	public R delete(@PathVariable("id") Long id) {
 		// 判断该规则其他地方是否使用过
 		if (dataFieldService.selectByRuleId(id).size() > 0) {
-			return new R(new RuntimeException("规则正在被使用，请检查后重试!"));
+			R r =new R();
+			r.setData(false);
+			r.setMsg("规则正在被使用，请检查后重试!");
+			return r;
 		} else if (dataRuleService.deleteById(id)) {
 			return new R<>(true);
 		} else {
-			return new R(new RuntimeException("删除失败!"));
+
+			return new R<>(new RuntimeException("删除失败!"));
 		}
 	}
 
@@ -128,7 +132,10 @@ public class DataRuleController {
 	public R deleteT(@RequestBody Set<Long> ids) {
 		// 判断规则中是否有一条被使用过
 		if (dataFieldService.selectByRuleIds(ids).size() > 0) {
-			return new R(new RuntimeException("规则正在被使用，请检查后重试!"));
+			R r =new R();
+			r.setData(false);
+			r.setMsg("规则正在被使用，请检查后重试!");
+			return r;
 		} else {
 			return new R<>(dataRuleService.deleteByIds(ids));
 		}

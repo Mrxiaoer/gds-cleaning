@@ -84,7 +84,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 			// 算法分析未集类,不进行处理
 			boolean flag = true;
-			if (StrUtil.isNotBlank(result)) {
+			if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
 				// 算法分析返回结果,存入数据库
 				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
 			}
@@ -145,7 +145,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	}
 
 	@Override
-	public Map<String,Object> centerFiltration(Long centerId, Float screenSize) {
+	public Map<String, Object> centerFiltration(Long centerId, Float screenSize) {
 		// 根据中心id与滤网大小查询滤出来的数据
 		List<DataPoolAnalysis> results = dataFieldValueMapper.centerFiltration(centerId, screenSize / 100);
 
@@ -162,14 +162,14 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			darVo.setSimilarity(darVo.getSimilarity() * 100);
 			darVos.add(darVo);
 		}
-		Map<String,Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("centerId", centerId);
 		map.put("list", darVos);
 		return map;
 	}
 
 	@Override
-	public Map<String,Object> nonCentralFiltration(Long nonCentral, Float screenSize) {
+	public Map<String, Object> nonCentralFiltration(Long nonCentral, Float screenSize) {
 		// 获取当前数据主表是那一个
 		DataFieldValue dataFieldValue = dataFieldValueService.selectById(nonCentral);
 
@@ -195,12 +195,12 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		}
 
 		// 取数据滤网大的数据
-		Map<String,Object> list = this.centerFiltration(nonCentral, screenSize);
+		Map<String, Object> list = this.centerFiltration(nonCentral, screenSize);
 		return list;
 	}
 
 	@Override
-	public Map<String,Object> centerPointFiltration(DataDto dataDto) {
+	public Map<String, Object> centerPointFiltration(DataDto dataDto) {
 		// 插入新数据
 		DataFieldValue value = new DataFieldValue();
 		value.setFieldId(dataDto.getFieldId());
@@ -227,10 +227,25 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", dataDto.getFieldId()).eq("is_manual", DataCleanConstant.FALSE));
 
 			// 算法分析返回结果,存入数据库
-			boolean flag = this.jsonStrSave(dataDto.getFieldId(), result, DataCleanConstant.FALSE);
+			//todo
+			boolean flag = true;
+			if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
+				// 算法分析返回结果,存入数据库
+				flag = this.jsonStrSave(dataDto.getFieldId(), result, DataCleanConstant.FALSE);
+			}
+			if (flag) {
+				// 成功
+				dataField.setAnalyseState(DataCleanConstant.DONE_DEEP_ANALYSIS);
+				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
+				dataFieldService.update(dataField);
+			} else {
+				// 出错
+				dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
+				dataFieldService.update(dataField);
+			}
 		}
 		// 根据标准数据过滤计算接口
-		Map<String,Object> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
+		Map<String, Object> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
 		return list;
 	}
 
