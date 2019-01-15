@@ -21,12 +21,11 @@ import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.CalculateService;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
-import com.cloud.gds.cleaning.utils.CommonUtils;
-import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -159,7 +158,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			BeanUtils.copyProperties(result, darVo);
 			darVo.setFieldValue(com.alibaba.fastjson.JSONObject.parseObject(result.getFieldValue()));
 			// 百分比转换
-			darVo.setSimilarity(darVo.getSimilarity() * 100);
+			DecimalFormat df = new DecimalFormat(".00");
+			darVo.setSimilarity(Double.parseDouble(df.format(darVo.getSimilarity() * 100)));
 			darVos.add(darVo);
 		}
 		Map<String, Object> map = new HashMap<>();

@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -222,7 +223,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			BeanUtils.copyProperties(result, darVo);
 			darVo.setFieldValue(com.alibaba.fastjson.JSONObject.parseObject(result.getFieldValue()));
 			// 百分比转换
-			darVo.setSimilarity(darVo.getSimilarity() * 100);
+			DecimalFormat df = new DecimalFormat(".00");
+			darVo.setSimilarity(Double.parseDouble(df.format(darVo.getSimilarity() * 100)));
 			darVos.add(darVo);
 		}
 		return darVos;
