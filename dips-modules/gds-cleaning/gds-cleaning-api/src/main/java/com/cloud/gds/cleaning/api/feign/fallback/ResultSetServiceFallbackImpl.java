@@ -24,31 +24,37 @@ public class ResultSetServiceFallbackImpl implements ResultSetService {
 
 	@Override
 	public R page(Map<String, Object> params) {
+		log.error("feign 分页数据失败", cause);
 		return null;
 	}
 
 	@Override
 	public R contrastBefore(Map<String, Object> params) {
+		log.error("feign 获取详情前数据失败", cause);
 		return null;
 	}
 
 	@Override
 	public R contrastAfter(Map<String, Object> params) {
+		log.error("feign 获取详情后数据失败", cause);
 		return null;
 	}
 
 	@Override
 	public List<CleanItem> cleaningItem(Long id) {
+		log.error("feign 获取清洗项失败", cause);
 		return null;
 	}
 
 	@Override
 	public R clear(Long fieldId) {
+		log.error("feign 清空数据失败", cause);
 		return null;
 	}
 
 	@Override
 	public R clearBuffer(Long fieldId) {
+		log.error("feign 清缓存失败", cause);
 		return null;
 	}
 }

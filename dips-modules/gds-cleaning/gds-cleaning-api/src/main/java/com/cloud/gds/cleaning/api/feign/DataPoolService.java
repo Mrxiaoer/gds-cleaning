@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.api.feign;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.dto.InputJsonList;
@@ -84,5 +85,14 @@ public interface DataPoolService {
 	 */
 	@PostMapping("/data_pool/api")
 	public R jsonapi(Long id, @RequestBody InputJsonList inputJsonList);
+
+	/**
+	 * json导入
+	 *
+	 * @param id
+	 * @param jsonArray
+	 */
+	@PostMapping("/saveJson")
+	public void saveJsonData(long id, @RequestBody JSONArray jsonArray);
 
 }

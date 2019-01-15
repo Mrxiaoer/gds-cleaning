@@ -26,36 +26,44 @@ public class DataAnalysisServiceFallbackImpl implements DataAnalysisService {
 
 	@Override
 	public R setThreshold(Map<String, Object> params) {
+		log.error("feign 分析出错", cause);
 		return null;
 	}
 
 	@Override
 	public List<CenterData> gainCleanData(Long fieldId) {
+		log.error("feign 中心数据查询失败", cause);
 		return null;
 	}
 
 	@Override
 	public R gainDetails(Long id) {
+		log.error("feign 获取数据明细失败", cause);
 		return null;
 	}
 
 	@Override
 	public List<DARVo> centerToSatellite(Long id) {
+		log.error("feign 获取卫星数据信息失败", cause);
 		return null;
 	}
 
 	@Override
 	public R cleanDate(List<Map<String, Object>> params) {
+		log.error("feign 清洗数据失败", cause);
 		return null;
 	}
 
 	@Override
 	public R automaticCleaning(Long fieldId) {
+		log.error("feign 自动分析失败", cause);
 		return null;
 	}
 
 	@Override
-	public List<DARVo> filterMethod(String type, DataDto dataDto) {
+	public Map<String, Object> filterMethod(String type, DataDto dataDto) {
+		log.error("feign 数据过滤接口获取失败", cause);
 		return null;
 	}
+
 }

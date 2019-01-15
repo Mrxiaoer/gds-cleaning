@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.api.feign.fallback;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.dto.InputJsonList;
@@ -63,5 +64,10 @@ public class DataPoolServiceFallbackImpl implements DataPoolService {
 	public R jsonapi(Long id, InputJsonList inputJsonList) {
 		log.error("feign api导入失败", cause);
 		return null;
+	}
+
+	@Override
+	public void saveJsonData(long id, JSONArray jsonArray) {
+		log.error("feign json导入失败", cause);
 	}
 }

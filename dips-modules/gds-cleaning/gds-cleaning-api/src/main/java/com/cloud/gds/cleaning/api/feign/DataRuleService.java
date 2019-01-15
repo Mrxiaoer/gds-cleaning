@@ -32,7 +32,7 @@ public interface DataRuleService {
 	 * @return R
 	 */
 	@GetMapping("/data_rule/{id}")
-	public R info(@PathVariable("id") Long id);
+	public DataRuleVo info(@PathVariable("id") Long id);
 
 	/**
 	 * 查询部门规则

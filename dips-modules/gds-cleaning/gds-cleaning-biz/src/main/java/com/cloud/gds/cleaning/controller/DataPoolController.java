@@ -6,16 +6,11 @@ import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.dto.InputJsonList;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 清洗数据池
@@ -117,13 +112,16 @@ public class DataPoolController {
 	 */
 	@PostMapping("/api")
 	public R jsonapi(Long id, @RequestBody InputJsonList inputJsonList) {
-
-		//		inputJsonList.getRECORDS()
-		// todo 2019-1-10 09:53:15
 		dataFieldValueService.saveAll(id, inputJsonList.getRecords());
 		return new R();
 	}
 
+	/**
+	 * json导入
+	 *
+	 * @param id
+	 * @param jsonArray
+	 */
 	@PostMapping("/saveJson")
 	@ApiOperation(value = "json导入", notes = "json导入")
 	public void saveJsonData(long id, @RequestBody JSONArray jsonArray) {

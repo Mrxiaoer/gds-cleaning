@@ -66,7 +66,7 @@ public interface ResultSetService {
 	public R clear(@PathVariable("fieldId") Long fieldId);
 
 	/**
-	 * 清缓存
+	 * 清理缓存
 	 * 由于结果集中有对比清洗前数据,如果清洗后数据与新一套数据再次进行清洗因此需要对已删除的数据进行缓存清除
 	 *
 	 * @param fieldId
