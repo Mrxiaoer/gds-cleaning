@@ -6,7 +6,7 @@ jasypt:
 spring:
   redis:
     password:
-    host: 106.14.176.127
+    host: dips-redis
   # Jackson配置
   jackson:
     time-zone: GMT+8
@@ -91,19 +91,20 @@ swagger:
     name: 'BigPan'
     email: '675556650@qq.com'
     url: 'http://ioa.govmade.com'
-  authorization:
+
+ authorization:
     name: 'DIPS OAuth'
     auth-regex: '^.*$'
     authorization-scope-list:
       - scope: 'server'
         description: 'server all'
     token-url-list:
-      - ${security.auth.server}/token
+      - http://115.233.227.46:10029/auth/oauth/token
 
 ## spring security 配置
 security:
   auth:
-    server: http://127.0.0.1:9999/auth/oauth
+    server: http://dips-gateway:9999/auth/oauth
   oauth2:
     resource:
       token-info-uri: ${security.auth.server}/check_token
