@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 @Service
 public class CalculateServiceImpl implements CalculateService {
 
-
 	/**
 	 * 数据分析聚类及数据相似度计算接口调用
 	 */

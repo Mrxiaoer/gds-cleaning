@@ -22,15 +22,11 @@ import java.util.Set;
 @RequestMapping("/clean_pool")
 public class CleanPoolController {
 
-	private final DataFieldService dataFieldService;
-
-	private final DataRuleService dataRuleService;
-
 	@Autowired
-	public CleanPoolController(DataFieldService dataFieldService, DataRuleService dataRuleService) {
-		this.dataFieldService = dataFieldService;
-		this.dataRuleService = dataRuleService;
-	}
+	private DataFieldService dataFieldService;
+	@Autowired
+	private DataRuleService dataRuleService;
+
 
 	/**
 	 * 分页查询

@@ -92,7 +92,7 @@ swagger:
     email: '675556650@qq.com'
     url: 'http://ioa.govmade.com'
 
- authorization:
+  authorization:
     name: 'DIPS OAuth'
     auth-regex: '^.*$'
     authorization-scope-list:
