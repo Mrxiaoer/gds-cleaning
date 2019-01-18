@@ -511,10 +511,16 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	public JSONArray dataJsonInput(long fieldId, JSONArray jsonArray) {
-
+	public JSONArray dataJsonInput(long fieldId, JSONArray jsonArray) throws NullPointerException {
+		Long startTime = System.currentTimeMillis();
 		//获取规则
-		String jsonParams = dataRuleMapper.selectRuleByFieldId(fieldId).getParams();
+		String jsonParams;
+		try {
+			jsonParams = dataRuleMapper.selectRuleByFieldId(fieldId).getParams();
+		} catch (NullPointerException npe) {
+			throw new NullPointerException("未找到对应规则！");
+		}
+
 		JSONArray paramArray = JSONArray.parseArray(jsonParams);
 
 		List<DataSetVo> dl = paramArray.toJavaList(DataSetVo.class);
@@ -528,11 +534,14 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 				iterator.remove();
 			}
 		}
+		Long beforeSave = System.currentTimeMillis();
 		//存储正确数据
 		if (!saveAllJson(fieldId, jsonArray)) {
 			throw new RuntimeException("数据保存失败！");
 		}
-
+		Long afterSave = System.currentTimeMillis();
+		System.out.println("校验耗时" + (beforeSave - startTime));
+		System.out.println("保存耗时" + (afterSave - beforeSave));
 		//返回错误数据
 		return array;
 	}
@@ -565,6 +574,13 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return flag;
 	}
 
+	/**
+	 * 返回结果只说明导入操作是否完成，不保证是否有数据被导入
+	 *
+	 * @param fieldId
+	 * @param jsonArray
+	 * @return
+	 */
 	private boolean saveAllJson(long fieldId, JSONArray jsonArray) {
 		// 循环插入数据库相关信息
 		List<DataFieldValue> list = new ArrayList<>();
@@ -581,7 +597,12 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			}
 			list.add(dataFieldValue);
 		}
-		return this.insertBatch(list);
+
+		//批量导入
+		if (list.isEmpty()) {
+			return true;
+		}
+		return this.insertBatch(list, 500);
 	}
 
 	/**

@@ -52,55 +52,43 @@
 
 	<select id="gainCleanData" parameterType="java.lang.Long" resultMap="CenterData">
 		SELECT
-			tab1.*, tab2.field_value
+			tab1.*,
+			tab2.field_value
 		FROM
-			(
-				SELECT
-					base_id,
-					is_manual,
-					COUNT(base_id) AS count
-				FROM
-					dataclean_analysis_result
-				WHERE
-					field_id = #{fieldId}
-				GROUP BY
-					base_id
-			) tab1
-		LEFT JOIN dataclean_data_field_value tab2 ON tab1.base_id = tab2.id
-		WHERE
-			tab2.is_deleted = 0
-		ORDER BY
-			count DESC
+			(SELECT base_id, is_manual, COUNT(base_id) AS count
+			 FROM
+				 dataclean_analysis_result
+			 WHERE field_id = #{fieldId}
+			 GROUP BY base_id) tab1
+				LEFT JOIN dataclean_data_field_value tab2
+				ON tab1.base_id = tab2.id
+		WHERE tab2.is_deleted = 0
+		ORDER BY count DESC
 	</select>
 
 	<select id="gainDetails" parameterType="java.lang.Long" resultMap="dataFieldValueMap">
-		SELECT
-			*
+		SELECT *
 		FROM
 			dataclean_data_field_value
-		WHERE
-			id IN (
-				SELECT
-					compare_id
-				FROM
-					dataclean_analysis_result
-				WHERE
-					base_id = #{id} AND is_deleted = 0
-			)
+		WHERE id IN
+		      (SELECT compare_id
+		       FROM
+			       dataclean_analysis_result
+		       WHERE base_id = #{id} AND is_deleted = 0)
 	</select>
 
 	<select id="selectDataPool" resultType="com.cloud.gds.cleaning.api.dto.DataPoolAnalysis">
 		SELECT
 		<include refid="DataPoolAnalysis"/>
 		FROM
-		    (
-		      SELECT
-		        compare_id,
-		        similarity
-		      FROM
-		          dataclean_analysis_result
-		      WHERE
-		          base_id = #{id}
+		(
+		SELECT
+		compare_id,
+		similarity
+		FROM
+		dataclean_analysis_result
+		WHERE
+		base_id = #{id}
 		) b
 		LEFT JOIN dataclean_data_field_value a ON b.compare_id = a.id
 		WHERE
@@ -111,18 +99,25 @@
 		SELECT
 		<include refid="DataPoolAnalysis"/>
 		FROM
-			(
-				SELECT
-					compare_id,
-					similarity
-				FROM
-					dataclean_analysis_result
-				WHERE
-					base_id = #{centerId} AND similarity &gt; #{screenSize}
-			) b
+		(
+		SELECT
+		compare_id,
+		similarity
+		FROM
+		dataclean_analysis_result
+		WHERE
+		base_id = #{centerId} AND similarity &gt; #{screenSize}
+		) b
 		LEFT JOIN dataclean_data_field_value a ON b.compare_id = a.id
 		WHERE
 		a.is_deleted = 0
 	</select>
+
+	<insert id="insertAll" parameterType="com.cloud.gds.cleaning.api.entity.DataFieldValue">
+		insert into dataclean_data_field_value (field_value,create_user) values
+		<foreach collection="valueList" item="fieldValue" separator=",">
+			(fieldValue.fieldValue,fieldValue.createUser)
+		</foreach>
+	</insert>
 
 </mapper>
