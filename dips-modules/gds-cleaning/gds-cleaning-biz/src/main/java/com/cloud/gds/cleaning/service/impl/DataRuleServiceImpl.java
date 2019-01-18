@@ -147,7 +147,7 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		// 取规则参数集合转model
 		List<DataSetVo> list = dataRuleVo.getDetail();
 		// 先赋第一个model作为基础数
-		DataSetVo resultSet = list != null ? list.get(0) : new DataSetVo();
+		DataSetVo resultSet = (list != null && list.size() > 0) ? list.get(0) : new DataSetVo();
 		// 如何判断那些是同义,那些没有
 		if (list != null && list.size() > 0) {
 			for (DataSetVo dataSetVo : list) {
