@@ -125,7 +125,11 @@ public class DataPoolController {
 	@PostMapping("/saveJson")
 	@ApiOperation(value = "json导入", notes = "json导入")
 	public void saveJsonData(long id, @RequestBody JSONArray jsonArray) {
-		System.out.println(dataFieldValueService.dataJsonInput(id, jsonArray));
+		try {
+			System.out.println(dataFieldValueService.dataJsonInput(id, jsonArray));
+		}catch (NullPointerException npe){
+			System.out.println(npe.getMessage());
+		}
 	}
 
 }
