@@ -23,17 +23,19 @@ public class CalculateServiceImpl implements CalculateService {
 	 */
 	@Override
 	public String analysisSimilarity(int analysisType, String jsonFileUrl) {
+		String path = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+		System.out.println("path:"+path);
 		String result = null;
 		String[] arguments = null;
 		//配置python算法程序文件路径，python环境驱动并填入json文件所在路径
 		if (analysisType == DataCleanConstant.QUICK_ANALYSIS) {
 			//调用快速分析算法，采用层次聚类
 			arguments = new String[]{"/anaconda3/bin/python",
-				"/usr/local/data-cleaning/analysis_similarity/quickAnalyse.py", jsonFileUrl};
+				path + "/analysis_similarity/quickAnalyse.py", jsonFileUrl};
 		} else if (analysisType == DataCleanConstant.DEEP_ANALYSIS) {
 			//调用深度分析算法，计算矩阵，采用DBSCAN算法
 			arguments = new String[]{"/anaconda3/bin/python",
-				"/usr/local/data-cleaning/analysis_similarity/deepAnalyse.py", jsonFileUrl};
+				path + "/analysis_similarity/deepAnalyse.py", jsonFileUrl};
 		}
 		try {
 			//调用python的相似度计算程序
@@ -56,10 +58,11 @@ public class CalculateServiceImpl implements CalculateService {
 
 	@Override
 	public String standardSimilarity(String jsonStr) {
+		String path = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 		String result = null;
 		//配置正确的python环境驱动并引入标准json数据
 		String[] arguments = new String[]{"/anaconda3/bin/python",
-			"/usr/local/data-cleaning/analysis_similarity/centroidAnalyse.py", jsonStr};
+			path + "/analysis_similarity/centroidAnalyse.py", jsonStr};
 		try {
 			//调用python标准分析程序
 			Process process = Runtime.getRuntime().exec(arguments);
