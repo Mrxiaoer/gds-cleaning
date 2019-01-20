@@ -21,7 +21,13 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 
 	int deleteByIds(@Param("ids") Set<Long> ids);
 
-	int insertAll(@Param("valueList") List<DataFieldValue> valueList);
+	/**
+	 * 批量插入
+	 *
+	 * @param valueList
+	 * @return
+	 */
+	boolean insertAll(@Param("valueList") List<DataFieldValue> valueList);
 
 	// List<DataFieldValue> selectByCleanIds(@Param("ids") Set<Long> ids);
 

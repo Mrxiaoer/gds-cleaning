@@ -113,10 +113,10 @@
 		a.is_deleted = 0
 	</select>
 
-	<insert id="insertAll" parameterType="com.cloud.gds.cleaning.api.entity.DataFieldValue">
-		insert into dataclean_data_field_value (field_value,create_user) values
+	<insert id="insertAll">
+		insert into dataclean_data_field_value (field_id,field_value,create_user) values
 		<foreach collection="valueList" item="fieldValue" separator=",">
-			(fieldValue.fieldValue,fieldValue.createUser)
+			(#{fieldValue.fieldId},#{fieldValue.fieldValue},#{fieldValue.createUser})
 		</foreach>
 	</insert>
 

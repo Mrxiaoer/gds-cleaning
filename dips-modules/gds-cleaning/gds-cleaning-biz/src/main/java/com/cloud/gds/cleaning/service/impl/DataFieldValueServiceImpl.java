@@ -529,7 +529,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		JSONArray array = new JSONArray();
 		while (iterator.hasNext()) {
 			Object jsonData = iterator.next();
-			if (!checkJsonParams(dl, JSONUtil.parseObj(jsonData))) {
+			if (!checkJsonParams(dl, JSONUtil.parseObj(jsonData, false))) {
 				array.add(jsonData);
 				iterator.remove();
 			}
@@ -602,7 +602,24 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		if (list.isEmpty()) {
 			return true;
 		}
-		return this.insertBatch(list, 500);
+		return batchSave(list, 100);
+	}
+
+	public boolean batchSave(List<DataFieldValue> list, int oneSize) {
+		boolean flag = true;
+		List<DataFieldValue> subList;
+		int currentNum = 0;
+		while (flag) {
+			if (list.size() > oneSize * (currentNum + 1)) {
+				subList = list.subList(currentNum * oneSize, oneSize * (currentNum + 1));
+			} else {
+				subList = list.subList(currentNum * oneSize, list.size());
+				flag = false;
+			}
+			dataFieldValueMapper.insertAll(subList);
+			currentNum++;
+		}
+		return true;
 	}
 
 	/**
