@@ -9,6 +9,7 @@ import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -106,5 +107,14 @@ public class DataRuleServiceTest {
 		DataSetVo dataSetVo = dataRuleService.gainUpperPower(ruleId);
 		System.out.println(dataSetVo);
 
+	}
+
+	@Autowired
+	@Qualifier("test2Service")
+	TestService testService;
+
+	@Test
+	public void tttt(){
+		testService.test();
 	}
 }

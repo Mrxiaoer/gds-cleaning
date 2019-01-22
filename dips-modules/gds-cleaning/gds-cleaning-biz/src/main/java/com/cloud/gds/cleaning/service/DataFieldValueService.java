@@ -136,14 +136,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	List<DataFieldValueTree> compareDifference(Long id);
 
-	/**
-	 * 获取待分析数据
-	 *
-	 * @param fieldId   数据集id
-	 * @param threshold 阀值
-	 * @return String JSON字符串
-	 */
-	String getAnalysisData(Long fieldId, Float threshold);
+	// /**
+	//  * 获取待分析数据
+	//  *
+	//  * @param fieldId   数据集id
+	//  * @param threshold 阀值
+	//  * @return String JSON字符串
+	//  */
+	// String getAnalysisData(Long fieldId, Float threshold);
 
 	/**
 	 * 手动清洗数据

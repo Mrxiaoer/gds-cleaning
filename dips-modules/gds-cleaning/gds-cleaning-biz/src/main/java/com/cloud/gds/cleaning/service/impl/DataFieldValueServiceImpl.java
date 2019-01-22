@@ -329,75 +329,75 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return TreeUtil.buildByRecursive(treeList, 0L);
 	}
 
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public String getAnalysisData(Long fieldId, Float threshold) {
-
-		DataField dataField = new DataField();
-		dataField.setId(fieldId);
-		dataField = dataFieldService.selectById(dataField);
-
-		DataRule dataRule = new DataRule();
-		dataRule.setId(dataField.getRuleId());
-		dataRule = dataRuleService.selectById(dataRule);
-
-		WillAnalysisData willAnalysisData = new WillAnalysisData();
-		//设置阀值
-		willAnalysisData.setThreshold(threshold);
-		//设置字段名，权重，字段是否近似
-		List<DataSetVo> list = JSONUtil.parseArray(dataRule.getParams()).toList(DataSetVo.class);
-		List<String> params = new ArrayList<>(4);
-		List<Float> weights = new ArrayList<>(4);
-		List<Integer> approximates = new ArrayList<>(4);
-		List<String> needDeleteFields = new ArrayList<>();
-		for (DataSetVo dataSetVo : list) {
-			//如果权重为零，删除该字段
-			if (dataSetVo.getWeight() > 0) {
-				params.add(dataSetVo.getProp());
-				weights.add(dataSetVo.getWeight());
-				approximates.add(dataSetVo.getIsSynonymous());
-			} else {
-				needDeleteFields.add(dataSetVo.getProp());
-			}
-		}
-		willAnalysisData.setParams(params);
-		willAnalysisData.setWeights(weights);
-		willAnalysisData.setApproximates(approximates);
-
-		willAnalysisData.setNeedReanalysis(dataField.getNeedReanalysis());
-		//设置待分析数据
-		List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
-		List<JSONObject> objList = new ArrayList<>();
-		for (DataFieldValue dataFieldValue : willAnalysisList) {
-			if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
-				JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
-				//如果原数据含字段id，删除之
-				jsonObj.remove("id");
-				//删除权重为0的字段
-				for (String needDeleteField : needDeleteFields) {
-					jsonObj.remove(needDeleteField);
-				}
-				for (String needField : params) {
-					if (!jsonObj.containsKey(needField)) {
-						jsonObj.put(needField, "");
-					}
-				}
-				//添加id字段
-				jsonObj.putOnce("id", dataFieldValue.getId());
-
-				objList.add(jsonObj);
-			}
-		}
-		willAnalysisData.setData(objList);
-
-		//写入文件
-		String resultPath = fileSavePath + "/" + fieldId + ".json";
-		FileWriter fileWriter = new FileWriter(resultPath);
-		fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
-
-		//返回文件路径
-		return resultPath;
-	}
+	// @Override
+	// @Transactional(rollbackFor = Exception.class)
+	// public String getAnalysisData(Long fieldId, Float threshold) {
+	//
+	// 	DataField dataField = new DataField();
+	// 	dataField.setId(fieldId);
+	// 	dataField = dataFieldService.selectById(dataField);
+	//
+	// 	DataRule dataRule = new DataRule();
+	// 	dataRule.setId(dataField.getRuleId());
+	// 	dataRule = dataRuleService.selectById(dataRule);
+	//
+	// 	WillAnalysisData willAnalysisData = new WillAnalysisData();
+	// 	//设置阀值
+	// 	willAnalysisData.setThreshold(threshold);
+	// 	//设置字段名，权重，字段是否近似
+	// 	List<DataSetVo> list = JSONUtil.parseArray(dataRule.getParams()).toList(DataSetVo.class);
+	// 	List<String> params = new ArrayList<>(4);
+	// 	List<Float> weights = new ArrayList<>(4);
+	// 	List<Integer> approximates = new ArrayList<>(4);
+	// 	List<String> needDeleteFields = new ArrayList<>();
+	// 	for (DataSetVo dataSetVo : list) {
+	// 		//如果权重为零，删除该字段
+	// 		if (dataSetVo.getWeight() > 0) {
+	// 			params.add(dataSetVo.getProp());
+	// 			weights.add(dataSetVo.getWeight());
+	// 			approximates.add(dataSetVo.getIsSynonymous());
+	// 		} else {
+	// 			needDeleteFields.add(dataSetVo.getProp());
+	// 		}
+	// 	}
+	// 	willAnalysisData.setParams(params);
+	// 	willAnalysisData.setWeights(weights);
+	// 	willAnalysisData.setApproximates(approximates);
+	//
+	// 	willAnalysisData.setNeedReanalysis(dataField.getNeedReanalysis());
+	// 	//设置待分析数据
+	// 	List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
+	// 	List<JSONObject> objList = new ArrayList<>();
+	// 	for (DataFieldValue dataFieldValue : willAnalysisList) {
+	// 		if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
+	// 			JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
+	// 			//如果原数据含字段id，删除之
+	// 			jsonObj.remove("id");
+	// 			//删除权重为0的字段
+	// 			for (String needDeleteField : needDeleteFields) {
+	// 				jsonObj.remove(needDeleteField);
+	// 			}
+	// 			for (String needField : params) {
+	// 				if (!jsonObj.containsKey(needField)) {
+	// 					jsonObj.put(needField, "");
+	// 				}
+	// 			}
+	// 			//添加id字段
+	// 			jsonObj.putOnce("id", dataFieldValue.getId());
+	//
+	// 			objList.add(jsonObj);
+	// 		}
+	// 	}
+	// 	willAnalysisData.setData(objList);
+	//
+	// 	//写入文件
+	// 	String resultPath = fileSavePath + "/" + fieldId + ".json";
+	// 	FileWriter fileWriter = new FileWriter(resultPath);
+	// 	fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
+	//
+	// 	//返回文件路径
+	// 	return resultPath;
+	// }
 
 	@Override
 	public boolean cleanDate(List<Map<String, Object>> params) {
@@ -472,43 +472,44 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return baseVos;
 	}
 
-	/**
-	 * 未分析或需要重新分析的数据
-	 *
-	 * @param fieldId
-	 * @return List<DataFieldValue>
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public List<DataFieldValue> firstAnalysisList(Long fieldId) {
-		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
-			.eq("is_deleted", DataCleanConstant.FALSE);
+	// /**
+	//  * 未分析或需要重新分析的数据
+	//  *
+	//  * @param fieldId
+	//  * @return List<DataFieldValue>
+	//  */
+	// @Transactional(rollbackFor = Exception.class)
+	// public List<DataFieldValue> firstAnalysisList(Long fieldId) {
+	// 	Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
+	// 		.eq("is_deleted", DataCleanConstant.FALSE);
+	//
+	// 	List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
+	// 	DataFieldValue dataFieldValue = new DataFieldValue();
+	// 	dataFieldValue.setState(1);
+	// 	baseMapper.update(dataFieldValue, wrapper);
+	//
+	// 	return needAnalysisList;
+	// }
 
-		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
-		DataFieldValue dataFieldValue = new DataFieldValue();
-		dataFieldValue.setState(1);
-		baseMapper.update(dataFieldValue, wrapper);
-
-		return needAnalysisList;
-	}
-
-	/**
-	 * 多次分析的数据
-	 *
-	 * @param fieldId
-	 * @return List<DataFieldValue>
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public List<DataFieldValue> notFirstAnalysisList(Long fieldId) {
-		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
-			.eq("is_deleted", DataCleanConstant.FALSE).eq("state", 0);
-
-		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
-		DataFieldValue dataFieldValue = new DataFieldValue();
-		dataFieldValue.setState(1);
-		baseMapper.update(dataFieldValue, wrapper);
-
-		return needAnalysisList;
-	}
+	// /**
+	//  * 多次分析的数据(已弃用，所有分析统一使用firstAnalysisList方法)
+	//  *
+	//  * @param fieldId
+	//  * @return List<DataFieldValue>
+	//  */
+	// @Deprecated
+	// @Transactional(rollbackFor = Exception.class)
+	// public List<DataFieldValue> notFirstAnalysisList(Long fieldId) {
+	// 	Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
+	// 		.eq("is_deleted", DataCleanConstant.FALSE).eq("state", 0);
+	//
+	// 	List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
+	// 	DataFieldValue dataFieldValue = new DataFieldValue();
+	// 	dataFieldValue.setState(1);
+	// 	baseMapper.update(dataFieldValue, wrapper);
+	//
+	// 	return needAnalysisList;
+	// }
 
 	@Override
 	public JSONArray dataJsonInput(long fieldId, JSONArray jsonArray) throws NullPointerException {

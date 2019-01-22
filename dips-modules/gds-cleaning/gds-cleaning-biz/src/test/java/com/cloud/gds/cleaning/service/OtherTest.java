@@ -102,4 +102,9 @@ public class OtherTest {
 		System.out.println(result);
 	}
 
+	@Test
+	public void smileTest1(){
+
+	}
+
 }
