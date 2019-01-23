@@ -2,12 +2,16 @@ import gensim
 import json
 import numpy as np
 import pickle,os
+import bz2
+import redis
 from collections import Counter
+from gensim.models.keyedvectors import KeyedVectors
 general_dict_path = '/usr/local/data-cleaning/general_dict.pkl'
 
 #装载词向量模型
 def load_word_embedding(path):
-    model = gensim.models.Word2Vec.load(path)
+    # model = gensim.models.Word2Vec.load(path)
+    model = RedisKeyedVectore()
     return model
 
 #得到停用词
@@ -133,3 +137,30 @@ class JsonData(object):
     @property
     def needReAnalyse(self):
         return self._needReAnalyse
+
+class RedisKeyedVectore(KeyedVectors):
+    def __init__(self):
+        self.rs = redis.StrictRedis(host='localhost',port=6379)
+
+    def word_vec(self, word):
+        try:
+            return pickle.loads(bz2.decompress(self.rs.get(word)))
+        except TypeError:
+            return None
+
+    @classmethod
+    def load_word2vec_format(cls, **kwargs):
+        raise NotImplementedError("You can't load a word model that way. It needs to pre-loaded into redis")
+
+    def save(self, *args, **kwargs):
+        raise NotImplementedError("You can't write back to Redis that way.")
+
+    def save_word2vec_format(self, **kwargs):
+        raise NotImplementedError("You can't write back to Redis that way.")
+
+    def __getitem__(self, word):
+        if isinstance(word,str):
+            return self.word_vec(word)
+
+    def __contains__(self, word):
+        return self.rs.exists(word)
