@@ -334,10 +334,10 @@ def allProcess(json_path,fileName,stopwords_path,model_path):
 
 
 def summary(json_path):
-    stopwords_path = '/usr/local/data-cleaning/analysis_similarity/resource/stopword_china.txt'
+    stopwords_path = '/usr/local/stopword_china.txt'
     #stopwords_path = 'resource/stopword_china.txt'
     #stopwords_path = os.path.abspath(stopwords_path)
-    model_path = '/usr/local/data-cleaning/analysis_similarity/resource/zhwiki_embedding_t2s.model'
+    model_path = '/usr/local/zhwiki_embedding_t2s.model'
     #model_path = 'resource/zhwiki_embedding_t2s.model'
     #model_path = os.path.abspath(model_path)
 
