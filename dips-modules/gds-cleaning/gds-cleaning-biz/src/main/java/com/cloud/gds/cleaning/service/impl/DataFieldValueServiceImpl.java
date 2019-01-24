@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.util.SpecialStringUtil;
@@ -17,10 +18,10 @@ import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
 import com.cloud.gds.cleaning.api.vo.*;
+import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
-import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
@@ -47,7 +48,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	private final DataRuleMapper dataRuleMapper;
 	private final DataFieldValueMapper dataFieldValueMapper;
-	private final AnalysisResultService analysisResultService;
+	private final AnalysisResultMapper analysisResultMapper;
 	private final DataFieldMapper dataFieldMapper;
 	private final DataRuleService dataRuleService;
 
@@ -55,12 +56,12 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	String fileSavePath;
 
 	@Autowired
-	public DataFieldValueServiceImpl(DataFieldMapper dataFieldMapper, DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper, AnalysisResultService analysisResultService) {
+	public DataFieldValueServiceImpl(DataFieldMapper dataFieldMapper, DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper, AnalysisResultMapper analysisResultMapper) {
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleService = dataRuleService;
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataRuleMapper = dataRuleMapper;
-		this.analysisResultService = analysisResultService;
+		this.analysisResultMapper = analysisResultMapper;
 	}
 
 	@Override
@@ -248,9 +249,30 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		// 删除数据时需要删除分析结果表中相关数据
-		analysisResultService.deleteAllById(id);
+		analysisResultDelete(id);
 		return this.updateById(dataFieldValue);
 	}
+
+	private boolean analysisResultDeletes(Set<Long> ids) {
+		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids))) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids)));
+
+	}
+
+	/**
+	 * 数据池数据删除 触发分析结果表中的数据进行删除
+	 * todo
+	 *
+	 * @param id
+	 * @return
+	 */
+	private boolean analysisResultDelete(Long id) {
+		AnalysisResult before1 = new AnalysisResult();
+		before1.setBaseId(id);
+		AnalysisResult before2 = new AnalysisResult();
+		before2.setCompareId(id);
+		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<>(before1))) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<>(before2)));
+	}
+
 
 	@Override
 	public Boolean deleteByIds(Set<Long> ids) {
@@ -260,7 +282,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		// 删除数据时需要删除分析结果表中相关数据
-		analysisResultService.deleteAllByIds(ids);
+		analysisResultDeletes(ids);
 		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id", ids));
 	}
 
@@ -411,7 +433,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			AnalysisResult q = new AnalysisResult();
 			q.setBaseId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			q.setCompareId(Long.valueOf(String.valueOf(map.get("cleanId"))));
-			analysisResultService.delete(new EntityWrapper<>(q));
+			analysisResultMapper.delete(new EntityWrapper<>(q));
 		}
 		// 清洗数据
 		return this.updateBatchById(list);
@@ -594,7 +616,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		}
 
 		//批量导入
-		if (list.isEmpty()){
+		if (list.isEmpty()) {
 			return true;
 		}
 		return batchSave(list, 100);
@@ -602,6 +624,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	/**
 	 * 批量分段插入
+	 *
 	 * @param list
 	 * @param oneSize
 	 * @return
