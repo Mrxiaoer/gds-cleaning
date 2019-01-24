@@ -1,35 +1,33 @@
 package com.cloud.gds.cleaning.service.impl;
 
-import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
-import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
 import com.cloud.gds.cleaning.api.vo.*;
+import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
-import com.cloud.gds.cleaning.service.*;
+import com.cloud.gds.cleaning.service.AnalysisResultService;
+import com.cloud.gds.cleaning.service.DataFieldValueService;
+import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -43,28 +41,26 @@ import java.util.stream.Collectors;
  * @Email : 1042703214@qq.com
  * @Date : 2018-11-22
  */
-@Service("dataFieldValueService")
+@Service
 public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper, DataFieldValue> implements
 	DataFieldValueService {
 
 	private final DataRuleMapper dataRuleMapper;
 	private final DataFieldValueMapper dataFieldValueMapper;
-	private final CalculateService calculateService;
-	private final DataFieldService dataFieldService;
+	private final AnalysisResultService analysisResultService;
+	private final DataFieldMapper dataFieldMapper;
 	private final DataRuleService dataRuleService;
+
 	@Value("${file-save.path}")
 	String fileSavePath;
-	@Autowired
-	AnalysisResultService analysisResultService;
 
 	@Autowired
-	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-									 DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper) {
-		this.calculateService = calculateService;
-		this.dataFieldService = dataFieldService;
+	public DataFieldValueServiceImpl(DataFieldMapper dataFieldMapper, DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper, AnalysisResultService analysisResultService) {
+		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleService = dataRuleService;
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataRuleMapper = dataRuleMapper;
+		this.analysisResultService = analysisResultService;
 	}
 
 	@Override
@@ -106,7 +102,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
-		DataField dataField = dataFieldService.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
+		DataField dataField = dataFieldMapper.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
@@ -151,7 +147,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
-		DataField dataField = dataFieldService.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
+		DataField dataField = dataFieldMapper.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
@@ -185,7 +181,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		List<CenterData> list = dataFieldValueMapper.gainCleanData(fieldId);
 
 		// 获取规则中比较最高的一项
-		DataSetVo dataSetVo = dataRuleService.gainUpperPower(dataFieldService.selectById(fieldId).getRuleId());
+		DataSetVo dataSetVo = dataRuleService.gainUpperPower(dataFieldMapper.selectById(fieldId).getRuleId());
 
 		// 取field_value值,先判断list是否有值
 		if (list != null && list.size() != 0) {
@@ -228,12 +224,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			darVos.add(darVo);
 		}
 		return darVos;
-	}
-
-	@Override
-	public List<DataFieldValue> selectByfieldId(Long fieldId) {
-		return this.selectList(
-			new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
 	}
 
 	@Override
@@ -282,12 +272,15 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());
 		// 添加数据需将清洗池中的分析状态更换成最原先的状态
-		DataField dataField = dataFieldService.selectById(fieldId);
+		DataField dataField = dataFieldMapper.selectById(fieldId);
 		if (!DataCleanConstant.FALSE.equals(dataField.getAnalyseState())) {
 			DataField q = new DataField();
 			q.setId(fieldId);
 			q.setAnalyseState(DataCleanConstant.FALSE);
-			dataFieldService.update(q);
+			assert SecurityUtils.getUser() != null;
+			q.setModifiedUser(SecurityUtils.getUser().getId());
+			q.setModifiedTime(LocalDateTime.now());
+			dataFieldMapper.updateById(q);
 		}
 		return this.insert(dataFieldValue);
 	}
@@ -307,7 +300,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setFieldValue(JSON.toJSONString(map));
 			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			// 添加数据
-			//			this.insert(dataFieldValue);
 			list.add(dataFieldValue);
 		}
 		this.insertBatch(list);
@@ -431,7 +423,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataField field = new DataField();
 		field.setId(fieldId);
 		field.setAnalyseState(DataCleanConstant.NO_ANALYSIS);
-		dataFieldService.update(field);
+		field.setModifiedUser(SecurityUtils.getUser().getId());
+		field.setModifiedTime(LocalDateTime.now());
+		dataFieldMapper.updateById(field);
 		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId));
 	}
 
@@ -446,7 +440,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public List<CleanItem> cleaningItem(Long beCleanedId) {
 		// 查询规则比较高的项
 		Long fieldId = dataFieldValueMapper.selectById(beCleanedId).getFieldId();
-		Long ruleId = dataFieldService.selectById(fieldId).getRuleId();
+		Long ruleId = dataFieldMapper.selectById(fieldId).getRuleId();
 		DataSetVo dataSetVo = dataRuleService.gainUpperPower(ruleId);
 
 		// 查询被清洗掉的数据
@@ -600,12 +594,18 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		}
 
 		//批量导入
-		if (list.isEmpty()) {
+		if (list.isEmpty()){
 			return true;
 		}
 		return batchSave(list, 100);
 	}
 
+	/**
+	 * 批量分段插入
+	 * @param list
+	 * @param oneSize
+	 * @return
+	 */
 	public boolean batchSave(List<DataFieldValue> list, int oneSize) {
 		boolean flag = true;
 		List<DataFieldValue> subList;
@@ -621,20 +621,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			currentNum++;
 		}
 		return true;
-	}
-
-	/**
-	 * 调用清洗相似度计算
-	 */
-	public void interfaceTest() {
-		String str = "{\"threshold\":0.6,\"Params\":[\"length\",\"type\",\"nameEn\",\"nameCn\"],\"weights\":[0.1,0.2,"
-			+ "0.3,0.4],\"approximates\":[0,0,1,1],\"standard\":{\"length\":10,\"type\":1,\"nameEn\":\"mc\","
-			+ "\"nameCn\":\"名称\"},\"similarity\":{\"nameEn\":{\"xm\":0.5,\"mz\":0.8},\"nameCn\":{\"姓名\":0.6,"
-			+ "\"名字\":0.8}},\"data\":[{\"id\":1,\"length\":10,\"type\":1,\"nameEn\":\"xm\",\"nameCn\":\"姓名\"},"
-			+ "{\"id\":2,\"length\":18,\"type\":2,\"nameEn\":\"sfz\",\"nameCn\":\"身份证\"},{\"id\":3,\"length\":1,"
-			+ "\"type\":3,\"nameEn\":\"sex\",\"nameCn\":\"性别\"}]}";
-		String simResult = calculateService.analysisSimilarity(DataCleanConstant.QUICK_ANALYSIS, "dddd");
-		System.out.println(simResult);
 	}
 
 }

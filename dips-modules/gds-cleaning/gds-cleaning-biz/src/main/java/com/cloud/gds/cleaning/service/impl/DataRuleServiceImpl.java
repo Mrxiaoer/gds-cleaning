@@ -31,7 +31,7 @@ import java.util.Set;
  * @Email : 1042703214@qq.com
  * @Date : 2018-11-22
  */
-@Service("dataFieldService")
+@Service
 public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> implements DataRuleService {
 
 	@Autowired
