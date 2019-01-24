@@ -22,12 +22,9 @@ import java.util.Set;
 @RequestMapping("/data_pool")
 public class DataPoolController {
 
-	private final DataFieldValueService dataFieldValueService;
-
 	@Autowired
-	public DataPoolController(DataFieldValueService dataFieldValueService) {
-		this.dataFieldValueService = dataFieldValueService;
-	}
+	private DataFieldValueService dataFieldValueService;
+
 
 	/**
 	 * 分页

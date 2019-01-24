@@ -47,25 +47,21 @@ import java.util.stream.Collectors;
 public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper, DataFieldValue> implements
 	DataFieldValueService {
 
-	private final DataRuleMapper dataRuleMapper;
-	private final DataFieldValueMapper dataFieldValueMapper;
-	private final CalculateService calculateService;
-	private final DataFieldService dataFieldService;
-	private final DataRuleService dataRuleService;
 	@Value("${file-save.path}")
 	String fileSavePath;
-	@Autowired
-	AnalysisResultService analysisResultService;
 
 	@Autowired
-	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-									 DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper) {
-		this.calculateService = calculateService;
-		this.dataFieldService = dataFieldService;
-		this.dataRuleService = dataRuleService;
-		this.dataFieldValueMapper = dataFieldValueMapper;
-		this.dataRuleMapper = dataRuleMapper;
-	}
+	private AnalysisResultService analysisResultService;
+	@Autowired
+	private DataRuleMapper dataRuleMapper;
+	@Autowired
+	private DataFieldValueMapper dataFieldValueMapper;
+	@Autowired
+	private CalculateService calculateService;
+	@Autowired
+	private DataRuleService dataRuleService;
+	@Autowired
+	private DataFieldService dataFieldService;
 
 	@Override
 	public Page<DataPoolVo> queryPage(Map<String, Object> params) {

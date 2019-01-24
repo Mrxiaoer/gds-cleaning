@@ -37,21 +37,15 @@ import java.util.*;
 @Service
 public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper, AnalysisResult> implements
 	AnalysisResultService {
-
-	private final DataFieldService dataFieldService;
-	private final DataFieldValueService dataFieldValueService;
-	private final CalculateService calculateService;
-
+	
 	@Autowired
-	DataFieldValueMapper dataFieldValueMapper;
-
+	private DataFieldService dataFieldService;
 	@Autowired
-	public AnalysisResultServiceImpl(DataFieldService dataFieldService, DataFieldValueService dataFieldValueService,
-									 CalculateService calculateService) {
-		this.dataFieldService = dataFieldService;
-		this.dataFieldValueService = dataFieldValueService;
-		this.calculateService = calculateService;
-	}
+	private DataFieldValueService dataFieldValueService;
+	@Autowired
+	private CalculateService calculateService;
+	@Autowired
+	private DataFieldValueMapper dataFieldValueMapper;
 
 	@Override
 	public void dataAnalysis(Map<String, Object> params) {

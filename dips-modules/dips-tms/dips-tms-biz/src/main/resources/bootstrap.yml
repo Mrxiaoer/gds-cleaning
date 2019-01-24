@@ -23,4 +23,4 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://dips:dips@127.0.0.1:1025/eureka/
+      defaultZone: http://dips:dips@dips-eureka:1025/eureka/

@@ -23,13 +23,8 @@ import java.util.Map;
 @RequestMapping("/result_set")
 public class ResultSetController {
 
-	private final DataFieldValueService dataFieldValueService;
-
 	@Autowired
-	public ResultSetController(
-		DataFieldValueService dataFieldValueService) {
-		this.dataFieldValueService = dataFieldValueService;
-	}
+	private DataFieldValueService dataFieldValueService;
 
 	/**
 	 * 结果集详情分页
