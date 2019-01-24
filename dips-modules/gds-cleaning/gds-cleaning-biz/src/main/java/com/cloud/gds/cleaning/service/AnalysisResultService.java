@@ -21,7 +21,7 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	 *
 	 * @param params
 	 */
-	void dataAnalysis(Map<String, Object> params);
+	void smallDataAnalysis(Map<String, Object> params);
 
 	/**
 	 * 根据id删除中心、卫星相关分析结果集

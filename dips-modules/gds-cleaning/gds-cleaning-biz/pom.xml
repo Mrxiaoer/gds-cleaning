@@ -16,6 +16,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.github.haifengl</groupId>
+			<artifactId>smile-core</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		<dependency>
 			<groupId>com.cloud</groupId>
 			<artifactId>gds-cleaning-api</artifactId>
 			<version>${dips.version}</version>

@@ -21,6 +21,7 @@ import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.CalculateService;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
+import com.cloud.gds.cleaning.service.DoAnalysisService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,25 +42,34 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	private final DataFieldService dataFieldService;
 	private final DataFieldValueService dataFieldValueService;
 	private final CalculateService calculateService;
+	private final DoAnalysisService doAnalysisService;
 
 	@Autowired
 	DataFieldValueMapper dataFieldValueMapper;
 
 	@Autowired
 	public AnalysisResultServiceImpl(DataFieldService dataFieldService, DataFieldValueService dataFieldValueService,
-									 CalculateService calculateService) {
+									 CalculateService calculateService, DoAnalysisService doAnalysisService) {
 		this.dataFieldService = dataFieldService;
 		this.dataFieldValueService = dataFieldValueService;
 		this.calculateService = calculateService;
+		this.doAnalysisService = doAnalysisService;
 	}
 
 	@Override
-	public void dataAnalysis(Map<String, Object> params) {
+	public void smallDataAnalysis(Map<String, Object> params){
+
+		this.updateAnalysisState();
+
+	}
+
+
+	public void updateAnalysisState(Map ) {
 		Long fieldId = Long.valueOf(String.valueOf(params.get("fieldId")));
 		Float threshold = Float.parseFloat(params.get("threshold").toString()) / 100;
 		Integer degree = (Integer) params.get("degree");
 		// 分析程度degree  1、快速分析 2、深度分析
-		String fileUrl = dataFieldValueService.getAnalysisData(fieldId, threshold);
+		String fileUrl = doAnalysisService.getAllNeedAnalysisDataFile(fieldId, threshold);
 
 		//  更新清洗池中分析状态->正在分析
 		DataField dataField = new DataField();
@@ -68,36 +78,36 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		dataField.setThreshold(threshold);
 		dataFieldService.update(dataField);
 
-		//  数据分析接口
-		String result = calculateService.analysisSimilarity(degree, fileUrl);
-//		String result = null;
-		// 判断分析是否成功(分析正确返回json数据,错误返回None)
-		if ("None".equals(result)) {
-			// 失败
-			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-			dataField.setNeedReanalysis(DataCleanConstant.TRUE);
-			dataFieldService.update(dataField);
-		} else {
-			// 算法分析前先将分析结果表中对应数据删除
-			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
-
-			// 算法分析未集类,不进行处理
-			boolean flag = true;
-			if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
-				// 算法分析返回结果,存入数据库
-				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
-			}
-			if (flag) {
-				// 成功
-				dataField.setAnalyseState(degree.equals(DataCleanConstant.QUICK_ANALYSIS) ? DataCleanConstant.DONE_QUICK_ANALYSIS : DataCleanConstant.DONE_DEEP_ANALYSIS);
-				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
-				dataFieldService.update(dataField);
-			} else {
-				// 出错
-				dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-				dataFieldService.update(dataField);
-			}
-		}
+// 		//  数据分析接口
+// 		String result = calculateService.analysisSimilarity(degree, fileUrl);
+// //		String result = null;
+// 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
+// 		if ("None".equals(result)) {
+// 			// 失败
+// 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
+// 			dataField.setNeedReanalysis(DataCleanConstant.TRUE);
+// 			dataFieldService.update(dataField);
+// 		} else {
+// 			// 算法分析前先将分析结果表中对应数据删除
+// 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
+//
+// 			// 算法分析未集类,不进行处理
+// 			boolean flag = true;
+// 			if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
+// 				// 算法分析返回结果,存入数据库
+// 				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
+// 			}
+// 			if (flag) {
+// 				// 成功
+// 				dataField.setAnalyseState(degree.equals(DataCleanConstant.QUICK_ANALYSIS) ? DataCleanConstant.DONE_QUICK_ANALYSIS : DataCleanConstant.DONE_DEEP_ANALYSIS);
+// 				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
+// 				dataFieldService.update(dataField);
+// 			} else {
+// 				// 出错
+// 				dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
+// 				dataFieldService.update(dataField);
+// 			}
+// 		}
 	}
 
 
@@ -212,7 +222,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		DataField dataField = dataFieldService.selectById(dataDto.getFieldId());
 
-		String fileUrl = dataFieldValueService.getAnalysisData(dataDto.getFieldId(), dataField.getThreshold());
+		String fileUrl = doAnalysisService.getAllNeedAnalysisDataFile(dataDto.getFieldId(), dataField.getThreshold());
 
 		// 重新聚类
 		String result = calculateService.analysisSimilarity(DataCleanConstant.DEEP_ANALYSIS, fileUrl);
