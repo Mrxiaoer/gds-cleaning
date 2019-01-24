@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * @Email : 1042703214@qq.com
  * @Date : 2018-11-22
  */
-@Service("dataFieldValueService")
+@Service
 public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper, DataFieldValue> implements
 	DataFieldValueService {
 
@@ -55,7 +55,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	@Value("${file-save.path}")
 	String fileSavePath;
 	@Autowired
-	AnalysisResultService analysisResultService;
+	private AnalysisResultService analysisResultService;
 
 	@Autowired
 	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
@@ -228,12 +228,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			darVos.add(darVo);
 		}
 		return darVos;
-	}
-
-	@Override
-	public List<DataFieldValue> selectByfieldId(Long fieldId) {
-		return this.selectList(
-			new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
 	}
 
 	@Override

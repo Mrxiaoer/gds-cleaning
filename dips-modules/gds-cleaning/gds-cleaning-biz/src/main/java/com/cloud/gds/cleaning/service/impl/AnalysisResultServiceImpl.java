@@ -56,32 +56,28 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		this.doAnalysisService = doAnalysisService;
 	}
 
-	@Override
-	public void smallDataAnalysis(Map<String, Object> params){
-
-		this.updateAnalysisState();
-
+	public void updateAnalysisState(Long fieldId,Float threshold,Integer analyseState){
+		//  更新清洗池中分析状态->正在分析
+		DataField dataField = new DataField();
+		dataField.setId(fieldId);
+		dataField.setAnalyseState(analyseState);
+		dataField.setThreshold(threshold);
+		dataFieldService.update(dataField);
 	}
 
-
-	public void updateAnalysisState(Map ) {
+	@Override
+	public void smallDataAnalysis(Map<String, Object> params ) {
 		Long fieldId = Long.valueOf(String.valueOf(params.get("fieldId")));
 		Float threshold = Float.parseFloat(params.get("threshold").toString()) / 100;
 		Integer degree = (Integer) params.get("degree");
 		// 分析程度degree  1、快速分析 2、深度分析
 		String fileUrl = doAnalysisService.getAllNeedAnalysisDataFile(fieldId, threshold);
 
-		//  更新清洗池中分析状态->正在分析
-		DataField dataField = new DataField();
-		dataField.setId(fieldId);
-		dataField.setAnalyseState(DataCleanConstant.BEING_ANALYSIS);
-		dataField.setThreshold(threshold);
-		dataFieldService.update(dataField);
 
-// 		//  数据分析接口
-// 		String result = calculateService.analysisSimilarity(degree, fileUrl);
-// //		String result = null;
-// 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
+ 		//  数据分析接口
+ 		String result = calculateService.analysisSimilarity(degree, fileUrl);
+ //		String result = null;
+ 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 // 		if ("None".equals(result)) {
 // 			// 失败
 // 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);

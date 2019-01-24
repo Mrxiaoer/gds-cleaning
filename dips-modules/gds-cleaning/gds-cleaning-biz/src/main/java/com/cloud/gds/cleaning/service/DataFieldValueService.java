@@ -80,14 +80,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	List<DARVo> centerToSatellite(Long centerId);
 
 	/**
-	 * 根据清洗池id查询
-	 *
-	 * @param fieldId 清洗池id
-	 * @return 数据池集合
-	 */
-	List<DataFieldValue> selectByfieldId(Long fieldId);
-
-	/**
 	 * 修改结果集字段
 	 *
 	 * @param id

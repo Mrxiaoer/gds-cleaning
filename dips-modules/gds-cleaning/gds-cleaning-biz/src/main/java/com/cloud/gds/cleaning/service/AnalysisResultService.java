@@ -59,8 +59,8 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	/**
 	 * 非中心数据过滤
 	 *
-	 * @param nonCentral
-	 * @param screenSize
+	 * @param nonCentral 更换中心id
+	 * @param screenSize 滤网大小
 	 * @return
 	 */
 	Map<String, Object> nonCentralFiltration(Long nonCentral, Float screenSize);

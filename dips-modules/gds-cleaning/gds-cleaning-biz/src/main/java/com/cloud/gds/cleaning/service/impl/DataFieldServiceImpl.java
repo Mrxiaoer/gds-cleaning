@@ -8,12 +8,13 @@ import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataField;
+import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.vo.DataFieldVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
+import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
+import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.DataFieldService;
-import com.cloud.gds.cleaning.service.DataFieldValueService;
-import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,10 +34,15 @@ import java.util.*;
 @Service
 public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField> implements DataFieldService {
 
+	private final DataRuleMapper dataRuleMapper;
+
+	private final DataFieldValueMapper dataFieldValueMapper;
+
 	@Autowired
-	DataRuleService dataRuleService;
-	@Autowired
-	DataFieldValueService dataFieldValueService;
+	public DataFieldServiceImpl(DataRuleMapper dataRuleMapper, DataFieldValueMapper dataFieldValueMapper) {
+		this.dataRuleMapper = dataRuleMapper;
+		this.dataFieldValueMapper = dataFieldValueMapper;
+	}
 
 	@Override
 	public Page<DataField> queryPage(Map<String, Object> params) {
@@ -83,7 +89,7 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 		DataFieldVo dataFieldVo = new DataFieldVo();
 		DataField dataField = this.selectById(id);
 		BeanUtils.copyProperties(dataField, dataFieldVo);
-		dataFieldVo.setRuleName((dataField.getRuleId() == 0) ? null : (dataRuleService.selectById(dataField.getRuleId()).getName()));
+		dataFieldVo.setRuleName((dataField.getRuleId() == 0) ? null : (dataRuleMapper.selectById(dataField.getRuleId()).getName()));
 		dataFieldVo.setRuleId(dataFieldVo.getRuleId() == 0 ? null : dataFieldVo.getRuleId());
 		return dataFieldVo;
 	}
@@ -132,11 +138,11 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 	public Boolean checkRule(Long id, Long ruleId) {
 		DataField dataField = this.selectById(id);
 		// 数据池数据为空, 规则可换
-		if (dataFieldValueService.selectByfieldId(id).size() > 0) {
+		if ((dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", id).eq("is_deleted", DataCleanConstant.FALSE))).size() > 0) {
 			// 原先规则为空,规则可以换
 			if (dataField.getRuleId() != null) {
-				DataRuleVo oldVo = DataRuleUtils.po2Vo(dataRuleService.selectById(dataField.getRuleId()));
-				DataRuleVo newVo = DataRuleUtils.po2Vo(dataRuleService.selectById(ruleId));
+				DataRuleVo oldVo = DataRuleUtils.po2Vo(dataRuleMapper.selectById(dataField.getRuleId()));
+				DataRuleVo newVo = DataRuleUtils.po2Vo(dataRuleMapper.selectById(ruleId));
 				SortedMap<String, String> old = oldVo.getDetail() != null ? DataRuleUtils.changeSortedMap(oldVo.getDetail()) : null;
 				SortedMap<String, String> fresh = newVo.getDetail() != null ? DataRuleUtils.changeSortedMap(newVo.getDetail()) : null;
 				// 如果规则前后2个规则中参数为空,可更新规则
