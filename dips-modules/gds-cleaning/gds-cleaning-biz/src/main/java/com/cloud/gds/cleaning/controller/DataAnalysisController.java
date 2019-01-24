@@ -29,8 +29,7 @@ public class DataAnalysisController {
 	private final AnalysisResultService analysisResultService;
 
 	@Autowired
-	public DataAnalysisController(DataFieldValueService dataFieldValueService,
-								  AnalysisResultService analysisResultService) {
+	public DataAnalysisController(DataFieldValueService dataFieldValueService, AnalysisResultService analysisResultService) {
 		this.dataFieldValueService = dataFieldValueService;
 		this.analysisResultService = analysisResultService;
 	}

@@ -16,10 +16,10 @@ import com.cloud.gds.cleaning.api.vo.DARVo;
 import com.cloud.gds.cleaning.api.vo.GroupVo;
 import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
 import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
+import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.CalculateService;
-import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DoAnalysisService;
 import org.springframework.beans.BeanUtils;
@@ -39,7 +39,7 @@ import java.util.*;
 public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper, AnalysisResult> implements
 	AnalysisResultService {
 
-	private final DataFieldService dataFieldService;
+	private final DataFieldMapper dataFieldMapper;
 	private final DataFieldValueService dataFieldValueService;
 	private final CalculateService calculateService;
 	private final DoAnalysisService doAnalysisService;
@@ -48,21 +48,12 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	DataFieldValueMapper dataFieldValueMapper;
 
 	@Autowired
-	public AnalysisResultServiceImpl(DataFieldService dataFieldService, DataFieldValueService dataFieldValueService,
+	public AnalysisResultServiceImpl(DataFieldMapper dataFieldMapper, DataFieldValueService dataFieldValueService,
 									 CalculateService calculateService, DoAnalysisService doAnalysisService) {
-		this.dataFieldService = dataFieldService;
+		this.dataFieldMapper = dataFieldMapper;
 		this.dataFieldValueService = dataFieldValueService;
 		this.calculateService = calculateService;
 		this.doAnalysisService = doAnalysisService;
-	}
-
-	public void updateAnalysisState(Long fieldId,Float threshold,Integer analyseState){
-		//  更新清洗池中分析状态->正在分析
-		DataField dataField = new DataField();
-		dataField.setId(fieldId);
-		dataField.setAnalyseState(analyseState);
-		dataField.setThreshold(threshold);
-		dataFieldService.update(dataField);
 	}
 
 	@Override
@@ -72,38 +63,33 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		Integer degree = (Integer) params.get("degree");
 		// 分析程度degree  1、快速分析 2、深度分析
 		String fileUrl = doAnalysisService.getAllNeedAnalysisDataFile(fieldId, threshold);
-
-
+		// 算法正在分析中
+		updateAnaStateWithThreshold(fieldId, threshold, DataCleanConstant.BEING_ANALYSIS);
  		//  数据分析接口
  		String result = calculateService.analysisSimilarity(degree, fileUrl);
- //		String result = null;
+// 		String result = null;
  		// 判断分析是否成功(分析正确返回json数据,错误返回None)
-// 		if ("None".equals(result)) {
-// 			// 失败
-// 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-// 			dataField.setNeedReanalysis(DataCleanConstant.TRUE);
-// 			dataFieldService.update(dataField);
-// 		} else {
-// 			// 算法分析前先将分析结果表中对应数据删除
-// 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
-//
-// 			// 算法分析未集类,不进行处理
-// 			boolean flag = true;
-// 			if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
-// 				// 算法分析返回结果,存入数据库
-// 				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
-// 			}
-// 			if (flag) {
-// 				// 成功
-// 				dataField.setAnalyseState(degree.equals(DataCleanConstant.QUICK_ANALYSIS) ? DataCleanConstant.DONE_QUICK_ANALYSIS : DataCleanConstant.DONE_DEEP_ANALYSIS);
-// 				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
-// 				dataFieldService.update(dataField);
-// 			} else {
-// 				// 出错
-// 				dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-// 				dataFieldService.update(dataField);
-// 			}
-// 		}
+ 		if ("None".equals(result)) {
+ 			// 失败
+			updateAnalyseStateWithNeedReanalyse(fieldId, DataCleanConstant.ERROR_ANALYSIS, DataCleanConstant.TRUE);
+ 		} else {
+ 			// 算法分析前先将分析结果表中对应数据删除
+ 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
+
+ 			// 算法分析未集类,不进行处理
+ 			boolean flag = true;
+ 			if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
+ 				// 算法分析返回结果,存入数据库
+ 				flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
+ 			}
+ 			if (flag) {
+ 				// 成功
+				updateAnalyseStateWithNeedReanalyse(fieldId, degree.equals(DataCleanConstant.QUICK_ANALYSIS) ? DataCleanConstant.DONE_QUICK_ANALYSIS : DataCleanConstant.DONE_DEEP_ANALYSIS, DataCleanConstant.FALSE);
+ 			} else {
+ 				// 出错
+				updateAnalyseState(fieldId, DataCleanConstant.ERROR_ANALYSIS);
+ 			}
+ 		}
 	}
 
 
@@ -216,7 +202,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		value.setCreateTime(LocalDateTime.now());
 		dataFieldValueService.insert(value);
 
-		DataField dataField = dataFieldService.selectById(dataDto.getFieldId());
+		DataField dataField = dataFieldMapper.selectById(dataDto.getFieldId());
 
 		String fileUrl = doAnalysisService.getAllNeedAnalysisDataFile(dataDto.getFieldId(), dataField.getThreshold());
 
@@ -226,8 +212,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		// 判断分析是否成功(分析正确返回json数据,错误返回None)
 		if ("None".equals(result)) {
 			// 失败
-			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-			dataFieldService.update(dataField);
+			updateAnalyseState(dataField.getId(), DataCleanConstant.ERROR_ANALYSIS);
 		} else {
 			// 算法分析前先将分析结果表中对应数据删除
 			this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", dataDto.getFieldId()).eq("is_manual", DataCleanConstant.FALSE));
@@ -240,13 +225,10 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			}
 			if (flag) {
 				// 成功
-				dataField.setAnalyseState(DataCleanConstant.DONE_DEEP_ANALYSIS);
-				dataField.setNeedReanalysis(DataCleanConstant.FALSE);
-				dataFieldService.update(dataField);
+				updateAnalyseStateWithNeedReanalyse(dataField.getId(), DataCleanConstant.DONE_DEEP_ANALYSIS, DataCleanConstant.FALSE);
 			} else {
 				// 出错
-				dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-				dataFieldService.update(dataField);
+				updateAnalyseState(dataField.getId(), DataCleanConstant.ERROR_ANALYSIS);
 			}
 		}
 		// 根据标准数据过滤计算接口
@@ -276,5 +258,55 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 
 		return true;
 	}
+
+	/**
+	 * 更新清洗池中的分析状态以及阀值
+	 *
+	 * @param fieldId 清洗池id
+	 * @param threshold 阀值
+	 * @param analyseState 分析状态值
+	 */
+	private void updateAnaStateWithThreshold(Long fieldId,Float threshold,Integer analyseState){
+		DataField dataField = new DataField();
+		dataField.setId(fieldId);
+		dataField.setAnalyseState(analyseState);
+		dataField.setThreshold(threshold);
+		dataField.setModifiedUser(SecurityUtils.getUser().getId());
+		dataField.setModifiedTime(LocalDateTime.now());
+		dataFieldMapper.updateById(dataField);
+	}
+
+	/**
+	 * 更新清洗池中的算法分析状态
+	 *
+	 * @param fieldId 清洗池id
+	 * @param analyseState 分析状态值
+	 */
+	private void updateAnalyseState(Long fieldId,Integer analyseState){
+		DataField dataField = new DataField();
+		dataField.setId(fieldId);
+		dataField.setAnalyseState(analyseState);
+		dataField.setModifiedUser(SecurityUtils.getUser().getId());
+		dataField.setModifiedTime(LocalDateTime.now());
+		dataFieldMapper.updateById(dataField);
+	}
+
+	/**
+	 * 更新清洗池中的算法分析状态和是否需要重新分析状态
+	 *
+	 * @param fieldId 清洗池id
+	 * @param analyseState 分析状态值
+	 */
+	private void updateAnalyseStateWithNeedReanalyse(Long fieldId,Integer analyseState,Integer needReanalysisState ){
+		DataField dataField = new DataField();
+		dataField.setId(fieldId);
+		dataField.setAnalyseState(analyseState);
+		dataField.setNeedReanalysis(needReanalysisState);
+		dataField.setModifiedUser(SecurityUtils.getUser().getId());
+		dataField.setModifiedTime(LocalDateTime.now());
+		dataFieldMapper.updateById(dataField);
+	}
+
+
 
 }
