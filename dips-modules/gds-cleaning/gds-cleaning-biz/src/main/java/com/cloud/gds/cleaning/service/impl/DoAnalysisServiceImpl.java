@@ -10,6 +10,7 @@ import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
+import com.cloud.gds.cleaning.api.feign.DataAnalysisService;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
@@ -21,9 +22,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.stereotype.Service;
 
 /**
  * 执行分析实现类
@@ -32,24 +36,27 @@ import org.springframework.beans.factory.annotation.Value;
  * @Email : lolilijve@gmail.com
  * @Date : 2019-01-20
  */
+@Service
 public class DoAnalysisServiceImpl implements DoAnalysisService {
 
 	private final DataFieldValueMapper dataFieldValueMapper;
 	private final DataFieldMapper dataFieldMapper;
 	private final DataRuleMapper dataRuleMapper;
+	private final ExecutorService analysisThreadPool;
+	// private final SimpleAsyncTaskExecutor analysisThreadPool;
 	@Value("${file-save.path}")
 	String fileSavePath;
 
 	@Autowired
-	@Qualifier("analysisThreadPool")
-	private ExecutorService analysisThreadPool;
+	private DataAnalysisService dataAnalysisService;
 
 	@Autowired
 	public DoAnalysisServiceImpl(DataFieldValueMapper dataFieldValueMapper, DataFieldMapper dataFieldMapper,
-		DataRuleMapper dataRuleMapper) {
+		DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool) {
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleMapper = dataRuleMapper;
+		this.analysisThreadPool = analysisThreadPool;
 	}
 
 	@Override
@@ -70,11 +77,15 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		//待分析数据分组处理
 		boolean flag = true;
 		List<JSONObject> subList;
+		AtomicInteger needGetNum = new AtomicInteger((int) Math.ceil((double) list.size() / oneSize));
 		int currentNum = 0;
+		//将数据分块分发处理，通过feign
 		while (flag) {
 			if (list.size() > oneSize * (currentNum + 1)) {
+				//非最后一块
 				subList = list.subList(currentNum * oneSize, oneSize * (currentNum + 1));
 			} else {
+				//最后一块
 				subList = list.subList(currentNum * oneSize, list.size());
 				flag = false;
 			}
@@ -82,10 +93,34 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 			subData.setData(subList);
 			String filePath = this.willAnalysisDataToFile(fieldId + "_" + currentNum, subData);
 			//@todo 分析过程
-			analysisThreadPool.execute(() -> System.out.println(Thread.currentThread().getName()));
+			// dataAnalysisService.bigDataAnalysis(filePath);
+			analysisThreadPool.execute(() -> {
+				try {
+					System.out.println(Thread.currentThread().getName() + "----" + subData);
+					Thread.sleep(1000);
+
+					dataAnalysisService.bigDataAnalysis(filePath);
+					needGetNum.getAndDecrement();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			});
 
 			currentNum++;
+
+			flag = false;
 		}
+
+		while (needGetNum.get() > 0) {
+			System.out.println("未完成！");
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		System.out.println("over!");
 	}
 
 	/**

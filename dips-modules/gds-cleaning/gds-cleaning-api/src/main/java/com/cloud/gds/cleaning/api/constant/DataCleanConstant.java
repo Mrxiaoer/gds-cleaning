@@ -9,7 +9,7 @@ package com.cloud.gds.cleaning.api.constant;
  */
 public interface DataCleanConstant {
 
-
+	String MODULE_NAME ="gds-cleaning";
 	/**
 	 * 默认值0 未删除
 	 */

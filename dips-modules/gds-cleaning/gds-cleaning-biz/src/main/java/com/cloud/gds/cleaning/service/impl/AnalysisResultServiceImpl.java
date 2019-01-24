@@ -59,12 +59,12 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	@Override
 	public void smallDataAnalysis(Map<String, Object> params){
 
-		this.updateAnalysisState();
+		// this.updateAnalysisState();
 
 	}
 
 
-	public void updateAnalysisState(Map ) {
+	public void updateAnalysisState(Map params) {
 		Long fieldId = Long.valueOf(String.valueOf(params.get("fieldId")));
 		Float threshold = Float.parseFloat(params.get("threshold").toString()) / 100;
 		Integer degree = (Integer) params.get("degree");

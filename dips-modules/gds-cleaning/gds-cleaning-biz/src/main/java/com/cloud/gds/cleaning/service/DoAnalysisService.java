@@ -2,6 +2,9 @@ package com.cloud.gds.cleaning.service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @author lolilijve
+ */
 public interface DoAnalysisService {
 
 	/**

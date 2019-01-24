@@ -60,9 +60,15 @@ public class DataAnalysisServiceFallbackImpl implements DataAnalysisService {
 		return null;
 	}
 
+	// @Override
+	// public Map<String, Object> filterMethod(String type, DataDto dataDto) {
+	// 	log.error("feign 数据过滤接口获取失败", cause);
+	// 	return null;
+	// }
+
 	@Override
-	public Map<String, Object> filterMethod(String type, DataDto dataDto) {
-		log.error("feign 数据过滤接口获取失败", cause);
+	public String bigDataAnalysis(String filePath) {
+		log.error("feign 数据分析接口获取失败", cause);
 		return null;
 	}
 

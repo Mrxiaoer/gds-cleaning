@@ -104,7 +104,8 @@ public class OtherTest {
 
 	@Test
 	public void smileTest1(){
-
+		int allNum = (int) Math.ceil((double) 1002/10);
+		System.out.println(allNum);
 	}
 
 }

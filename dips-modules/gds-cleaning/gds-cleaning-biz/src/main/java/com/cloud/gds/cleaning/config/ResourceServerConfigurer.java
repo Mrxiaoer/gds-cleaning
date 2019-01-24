@@ -1,10 +1,16 @@
 package com.cloud.gds.cleaning.config;
 
 import com.cloud.dips.common.security.component.BaseResourceServerConfigurerAdapter;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.filter.RequestContextFilter;
 
 /**
  * @Author : lolilijve
@@ -14,6 +20,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @Configuration
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Component
 public class ResourceServerConfigurer extends BaseResourceServerConfigurerAdapter {
 
 	@Override
@@ -21,6 +28,16 @@ public class ResourceServerConfigurer extends BaseResourceServerConfigurerAdapte
 		http.authorizeRequests()
 			.antMatchers("/v2/api-docs","/clean_pool/**","/data_pool/**","/data_rule/**","/result_set/**","/analysis/**")
 			.permitAll().anyRequest().authenticated().and().csrf().disable();
+	}
+
+	@Bean
+	public RequestContextFilter requestContextFilter() {
+		return new RequestContextFilter();
+	}
+
+	@Bean
+	public RequestContextListener requestContextListener() {
+		return new RequestContextListener();
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 分析线程池
@@ -15,14 +16,18 @@ import org.springframework.context.annotation.Bean;
  * @Email : lolilijve@gmail.com
  * @Date : 2019-01-22
  */
+@Configuration
 public class AnalysisThreadFactory {
 
 	@Bean("analysisThreadPool")
 	public ExecutorService createSingleThreadPool() {
+		// public SimpleAsyncTaskExecutor createSingleThreadPool() {
 		ThreadFactory analysisThreadFactory = new ThreadFactoryBuilder().setNameFormat("analysis-pool-%d").build();
 
-		return new ThreadPoolExecutor(1, 8, 500L, TimeUnit.MILLISECONDS,
-			new LinkedBlockingQueue<Runnable>(1024), analysisThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+		// return new SimpleAsyncTaskExecutor(analysisThreadFactory);
+		return new ThreadPoolExecutor(2, 8, 500L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(1024),
+			analysisThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+
 	}
 
 }

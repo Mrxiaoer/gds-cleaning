@@ -8,11 +8,16 @@ import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 数据分析相关
@@ -30,7 +35,7 @@ public class DataAnalysisController {
 
 	@Autowired
 	public DataAnalysisController(DataFieldValueService dataFieldValueService,
-								  AnalysisResultService analysisResultService) {
+		AnalysisResultService analysisResultService) {
 		this.dataFieldValueService = dataFieldValueService;
 		this.analysisResultService = analysisResultService;
 	}
@@ -44,7 +49,8 @@ public class DataAnalysisController {
 	@ApiOperation(value = "设置阀值", notes = "设置阀值")
 	public R setThreshold(@RequestBody Map<String, Object> params) {
 		// python分析数据
-		analysisResultService.dataAnalysis(params);
+		//todo
+		// analysisResultService.dataAnalysis(params);
 		return new R();
 	}
 
@@ -116,7 +122,7 @@ public class DataAnalysisController {
 	 */
 	@PostMapping("/filter_method")
 	@ApiOperation(value = "数据过滤", notes = "此接口有问题")
-	public Map<String,Object> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
+	public Map<String, Object> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
 		if ("center".equals(type)) {
 			System.out.println("请求中心数据接口");
 			return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
@@ -130,5 +136,10 @@ public class DataAnalysisController {
 		return null;
 	}
 
+	@GetMapping("/big_data_analysis")
+	public String bigDataAnalysis(@RequestParam String filePath) {
+		System.out.println("feign big_data_analysis");
+		return null;
+	}
 
 }
