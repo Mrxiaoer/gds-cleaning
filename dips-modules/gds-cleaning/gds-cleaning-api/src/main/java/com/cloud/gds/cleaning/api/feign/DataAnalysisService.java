@@ -2,8 +2,7 @@ package com.cloud.gds.cleaning.api.feign;
 
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
-import com.cloud.gds.cleaning.api.dto.DataDto;
-import com.cloud.gds.cleaning.api.feign.factory.CleanPoolServiceFallbackFactory;
+import com.cloud.gds.cleaning.api.feign.factory.DataAnalysisServiceFallbackFactory;
 import com.cloud.gds.cleaning.api.vo.CenterData;
 import com.cloud.gds.cleaning.api.vo.DARVo;
 import java.util.List;
@@ -20,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Email : 806039077@qq.com
  * @Date : 2019-01-10
  */
-@FeignClient(value = DataCleanConstant.MODULE_NAME, fallbackFactory = CleanPoolServiceFallbackFactory.class)
+@FeignClient(value = DataCleanConstant.MODULE_NAME, path = "/analysis", fallbackFactory =
+	DataAnalysisServiceFallbackFactory.class)
 public interface DataAnalysisService {
 
 	/**
@@ -28,7 +28,7 @@ public interface DataAnalysisService {
 	 *
 	 * @param params 其中包括：fieldId  threshold 阀值 degree快速、深度
 	 */
-	@PostMapping("/analysis/set/threshold")
+	@PostMapping("/set/threshold")
 	public R setThreshold(@RequestBody Map<String, Object> params);
 
 	/**
@@ -37,7 +37,7 @@ public interface DataAnalysisService {
 	 * @param fieldId
 	 * @return
 	 */
-	@GetMapping("/analysis/center_data/{fieldId}")
+	@GetMapping("/center_data/{fieldId}")
 	public List<CenterData> gainCleanData(@PathVariable(value = "fieldId") Long fieldId);
 
 	/**
@@ -46,7 +46,7 @@ public interface DataAnalysisService {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/analysis/details")
+	@GetMapping("/details")
 	public R gainDetails(@RequestParam(value = "fieldId") Long id);
 
 	/**
@@ -55,7 +55,7 @@ public interface DataAnalysisService {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/analysis/center_to_satellite/{centerId}")
+	@GetMapping("/center_to_satellite/{centerId}")
 	public List<DARVo> centerToSatellite(@PathVariable(value = "centerId") Long id);
 
 	/**
@@ -64,7 +64,7 @@ public interface DataAnalysisService {
 	 * @param params
 	 * @return
 	 */
-	@PostMapping("/analysis/clean")
+	@PostMapping("/clean")
 	public R cleanDate(@RequestBody List<Map<String, Object>> params);
 
 	/**
@@ -73,7 +73,7 @@ public interface DataAnalysisService {
 	 * @param fieldId
 	 * @return
 	 */
-	@GetMapping("/analysis/automatic_cleaning/{fieldId}")
+	@GetMapping("/automatic_cleaning/{fieldId}")
 	public R automaticCleaning(@PathVariable(value = "fieldId") Long fieldId);
 
 	/**
@@ -82,7 +82,7 @@ public interface DataAnalysisService {
 	 * @param dataDto
 	 * @return
 	 */
-	// @PostMapping("/analysis/filter_method")
+	// @PostMapping("/filter_method")
 	// public Map<String, Object> filterMethod(String type, DataDto dataDto);
 
 	/**
@@ -91,7 +91,7 @@ public interface DataAnalysisService {
 	 * @param filePath
 	 * @return jsonString
 	 */
-	@GetMapping("/analysis/big_data_analysis")
+	@GetMapping("/big_data_analysis")
 	public String bigDataAnalysis(@RequestParam("filePath") String filePath);
 
 }

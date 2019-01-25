@@ -138,8 +138,9 @@ public class DataAnalysisController {
 
 	@GetMapping("/big_data_analysis")
 	public String bigDataAnalysis(@RequestParam String filePath) {
-		System.out.println("feign big_data_analysis");
-		return null;
+		// System.out.println("feign big_data_analysis ==== " + filePath);
+		//todo 调用分析，返回分析结果
+		return "";
 	}
 
 }

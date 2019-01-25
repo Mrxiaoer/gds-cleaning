@@ -12,6 +12,7 @@ import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.feign.DataAnalysisService;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
+import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
@@ -26,8 +27,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * 执行分析实现类
@@ -43,20 +45,19 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	private final DataFieldMapper dataFieldMapper;
 	private final DataRuleMapper dataRuleMapper;
 	private final ExecutorService analysisThreadPool;
-	// private final SimpleAsyncTaskExecutor analysisThreadPool;
+	private final DataAnalysisService dataAnalysisService;
 	@Value("${file-save.path}")
 	String fileSavePath;
 
 	@Autowired
-	private DataAnalysisService dataAnalysisService;
-
-	@Autowired
 	public DoAnalysisServiceImpl(DataFieldValueMapper dataFieldValueMapper, DataFieldMapper dataFieldMapper,
-		DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool) {
+		DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool,
+		DataAnalysisService dataAnalysisService) {
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleMapper = dataRuleMapper;
 		this.analysisThreadPool = analysisThreadPool;
+		this.dataAnalysisService = dataAnalysisService;
 	}
 
 	@Override
@@ -79,6 +80,9 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		List<JSONObject> subList;
 		AtomicInteger needGetNum = new AtomicInteger((int) Math.ceil((double) list.size() / oneSize));
 		int currentNum = 0;
+
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		List<ResultJsonVo> resultList = new ArrayList<>();
 		//将数据分块分发处理，通过feign
 		while (flag) {
 			if (list.size() > oneSize * (currentNum + 1)) {
@@ -92,27 +96,34 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 			WillAnalysisData subData = willAnalysisData.clone();
 			subData.setData(subList);
 			String filePath = this.willAnalysisDataToFile(fieldId + "_" + currentNum, subData);
-			//@todo 分析过程
-			// dataAnalysisService.bigDataAnalysis(filePath);
+
 			analysisThreadPool.execute(() -> {
-				try {
-					System.out.println(Thread.currentThread().getName() + "----" + subData);
-					Thread.sleep(1000);
-
-					dataAnalysisService.bigDataAnalysis(filePath);
-					needGetNum.getAndDecrement();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				//将主线程的RequestAttributes赋予新线程
+				RequestContextHolder.setRequestAttributes(requestAttributes);
+				//向feign分发任务，失败重试
+				String resultStr = null;
+				int tryNum = 0;
+				int maxTry = 5;
+				while (resultStr == null && tryNum < maxTry) {
+					resultStr = dataAnalysisService.bigDataAnalysis(filePath);
+					tryNum++;
 				}
+
+				//清空RequestAttributes
+				RequestContextHolder.resetRequestAttributes();
+				//同步汇总
+				synchronized (resultList) {
+					resultList.add(JSONUtil.toBean(resultStr, ResultJsonVo.class));
+				}
+				//待获取反馈数-1
+				needGetNum.getAndDecrement();
 			});
-
+			//当前执行到数目+1
 			currentNum++;
-
-			flag = false;
 		}
 
 		while (needGetNum.get() > 0) {
-			System.out.println("未完成！");
+			// System.out.println("未完成！");
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -120,7 +131,22 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 			}
 		}
 
-		System.out.println("over!");
+		//结果处理
+		this.resultHandle(fieldId, resultList);
+
+	}
+
+	/**
+	 * 将汇总的返回数据进行处理并存储
+	 *
+	 * @param fieldId
+	 * @param resultList
+	 */
+	private void resultHandle(long fieldId, List<ResultJsonVo> resultList) {
+		//todo 自动清洗
+
+		//todo 存储
+
 	}
 
 	/**
