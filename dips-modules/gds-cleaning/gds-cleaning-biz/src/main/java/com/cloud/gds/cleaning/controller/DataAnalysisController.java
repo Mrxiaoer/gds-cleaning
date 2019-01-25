@@ -49,8 +49,7 @@ public class DataAnalysisController {
 	@ApiOperation(value = "设置阀值", notes = "设置阀值")
 	public R setThreshold(@RequestBody Map<String, Object> params) {
 		// python分析数据
-		//todo
-		// analysisResultService.dataAnalysis(params);
+		 analysisResultService.smallDataAnalysis(params);
 		return new R();
 	}
 

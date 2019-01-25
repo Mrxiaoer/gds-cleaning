@@ -35,22 +35,6 @@ public class AnalysisResultServiceTest {
 	}
 
 	@Test
-	public void deleteAllById() {
-		Long id = 77L;
-		boolean flag = service.deleteAllById(id);
-		System.out.println(flag);
-	}
-
-	@Test
-	public void deleteAllByIds() {
-		Set<Long> ids = new HashSet<>();
-		ids.add(66L);
-		ids.add(77L);
-		boolean flag = service.deleteAllByIds(ids);
-		System.out.println(flag);
-	}
-
-	@Test
 	public void cleanData() {
 		String string = "[{\"baseId\":1,\"cleanId\":3},{\"baseId\":1,\"cleanId\":4},{\"baseId\":2,\"cleanId\":3}]";
 		JSONArray jsonArray = JSONArray.parseArray(string);

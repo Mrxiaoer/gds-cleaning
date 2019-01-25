@@ -24,22 +24,6 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	void smallDataAnalysis(Map<String, Object> params);
 
 	/**
-	 * 根据id删除中心、卫星相关分析结果集
-	 *
-	 * @param id
-	 * @return
-	 */
-	boolean deleteAllById(Long id);
-
-	/**
-	 * 根据ids删除中心、卫星相关分析结果集
-	 *
-	 * @param ids
-	 * @return
-	 */
-	boolean deleteAllByIds(Set<Long> ids);
-
-	/**
 	 * 自动清洗
 	 *
 	 * @param fieldId

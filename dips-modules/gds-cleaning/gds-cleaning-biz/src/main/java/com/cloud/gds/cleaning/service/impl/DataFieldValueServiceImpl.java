@@ -253,6 +253,13 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return this.updateById(dataFieldValue);
 	}
 
+	/**
+	 * 数据池数据删除 触发分析结果表中的数据进行删除
+	 * 由于未对结果池中查看是否存在此id,因此删除的条数->boolean 可能是false
+	 *
+	 * @param ids
+	 * @return
+	 */
 	private boolean analysisResultDeletes(Set<Long> ids) {
 		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids))) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids)));
 
@@ -260,7 +267,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	/**
 	 * 数据池数据删除 触发分析结果表中的数据进行删除
-	 * todo
+	 * 由于未对结果池中查看是否存在此id,因此删除的条数->boolean 可能是false
 	 *
 	 * @param id
 	 * @return

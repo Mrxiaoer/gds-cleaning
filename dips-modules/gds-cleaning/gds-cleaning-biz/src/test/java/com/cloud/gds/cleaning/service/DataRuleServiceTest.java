@@ -109,12 +109,4 @@ public class DataRuleServiceTest {
 
 	}
 
-	@Autowired
-	@Qualifier("test2Service")
-	TestService testService;
-
-	@Test
-	public void tttt(){
-		testService.test();
-	}
 }
