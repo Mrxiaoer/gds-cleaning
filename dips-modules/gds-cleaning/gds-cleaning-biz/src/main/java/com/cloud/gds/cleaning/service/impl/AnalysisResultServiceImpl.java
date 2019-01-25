@@ -92,21 +92,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
  		}
 	}
 
-
-	@Override
-	public boolean deleteAllById(Long id) {
-		AnalysisResult before1 = new AnalysisResult();
-		before1.setBaseId(id);
-		AnalysisResult before2 = new AnalysisResult();
-		before2.setCompareId(id);
-		return this.delete(new EntityWrapper<>(before1)) && this.delete(new EntityWrapper<>(before2));
-	}
-
-	@Override
-	public boolean deleteAllByIds(Set<Long> ids) {
-		return this.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids)) && this.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids));
-	}
-
 	@Override
 	public boolean automaticCleaning(Long fieldId) {
 		// 查询相应清洗池的分析结果集
