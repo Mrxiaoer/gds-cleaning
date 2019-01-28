@@ -187,7 +187,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		// python返回结果判断是否有值,是否有集类
 		if (!"None".equals(resultJosn)) {
 			// 结果数据不为空插入数据库中
-			if (StrUtil.isNotBlank(resultJosn) && "[]".equals(resultJosn)) {
+			if (StrUtil.isNotBlank(resultJosn) && !"[]".equals(resultJosn)) {
 				//  删除旧中心值
 				this.delete(new EntityWrapper<AnalysisResult>().eq("base_id", nonCentral));
 				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.TRUE);
