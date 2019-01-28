@@ -6,18 +6,14 @@ import com.cloud.gds.cleaning.api.vo.CenterData;
 import com.cloud.gds.cleaning.api.vo.DARVo;
 import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
+import com.cloud.gds.cleaning.service.DoAnalysisService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 数据分析相关
@@ -32,12 +28,14 @@ public class DataAnalysisController {
 
 	private final DataFieldValueService dataFieldValueService;
 	private final AnalysisResultService analysisResultService;
+	private final DoAnalysisService doAnalysisService;
 
 	@Autowired
 	public DataAnalysisController(DataFieldValueService dataFieldValueService,
-		AnalysisResultService analysisResultService) {
+								  AnalysisResultService analysisResultService, DoAnalysisService doAnalysisService) {
 		this.dataFieldValueService = dataFieldValueService;
 		this.analysisResultService = analysisResultService;
+		this.doAnalysisService = doAnalysisService;
 	}
 
 	/**
@@ -49,7 +47,7 @@ public class DataAnalysisController {
 	@ApiOperation(value = "设置阀值", notes = "设置阀值")
 	public R setThreshold(@RequestBody Map<String, Object> params) {
 		// python分析数据
-		 analysisResultService.smallDataAnalysis(params);
+		analysisResultService.smallDataAnalysis(params);
 		return new R();
 	}
 
@@ -110,7 +108,7 @@ public class DataAnalysisController {
 	@GetMapping("/automatic_cleaning/{fieldId}")
 	@ApiOperation(value = "自动清洗", notes = "根据fieldId自动清洗数据")
 	public R automaticCleaning(@PathVariable Long fieldId) {
-		return new R<>(analysisResultService.automaticCleaning(fieldId));
+		return new R<>(doAnalysisService.automaticCleaning(fieldId));
 	}
 
 	/**
@@ -136,10 +134,10 @@ public class DataAnalysisController {
 	}
 
 	@GetMapping("/big_data_analysis")
-	public String bigDataAnalysis(@RequestParam String filePath) {
+	public String bigDataAnalysis(Long fieldId, Float threshold, @RequestParam(name = "size", defaultValue = "1000") Integer oneSize) {
 		// System.out.println("feign big_data_analysis ==== " + filePath);
-		//todo 调用分析，返回分析结果
-		return "";
+		doAnalysisService.handOutAnalysis(fieldId, threshold / 100, oneSize);
+		return "大数据自动清洗完毕!";
 	}
 
 }

@@ -4,32 +4,40 @@ import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
+import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.feign.DataAnalysisService;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
+import com.cloud.gds.cleaning.api.vo.GroupVo;
 import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
+import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
+import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DoAnalysisService;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+
+import java.text.Collator;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 执行分析实现类
@@ -46,18 +54,24 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	private final DataRuleMapper dataRuleMapper;
 	private final ExecutorService analysisThreadPool;
 	private final DataAnalysisService dataAnalysisService;
+	private final AnalysisResultMapper analysisResultMapper;
+	private final DataFieldValueService dataFieldValueService;
+
 	@Value("${file-save.path}")
 	String fileSavePath;
 
 	@Autowired
 	public DoAnalysisServiceImpl(DataFieldValueMapper dataFieldValueMapper, DataFieldMapper dataFieldMapper,
-		DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool,
-		DataAnalysisService dataAnalysisService) {
+								 DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool,
+								 DataAnalysisService dataAnalysisService, AnalysisResultMapper analysisResultMapper,
+								 DataFieldValueService dataFieldValueService) {
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleMapper = dataRuleMapper;
 		this.analysisThreadPool = analysisThreadPool;
 		this.dataAnalysisService = dataAnalysisService;
+		this.analysisResultMapper = analysisResultMapper;
+		this.dataFieldValueService = dataFieldValueService;
 	}
 
 	@Override
@@ -143,11 +157,62 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	 * @param resultList
 	 */
 	private void resultHandle(long fieldId, List<ResultJsonVo> resultList) {
-		//todo 自动清洗
+		// 结果存入数据库
+		saveAnalysisResult(fieldId, resultList);
+		// todo 自动清洗 2019-1-28 15:15:19 如何解决复写问题
 
-		//todo 存储
 
 	}
+
+
+	/**
+	 * 储存分析结果返回数据
+	 *
+	 * @param fieldId
+	 * @param resultList
+	 * @return
+	 */
+	private boolean saveAnalysisResult(Long fieldId, List<ResultJsonVo> resultList) {
+		List<AnalysisResult> list = new ArrayList<>();
+		for (ResultJsonVo jsonVo : resultList) {
+			for (GroupVo vo : jsonVo.getGroup()) {
+				AnalysisResult result = new AnalysisResult();
+				result.setFieldId(fieldId);
+				result.setBaseId(jsonVo.getId());
+				result.setCompareId(vo.getId());
+				result.setSimilarity(vo.getSimilarity());
+				// 是否手动分析(0、自动 1、手动)
+				result.setIsManual(DataCleanConstant.FALSE);
+				list.add(result);
+			}
+		}
+		return insertBatch(list, 100);
+	}
+
+	/**
+	 * 分批次插入数据库
+	 *
+	 * @param list
+	 * @param oneSize
+	 * @return
+	 */
+	public boolean insertBatch(List<AnalysisResult> list, int oneSize) {
+		boolean flag = true;
+		List<AnalysisResult> subList;
+		int currentNum = 0;
+		while (flag) {
+			if (list.size() > oneSize * (currentNum + 1)) {
+				subList = list.subList(currentNum * oneSize, oneSize * (currentNum + 1));
+			} else {
+				subList = list.subList(currentNum * oneSize, list.size());
+				flag = false;
+			}
+			analysisResultMapper.insertAll(subList);
+			currentNum++;
+		}
+		return true;
+	}
+
 
 	/**
 	 * 需要分析的数据
@@ -257,51 +322,33 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		return this.willAnalysisDataToFile(fieldId.toString(), this.getAnalysisData(fieldId, threshold));
 	}
 
-	// public void dataAnalysis(Map<String, Object> params) {
-	// 	Long fieldId = Long.valueOf(String.valueOf(params.get("fieldId")));
-	// 	Float threshold = Float.parseFloat(params.get("threshold").toString()) / 100;
-	// 	Integer degree = (Integer) params.get("degree");
-	// 	// 分析程度degree  1、快速分析 2、深度分析
-	// 	String fileUrl = dataFieldValueService.getAnalysisData(fieldId, threshold);
-	//
-	// 	//  更新清洗池中分析状态->正在分析
-	// 	DataField dataField = new DataField();
-	// 	dataField.setId(fieldId);
-	// 	dataField.setAnalyseState(DataCleanConstant.BEING_ANALYSIS);
-	// 	dataField.setThreshold(threshold);
-	// 	dataFieldService.update(dataField);
-	//
-	// 	//  数据分析接口
-	// 	String result = calculateService.analysisSimilarity(degree, fileUrl);
-	// 	//		String result = null;
-	// 	// 判断分析是否成功(分析正确返回json数据,错误返回None)
-	// 	if ("None".equals(result)) {
-	// 		// 失败
-	// 		dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-	// 		dataField.setNeedReanalysis(DataCleanConstant.TRUE);
-	// 		dataFieldService.update(dataField);
-	// 	} else {
-	// 		// 算法分析前先将分析结果表中对应数据删除
-	// 		this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
-	//
-	// 		// 算法分析未集类,不进行处理
-	// 		boolean flag = true;
-	// 		if (StrUtil.isNotBlank(result) && !"[]".equals(result)) {
-	// 			// 算法分析返回结果,存入数据库
-	// 			flag = this.jsonStrSave(fieldId, result, DataCleanConstant.FALSE);
-	// 		}
-	// 		if (flag) {
-	// 			// 成功
-	// 			dataField.setAnalyseState(degree.equals(DataCleanConstant.QUICK_ANALYSIS) ? DataCleanConstant
-	// .DONE_QUICK_ANALYSIS : DataCleanConstant.DONE_DEEP_ANALYSIS);
-	// 			dataField.setNeedReanalysis(DataCleanConstant.FALSE);
-	// 			dataFieldService.update(dataField);
-	// 		} else {
-	// 			// 出错
-	// 			dataField.setAnalyseState(DataCleanConstant.ERROR_ANALYSIS);
-	// 			dataFieldService.update(dataField);
-	// 		}
-	// 	}
-	// }
+	@Override
+	public boolean automaticCleaning(Long fieldId) {
+		// 查询相应清洗池的分析结果集
+		List<AnalysisResult> results = analysisResultMapper.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
+
+		// 组装待清洗数据
+		List<DataFieldValue> list = new ArrayList<>();
+		if (results.size() == DataCleanConstant.FALSE) {
+			return true;
+		}
+		for (AnalysisResult analysisResult : results) {
+			if (!analysisResult.getBaseId().equals(analysisResult.getCompareId())) {
+				DataFieldValue dataFieldValue = new DataFieldValue();
+				dataFieldValue.setId(analysisResult.getCompareId());
+				dataFieldValue.setBeCleanedId(analysisResult.getBaseId());
+				dataFieldValue.setFieldId(analysisResult.getFieldId());
+				// 由于数据被清洗了,对数据进行删除状态的更新
+				dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
+				assert SecurityUtils.getUser() != null;
+				dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
+				dataFieldValue.setModifiedTime(LocalDateTime.now());
+				list.add(dataFieldValue);
+			}
+		}
+		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
+		return dataFieldValueService.updateBatchById(list) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId)));
+	}
+
 
 }

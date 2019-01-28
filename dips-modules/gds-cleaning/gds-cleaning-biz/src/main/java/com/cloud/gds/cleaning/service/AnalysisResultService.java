@@ -24,14 +24,6 @@ public interface AnalysisResultService extends IService<AnalysisResult> {
 	void smallDataAnalysis(Map<String, Object> params);
 
 	/**
-	 * 自动清洗
-	 *
-	 * @param fieldId
-	 * @return
-	 */
-	boolean automaticCleaning(Long fieldId);
-
-	/**
 	 * 根据中心数据过滤
 	 *
 	 * @param centerId   中心id

@@ -27,4 +27,12 @@ public interface DoAnalysisService {
 	 */
 	String getAllNeedAnalysisDataFile(Long fieldId, Float threshold);
 
+	/**
+	 * 自动清洗
+	 *
+	 * @param fieldId
+	 * @return
+	 */
+	boolean automaticCleaning(Long fieldId);
+
 }

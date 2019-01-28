@@ -40,18 +40,16 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	AnalysisResultService {
 
 	private final DataFieldMapper dataFieldMapper;
-	private final DataFieldValueService dataFieldValueService;
 	private final CalculateService calculateService;
 	private final DoAnalysisService doAnalysisService;
+	private final DataFieldValueMapper dataFieldValueMapper;
+
 
 	@Autowired
-	DataFieldValueMapper dataFieldValueMapper;
-
-	@Autowired
-	public AnalysisResultServiceImpl(DataFieldMapper dataFieldMapper, DataFieldValueService dataFieldValueService,
+	public AnalysisResultServiceImpl(DataFieldMapper dataFieldMapper,DataFieldValueMapper dataFieldValueMapper,
 									 CalculateService calculateService, DoAnalysisService doAnalysisService) {
 		this.dataFieldMapper = dataFieldMapper;
-		this.dataFieldValueService = dataFieldValueService;
+		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.calculateService = calculateService;
 		this.doAnalysisService = doAnalysisService;
 	}
@@ -92,33 +90,6 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
  		}
 	}
 
-	@Override
-	public boolean automaticCleaning(Long fieldId) {
-		// 查询相应清洗池的分析结果集
-		List<AnalysisResult> results = this.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
-
-		// 组装待清洗数据
-		List<DataFieldValue> list = new ArrayList<>();
-		if (results.size() == DataCleanConstant.FALSE) {
-			return true;
-		}
-		for (AnalysisResult analysisResult : results) {
-			if (!analysisResult.getBaseId().equals(analysisResult.getCompareId())) {
-				DataFieldValue dataFieldValue = new DataFieldValue();
-				dataFieldValue.setId(analysisResult.getCompareId());
-				dataFieldValue.setBeCleanedId(analysisResult.getBaseId());
-				dataFieldValue.setFieldId(analysisResult.getFieldId());
-				// 由于数据被清洗了,对数据进行删除状态的更新
-				dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
-				assert SecurityUtils.getUser() != null;
-				dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
-				dataFieldValue.setModifiedTime(LocalDateTime.now());
-				list.add(dataFieldValue);
-			}
-		}
-		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
-		return dataFieldValueService.updateBatchById(list) && this.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
-	}
 
 	@Override
 	public Map<String, Object> centerFiltration(Long centerId, Float screenSize) {
@@ -148,7 +119,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 	@Override
 	public Map<String, Object> nonCentralFiltration(Long nonCentral, Float screenSize) {
 		// 获取当前数据主表是那一个
-		DataFieldValue dataFieldValue = dataFieldValueService.selectById(nonCentral);
+		DataFieldValue dataFieldValue = dataFieldValueMapper.selectById(nonCentral);
 
 		// 封装过滤参数
 		FilterParams filterParams = new FilterParams();
@@ -164,7 +135,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		// python返回结果判断是否有值,是否有集类
 		if (!"None".equals(resultJosn)) {
 			// 结果数据不为空插入数据库中
-			if (StrUtil.isNotBlank(resultJosn) && "[]".equals(resultJosn)) {
+			if (StrUtil.isNotBlank(resultJosn) && !"[]".equals(resultJosn)) {
 				//  删除旧中心值
 				this.delete(new EntityWrapper<AnalysisResult>().eq("base_id", nonCentral));
 				this.jsonStrSave(dataFieldValue.getFieldId(), resultJosn, DataCleanConstant.TRUE);
@@ -172,8 +143,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		}
 
 		// 取数据滤网大的数据
-		Map<String, Object> list = this.centerFiltration(nonCentral, screenSize);
-		return list;
+		return this.centerFiltration(nonCentral, screenSize);
 	}
 
 	@Override
@@ -185,7 +155,7 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 		assert SecurityUtils.getUser() != null;
 		value.setCreateUser(SecurityUtils.getUser().getId());
 		value.setCreateTime(LocalDateTime.now());
-		dataFieldValueService.insert(value);
+		dataFieldValueMapper.insert(value);
 
 		DataField dataField = dataFieldMapper.selectById(dataDto.getFieldId());
 
@@ -217,8 +187,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 			}
 		}
 		// 根据标准数据过滤计算接口
-		Map<String, Object> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
-		return list;
+//		Map<String, Object> list = this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
+		return this.nonCentralFiltration(value.getId(), dataDto.getScreenSize());
 	}
 
 	private Boolean jsonStrSave(Long fieldId, String result, Integer isManual) {
@@ -239,9 +209,8 @@ public class AnalysisResultServiceImpl extends ServiceImpl<AnalysisResultMapper,
 				analysisResults.add(q);
 			}
 		}
-		this.insertBatch(analysisResults);
 
-		return true;
+		return this.insertBatch(analysisResults);
 	}
 
 	/**
