@@ -126,8 +126,10 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 				//清空RequestAttributes
 				RequestContextHolder.resetRequestAttributes();
 				//同步汇总
-				synchronized (resultList) {
-					resultList.add(JSONUtil.toBean(resultStr, ResultJsonVo.class));
+				if (JSONUtil.isJsonObj(resultStr)) {
+					synchronized (resultList) {
+						resultList.add(JSONUtil.toBean(resultStr, ResultJsonVo.class));
+					}
 				}
 				//待获取反馈数-1
 				needGetNum.getAndDecrement();
