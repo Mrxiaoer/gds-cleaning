@@ -74,6 +74,25 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	public void handOutAnalysis(long fieldId, float threshold, int oneSize) {
 		WillAnalysisData willAnalysisData = this.getAnalysisData(fieldId, threshold);
 
+		int beforeNum = 0;
+		int afterNum = 0;
+		float mx = 0.8F;
+		while (oneSize << 2 < beforeNum) {
+
+			if (beforeNum * mx > afterNum) {
+				WillAnalysisData AnalysisData = this.getAnalysisData(fieldId, threshold);
+				beforeNum = willAnalysisData.getData().size();
+				//结果处理
+				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize));
+				afterNum = AnalysisData.getData().size();
+			} else {
+				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize << 1));
+			}
+		}
+
+	}
+
+	private List<ResultJsonVo> doHandout(long fieldId, WillAnalysisData willAnalysisData, int oneSize) {
 		List<JSONObject> list = willAnalysisData.getData();
 		//最大权重
 		float maxWeight = Collections.max(willAnalysisData.getWeights());
@@ -143,9 +162,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 			}
 		}
 
-		//结果处理
-		this.resultHandle(fieldId, resultList);
-
+		return resultList;
 	}
 
 	/**
@@ -159,6 +176,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		saveAnalysisResult(fieldId, resultList);
 		// 自动清洗
 		automaticCleaning(fieldId);
+
 	}
 
 
