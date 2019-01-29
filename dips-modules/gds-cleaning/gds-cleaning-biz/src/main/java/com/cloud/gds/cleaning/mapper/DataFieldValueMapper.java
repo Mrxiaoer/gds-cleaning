@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 导入数据的内容
@@ -18,8 +17,6 @@ import java.util.Set;
  */
 @Mapper
 public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
-
-	int deleteByIds(@Param("ids") Set<Long> ids);
 
 	/**
 	 * 批量插入
@@ -65,5 +62,13 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 	 * @return
 	 */
 	List<DataPoolAnalysis> centerFiltration(@Param("centerId") Long centerId, @Param("screenSize") Float screenSize);
+
+	/**
+	 * 大数据批量更新
+	 *
+	 * @param list
+	 * @return
+	 */
+	boolean updateBatchById(@Param("valueList") List<DataFieldValue> list);
 
 }

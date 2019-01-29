@@ -39,17 +39,6 @@
 		a.be_cleaned_id
 	</sql>
 
-	<update id="deleteByIds">
-		UPDATE dataclean_data_field_value
-		<set>
-			is_deleted = 1
-		</set>
-		where id in
-		<foreach close=")" collection="ids" item="id" open="(" separator=",">
-			#{id}
-		</foreach>
-	</update>
-
 	<select id="gainCleanData" parameterType="java.lang.Long" resultMap="CenterData">
 		SELECT
 			tab1.*,
@@ -113,11 +102,34 @@
 		a.is_deleted = 0
 	</select>
 
+	<!-- api数据量较大时添加 -->
 	<insert id="insertAll">
 		insert into dataclean_data_field_value (field_id,field_value,create_user) values
 		<foreach collection="valueList" item="fieldValue" separator=",">
 			(#{fieldValue.fieldId},#{fieldValue.fieldValue},#{fieldValue.createUser})
 		</foreach>
 	</insert>
+
+	<!-- 自动化清洗大数据更新处理 -->
+	<update id="updateBatchById">
+		<foreach collection="valueList" item="fieldValue" separator=",">
+			update dataclean_data_field_value
+			<set>
+				<if test="fieldValue.beCleanedId != null">
+					be_cleaned_id = #{fieldValue.beCleanedId},
+				</if>
+				<if test="fieldValue.isDeleted != null">
+					is_deleted = #{fieldValue.isDeleted},
+				</if>
+				<if test="fieldValue.modifiedUser != null">
+					modified_user = #{fieldValue.modifiedUser},
+				</if>
+				<if test="fieldValue.modifiedTime != null">
+					modified_time = #{fieldValue.modifiedTime},
+				</if>
+			</set>
+			where id = #{fieldValue.id}
+		</foreach>
+	</update>
 
 </mapper>

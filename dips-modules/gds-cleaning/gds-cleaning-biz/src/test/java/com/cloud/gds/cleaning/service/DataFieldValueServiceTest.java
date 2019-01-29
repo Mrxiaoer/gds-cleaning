@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
+import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
@@ -17,6 +18,8 @@ import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -226,6 +229,28 @@ public class DataFieldValueServiceTest {
 			System.out.println(str);
 		}
 		//		dataFieldValueService.jsonapi();
+	}
+
+	@Test
+	public void updateBatchById(){
+		List<DataFieldValue> list = new ArrayList<>();
+		DataFieldValue one = new DataFieldValue();
+		DataFieldValue two = new DataFieldValue();
+		one.setId(23L);
+		one.setBeCleanedId(26L);
+		one.setModifiedUser(6);
+		one.setModifiedTime(LocalDateTime.now());
+		one.setIsDeleted(DataCleanConstant.TRUE);
+		if (list == null){
+			System.out.println("111111");
+		}else if (list.size()>0){
+			System.out.println("222222222222");
+		}else {
+			System.out.println("3333333333");
+		}
+
+//		dataFieldValueMapper.updateBatchById(list);
+
 	}
 
 }

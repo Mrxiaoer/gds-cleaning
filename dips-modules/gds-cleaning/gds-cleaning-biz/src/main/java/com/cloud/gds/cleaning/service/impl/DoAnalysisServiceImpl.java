@@ -21,7 +21,6 @@ import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
-import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DoAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,7 +54,6 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	private final ExecutorService analysisThreadPool;
 	private final DataAnalysisService dataAnalysisService;
 	private final AnalysisResultMapper analysisResultMapper;
-	private final DataFieldValueService dataFieldValueService;
 
 	@Value("${file-save.path}")
 	String fileSavePath;
@@ -63,15 +61,13 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	@Autowired
 	public DoAnalysisServiceImpl(DataFieldValueMapper dataFieldValueMapper, DataFieldMapper dataFieldMapper,
 								 DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool,
-								 DataAnalysisService dataAnalysisService, AnalysisResultMapper analysisResultMapper,
-								 DataFieldValueService dataFieldValueService) {
+								 DataAnalysisService dataAnalysisService, AnalysisResultMapper analysisResultMapper) {
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleMapper = dataRuleMapper;
 		this.analysisThreadPool = analysisThreadPool;
 		this.dataAnalysisService = dataAnalysisService;
 		this.analysisResultMapper = analysisResultMapper;
-		this.dataFieldValueService = dataFieldValueService;
 	}
 
 	@Override
@@ -161,9 +157,8 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	private void resultHandle(long fieldId, List<ResultJsonVo> resultList) {
 		// 结果存入数据库
 		saveAnalysisResult(fieldId, resultList);
-		// todo 自动清洗 2019-1-28 15:15:19 如何解决复写问题
-
-
+		// 自动清洗
+		automaticCleaning(fieldId);
 	}
 
 
@@ -349,7 +344,11 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 			}
 		}
 		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
-		return dataFieldValueService.updateBatchById(list) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId)));
+		if (list.size() > 0) {
+			return dataFieldValueMapper.updateBatchById(list) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId)));
+
+		}
+		return true;
 	}
 
 
