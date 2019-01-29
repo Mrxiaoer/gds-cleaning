@@ -76,17 +76,19 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 
 		int beforeNum = 0;
 		int afterNum = 0;
-		float mx = 0.8F;
-		while (oneSize << 2 < beforeNum) {
-
-			if (beforeNum * mx > afterNum) {
-				WillAnalysisData AnalysisData = this.getAnalysisData(fieldId, threshold);
+		float dmx = 0.8F;
+		float umx = 0.95F;
+		while (oneSize << 3 < beforeNum) {
+			if (beforeNum * dmx > afterNum) {
+				WillAnalysisData analysisData = this.getAnalysisData(fieldId, threshold);
 				beforeNum = willAnalysisData.getData().size();
 				//结果处理
 				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize));
-				afterNum = AnalysisData.getData().size();
-			} else {
+				afterNum = analysisData.getData().size();
+			} else if(beforeNum * dmx < afterNum&&beforeNum * umx > afterNum){
 				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize << 1));
+			}else {
+				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize << 2));
 			}
 		}
 
@@ -154,7 +156,6 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		}
 
 		while (needGetNum.get() > 0) {
-			// System.out.println("未完成！");
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
