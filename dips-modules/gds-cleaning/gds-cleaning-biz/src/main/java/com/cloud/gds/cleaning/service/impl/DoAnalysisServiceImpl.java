@@ -22,21 +22,23 @@ import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.DoAnalysisService;
+import java.text.Collator;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-
-import java.text.Collator;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 执行分析实现类
@@ -60,8 +62,8 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 
 	@Autowired
 	public DoAnalysisServiceImpl(DataFieldValueMapper dataFieldValueMapper, DataFieldMapper dataFieldMapper,
-								 DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool,
-								 DataAnalysisService dataAnalysisService, AnalysisResultMapper analysisResultMapper) {
+		DataRuleMapper dataRuleMapper, @Qualifier("analysisThreadPool") ExecutorService analysisThreadPool,
+		DataAnalysisService dataAnalysisService, AnalysisResultMapper analysisResultMapper) {
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleMapper = dataRuleMapper;
@@ -85,9 +87,9 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 				//结果处理
 				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize));
 				afterNum = analysisData.getData().size();
-			} else if(beforeNum * dmx < afterNum&&beforeNum * umx > afterNum){
+			} else if (beforeNum * dmx < afterNum && beforeNum * umx > afterNum) {
 				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize << 1));
-			}else {
+			} else {
 				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize << 2));
 			}
 		}
@@ -180,7 +182,6 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 
 	}
 
-
 	/**
 	 * 储存分析结果返回数据
 	 *
@@ -228,7 +229,6 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		}
 		return true;
 	}
-
 
 	/**
 	 * 需要分析的数据
@@ -341,7 +341,8 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	@Override
 	public boolean automaticCleaning(Long fieldId) {
 		// 查询相应清洗池的分析结果集
-		List<AnalysisResult> results = analysisResultMapper.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
+		List<AnalysisResult> results = analysisResultMapper
+			.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
 
 		// 组装待清洗数据
 		List<DataFieldValue> list = new ArrayList<>();
@@ -364,11 +365,26 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		}
 		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
 		if (list.size() > 0) {
-			return dataFieldValueMapper.updateBatchById(list) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId)));
+			return dataFieldValueMapper.updateBatchById(list) && SqlHelper
+				.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId)));
 
 		}
 		return true;
 	}
 
+	@Override
+	public List<Long> exactlySame(Map<Long, String> map) {
+		List<Long> list = new ArrayList<>();
+		Set<String> set = new LinkedHashSet<>();
+		//通过set来取出某一字段值相同的数据的id
+		map.forEach((aLong, s) -> {
+			int size = set.size();
+			set.add(s);
+			if (set.size()==size) {
+				list.add(aLong);
+			}
+		});
+		return list;
+	}
 
 }

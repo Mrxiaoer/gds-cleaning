@@ -1,5 +1,7 @@
 package com.cloud.gds.cleaning.service;
 
+import java.util.List;
+import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -34,5 +36,7 @@ public interface DoAnalysisService {
 	 * @return
 	 */
 	boolean automaticCleaning(Long fieldId);
+
+	List<Long> exactlySame(Map<Long, String> map);
 
 }

@@ -5,7 +5,9 @@ import cn.hutool.json.JSONUtil;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Random;
+import lombok.Data;
 import org.junit.Test;
 
 /**
@@ -104,7 +106,21 @@ public class OtherTest {
 
 	@Test
 	public void smileTest1(){
-		System.out.println((-1)<<1);
+		Person xx=new Person();
+		xx.setName("wyn");
+		xxxxx(xx);
+		System.out.println(xx.toString());
 	}
 
+	private void xxxxx(Object xx){
+		// xx=new Person();
+		((Person) xx).setAge(18);
+	}
+
+	@Data
+	class Person{
+		int age;
+		String name;
+		int sex;
+	}
 }
