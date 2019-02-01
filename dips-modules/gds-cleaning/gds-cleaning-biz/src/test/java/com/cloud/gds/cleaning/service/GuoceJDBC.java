@@ -80,12 +80,10 @@ public class GuoceJDBC {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
-			// 注册 JDBC 驱动
-			Class.forName(JDBC_DRIVER);
 
 			// 打开链接
 			System.out.println("连接数据库...");
-			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			conn = myDataSource.getConnection();
 
 			// 执行查询
 			System.out.println(" 实例化Statement对象...");
@@ -125,7 +123,7 @@ public class GuoceJDBC {
 			// 完成后关闭
 			rs.close();
 			stmt.close();
-			conn.close();
+			myDataSource.releaseConnection(conn);
 		} catch (Exception e) {
 			// 处理 Class.forName 错误
 			e.printStackTrace();
@@ -155,12 +153,9 @@ public class GuoceJDBC {
 		String idStr = list.toString();
 		String ids = idStr.substring(1, idStr.length() - 1);
 		try {
-			// 注册 JDBC 驱动
-			Class.forName(JDBC_DRIVER);
-
 			// 打开链接
 			System.out.println("连接数据库...");
-			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			conn = myDataSource.getConnection();
 
 			// 执行查询
 			System.out.println(" 实例化Statement对象...");
@@ -190,7 +185,7 @@ public class GuoceJDBC {
 
 			stmt.execute(sqlcount);
 			stmt.close();
-			conn.close();
+			myDataSource.releaseConnection(conn);
 		} catch (SQLException se) {
 			// 处理 JDBC 错误
 			se.printStackTrace();
