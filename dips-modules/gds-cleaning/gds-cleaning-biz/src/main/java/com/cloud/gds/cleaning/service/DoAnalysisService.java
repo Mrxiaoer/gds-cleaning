@@ -27,7 +27,7 @@ public interface DoAnalysisService {
 	 * @param threshold
 	 * @return
 	 */
-	String getAllNeedAnalysisDataFile(Long fieldId, Float threshold);
+	String getAllNeedAnalysisDataFile(long fieldId, float threshold);
 
 	/**
 	 * 自动清洗
@@ -35,7 +35,7 @@ public interface DoAnalysisService {
 	 * @param fieldId
 	 * @return
 	 */
-	boolean automaticCleaning(Long fieldId);
+	boolean automaticCleaning(long fieldId);
 
 	/**
 	 * 完全相同的数据id
