@@ -3,29 +3,25 @@ package com.cloud.gds.cleaning.service;
 import com.alibaba.fastjson.JSON;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import java.io.PrintWriter;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
-import javax.sql.DataSource;
 import lombok.Data;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.sql.DataSource;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 /**
  * @Author : lolilijve
@@ -122,11 +118,12 @@ public class GuoceJDBC {
 		System.out.println("OVER!");
 	}
 
-	@Test
-	public void move() {
+	public void move(List<Long> list) {
 		Connection conn = null;
 		Statement stmt = null;
-		String ids = "15528,15530";
+		String idStr = list.toString();
+		String ids = idStr.substring(1, idStr.length() - 1);
+		System.out.println(ids);
 		try {
 			// 注册 JDBC 驱动
 			Class.forName("com.mysql.jdbc.Driver");
@@ -190,10 +187,74 @@ public class GuoceJDBC {
 		System.out.println("OVER!");
 	}
 
+	@Test
+	public void test() {
+
+		List<Long> ids = new ArrayList<>();
+		ids.add(11L);
+		ids.add(222L);
+		ids.add(333L);
+		batchSave(ids, 2);
+	}
+
+	public boolean batchSave(List<Long> list, int oneSize) {
+		boolean flag = true;
+		List<Long> subList;
+		int currentNum = 0;
+		while (flag) {
+			if (list.size() > oneSize * (currentNum + 1)) {
+				subList = list.subList(currentNum * oneSize, oneSize * (currentNum + 1));
+			} else {
+				subList = list.subList(currentNum * oneSize, list.size());
+				flag = false;
+			}
+			move(subList);
+			currentNum++;
+		}
+		return true;
+	}
+
+
 //	INSERT INTO gov_policy_general (title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,url,creator_id,scrapy_id,examine_status,examine_user_id,processor_id,examine_date
 //									)
 //	SELECT title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,url,creator_id,id AS scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date
 //	FROM scrapy_gov_policy_general where id in (15528,15530)
+
+	public void MultiThreadLabel() throws Exception {
+
+		MyDataSource myDataSource = new MyDataSource();
+		//查询未打标签的ids
+		Connection conn = null;
+		try {
+			conn = myDataSource.getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//todo jdbc操作
+		List<Long> ids = new ArrayList<>();
+		myDataSource.releaseConnection(conn);
+		int oneSize = 100;
+		AtomicInteger currNum = new AtomicInteger();
+		analysisThreadPool.execute(() -> {
+			//根据ids分块查询数据
+			Connection connect = null;
+			try {
+				connect = myDataSource.getConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			List<Long> idList = ids.subList(oneSize * currNum.get(), oneSize * (currNum.get() + 1));
+			currNum.getAndIncrement();
+			//todo jdbc操作
+
+			//打标签
+			//todo
+
+			//标签jdbc存储
+			//todo jdbc操作
+			myDataSource.releaseConnection(connect);
+		});
+	}
 
 	@Data
 	private static class GouceEntity {
@@ -295,42 +356,6 @@ public class GuoceJDBC {
 			return null;
 		}
 
-	}
-
-	public void MultiThreadLabel() throws Exception {
-
-		MyDataSource myDataSource = new MyDataSource();
-		//查询未打标签的ids
-		Connection conn = null;
-		try {
-			conn = myDataSource.getConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		//todo jdbc操作
-		List<Long> ids = new ArrayList<>();
-		myDataSource.releaseConnection(conn);
-		int oneSize = 100;
-		AtomicInteger currNum = new AtomicInteger();
-		analysisThreadPool.execute(() -> {
-			//根据ids分块查询数据
-			Connection connect = null;
-			try {
-				connect = myDataSource.getConnection();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			List<Long> idList = ids.subList(oneSize * currNum.get(), oneSize * (currNum.get() + 1));
-			currNum.getAndIncrement();
-			//todo jdbc操作
-
-			//打标签
-			//todo
-
-			//标签jdbc存储
-			//todo jdbc操作
-			myDataSource.releaseConnection(connect);
-		});
 	}
 
 }
