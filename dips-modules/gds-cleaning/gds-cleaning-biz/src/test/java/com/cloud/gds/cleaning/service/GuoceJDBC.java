@@ -128,28 +128,28 @@ public class GuoceJDBC {
 			stmt = conn.createStatement();
 			String sql;
 			sql = "INSERT INTO gov_policy_general (title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,url,creator_id,scrapy_id,examine_status,examine_user_id,processor_id,examine_date)" +
-				"SELECT title,reference,issue,(CASE style WHEN '通知' THEN 1 WHEN '公告' THEN 2 WHEN '报告' THEN 3 WHEN '意见' THEN 4 WHEN '办法' THEN 5 WHEN '通报' THEN 6 WHEN '其他' THEN 7 ELSE 0 END)AS style,(CASE level WHEN '国家级' THEN 1 WHEN '省级' THEN 2 WHEN '市级' THEN 3 WHEN '区级（县级）' THEN 4 ELSE 0 END)AS `level`,write_time,publish_time,effect_time,text,url,creator_id,id AS scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date FROM scrapy_gov_policy_general where id in ";
+				"SELECT title,reference,issue,(CASE style WHEN \"通知\" THEN 1 WHEN \"公告\" THEN 2 WHEN \"报告\" THEN 3 WHEN \"意见\" THEN 4 WHEN \"办法\" THEN 5 WHEN \"通报\" THEN 6 WHEN \"其他\" THEN 7 ELSE 0 END)AS style,(CASE level WHEN \"国家级\" THEN 1 WHEN \"省级\" THEN 2 WHEN \"市级\" THEN 3 WHEN \"区级（县级）\" THEN 4 ELSE 0 END)AS `level`,write_time,publish_time,effect_time,text,url,creator_id,id AS scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date FROM scrapy_gov_policy_general where id in ";
 
 			String text;
 			text = "SELECT title,reference,issue,(CASE style WHEN \"通知\" THEN 1 WHEN \"公告\" THEN 2 WHEN \"报告\" THEN 3 WHEN \"意见\" THEN 4 WHEN \"办法\" THEN 5 WHEN \"通报\" THEN 6 WHEN \"其他\" THEN 7 ELSE 0 END)AS style,(CASE level WHEN \"国家级\" THEN 1 WHEN \"省级\" THEN 2 WHEN \"市级\" THEN 3 WHEN \"区级（县级）\" THEN 4 ELSE 0 END)AS `level`,write_time,publish_time,effect_time,text,url,creator_id,id AS scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date FROM scrapy_gov_policy_general where id in ";
 
 			String sqlcount;
-			sqlcount = text + "(" + ids + ")";
+			sqlcount = sql + "(" + ids + ")";
 			System.out.println(sqlcount);
 
-			ResultSet rs = stmt.executeQuery(sqlcount);
-//			stmt.execute(sqlcount);
-			while (rs.next()) {
-				int id = rs.getInt("style");
-				String name = rs.getString("level");
-
-				System.out.println(id);
-				System.out.println(name);
-
-			}
+//			ResultSet rs = stmt.executeQuery(sqlcount);
+			stmt.execute(sqlcount);
+//			while (rs.next()) {
+//				int id = rs.getInt("style");
+//				String name = rs.getString("level");
+//
+//				System.out.println(id);
+//				System.out.println(name);
+//
+//			}
 
 			// 完成后关闭
-			rs.close();
+//			rs.close();
 			stmt.close();
 			conn.close();
 		} catch (SQLException se) {
