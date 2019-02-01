@@ -52,10 +52,20 @@ public class GuoceJDBC {
 		List<Long> ids = doAnalysisService.getNoExactlySameDataIds(97L);
 		List<List<Long>> idLists = cutIds(ids);
 
+		AtomicInteger allNum = new AtomicInteger(idLists.size());
 		for (List<Long> idList : idLists) {
 			analysisThreadPool.execute(() -> {
 				this.move(idList);
+				allNum.getAndDecrement();
 			});
+		}
+
+		while(allNum.get()>0){
+			try {
+				Thread.sleep(1000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 		// Connection conn;

@@ -302,7 +302,13 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 				// jsonObj.remove("id");
 				//删除权重为0的字段
 				for (String needDeleteField : needDeleteFields) {
-					jsonObj.remove(needDeleteField);
+					if (replaceId) {
+						jsonObj.remove(needDeleteField);
+					} else {
+						if (!needDeleteField.equals("id")) {
+							jsonObj.remove(needDeleteField);
+						}
+					}
 				}
 				for (String needField : params) {
 					if (!jsonObj.containsKey(needField)) {
@@ -404,7 +410,9 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		Map<Long, String> map = new HashMap<>(1024);
 		for (JSONObject data : list) {
 			if (data.get(maxWeightParam) != null && StrUtil.isNotBlank(data.get(maxWeightParam).toString())) {
-				map.put(Long.valueOf(data.get("id").toString()), data.get(maxWeightParam).toString());
+				if (data.get("id") != null) {
+					map.put(Long.valueOf(data.get("id").toString()), data.get(maxWeightParam).toString());
+				}
 			}
 		}
 

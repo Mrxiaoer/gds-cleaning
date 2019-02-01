@@ -8,8 +8,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.Wrapper;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,12 +23,12 @@ import org.springframework.stereotype.Component;
  * @Date : 2019-02-01
  */
 @Component
-public class MyDataSource implements DataSource {
+public class MyDataSource implements CommonDataSource, Wrapper {
 
 	// JDBC 驱动名及数据库 URL
 	private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	private static final String DB_URL =
-		"jdbc:mysql://118.31.60.34:3306/dips_cloud_gov2?useUnicode=true" + "&characterEncoding=UTF-8";
+		"jdbc:mysql://118.31.60.34:3306/dips_cloud_gov2?useUnicode=true&useSSL=false&characterEncoding=UTF-8";
 
 	// 数据库的用户名与密码，需要根据自己的设置
 	private static final String USER = "root";
@@ -47,7 +49,6 @@ public class MyDataSource implements DataSource {
 		}
 	}
 
-	@Override
 	public Connection getConnection() throws SQLException {
 		// 取出连接池中一个连接,删除第一个连接返回
 		final Connection conn = dataSources.removeFirst();
@@ -69,11 +70,6 @@ public class MyDataSource implements DataSource {
 					}
 				}
 			});
-	}
-
-	@Override
-	public Connection getConnection(String username, String password) throws SQLException {
-		return null;
 	}
 
 	// 将连接放回连接池
