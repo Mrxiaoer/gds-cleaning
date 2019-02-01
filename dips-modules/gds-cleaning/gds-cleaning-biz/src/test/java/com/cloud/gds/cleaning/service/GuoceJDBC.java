@@ -123,7 +123,7 @@ public class GuoceJDBC {
 		Statement stmt = null;
 		String idStr = list.toString();
 		String ids = idStr.substring(1, idStr.length() - 1);
-		System.out.println(ids);
+//		System.out.println(ids);
 		try {
 			// 注册 JDBC 驱动
 			Class.forName("com.mysql.jdbc.Driver");
@@ -146,19 +146,7 @@ public class GuoceJDBC {
 			sqlcount = sql + "(" + ids + ")";
 			System.out.println(sqlcount);
 
-//			ResultSet rs = stmt.executeQuery(sqlcount);
 			stmt.execute(sqlcount);
-//			while (rs.next()) {
-//				int id = rs.getInt("style");
-//				String name = rs.getString("level");
-//
-//				System.out.println(id);
-//				System.out.println(name);
-//
-//			}
-
-			// 完成后关闭
-//			rs.close();
 			stmt.close();
 			conn.close();
 		} catch (SQLException se) {
@@ -187,15 +175,6 @@ public class GuoceJDBC {
 		System.out.println("OVER!");
 	}
 
-	@Test
-	public void test() {
-
-		List<Long> ids = new ArrayList<>();
-		ids.add(11L);
-		ids.add(222L);
-		ids.add(333L);
-		batchSave(ids, 2);
-	}
 
 	public boolean batchSave(List<Long> list, int oneSize) {
 		boolean flag = true;
@@ -230,8 +209,8 @@ public class GuoceJDBC {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		//todo jdbc操作
-		List<Long> ids = new ArrayList<>();
+		//todo jdbc操作 未打标签的ids
+		List<Long> ids = selectNoTagId();
 		myDataSource.releaseConnection(conn);
 		int oneSize = 100;
 		AtomicInteger currNum = new AtomicInteger();
@@ -249,6 +228,12 @@ public class GuoceJDBC {
 
 			//打标签
 			//todo
+			TagRelation tagRelation = new TagRelation();
+			// 固定
+			tagRelation.setNode("gov_general_policy");
+			tagRelation.setType_id(4L);
+
+
 
 			//标签jdbc存储
 			//todo jdbc操作
@@ -278,13 +263,17 @@ public class GuoceJDBC {
 
 	@Data
 	private static class GouceEntity {
-
 		private Integer id;
-
 		private String title;
-
 		private Integer is_deleted;
+	}
 
+	@Data
+	public class TagRelation{
+		private String node;
+		private Long tag_id;
+		private Long relation_id;
+		private Long type_id;
 	}
 
 	public class MyDataSource implements DataSource {
@@ -376,5 +365,62 @@ public class GuoceJDBC {
 			return null;
 		}
 
+	}
+
+
+	public List<Long> selectNoTagId() {
+		Connection conn = null;
+		Statement stmt = null;
+		List<Long> ids = new ArrayList<>();
+		try {
+			// 注册 JDBC 驱动
+			Class.forName("com.mysql.jdbc.Driver");
+
+			// 打开链接
+			System.out.println("连接数据库...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+			// 执行查询
+			System.out.println(" 实例化Statement对象...");
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT a.id FROM gov_policy_general a LEFT JOIN gov_tag_relation b ON a.id = b.relation_id WHERE b.relation_id IS NULL AND a.examine_user_id = 2112 ";
+			ResultSet rs = stmt.executeQuery(sql);
+
+			// 展开结果集数据库
+			while (rs.next()) {
+				// 通过字段检索
+				Long id = rs.getLong("id");
+				ids.add(id);
+
+				// 输出数据
+//				System.out.print("ID: " + id);
+			}
+			// 完成后关闭
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// 处理 Class.forName 错误
+			e.printStackTrace();
+		} finally {
+			// 关闭资源
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (SQLException se2) {
+				// 什么都不做
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		System.out.println("selectNoTagId OVER!");
+		return ids;
 	}
 }
