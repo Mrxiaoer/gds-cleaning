@@ -147,10 +147,9 @@ public class GuoceJDBC {
 		Statement stmt = null;
 		String idStr = list.toString();
 		String ids = idStr.substring(1, idStr.length() - 1);
-//		System.out.println(ids);
 		try {
 			// 注册 JDBC 驱动
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName(JDBC_DRIVER);
 
 			// 打开链接
 			System.out.println("连接数据库...");
@@ -211,6 +210,16 @@ public class GuoceJDBC {
 		System.out.println("OVER!");
 	}
 
+	@Test
+	public void test(){
+
+		List<Long> ids = new ArrayList<>();
+		ids.add(1813L);
+		ids.add(15528L);
+		ids.add(15530L);
+		ids.add(1814L);
+		batchSave(ids, 2);
+	}
 
 	public boolean batchSave(List<Long> list, int oneSize) {
 		boolean flag = true;
