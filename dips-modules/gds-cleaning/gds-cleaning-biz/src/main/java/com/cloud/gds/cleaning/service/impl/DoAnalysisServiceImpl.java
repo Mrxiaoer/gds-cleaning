@@ -76,7 +76,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 
 	@Override
 	public void handOutAnalysis(long fieldId, float threshold, int oneSize) {
-		WillAnalysisData willAnalysisData = this.getAnalysisData(fieldId, threshold);
+		WillAnalysisData willAnalysisData = this.getAnalysisData(fieldId, threshold, true);
 
 		int beforeNum = 0;
 		int afterNum = 0;
@@ -84,7 +84,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		float umx = 0.95F;
 		while (oneSize << 3 < beforeNum) {
 			if (beforeNum * dmx > afterNum) {
-				WillAnalysisData analysisData = this.getAnalysisData(fieldId, threshold);
+				WillAnalysisData analysisData = this.getAnalysisData(fieldId, threshold, true);
 				beforeNum = willAnalysisData.getData().size();
 				//结果处理
 				this.resultHandle(fieldId, this.doHandout(fieldId, willAnalysisData, oneSize));
@@ -255,9 +255,10 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	 *
 	 * @param fieldId
 	 * @param threshold
+	 * @param replaceId 是否替换查询数据主键为本系统id（暂定主键为id）
 	 * @return
 	 */
-	private WillAnalysisData getAnalysisData(Long fieldId, Float threshold) {
+	private WillAnalysisData getAnalysisData(long fieldId, float threshold, boolean replaceId) {
 
 		DataField dataField = new DataField();
 		dataField.setId(fieldId);
@@ -298,7 +299,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 			if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
 				JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
 				//如果原数据含字段id，删除之
-				jsonObj.remove("id");
+				// jsonObj.remove("id");
 				//删除权重为0的字段
 				for (String needDeleteField : needDeleteFields) {
 					jsonObj.remove(needDeleteField);
@@ -309,7 +310,9 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 					}
 				}
 				//添加id字段
-				jsonObj.putOnce("id", dataFieldValue.getId());
+				if (replaceId) {
+					jsonObj.put("id", dataFieldValue.getId());
+				}
 
 				objList.add(jsonObj);
 			}
@@ -336,12 +339,12 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	}
 
 	@Override
-	public String getAllNeedAnalysisDataFile(Long fieldId, Float threshold) {
-		return this.willAnalysisDataToFile(fieldId.toString(), this.getAnalysisData(fieldId, threshold));
+	public String getAllNeedAnalysisDataFile(long fieldId, float threshold) {
+		return this.willAnalysisDataToFile(String.valueOf(fieldId), this.getAnalysisData(fieldId, threshold, true));
 	}
 
 	@Override
-	public boolean automaticCleaning(Long fieldId) {
+	public boolean automaticCleaning(long fieldId) {
 		// 查询相应清洗池的分析结果集
 		List<AnalysisResult> results = analysisResultMapper
 			.selectList(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId));
@@ -380,10 +383,10 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		Set<String> set = new LinkedHashSet<>();
 		//通过set来取出某一字段值相同的数据的id
 		map.forEach((aLong, s) -> {
-			int size = set.size();
-			set.add(StrUtil.cleanBlank(s));
-			if (set.size() == size) {
+			if (set.contains(StrUtil.cleanBlank(s))) {
 				list.add(aLong);
+			} else {
+				set.add(StrUtil.cleanBlank(s));
 			}
 		});
 		return list;
@@ -391,7 +394,8 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 
 	@Override
 	public List<Long> getExactlySameDataIds(long fieldId) {
-		WillAnalysisData willAnalysisData = this.getAnalysisData(fieldId, 1F);
+		WillAnalysisData willAnalysisData = this.getAnalysisData(fieldId, 1F, false);
+
 		List<JSONObject> list = willAnalysisData.getData();
 		//最大权重
 		float maxWeight = Collections.max(willAnalysisData.getWeights());
