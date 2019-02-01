@@ -37,6 +37,20 @@ public interface DoAnalysisService {
 	 */
 	boolean automaticCleaning(Long fieldId);
 
+	/**
+	 * 完全相同的数据id
+	 *
+	 * @param map
+	 * @return
+	 */
 	List<Long> exactlySame(Map<Long, String> map);
+
+	/**
+	 * 获得完全相同的数据id
+	 *
+	 * @param fieldId
+	 * @return
+	 */
+	List<Long> getExactlySameDataIds(long fieldId);
 
 }

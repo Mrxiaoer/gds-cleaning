@@ -1,6 +1,7 @@
 package com.cloud.gds.cleaning.service;
 
 import com.cloud.gds.cleaning.GdsCleaningApplication;
+import hammerlab.iterator.map;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
@@ -36,6 +37,11 @@ public class DoAnalysisServiceTest {
 		map.put(6L,"d");
 		map.put(7L,"ab");
 		System.out.println(doAnalysisService.exactlySame(map));
+	}
+
+	@Test
+	public void getExactlySame(){
+		System.out.println(doAnalysisService.getExactlySameDataIds(96L));
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.io.UnsupportedEncodingException;
@@ -122,5 +123,12 @@ public class OtherTest {
 		int age;
 		String name;
 		int sex;
+	}
+
+	@Test
+	public void cleanBlank(){
+		// xx=new Person();
+		String str = StrUtil.cleanBlank("aa bb\ncc   dd");
+		System.out.println(str);
 	}
 }

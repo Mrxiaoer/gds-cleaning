@@ -17,7 +17,13 @@ import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
-import com.cloud.gds.cleaning.api.vo.*;
+import com.cloud.gds.cleaning.api.vo.BaseVo;
+import com.cloud.gds.cleaning.api.vo.CenterData;
+import com.cloud.gds.cleaning.api.vo.CleanItem;
+import com.cloud.gds.cleaning.api.vo.DARVo;
+import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
+import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
@@ -25,15 +31,18 @@ import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 数据池接口实现类
@@ -56,7 +65,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	String fileSavePath;
 
 	@Autowired
-	public DataFieldValueServiceImpl(DataFieldMapper dataFieldMapper, DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper, AnalysisResultMapper analysisResultMapper) {
+	public DataFieldValueServiceImpl(DataFieldMapper dataFieldMapper, DataRuleService dataRuleService,
+		DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper,
+		AnalysisResultMapper analysisResultMapper) {
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleService = dataRuleService;
 		this.dataFieldValueMapper = dataFieldValueMapper;
@@ -261,7 +272,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	 * @return
 	 */
 	private boolean analysisResultDeletes(Set<Long> ids) {
-		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids))) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids)));
+		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids)))
+			&& SqlHelper
+			.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids)));
 
 	}
 
@@ -277,9 +290,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		before1.setBaseId(id);
 		AnalysisResult before2 = new AnalysisResult();
 		before2.setCompareId(id);
-		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<>(before1))) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<>(before2)));
+		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<>(before1))) && SqlHelper
+			.delBool(analysisResultMapper.delete(new EntityWrapper<>(before2)));
 	}
-
 
 	@Override
 	public Boolean deleteByIds(Set<Long> ids) {
@@ -487,7 +500,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			Map<String, Object> map = result.getFieldValue();
 			b.setLabel(map.get(dataSetVo.getProp()).toString());
 			// 查询是否存在子叶
-			List<DataFieldValue> leafs = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
+			List<DataFieldValue> leafs = dataFieldValueMapper
+				.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
 			b.setLeaf(leafs.size() <= 0);
 
 			baseVos.add(b);
@@ -552,8 +566,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Iterator<Object> iterator = jsonArray.iterator();
 		JSONArray array = new JSONArray();
 		while (iterator.hasNext()) {
-			Object jsonData = iterator.next();
-			if (!checkJsonParams(dl, JSONUtil.parseObj(jsonData, false))) {
+			Object obj = iterator.next();
+			JSONObject jsonData = JSONUtil.parseObj(obj, false);
+			if (!checkJsonParams(dl, jsonData)) {
 				array.add(jsonData);
 				iterator.remove();
 			}
@@ -578,7 +593,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	 * @return
 	 */
 	private Boolean checkJsonParams(List<DataSetVo> dl, JSONObject jsonData) {
-
 		boolean flag = true;
 		List<String> dataKeys = new ArrayList<>();
 		//判断是否包含所有规则中的字段
@@ -588,12 +602,21 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			}
 			dataKeys.add(dsv.getProp());
 		}
-		//判断是否还包含包含规则以外的字段
-		for (String key : jsonData.keySet()) {
+		//判断是否还包含包含规则以外的字段,有则删除
+		Iterator<String> iterator = jsonData.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
 			if (!dataKeys.contains(key)) {
-				flag = false;
+				// flag = false;
+				iterator.remove();
 			}
 		}
+		// for (String key : jsonData.keySet()) {
+		// 	if (!dataKeys.contains(key)) {
+		// 		// flag = false;
+		// 		jsonData.remove(key);
+		// 	}
+		// }
 
 		return flag;
 	}

@@ -1,6 +1,7 @@
 package com.cloud.gds.cleaning.service.impl;
 
 import cn.hutool.core.io.file.FileWriter;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -26,6 +27,7 @@ import java.text.Collator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -379,12 +381,31 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		//通过set来取出某一字段值相同的数据的id
 		map.forEach((aLong, s) -> {
 			int size = set.size();
-			set.add(s);
-			if (set.size()==size) {
+			set.add(StrUtil.cleanBlank(s));
+			if (set.size() == size) {
 				list.add(aLong);
 			}
 		});
 		return list;
+	}
+
+	@Override
+	public List<Long> getExactlySameDataIds(long fieldId) {
+		WillAnalysisData willAnalysisData = this.getAnalysisData(fieldId, 1F);
+		List<JSONObject> list = willAnalysisData.getData();
+		//最大权重
+		float maxWeight = Collections.max(willAnalysisData.getWeights());
+		//最大权重所对应的字段
+		String maxWeightParam = willAnalysisData.getParams().get(willAnalysisData.getWeights().indexOf(maxWeight));
+
+		Map<Long, String> map = new HashMap<>(1024);
+		for (JSONObject data : list) {
+			if (data.get(maxWeightParam) != null && StrUtil.isNotBlank(data.get(maxWeightParam).toString())) {
+				map.put(Long.valueOf(data.get("id").toString()), data.get(maxWeightParam).toString());
+			}
+		}
+
+		return this.exactlySame(map);
 	}
 
 }
