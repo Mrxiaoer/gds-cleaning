@@ -1,27 +1,41 @@
 package com.cloud.gds.cleaning.service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.alibaba.fastjson.JSON;
+import com.cloud.gds.cleaning.GdsCleaningApplication;
+import com.cloud.gds.cleaning.api.entity.DataFieldValue;
+import lombok.Data;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author : lolilijve
  * @Email : lolilijve@gmail.com
  * @Date : 2019-02-01
  */
+@SpringBootTest(classes = GdsCleaningApplication.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class GuoceJDBC {
 
 	// JDBC 驱动名及数据库 URL
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	static final String DB_URL = "jdbc:mysql://118.31.60.34:3306/dips_cloud_gov";
+	static final String DB_URL = "jdbc:mysql://118.31.60.34:3306/dips_cloud_gov2";
 
 	// 数据库的用户名与密码，需要根据自己的设置
 	static final String USER = "root";
 	static final String PASS = "Gov20130528";
 
-	public static void main(String[] args) {
+	@Autowired
+	private  DataFieldValueService dataFieldValueService;
+
+	@Test
+	public void gouceInsert() {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
@@ -36,22 +50,36 @@ public class GuoceJDBC {
 			System.out.println(" 实例化Statement对象...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT id FROM XX";
+			sql = "SELECT id,title,is_deleted FROM scrapy_gov_policy_general WHERE is_deleted != 1 order by is_deleted desc ";
 			ResultSet rs = stmt.executeQuery(sql);
 
+			List<DataFieldValue> list = new ArrayList<>();
 			// 展开结果集数据库
 			while (rs.next()) {
 				// 通过字段检索
 				int id = rs.getInt("id");
-				String name = rs.getString("name");
-				String url = rs.getString("url");
+				String name = rs.getString("title");
+				int is_deleted = rs.getInt("is_deleted");
 
-				// 输出数据
-				System.out.print("ID: " + id);
-				System.out.print(", 站点名称: " + name);
-				System.out.print(", 站点 URL: " + url);
-				System.out.print("\n");
+//				// 输出数据
+//				System.out.print("ID: " + id);
+//				System.out.print(", 站点名称: " + name);
+//				System.out.print("\n");
+				DataFieldValue fieldValue = new DataFieldValue();
+				fieldValue.setFieldId(97L);
+
+				GouceEntity gouceEntity = new GouceEntity();
+				gouceEntity.setId(id);
+				gouceEntity.setTitle(name);
+				gouceEntity.setIs_deleted(is_deleted);
+//				System.out.println(rs.getRow());
+//				System.out.println(JSON.toJSONString(gouceEntity));
+				fieldValue.setFieldValue(JSON.toJSONString(gouceEntity));
+				fieldValue.setCreateUser(0);
+				list.add(fieldValue);
+
 			}
+			dataFieldValueService.batchSave(list, 1000);
 			// 完成后关闭
 			rs.close();
 			stmt.close();
@@ -80,6 +108,19 @@ public class GuoceJDBC {
 			}
 		}
 		System.out.println("OVER!");
+	}
+
+
+	@Data
+	private static class GouceEntity {
+
+		private Integer id;
+
+		private String title;
+
+		private Integer is_deleted;
+
+
 	}
 
 }

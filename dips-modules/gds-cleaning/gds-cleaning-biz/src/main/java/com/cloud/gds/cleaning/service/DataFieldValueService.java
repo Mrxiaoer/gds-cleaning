@@ -178,5 +178,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	JSONArray dataJsonInput(long fieldId, JSONArray jsonArray);
 
+	boolean batchSave(List<DataFieldValue> list, int oneSize);
 }
 
