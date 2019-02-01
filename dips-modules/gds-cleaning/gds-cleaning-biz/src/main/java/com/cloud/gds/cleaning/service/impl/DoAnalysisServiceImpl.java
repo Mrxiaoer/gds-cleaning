@@ -378,7 +378,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	}
 
 	@Override
-	public List<Long> exactlySame(Map<Long, String> map) {
+	public List<Long> noExactlySame(Map<Long, String> map) {
 		List<Long> list = new ArrayList<>();
 		Set<String> set = new LinkedHashSet<>();
 		//通过set来取出某一字段值相同的数据的id
@@ -392,7 +392,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 	}
 
 	@Override
-	public List<Long> getExactlySameDataIds(long fieldId) {
+	public List<Long> getNoExactlySameDataIds(long fieldId) {
 		WillAnalysisData willAnalysisData = this.getAnalysisData(fieldId, 1F, false);
 
 		List<JSONObject> list = willAnalysisData.getData();
@@ -408,7 +408,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 			}
 		}
 
-		return this.exactlySame(map);
+		return this.noExactlySame(map);
 	}
 
 }

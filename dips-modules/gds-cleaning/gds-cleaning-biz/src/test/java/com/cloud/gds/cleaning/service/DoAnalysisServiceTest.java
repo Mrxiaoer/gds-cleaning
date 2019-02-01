@@ -36,12 +36,12 @@ public class DoAnalysisServiceTest {
 		map.put(5L,"ab");
 		map.put(6L,"d");
 		map.put(7L,"ab");
-		System.out.println(doAnalysisService.exactlySame(map));
+		System.out.println(doAnalysisService.noExactlySame(map));
 	}
 
 	@Test
 	public void getExactlySame(){
-		System.out.println(doAnalysisService.getExactlySameDataIds(96L));
+		System.out.println(doAnalysisService.getNoExactlySameDataIds(96L));
 	}
 
 }
