@@ -383,9 +383,8 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		Set<String> set = new LinkedHashSet<>();
 		//通过set来取出某一字段值相同的数据的id
 		map.forEach((aLong, s) -> {
-			if (set.contains(StrUtil.cleanBlank(s))) {
+			if (!set.contains(StrUtil.cleanBlank(s))) {
 				list.add(aLong);
-			} else {
 				set.add(StrUtil.cleanBlank(s));
 			}
 		});
