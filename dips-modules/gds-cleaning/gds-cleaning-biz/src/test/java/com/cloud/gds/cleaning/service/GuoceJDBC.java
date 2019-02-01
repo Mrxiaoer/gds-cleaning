@@ -25,14 +25,14 @@ public class GuoceJDBC {
 
 	// JDBC 驱动名及数据库 URL
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	static final String DB_URL = "jdbc:mysql://118.31.60.34:3306/dips_cloud_gov2";
+	static final String DB_URL = "jdbc:mysql://118.31.60.34:3306/dips_cloud_gov2?useUnicode=true&characterEncoding=UTF-8";
 
 	// 数据库的用户名与密码，需要根据自己的设置
 	static final String USER = "root";
 	static final String PASS = "Gov20130528";
 
 	@Autowired
-	private  DataFieldValueService dataFieldValueService;
+	private DataFieldValueService dataFieldValueService;
 
 	@Test
 	public void gouceInsert() {
@@ -110,6 +110,78 @@ public class GuoceJDBC {
 		System.out.println("OVER!");
 	}
 
+	@Test
+	public void move() {
+		Connection conn = null;
+		Statement stmt = null;
+		String ids = "15528,15530";
+		try {
+			// 注册 JDBC 驱动
+			Class.forName("com.mysql.jdbc.Driver");
+
+			// 打开链接
+			System.out.println("连接数据库...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+			// 执行查询
+			System.out.println(" 实例化Statement对象...");
+			stmt = conn.createStatement();
+			String sql;
+			sql = "INSERT INTO gov_policy_general (title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,url,creator_id,scrapy_id,examine_status,examine_user_id,processor_id,examine_date)" +
+				"SELECT title,reference,issue,(CASE style WHEN '通知' THEN 1 WHEN '公告' THEN 2 WHEN '报告' THEN 3 WHEN '意见' THEN 4 WHEN '办法' THEN 5 WHEN '通报' THEN 6 WHEN '其他' THEN 7 ELSE 0 END)AS style,(CASE level WHEN '国家级' THEN 1 WHEN '省级' THEN 2 WHEN '市级' THEN 3 WHEN '区级（县级）' THEN 4 ELSE 0 END)AS `level`,write_time,publish_time,effect_time,text,url,creator_id,id AS scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date FROM scrapy_gov_policy_general where id in ";
+
+			String text;
+			text = "SELECT title,reference,issue,(CASE style WHEN \"通知\" THEN 1 WHEN \"公告\" THEN 2 WHEN \"报告\" THEN 3 WHEN \"意见\" THEN 4 WHEN \"办法\" THEN 5 WHEN \"通报\" THEN 6 WHEN \"其他\" THEN 7 ELSE 0 END)AS style,(CASE level WHEN \"国家级\" THEN 1 WHEN \"省级\" THEN 2 WHEN \"市级\" THEN 3 WHEN \"区级（县级）\" THEN 4 ELSE 0 END)AS `level`,write_time,publish_time,effect_time,text,url,creator_id,id AS scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date FROM scrapy_gov_policy_general where id in ";
+
+			String sqlcount;
+			sqlcount = text + "(" + ids + ")";
+			System.out.println(sqlcount);
+
+			ResultSet rs = stmt.executeQuery(sqlcount);
+//			stmt.execute(sqlcount);
+			while (rs.next()) {
+				int id = rs.getInt("style");
+				String name = rs.getString("level");
+
+				System.out.println(id);
+				System.out.println(name);
+
+			}
+
+			// 完成后关闭
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (SQLException se) {
+			// 处理 JDBC 错误
+			se.printStackTrace();
+		} catch (Exception e) {
+			// 处理 Class.forName 错误
+			e.printStackTrace();
+		} finally {
+			// 关闭资源
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (SQLException se2) {
+				// 什么都不做
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		System.out.println("OVER!");
+	}
+
+//	INSERT INTO gov_policy_general (title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,url,creator_id,scrapy_id,examine_status,examine_user_id,processor_id,examine_date
+//									)
+//	SELECT title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,url,creator_id,id AS scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date
+//	FROM scrapy_gov_policy_general where id in (15528,15530)
 
 	@Data
 	private static class GouceEntity {
