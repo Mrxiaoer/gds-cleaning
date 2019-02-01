@@ -38,19 +38,19 @@ public interface DoAnalysisService {
 	boolean automaticCleaning(long fieldId);
 
 	/**
-	 * 完全相同的数据id
+	 * 不存在其他完全相同的数据的id
 	 *
 	 * @param map
 	 * @return
 	 */
-	List<Long> exactlySame(Map<Long, String> map);
+	List<Long> noExactlySame(Map<Long, String> map);
 
 	/**
-	 * 获得完全相同的数据id
+	 * 获得存在其他完全相同的数据的id
 	 *
 	 * @param fieldId
 	 * @return
 	 */
-	List<Long> getExactlySameDataIds(long fieldId);
+	List<Long> getNoExactlySameDataIds(long fieldId);
 
 }
