@@ -60,28 +60,13 @@ public class GuoceJDBC {
 			});
 		}
 
-		while(allNum.get()>0){
+		while (allNum.get() > 0) {
 			try {
 				Thread.sleep(1000L);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-
-		// Connection conn;
-		// PreparedStatement stmt;
-		// try {
-		// 	conn = myDataSource.getConnection();
-		// 	String sql = "SELECT id,title,is_deleted FROM scrapy_gov_policy_general WHERE is_deleted != 1 ORDER BY
-		// is_deleted"
-		// 		+ " DESC ";
-		// 	stmt = conn.prepareStatement(sql);
-		// 	ResultSet rs = stmt.executeQuery();
-		// 	stmt.close();
-		// 	myDataSource.releaseConnection(conn);
-		// } catch (SQLException e) {
-		// 	e.printStackTrace();
-		// }
 
 	}
 
@@ -92,11 +77,9 @@ public class GuoceJDBC {
 		try {
 
 			// 打开链接
-			System.out.println("连接数据库...");
 			conn = myDataSource.getConnection();
 
 			// 执行查询
-			System.out.println(" 实例化Statement对象...");
 			stmt = conn.createStatement();
 			String sql;
 			sql = "SELECT id,title,is_deleted FROM scrapy_gov_policy_general WHERE is_deleted != 1 ORDER BY is_deleted"
@@ -137,22 +120,6 @@ public class GuoceJDBC {
 		} catch (Exception e) {
 			// 处理 Class.forName 错误
 			e.printStackTrace();
-		} finally {
-			// 关闭资源
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (SQLException se2) {
-				// 什么都不做
-			}
-			try {
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException se) {
-				se.printStackTrace();
-			}
 		}
 		System.out.println("OVER!");
 	}
@@ -223,7 +190,7 @@ public class GuoceJDBC {
 	}
 
 	@Test
-	public void test(){
+	public void test() {
 
 		List<Long> ids = new ArrayList<>();
 		ids.add(1813L);
@@ -290,8 +257,6 @@ public class GuoceJDBC {
 			tagRelation.setNode("gov_general_policy");
 			tagRelation.setType_id(4L);
 
-
-
 			//标签jdbc存储
 			//todo jdbc操作
 			myDataSource.releaseConnection(connect);
@@ -299,7 +264,7 @@ public class GuoceJDBC {
 	}
 
 	public List<List<Long>> cutIds(List<Long> ids) {
-		int oneSize = 100;
+		int oneSize = 500;
 		int currNum = 0;
 		List<List<Long>> lll = new ArrayList<>();
 		boolean flag = true;
@@ -318,22 +283,6 @@ public class GuoceJDBC {
 		return lll;
 	}
 
-	@Data
-	private static class GouceEntity {
-		private Integer id;
-		private String title;
-		private Integer is_deleted;
-	}
-
-	@Data
-	public class TagRelation{
-		private String node;
-		private Long tag_id;
-		private Long relation_id;
-		private Long type_id;
-	}
-
-
 	public List<Long> selectNoTagId() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -350,7 +299,8 @@ public class GuoceJDBC {
 			System.out.println(" 实例化Statement对象...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT a.id FROM gov_policy_general a LEFT JOIN gov_tag_relation b ON a.id = b.relation_id WHERE b.relation_id IS NULL AND a.examine_user_id = 2112 ";
+			sql = "SELECT a.id FROM gov_policy_general a LEFT JOIN gov_tag_relation b ON a.id = b.relation_id WHERE b"
+				+ ".relation_id IS NULL AND a.examine_user_id = 2112 ";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			// 展开结果集数据库
@@ -360,7 +310,7 @@ public class GuoceJDBC {
 				ids.add(id);
 
 				// 输出数据
-//				System.out.print("ID: " + id);
+				//				System.out.print("ID: " + id);
 			}
 			// 完成后关闭
 			rs.close();
@@ -389,4 +339,24 @@ public class GuoceJDBC {
 		System.out.println("selectNoTagId OVER!");
 		return ids;
 	}
+
+	@Data
+	private static class GouceEntity {
+
+		private Integer id;
+		private String title;
+		private Integer is_deleted;
+
+	}
+
+	@Data
+	public class TagRelation {
+
+		private String node;
+		private Long tag_id;
+		private Long relation_id;
+		private Long type_id;
+
+	}
+
 }
