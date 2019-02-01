@@ -6,7 +6,6 @@ import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.config.MyDataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -50,21 +49,29 @@ public class GuoceJDBC {
 
 	@Test
 	public void guoceClean() {
-		// List<Long> ids = doAnalysisService.getNoExactlySameDataIds(97L);
-		// List<List<Long>> idList = cutIds(ids);
-		Connection conn;
-		PreparedStatement stmt;
-		try {
-			conn = myDataSource.getConnection();
-			String sql = "SELECT id,title,is_deleted FROM scrapy_gov_policy_general WHERE is_deleted != 1 ORDER BY is_deleted"
-				+ " DESC ";
-			stmt = conn.prepareStatement(sql);
-			ResultSet rs = stmt.executeQuery();
-			stmt.close();
-			myDataSource.releaseConnection(conn);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		List<Long> ids = doAnalysisService.getNoExactlySameDataIds(97L);
+		List<List<Long>> idLists = cutIds(ids);
+
+		for (List<Long> idList : idLists) {
+			analysisThreadPool.execute(() -> {
+				this.move(idList);
+			});
 		}
+
+		// Connection conn;
+		// PreparedStatement stmt;
+		// try {
+		// 	conn = myDataSource.getConnection();
+		// 	String sql = "SELECT id,title,is_deleted FROM scrapy_gov_policy_general WHERE is_deleted != 1 ORDER BY
+		// is_deleted"
+		// 		+ " DESC ";
+		// 	stmt = conn.prepareStatement(sql);
+		// 	ResultSet rs = stmt.executeQuery();
+		// 	stmt.close();
+		// 	myDataSource.releaseConnection(conn);
+		// } catch (SQLException e) {
+		// 	e.printStackTrace();
+		// }
 
 	}
 
