@@ -25,17 +25,22 @@ public class MyDataSource implements CommonDataSource, Wrapper {
 	// JDBC 驱动名及数据库 URL
 	private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	private static final String DB_URL =
-		"jdbc:mysql://118.31.60.34:3306/dips_cloud_gov2?useUnicode=true&useSSL=false" + "&characterEncoding=UTF-8";
+		"jdbc:mysql://118.31.60.34:3306/dips_cloud_gov?useUnicode=true&useSSL=false" + "&characterEncoding=UTF-8";
 
 	// 数据库的用户名与密码，需要根据自己的设置
 	private static final String USER = "root";
 	private static final String PASS = "Gov20130528";
 	// 链表 --- 实现 栈结构 、队列 结构
-	private final LinkedList<Connection> dataSources = new LinkedList<Connection>();
+	private final LinkedList<Connection> dataSources = new LinkedList<>();
 
 	MyDataSource() {
+		try {
+			Class.forName(JDBC_DRIVER);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		// 一次性创建10个连接
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 8; i++) {
 			try {
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				// 将连接加入连接池中
@@ -62,7 +67,7 @@ public class MyDataSource implements CommonDataSource, Wrapper {
 					if (method.getName().equals("close")) {
 						// 需要加强的方法
 						// 不将连接真正关闭，将连接放回连接池
-						releaseConnection(conn);
+						// releaseConnection(conn);
 						return null;
 					} else {
 						// 不需要加强的方法,调用真实对象方法

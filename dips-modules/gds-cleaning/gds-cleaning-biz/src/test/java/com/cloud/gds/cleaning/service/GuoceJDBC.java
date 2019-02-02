@@ -5,7 +5,6 @@ import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.config.MyDataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,15 +28,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class GuoceJDBC {
 
-	// JDBC 驱动名及数据库 URL
-	private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	private static final String DB_URL =
-		"jdbc:mysql://118.31.60.34:3306/dips_cloud_gov2?useUnicode=true" + "&characterEncoding=UTF-8";
-
-	// 数据库的用户名与密码，需要根据自己的设置
-	private static final String USER = "root";
-	private static final String PASS = "Gov20130528";
-
 	@Autowired
 	private DataFieldValueService dataFieldValueService;
 	@Autowired
@@ -47,9 +37,12 @@ public class GuoceJDBC {
 	@Autowired
 	private MyDataSource myDataSource;
 
+	/**
+	 * 100%相似度的set方式清洗
+	 */
 	@Test
 	public void guoceClean() {
-		List<Long> ids = doAnalysisService.getNoExactlySameDataIds(97L);
+		List<Long> ids = doAnalysisService.getNoExactlySameDataIds(98L);
 		List<List<Long>> idLists = cutIds(ids);
 
 		AtomicInteger allNum = new AtomicInteger(idLists.size());
@@ -70,7 +63,6 @@ public class GuoceJDBC {
 
 	}
 
-	@Test
 	public void gouceInsert() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -124,6 +116,11 @@ public class GuoceJDBC {
 		System.out.println("OVER!");
 	}
 
+	/**
+	 * 表间移动数据
+	 *
+	 * @param list
+	 */
 	public void move(List<Long> list) {
 		Connection conn = null;
 		Statement stmt = null;
@@ -161,7 +158,7 @@ public class GuoceJDBC {
 			System.out.println(sqlcount);
 
 			stmt.execute(sqlcount);
-			stmt.close();
+			// stmt.close();
 			myDataSource.releaseConnection(conn);
 		} catch (SQLException se) {
 			// 处理 JDBC 错误
@@ -189,17 +186,14 @@ public class GuoceJDBC {
 		System.out.println("OVER!");
 	}
 
-	@Test
-	public void test() {
-
-		List<Long> ids = new ArrayList<>();
-		ids.add(1813L);
-		ids.add(15528L);
-		ids.add(15530L);
-		ids.add(1814L);
-		batchSave(ids, 2);
-	}
-
+	/**
+	 * 弃用
+	 *
+	 * @param list
+	 * @param oneSize
+	 * @return
+	 */
+	@Deprecated
 	public boolean batchSave(List<Long> list, int oneSize) {
 		boolean flag = true;
 		List<Long> subList;
@@ -217,13 +211,11 @@ public class GuoceJDBC {
 		return true;
 	}
 
-	//	INSERT INTO gov_policy_general (title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,
-	// url,creator_id,scrapy_id,examine_status,examine_user_id,processor_id,examine_date
-	//									)
-	//	SELECT title,reference,issue,style,`level`,write_time,publish_time,effect_time,text,url,creator_id,id AS
-	// scrapy_id,3 as examine_status,2112 AS examine_user_id,2112 AS processor_id,CURRENT_TIME() AS examine_date
-	//	FROM scrapy_gov_policy_general where id in (15528,15530)
-
+	/**
+	 * 多线程打标签
+	 *
+	 * @throws Exception
+	 */
 	public void MultiThreadLabel() throws Exception {
 
 		//查询未打标签的ids
@@ -263,6 +255,12 @@ public class GuoceJDBC {
 		});
 	}
 
+	/**
+	 * 切分ids
+	 *
+	 * @param ids
+	 * @return
+	 */
 	public List<List<Long>> cutIds(List<Long> ids) {
 		int oneSize = 500;
 		int currNum = 0;
@@ -293,7 +291,7 @@ public class GuoceJDBC {
 
 			// 打开链接
 			System.out.println("连接数据库...");
-			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			// conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
 			// 执行查询
 			System.out.println(" 实例化Statement对象...");
@@ -350,7 +348,7 @@ public class GuoceJDBC {
 	}
 
 	@Data
-	public class TagRelation {
+	private class TagRelation {
 
 		private String node;
 		private Long tag_id;
