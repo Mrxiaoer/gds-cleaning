@@ -204,18 +204,18 @@ public class GuoceJDBC {
 					String sql = "SELECT * FROM x";
 					rs = stmt.executeQuery(sql);
 					while (rs.next()) {
-						//todo 请自建内部类并填充数据
-
+						//todo 请设定内部类TagBeforeData的字段并填充数据
+						TagBeforeData tagBeforeData = new TagBeforeData();
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 
 				//todo 打标签
-				TagRelation tagRelation = new TagRelation();
-				// 固定
-				tagRelation.setNode("gov_general_policy");
-				tagRelation.setType_id(4L);
+				// TagRelation tagRelation = new TagRelation();
+				// // 固定
+				// tagRelation.setNode("gov_general_policy");
+				// tagRelation.setType_id(4L);
 
 				//todo 对标签进行存储
 
@@ -292,6 +292,11 @@ public class GuoceJDBC {
 		private Long tag_id;
 		private Long relation_id;
 		private Long type_id;
+
+	}
+
+	@Data
+	private class TagBeforeData {
 
 	}
 
