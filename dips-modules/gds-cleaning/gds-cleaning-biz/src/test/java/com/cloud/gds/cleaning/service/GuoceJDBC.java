@@ -1,5 +1,6 @@
 package com.cloud.gds.cleaning.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
@@ -8,10 +9,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.Data;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -188,7 +194,9 @@ public class GuoceJDBC {
 	public void MultiThreadLabel() throws Exception {
 
 		//查询未打标签的ids
-		List<Long> ids = selectNoTagId();
+		List<Long> ids = selectIds(
+			"SELECT a.id FROM gov_policy_general a LEFT JOIN gov_tag_relation b ON a.id = b.relation_id WHERE b"
+				+ ".relation_id IS NULL AND a.examine_user_id = 2112");
 		List<List<Long>> idLists = cutIds(ids, 100);
 
 		for (List<Long> idList : idLists) {
@@ -225,6 +233,69 @@ public class GuoceJDBC {
 	}
 
 	/**
+	 * 多线程更新时间
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void MultiThreadGetText() throws Exception {
+		// List<Long> ids = selectNoTagId();
+		List<Long> ids = selectIds("SELECT a.id FROM gov_policy_general a WHERE (a.publish_time <= \"1900-01-01 "
+			+ "00:00:00\" OR a.publish_time IS NULL)and a.examine_user_id = 2112");
+
+		AtomicInteger doNum = new AtomicInteger(ids.size());
+		for (Long id : ids) {
+			analysisThreadPool.execute(() -> {
+				// 按指定模式在字符串查找
+				String text = this.selectText("select text from gov_policy_general where id = " + id);
+
+				// 创建 Pattern 对象
+				String pattern = "<td[\\s\\S]*?>(发文日期|生成日期)</td>[\\s\\S]*?<td>([^<>]+?)</td>";
+				Pattern r = Pattern.compile(pattern);
+
+				// 创建 matcher 对象
+				Matcher m = r.matcher(text);
+
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Connection conn = null;
+				Statement stmt = null;
+				try {
+					conn = myDataSource.getConnection();
+
+					stmt = conn.createStatement();
+					String sql = null;
+					if (m.find()) {
+						Date date = sdf.parse(StrUtil.trim(m.group(2)));
+						sql = "UPDATE gov_policy_general SET publish_time = \"" + sdf1.format(date) + "\" WHERE id = '"
+							+ id + "'";
+						System.out.println("处理：" + id);
+					} else {
+						sql = "UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:01\" WHERE id = '" + id
+							+ "'";
+						System.out.println("NO MATCH");
+					}
+					stmt.execute(sql);
+
+					myDataSource.releaseConnection(conn);
+				} catch (ParseException | SQLException e) {
+					e.printStackTrace();
+				}
+
+				doNum.getAndDecrement();
+			});
+		}
+
+		while (doNum.get() > 0) {
+			try {
+				Thread.sleep(1000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * 切分ids
 	 *
 	 * @param ids
@@ -249,16 +320,13 @@ public class GuoceJDBC {
 		return lll;
 	}
 
-	public List<Long> selectNoTagId() {
+	public List<Long> selectIds(String sql) {
 		List<Long> ids = new ArrayList<>();
 		Connection conn = null;
 		Statement stmt = null;
 		try {
 			conn = myDataSource.getConnection();
 			stmt = conn.createStatement();
-			String sql =
-				"SELECT a.id FROM gov_policy_general a LEFT JOIN gov_tag_relation b ON a.id = b.relation_id WHERE b"
-					+ ".relation_id IS NULL AND a.examine_user_id = 2112 ";
 			// 执行查询
 			ResultSet rs = stmt.executeQuery(sql);
 			// 展开结果集数据库
@@ -274,6 +342,28 @@ public class GuoceJDBC {
 		}
 		System.out.println("selectNoTagId OVER!");
 		return ids;
+	}
+
+	private String selectText(String sql) {
+		Connection conn;
+		Statement stmt;
+		ResultSet rs;
+		String str = "";
+		try {
+			conn = myDataSource.getConnection();
+			stmt = conn.createStatement();
+			// 执行查询
+			rs = stmt.executeQuery(sql);
+			// 展开结果集数据库
+			while (rs.next()) {
+				str = rs.getString("text");
+			}
+			// 完成后归还连接
+			myDataSource.releaseConnection(conn);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return str;
 	}
 
 	@Data

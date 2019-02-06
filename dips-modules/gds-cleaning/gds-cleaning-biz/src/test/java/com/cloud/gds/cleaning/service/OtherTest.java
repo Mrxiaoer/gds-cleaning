@@ -128,7 +128,8 @@ public class OtherTest {
 	@Test
 	public void cleanBlank(){
 		// xx=new Person();
-		String str = StrUtil.cleanBlank("aa bb\ncc   dd");
-		System.out.println(str);
+		String str = StrUtil.trim("\n" + "                \n" + "                \n" + "               \n"
+			+ "2018-10-30               \n" + "               ");
+		System.out.println("="+str+"=");
 	}
 }
