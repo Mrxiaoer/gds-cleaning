@@ -40,7 +40,7 @@ public class MyDataSource implements CommonDataSource, Wrapper {
 			e.printStackTrace();
 		}
 		// 一次性创建10个连接
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 16; i++) {
 			try {
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				// 将连接加入连接池中
@@ -56,32 +56,34 @@ public class MyDataSource implements CommonDataSource, Wrapper {
 		Connection conn;
 		synchronized (dataSources) {
 			conn = dataSources.removeFirst();
-			System.out.println("取出一个连接剩余 " + dataSources.size() + "个连接！");
+			// System.out.println("取出一个连接剩余 " + dataSources.size() + "个连接！");
 		};
 		// 将目标Connection对象进行增强
-		return (Connection) Proxy.newProxyInstance(conn.getClass().getClassLoader(), conn.getClass().getInterfaces(),
-			new InvocationHandler() {
-				// 执行代理对象任何方法 都将执行 invoke
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-					if (method.getName().equals("close")) {
-						// 需要加强的方法
-						// 不将连接真正关闭，将连接放回连接池
-						// releaseConnection(conn);
-						return null;
-					} else {
-						// 不需要加强的方法,调用真实对象方法
-						return method.invoke(conn, args);
-					}
-				}
-			});
+		return conn;
+
+			// (Connection) Proxy.newProxyInstance(conn.getClass().getClassLoader(), conn.getClass().getInterfaces(),
+			// new InvocationHandler() {
+			// 	// 执行代理对象任何方法 都将执行 invoke
+			// 	@Override
+			// 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			// 		if (method.getName().equals("close")) {
+			// 			// 需要加强的方法
+			// 			// 不将连接真正关闭，将连接放回连接池
+			// 			// releaseConnection(conn);
+			// 			return null;
+			// 		} else {
+			// 			// 不需要加强的方法,调用真实对象方法
+			// 			return method.invoke(conn, args);
+			// 		}
+			// 	}
+			// });
 	}
 
 	// 将连接放回连接池
 	public void releaseConnection(Connection conn) {
 		synchronized (dataSources) {
 			dataSources.add(conn);
-			System.out.println("将连接 放回到连接池中 数量:" + dataSources.size());
+			// System.out.println("将连接 放回到连接池中 数量:" + dataSources.size());
 		};
 	}
 

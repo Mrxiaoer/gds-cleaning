@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.config.MyDataSource;
+import com.hankcs.hanlp.HanLP;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -240,55 +242,103 @@ public class GuoceJDBC {
 	@Test
 	public void MultiThreadGetText() throws Exception {
 		// List<Long> ids = selectNoTagId();
-		List<Long> ids = selectIds("SELECT a.id FROM gov_policy_general a WHERE (a.publish_time <= \"1900-01-01 "
-			+ "00:00:00\" OR a.publish_time IS NULL)and a.examine_user_id = 2112");
+		List<Long> ids = selectIds("SELECT a.id FROM gov_policy_general a WHERE (a.publish_time < \"1990-02-01 "
+			+ "00:00:00\" OR a.publish_time IS NULL)and a.examine_user_id = 2158 and examine_status = 3");
 
+		AtomicBoolean flag = new AtomicBoolean(false);
 		AtomicInteger doNum = new AtomicInteger(ids.size());
 		for (Long id : ids) {
-			analysisThreadPool.execute(() -> {
-				// 按指定模式在字符串查找
-				String text = this.selectText("select text from gov_policy_general where id = " + id);
+			try {
+				analysisThreadPool.execute(() -> {
+					// 按指定模式在字符串查找
+					String text = this.selectText("select text from gov_policy_general where id = " + id);
 
-				// 创建 Pattern 对象
-				String pattern = "<td[\\s\\S]*?>(发文日期|生成日期)</td>[\\s\\S]*?<td>([^<>]+?)</td>";
-				Pattern r = Pattern.compile(pattern);
+					// 创建 Pattern 对象
+					String pattern = "<td[\\s\\S]*?>(发文日期|生成日期)</td>[\\s\\S]*?<td>([^<>]+?)</td>";
+					String pattern1 = "<p[^>]*?>((?!<p>|</p>).)*?(\\d+?)((?!<p>|</p>|[\u4e00-\u9fa5]|\\d).)*?年("
+						+ "(?!<p>|</p>|[\u4e00-\u9fa5]).)*?"
+						+ "(\\d+?)((?!<p>|</p>|[\u4e00-\u9fa5]|\\d).)*?月((?!<p>|</p>|[\u4e00-\u9fa5]).)*?(\\d+?)("
+						+ "(?!<p>|</p>|[\u4e00-\u9fa5]|\\d).)*?日((?!<p>|</p>|[\u4e00-\u9fa5]|[\\pP]).)*?</p>";
+					String pattern2 = "(\\d+)年(\\d+)月(\\d+)日";
+					Pattern p = Pattern.compile(pattern);
+					Pattern p1 = Pattern.compile(pattern1);
+					Pattern p2 = Pattern.compile(pattern2);
 
-				// 创建 matcher 对象
-				Matcher m = r.matcher(text);
+					// 创建 matcher 对象
+					Matcher m = p.matcher(text);
+					Matcher m1 = p1.matcher(text);
+					Matcher m2 = p2.matcher(text);
 
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Connection conn = null;
-				Statement stmt = null;
-				try {
-					conn = myDataSource.getConnection();
+					SimpleDateFormat sdfP1 = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat sdfP2 = new SimpleDateFormat("yyyy年MM月dd日");
+					SimpleDateFormat sdfF1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Connection conn = null;
+					Statement stmt;
+					try {
+						conn = myDataSource.getConnection();
 
-					stmt = conn.createStatement();
-					String sql = null;
-					if (m.find()) {
-						Date date = sdf.parse(StrUtil.trim(m.group(2)));
-						sql = "UPDATE gov_policy_general SET publish_time = \"" + sdf1.format(date) + "\" WHERE id = '"
-							+ id + "'";
-						System.out.println("处理：" + id);
-					} else {
-						sql = "UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:01\" WHERE id = '" + id
-							+ "'";
-						System.out.println("NO MATCH");
+						stmt = conn.createStatement();
+						String sql;
+						if (m.find()) {
+							Date date = sdfP1.parse(StrUtil.trim(m.group(2)));
+							System.out.println("处理：" + id + ";====>时间：" + sdfF1.format(date));
+							sql = "UPDATE gov_policy_general SET publish_time = \"" + sdfF1.format(date)
+								+ "\" WHERE id = '" + id + "'";
+						} else if (m1.find()) {
+							Date date = sdfP2
+								.parse(StrUtil.cleanBlank(m1.group(2) + "年" + m1.group(5) + "月" + m1.group(8) + "日"));
+							System.out.println("处理：" + id+ ";====>时间：" + sdfF1.format(date));
+							if (date.before(new Date())) {
+								sql = "UPDATE gov_policy_general SET publish_time = \"" + sdfF1.format(date)
+									+ "\" WHERE id = '" + id + "'";
+							} else {
+								sql =
+									"UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:02\" WHERE id = '"
+										+ id + "'";
+							}
+						}else if(m2.find()){
+							Date date = sdfF1
+								.parse(StrUtil.trim(m2.group(1) + "-" + m2.group(2) + "-" + m2.group(3) + " 11:11:11"));
+							System.out.println("处理：" + id+ ";====>时间：" + sdfF1.format(date));
+							if (date.before(new Date())) {
+								sql = "UPDATE gov_policy_general SET publish_time = \"" + sdfF1.format(date)
+									+ "\" WHERE id = '" + id + "'";
+							} else {
+								sql =
+									"UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:02\" WHERE id = '"
+										+ id + "'";
+							}
+						} else {
+							System.out.println("NO MATCH");
+							sql =
+								"UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:02\" WHERE id = '" + id
+									+ "'";
+						}
+						stmt.execute(sql);
+
+					} catch (ParseException e) {
+						e.printStackTrace();
+					} catch (SQLException e) {
+						flag.set(true);
+						e.printStackTrace();
 					}
-					stmt.execute(sql);
 
-					myDataSource.releaseConnection(conn);
-				} catch (ParseException | SQLException e) {
-					e.printStackTrace();
-				}
+					if (conn != null) {
+						myDataSource.releaseConnection(conn);
+					}
 
-				doNum.getAndDecrement();
-			});
+					doNum.getAndDecrement();
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+				flag.set(true);
+				break;
+			}
 		}
 
-		while (doNum.get() > 0) {
+		while (doNum.get() > 0 || flag.get()) {
 			try {
-				Thread.sleep(1000L);
+				Thread.sleep(500L);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -322,8 +372,8 @@ public class GuoceJDBC {
 
 	public List<Long> selectIds(String sql) {
 		List<Long> ids = new ArrayList<>();
-		Connection conn = null;
-		Statement stmt = null;
+		Connection conn;
+		Statement stmt;
 		try {
 			conn = myDataSource.getConnection();
 			stmt = conn.createStatement();
@@ -340,7 +390,6 @@ public class GuoceJDBC {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("selectNoTagId OVER!");
 		return ids;
 	}
 
@@ -364,6 +413,118 @@ public class GuoceJDBC {
 			e.printStackTrace();
 		}
 		return str;
+	}
+
+	@Test
+	public void extractSummary() {
+		List<Long> ids = selectIds(
+			"SELECT a.id FROM gov_policy_general a WHERE summary IS NULL and a.examine_user_id = 2112");
+
+		AtomicBoolean flag = new AtomicBoolean(false);
+		AtomicInteger doNum = new AtomicInteger(ids.size());
+
+		for (Long id : ids) {
+			try {
+				analysisThreadPool.execute(() -> {
+					// 按指定模式在字符串查找
+					String document = this.selectText("select text from gov_policy_general where id = " + id);
+					String htmlRegex = "<[^>]+>";
+					List<String> sentenceList = HanLP.extractSummary(document.replaceAll(htmlRegex, "\n"), 1);
+					// System.out.println(id + " ====> " + sentenceList);
+					Connection conn = null;
+					Statement stmt;
+					if (sentenceList.size() > 0) {
+						try {
+							conn = myDataSource.getConnection();
+							stmt = conn.createStatement();
+
+							String summary = sentenceList.get(0).replaceAll("\"", "\\\\\"");
+							System.out.println(id + " ====> " + summary);
+							String sql =
+								"UPDATE gov_policy_general SET summary = \"" + summary + "\" WHERE id = " + id;
+							stmt.execute(sql);
+
+						} catch (SQLException e) {
+							flag.set(true);
+							e.printStackTrace();
+						}
+					}
+
+					if (conn != null) {
+						myDataSource.releaseConnection(conn);
+					}
+
+					doNum.getAndDecrement();
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		while (doNum.get() > 0 || flag.get()) {
+			try {
+				Thread.sleep(500L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Test
+	public void removeShortData() {
+		List<Long> ids = selectIds("SELECT id FROM gov_policy_general WHERE examine_user_id = 2158 and examine_status"
+			+ " = 3");
+
+		AtomicBoolean flag = new AtomicBoolean(false);
+		AtomicInteger doNum = new AtomicInteger(ids.size());
+
+		for (Long id : ids) {
+			try {
+				analysisThreadPool.execute(() -> {
+					// 按指定模式在字符串查找
+					String document = this.selectText("select text from gov_policy_general where id = " + id);
+					String htmlRegex = "<[^>]+>";
+					String htmlRegex1 = "&#13;|\\d";
+
+					document = StrUtil.cleanBlank(document.replaceAll(htmlRegex, "").replaceAll(htmlRegex1,""));
+					Connection conn = null;
+					Statement stmt;
+					try {
+						conn = myDataSource.getConnection();
+						stmt = conn.createStatement();
+						String sql;
+						if (document.length() > 64) {
+							// sql = "UPDATE gov_policy_general SET examine_user_id = 2158 WHERE id = " + id;
+						} else {
+							System.out.println("===>"+document);
+							sql =
+								"UPDATE gov_policy_general SET examine_status = 4 WHERE id = " + id;
+							stmt.execute(sql);
+						}
+
+					} catch (SQLException e) {
+						flag.set(true);
+						e.printStackTrace();
+					}
+
+					if (conn != null) {
+						myDataSource.releaseConnection(conn);
+					}
+
+					doNum.getAndDecrement();
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		while (doNum.get() > 0 || flag.get()) {
+			try {
+				Thread.sleep(250L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Data
