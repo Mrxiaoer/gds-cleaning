@@ -6,6 +6,13 @@ import com.cloud.gds.cleaning.GdsCleaningApplication;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.config.MyDataSource;
 import com.hankcs.hanlp.HanLP;
+import lombok.Data;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,12 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.Data;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @Author : lolilijve
@@ -287,7 +288,7 @@ public class GuoceJDBC {
 						} else if (m1.find()) {
 							Date date = sdfP2
 								.parse(StrUtil.cleanBlank(m1.group(2) + "年" + m1.group(5) + "月" + m1.group(8) + "日"));
-							System.out.println("处理：" + id+ ";====>时间：" + sdfF1.format(date));
+							System.out.println("处理：" + id + ";====>时间：" + sdfF1.format(date));
 							if (date.before(new Date())) {
 								sql = "UPDATE gov_policy_general SET publish_time = \"" + sdfF1.format(date)
 									+ "\" WHERE id = '" + id + "'";
@@ -296,10 +297,10 @@ public class GuoceJDBC {
 									"UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:02\" WHERE id = '"
 										+ id + "'";
 							}
-						}else if(m2.find()){
+						} else if (m2.find()) {
 							Date date = sdfF1
 								.parse(StrUtil.trim(m2.group(1) + "-" + m2.group(2) + "-" + m2.group(3) + " 11:11:11"));
-							System.out.println("处理：" + id+ ";====>时间：" + sdfF1.format(date));
+							System.out.println("处理：" + id + ";====>时间：" + sdfF1.format(date));
 							if (date.before(new Date())) {
 								sql = "UPDATE gov_policy_general SET publish_time = \"" + sdfF1.format(date)
 									+ "\" WHERE id = '" + id + "'";
@@ -486,7 +487,7 @@ public class GuoceJDBC {
 					String htmlRegex = "<[^>]+>";
 					String htmlRegex1 = "&#13;|\\d";
 
-					document = StrUtil.cleanBlank(document.replaceAll(htmlRegex, "").replaceAll(htmlRegex1,""));
+					document = StrUtil.cleanBlank(document.replaceAll(htmlRegex, "").replaceAll(htmlRegex1, ""));
 					Connection conn = null;
 					Statement stmt;
 					try {
@@ -496,7 +497,7 @@ public class GuoceJDBC {
 						if (document.length() > 64) {
 							// sql = "UPDATE gov_policy_general SET examine_user_id = 2158 WHERE id = " + id;
 						} else {
-							System.out.println("===>"+document);
+							System.out.println("===>" + document);
 							sql =
 								"UPDATE gov_policy_general SET examine_status = 4 WHERE id = " + id;
 							stmt.execute(sql);
@@ -527,6 +528,122 @@ public class GuoceJDBC {
 		}
 	}
 
+	public List<String> getScrapyTitle() {
+		Connection conn = null;
+		Statement stmt = null;
+		List<String> list = new ArrayList<>();
+		try {
+			// 打开链接
+			conn = myDataSource.getConnection();
+
+			// 执行查询
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT title FROM gov_policy_general WHERE examine_user_id = 2158";
+			ResultSet rs = stmt.executeQuery(sql);
+
+			// 展开结果集数据库
+			while (rs.next()) {
+				// 通过字段检索
+				String title = rs.getString("title");
+				list.add(title);
+			}
+			// 完成后关闭
+			// rs.close();
+			// stmt.close();
+			myDataSource.releaseConnection(conn);
+		} catch (Exception e) {
+			// 处理 Class.forName 错误
+			e.printStackTrace();
+		}
+		System.out.println("OVER!");
+		return list;
+	}
+
+	@Test
+	public void writeBackScrapy() {
+		Connection conn = null;
+		Statement stmt = null;
+		List<WriteTitle> list = new ArrayList<>();
+		try {
+			// 打开链接
+			conn = myDataSource.getConnection();
+
+			// 执行查询
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT id,title FROM scrapy_gov_policy_general WHERE is_deleted = 0";
+			ResultSet rs = stmt.executeQuery(sql);
+
+			// 展开结果集数据库
+			while (rs.next()) {
+				// 通过字段检索
+				Long id = rs.getLong("id");
+				String title = rs.getString("title");
+				WriteTitle writeTitle = new WriteTitle();
+				writeTitle.setId(id);
+				writeTitle.setTitle(title);
+				list.add(writeTitle);
+			}
+			// 完成后关闭
+			// rs.close();
+			// stmt.close();
+			myDataSource.releaseConnection(conn);
+		} catch (Exception e) {
+			// 处理 Class.forName 错误
+			e.printStackTrace();
+		}
+		System.out.println("OVER!");
+		System.out.println(list.size());
+	}
+
+	@Test
+	public void writeScrapyId() {
+		List<String> list = getScrapyTitle();
+
+		AtomicBoolean flag = new AtomicBoolean(false);
+		AtomicInteger doNum = new AtomicInteger(list.size());
+
+		for (String title : list) {
+			try {
+				analysisThreadPool.execute(() -> {
+					// 按指定模式在字符串查找
+					Connection conn = null;
+					Statement stmt;
+					try {
+						conn = myDataSource.getConnection();
+						stmt = conn.createStatement();
+						String sql;
+						System.out.println(title + " ====> " +"正在处理…" );
+						sql = "UPDATE scrapy_gov_policy_general SET is_deleted = 2 WHERE is_deleted = 0 AND title =" + "'" + title + "'";
+						stmt.execute(sql);
+
+					} catch (SQLException e) {
+						flag.set(true);
+						e.printStackTrace();
+					}
+
+					if (conn != null) {
+						myDataSource.releaseConnection(conn);
+					}
+
+					doNum.getAndDecrement();
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		while (doNum.get() > 0 || flag.get()) {
+			try {
+				Thread.sleep(250L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	@Data
 	private static class GouceEntity {
 
@@ -549,6 +666,12 @@ public class GuoceJDBC {
 	@Data
 	private class TagBeforeData {
 
+	}
+
+	@Data
+	private class WriteTitle {
+		private Long id;
+		private String title;
 	}
 
 }
