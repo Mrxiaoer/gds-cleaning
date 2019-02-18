@@ -253,7 +253,7 @@ public class GuoceJDBC {
 
 		for (Long id : ids) {
 			try {
-				analysisThreadPool.execute(() -> {
+				// analysisThreadPool.execute(() -> {
 					// 按指定模式在字符串查找
 					String text = this.selectText("select text from gov_policy_general where id = " + id);
 
@@ -323,10 +323,7 @@ public class GuoceJDBC {
 						}
 						stmt.execute(sql);
 
-					} catch (ParseException e) {
-						e.printStackTrace();
-					} catch (SQLException e) {
-						// flag.set(true);
+					} catch (ParseException | SQLException e) {
 						e.printStackTrace();
 					}
 
@@ -335,10 +332,9 @@ public class GuoceJDBC {
 					}
 
 					doNum.getAndDecrement();
-				});
+				// });
 			} catch (Exception e) {
 				e.printStackTrace();
-				// flag.set(true);
 				doNum.getAndDecrement();
 				// break;
 			}
@@ -364,7 +360,6 @@ public class GuoceJDBC {
 		List<Long> ids = selectIds(
 			"SELECT id FROM gov_policy_general WHERE publish_time < \"1900-01-01 00:00:05\" " + "and examine_user_id = 2158 and examine_status = 3");
 
-		AtomicBoolean flag = new AtomicBoolean(false);
 		AtomicInteger doNum = new AtomicInteger(ids.size());
 
 		for (Long id : ids) {
@@ -374,7 +369,7 @@ public class GuoceJDBC {
 					String text = this.selectText("select text from gov_policy_general where id = " + id);
 
 					String patternBM =
-						".*[^\u4e00-\u9fa5]([\u4e00-\u9fa5]+?(机构|委|署|局|厅|处|部|室|委员会|行|院|台|中心|报|司|办|府))[\\s\\S]*?(发文日期|生成日期)" + "?[\\s\\S]?[\\s]*?"
+						".*[^\u4e00-\u9fa5]([\u4e00-\u9fa5]+?(机构|委|署|局|厅|处|部|室|委员会|行|院|台|中心|报|司|办|府))[^\u4e00-\u9fa5]*?(发文日期|生成日期)?[\\s\\S]?[\\s]*?"
 							+ "(\\d+[-|年]\\d+[-|月]\\d+[日]?)";
 					Pattern pbm1 = Pattern.compile(patternBM);
 					Matcher mbm = pbm1.matcher(text);
@@ -394,9 +389,8 @@ public class GuoceJDBC {
 							sql = "UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:04\" WHERE id = '" + id + "'";
 						}
 						// stmt.execute(sql);
-
+						System.out.println(mbm.group(0));
 					} catch (SQLException e) {
-						flag.set(true);
 						e.printStackTrace();
 					}
 
@@ -408,13 +402,12 @@ public class GuoceJDBC {
 				});
 			} catch (Exception e) {
 				e.printStackTrace();
-				flag.set(true);
 				doNum.getAndDecrement();
 				break;
 			}
 		}
 
-		while (doNum.get() > 0 || flag.get()) {
+		while (doNum.get() > 0) {
 			try {
 				Thread.sleep(500L);
 			} catch (InterruptedException e) {
