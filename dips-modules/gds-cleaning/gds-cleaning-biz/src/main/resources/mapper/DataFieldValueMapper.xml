@@ -132,4 +132,53 @@
 		</foreach>
 	</update>
 
+
+	<update id="reductionById">
+		update dataclean_data_field_value
+		set
+		modified_time = now(),
+		is_deleted = 0,
+		modified_user = #{userId}
+		where
+		id = #{id}
+	</update>
+
+	<update id="reductionByIds">
+		update dataclean_data_field_value
+		set
+		modified_time = now(),
+		is_deleted = 0,
+		modified_user = #{userId}
+		where
+		id in
+		<foreach item="id" collection="ids" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+
+	</update>
+
+	<update id="oneKeyReduction">
+		update dataclean_data_field_value
+		set
+		modified_time = now(),
+		is_deleted = 0,
+		modified_user = #{userId}
+		where is_deleted = 1,
+		field_id = #{fieldId}
+	</update>
+
+	<delete id="recyclingBinClear">
+		DELETE
+		FROM
+		dataclean_data_field_value
+		WHERE
+		is_deleted = 1
+		AND id IN
+		<foreach item="id" collection="ids" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
 </mapper>

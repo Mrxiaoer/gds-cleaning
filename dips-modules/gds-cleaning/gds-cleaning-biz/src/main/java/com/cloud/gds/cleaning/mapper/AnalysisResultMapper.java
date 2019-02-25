@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 算法结果分析
@@ -23,5 +24,12 @@ public interface AnalysisResultMapper extends BaseMapper<AnalysisResult> {
 	 * @return
 	 */
 	boolean insertAll(@Param("valueList") List<AnalysisResult> valueList);
+
+	/**
+	 * 根据id删除算法结果分析情况
+	 * @param ids
+	 * @return
+	 */
+	boolean relevanceDelete(@Param("ids") Set<Long> ids);
 
 }

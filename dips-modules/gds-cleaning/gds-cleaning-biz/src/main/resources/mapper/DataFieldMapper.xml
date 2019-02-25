@@ -22,5 +22,13 @@
 		<result column="threshold" property="threshold"/>
 	</resultMap>
 
+	<update id="reduction">
+		update dataclean_data_field
+		set
+		is_deleted = 0
+		where is_deleted = 1
+		and id = #{id}
+	</update>
+
 
 </mapper>

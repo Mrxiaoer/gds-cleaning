@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 导入数据的内容
@@ -70,5 +71,41 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 	 * @return
 	 */
 	boolean updateBatchById(@Param("valueList") List<DataFieldValue> list);
+
+
+	/**
+	 * 还原数据
+	 *
+	 * @param id
+	 * @param userId
+	 * @return
+	 */
+	Integer reductionById(@Param("id") Long id, @Param("userId") Integer userId);
+
+	/**
+	 * 批量还原数据
+	 *
+	 * @param ids
+	 * @param userId
+	 * @return
+	 */
+	Integer reductionByIds(@Param("ids") Set<Long> ids, @Param("userId") Integer userId);
+
+	/**
+	 * 根据fieldId一键还原
+	 *
+	 * @param fieldId
+	 * @param userId
+	 * @return
+	 */
+	Integer oneKeyReduction(@Param("fieldId") Long fieldId, @Param("userId") Integer userId);
+
+	/**
+	 * 回收站批量删除
+	 *
+	 * @param ids
+	 * @return
+	 */
+	Integer recyclingBinClear(@Param("ids") Set<Long> ids);
 
 }

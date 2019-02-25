@@ -17,13 +17,7 @@ import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
-import com.cloud.gds.cleaning.api.vo.BaseVo;
-import com.cloud.gds.cleaning.api.vo.CenterData;
-import com.cloud.gds.cleaning.api.vo.CleanItem;
-import com.cloud.gds.cleaning.api.vo.DARVo;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
-import com.cloud.gds.cleaning.api.vo.DataSetVo;
+import com.cloud.gds.cleaning.api.vo.*;
 import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
@@ -31,18 +25,15 @@ import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据池接口实现类
@@ -66,8 +57,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 
 	@Autowired
 	public DataFieldValueServiceImpl(DataFieldMapper dataFieldMapper, DataRuleService dataRuleService,
-		DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper,
-		AnalysisResultMapper analysisResultMapper) {
+									 DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper,
+									 AnalysisResultMapper analysisResultMapper) {
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleService = dataRuleService;
 		this.dataFieldValueMapper = dataFieldValueMapper;
@@ -188,6 +179,28 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
+	public Page<DataPoolVo> queryRecycleBinPage(Map<String, Object> params) {
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p = new Page<>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
+		String fieldId = params.getOrDefault("fieldId", "").toString();
+		if (StrUtil.isNotBlank(fieldId)) {
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+		}
+		e.eq("is_deleted", DataCleanConstant.TRUE);
+		Page<DataFieldValue> page1 = this.selectPage(p, e);
+		Page<DataPoolVo> page2 = new Page<>();
+		BeanUtils.copyProperties(page1, page2);
+		page2.setRecords(DataPoolUtils.listEntity2Vo(page1.getRecords()));
+
+		return page2;
+	}
+
+	@Override
 	public List<CenterData> gainCleanData(Long fieldId) {
 		// field_value需要取其中比例"较高"的一项,因此需要重新组装中心数据回显
 		List<CenterData> list = dataFieldValueMapper.gainCleanData(fieldId);
@@ -202,7 +215,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 				com.alibaba.fastjson.JSONObject myJson = com.alibaba.fastjson.JSONObject
 					.parseObject(centerData.getFieldValue());
 				Map<String, Object> map = (Map<String, Object>) myJson;
-				centerData.setFieldValue(map.get(dataSetVo.getProp()).toString());
+				centerData.setFieldValue(map.get(dataSetVo.getProp()) != null ? map.get(dataSetVo.getProp()).toString() : ">无最高权重字段值喔~<");
 			}
 		}
 		return list;
@@ -437,18 +450,20 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public boolean cleanDate(List<Map<String, Object>> params) {
 
 		List<DataFieldValue> list = new ArrayList<>();
+		Set<Long> ids = new HashSet<>();
 		// 拼装参数进行清洗
 		for (Map<String, Object> map : params) {
 			// 组装value中要清洗的相应数据信息
 			DataFieldValue dataFieldValue = new DataFieldValue();
-			dataFieldValue.setId(Long.valueOf(String.valueOf(map.get("cleanId"))));
+			Long cleanId = Long.valueOf(String.valueOf(map.get("cleanId")));
+			dataFieldValue.setId(cleanId);
 			dataFieldValue.setBeCleanedId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			// 由于数据被清洗了,对数据进行删除状态的更新
 			dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
 			list.add(dataFieldValue);
-
+			ids.add(cleanId);
 			// 如数据被清洗,分析结果中相应的记录需要删除
 			AnalysisResult q = new AnalysisResult();
 			q.setBaseId(Long.valueOf(String.valueOf(map.get("baseId"))));
@@ -456,6 +471,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			analysisResultMapper.delete(new EntityWrapper<>(q));
 		}
 		// 清洗数据
+		System.out.println(ids);
+		analysisResultMapper.relevanceDelete(ids);
 		return this.updateBatchById(list);
 	}
 
@@ -675,6 +692,37 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			currentNum++;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean reductionById(Long id) {
+		assert SecurityUtils.getUser() != null;
+		Integer userId = SecurityUtils.getUser().getId();
+		return SqlHelper.retBool(dataFieldValueMapper.reductionById(id, userId));
+	}
+
+	@Override
+	public boolean reductionByIds(Set<Long> ids) {
+		assert SecurityUtils.getUser() != null;
+		Integer userId = SecurityUtils.getUser().getId();
+		return SqlHelper.retBool(dataFieldValueMapper.reductionByIds(ids, userId));
+	}
+
+	@Override
+	public boolean oneKeyReduction(Long fieldId) {
+		assert SecurityUtils.getUser() != null;
+		Integer userId = SecurityUtils.getUser().getId();
+		return SqlHelper.retBool(dataFieldValueMapper.oneKeyReduction(fieldId, userId));
+	}
+
+	@Override
+	public boolean dataPoolDelete(Long id) {
+		return SqlHelper.retBool(dataFieldValueMapper.deleteById(id));
+	}
+
+	@Override
+	public boolean dataPoolDeletes(Set<Long> ids) {
+		return SqlHelper.retBool(dataFieldValueMapper.recyclingBinClear(ids));
 	}
 
 }

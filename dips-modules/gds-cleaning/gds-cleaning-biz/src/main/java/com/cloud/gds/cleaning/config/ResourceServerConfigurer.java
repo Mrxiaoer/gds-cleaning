@@ -30,7 +30,7 @@ public class ResourceServerConfigurer extends BaseResourceServerConfigurerAdapte
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/v2/api-docs","/clean_pool/**","/data_pool/**","/data_rule/**","/result_set/**","/analysis/**")
+			.antMatchers("/v2/api-docs","/clean_pool/**","/data_pool/**","/data_rule/**","/result_set/**","/analysis/**","/recycle/bin/**")
 			.permitAll().anyRequest().authenticated().and().csrf().disable();
 	}
 

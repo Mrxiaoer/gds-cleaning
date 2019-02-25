@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -69,7 +70,7 @@ public class DataField extends Model<DataField> {
 	/**
 	 * 是否删除（0，未删除；1，已删除）
 	 */
-	@JsonIgnore
+	@JsonProperty("state")
 	private Integer isDeleted;
 	/**
 	 * 分析状态（0、未分析 1、正在分析 2、已分析 3、分析出错）

@@ -30,6 +30,22 @@ public interface DataRuleService extends IService<DataRule> {
 	Page queryPage(Map<String, Object> params);
 
 	/**
+	 * 回收站分页
+	 *
+	 * @param params
+	 * @return
+	 */
+	Page queryRecycleBinPage(Map<String, Object> params);
+
+	/**
+	 * 还原规则
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean rulePoolReduction(Long id);
+
+	/**
 	 * 根据id查询规则信息
 	 *
 	 * @param id
@@ -91,5 +107,21 @@ public interface DataRuleService extends IService<DataRule> {
 	 * @return
 	 */
 	DataSetVo gainUpperPower(Long ruleId);
+
+	/**
+	 * 直接删除规则池中的数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean rulePoolDelete(Long id);
+
+	/**
+	 * 批量直接删除规则池中的数据
+	 *
+	 * @param ids
+	 * @return
+	 */
+	boolean rulePoolDeletes(Set<Long> ids);
 }
 

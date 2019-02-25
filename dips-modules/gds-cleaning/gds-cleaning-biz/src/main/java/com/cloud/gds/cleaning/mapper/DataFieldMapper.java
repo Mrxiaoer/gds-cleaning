@@ -3,6 +3,7 @@ package com.cloud.gds.cleaning.mapper;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户数据数据库映射接口
@@ -13,5 +14,13 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface DataFieldMapper extends BaseMapper<DataField> {
+
+	/**
+	 * 回收站还原
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean reduction(@Param("id") Long id);
 
 }

@@ -5,12 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.vo.BaseVo;
-import com.cloud.gds.cleaning.api.vo.CenterData;
-import com.cloud.gds.cleaning.api.vo.CleanItem;
-import com.cloud.gds.cleaning.api.vo.DARVo;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+import com.cloud.gds.cleaning.api.vo.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +42,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @return
 	 */
 	Page<BaseVo> contrastAfterPage(Map<String, Object> params);
+
+	/**
+	 * 回收站数据池分页
+	 *
+	 * @param params
+	 * @return
+	 */
+	Page<DataPoolVo> queryRecycleBinPage(Map<String, Object> params);
 
 	/**
 	 * 分析结果默认中心数据显示
@@ -178,6 +182,53 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	JSONArray dataJsonInput(long fieldId, JSONArray jsonArray);
 
+	/**
+	 * 批量分段插入
+	 *
+	 * @param list
+	 * @param oneSize
+	 * @return
+	 */
 	boolean batchSave(List<DataFieldValue> list, int oneSize);
+
+	/**
+	 * 还原数据池中数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean reductionById(Long id);
+
+	/**
+	 * 批量还原数据池中数据
+	 *
+	 * @param ids
+	 * @return
+	 */
+	boolean reductionByIds(Set<Long> ids);
+
+	/**
+	 * 根据清洗池id一键还原
+	 *
+	 * @param fieldId
+	 * @return
+	 */
+	boolean oneKeyReduction(Long fieldId);
+
+	/**
+	 * 直接删除数据池中的数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean dataPoolDelete(Long id);
+
+	/**
+	 * 批量直接删除数据池中的数据
+	 *
+	 * @param ids
+	 * @return
+	 */
+	boolean dataPoolDeletes(Set<Long> ids);
 }
 

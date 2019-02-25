@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.util.SpecialStringUtil;
@@ -34,8 +35,15 @@ import java.util.Set;
 @Service
 public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> implements DataRuleService {
 
+	private final DataFieldService dataFieldService;
+
+	private final DataRuleMapper dataRuleMapper;
+
 	@Autowired
-	DataFieldService dataFieldService;
+	public DataRuleServiceImpl(DataFieldService dataFieldService, DataRuleMapper dataRuleMapper) {
+		this.dataFieldService = dataFieldService;
+		this.dataRuleMapper = dataRuleMapper;
+	}
 
 	@Override
 	public Page queryPage(Map<String, Object> params) {
@@ -64,6 +72,45 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 			page.setRecords(vos);
 		}
 		return page;
+	}
+
+	@Override
+	public Page queryRecycleBinPage(Map<String, Object> params) {
+		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataRule> p = new Page<DataRule>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataRule> e = new EntityWrapper<DataRule>();
+		String name = params.getOrDefault("name", "").toString();
+		if (StrUtil.isNotBlank(name)) {
+			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
+		}
+		e.eq("is_deleted", DataCleanConstant.TRUE);
+		Page page = this.selectPage(p, e);
+		if (page.getRecords() != null) {
+			List<DataRule> dataRules = page.getRecords();
+			List<BaseVo> vos = new ArrayList<>();
+			for (DataRule dataRule : dataRules) {
+				BaseVo baseVo = new BaseVo();
+				BeanUtils.copyProperties(dataRule, baseVo);
+				vos.add(baseVo);
+			}
+			page.setRecords(vos);
+		}
+		return page;
+	}
+
+	@Override
+	public boolean rulePoolReduction(Long id) {
+		DataRule dataRule = new DataRule();
+		dataRule.setId(id);
+		assert SecurityUtils.getUser() != null;
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedTime(LocalDateTime.now());
+		dataRule.setIsDeleted(DataCleanConstant.FALSE);
+		return updateById(dataRule);
 	}
 
 	@Override
@@ -172,6 +219,16 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 			}
 		}
 		return resultSet;
+	}
+
+	@Override
+	public boolean rulePoolDelete(Long id) {
+		return SqlHelper.retBool(dataRuleMapper.deleteById(id));
+	}
+
+	@Override
+	public boolean rulePoolDeletes(Set<Long> ids) {
+		return SqlHelper.retBool(dataRuleMapper.recyclingBinClear(ids));
 	}
 
 }
