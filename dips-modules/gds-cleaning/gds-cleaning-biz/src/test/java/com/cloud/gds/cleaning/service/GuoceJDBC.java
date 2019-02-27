@@ -351,8 +351,7 @@ public class GuoceJDBC {
 	@Test
 	public void MultiThreadGetTime1() throws Exception {
 		List<Long> ids = selectIds(
-			"SELECT id FROM gov_policy_general WHERE (publish_time <='1900-1-2 00:00:00') and examine_user_id = "
-				+ "2158 and examine_status = 3");
+			"SELECT id FROM gov_policy_general WHERE (publish_time <='1900-1-2 00:00:00') and examine_user_id = " + "2158 and examine_status = 3");
 
 		AtomicInteger doNum = new AtomicInteger(ids.size());
 
@@ -401,9 +400,11 @@ public class GuoceJDBC {
 							System.out.println("m处理：" + id + ";====>时间：" + DateSyncUtil.format(date));
 							sql = getTimeSql(id, date, minDate);
 						} else if (m1.find()) {
-							Date date = DateSyncUtil.parse(m1.group(1) + "-" + m1.group(2) + "-" + m1.group(3) + " 11:11:13");
-							System.out.println("m1处理：" + id + ";====>时间：" + DateSyncUtil.format(date));
-							sql = getTimeSql(id, date, minDate);
+							if (Integer.valueOf(m1.group(1)) < 2020 && Integer.valueOf(m1.group(2)) <= 12 && Integer.valueOf(m1.group(3)) <= 31) {
+								Date date = DateSyncUtil.parse(m1.group(1) + "-" + m1.group(2) + "-" + m1.group(3) + " 11:11:13");
+								System.out.println("m1处理：" + id + ";====>时间：" + DateSyncUtil.format(date));
+								sql = getTimeSql(id, date, minDate);
+							}
 						}
 
 						if (sql != null) {
