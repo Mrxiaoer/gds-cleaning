@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 回收站
+ * 回收站controller
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com
@@ -189,13 +189,13 @@ public class RecycleBinController {
 
 
 	/**
-	 * 删除规则池中数据
+	 * 批量删除规则池中数据
 	 *
 	 * @param ids
 	 * @return
 	 */
 	@PostMapping("/rule_poo/delete")
-	@ApiOperation(value = "删除规则池中数据", notes = "删除规则池中数据")
+	@ApiOperation(value = "批量删除规则池中数据", notes = "批量删除规则池中数据")
 	public R rulePoolDeletes(@PathVariable("ids") Set<Long> ids) {
 		return new R<>(dataRuleService.rulePoolDeletes(ids));
 	}
