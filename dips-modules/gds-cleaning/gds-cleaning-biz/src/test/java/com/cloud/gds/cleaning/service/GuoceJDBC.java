@@ -404,7 +404,11 @@ public class GuoceJDBC {
 								Date date = DateSyncUtil.parse(m1.group(1) + "-" + m1.group(2) + "-" + m1.group(3) + " 11:11:13");
 								System.out.println("m1处理：" + id + ";====>时间：" + DateSyncUtil.format(date));
 								sql = getTimeSql(id, date, minDate);
+							}else{
+								sql = "UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:06\" WHERE id = " + id;
 							}
+						}else{
+							sql = "UPDATE gov_policy_general SET publish_time = \"1900-01-01 00:00:06\" WHERE id = " + id;
 						}
 
 						if (sql != null) {
