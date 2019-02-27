@@ -186,15 +186,14 @@ public class OtherTest {
 		String document = "<font>所属主题：法哈哈</font><font>发文日期：2015-02-02</font><font>公开责任部门：省政府法制办公室</font></p>"
 			+ "<font>所属主题：法制</font><font>发文日期：2016年02月02日</font><font>公开责任部门：省政府法制办公室</font></p>"
 			+ "<font>所属主题：法哈哈署</font><font>发文日期：2〇一<pp>柒</pp>年0二月02日</font><font> 2018-1-1 公开责任部门：省政府法制办公室</font></p><br/> 青岛市监察局：85911555<br/> "
-			+ "青岛市住房保障中心：82681116</p> <p align=\"right\">二○○九年三月三日<br/></p></div>\n"
+			+ "青岛市住房保障中心：82681116</p> <p align=\"right\">二○○九年三月三日<br/></p></div>A-2019-01-01"
 			+ "</div>";
 		//定义HTML标签的正则表达式，去除标签，只提取文字内容
 		String htmlRegex="<[^>]+>";
 		document = document.replaceAll(htmlRegex, "");
 		document = replaceNum(document);
 		// String pattern2 = ".*[^\u4e00-\u9fa5]([\u4e00-\u9fa5]+?(厅|部|办公室))[\\s\\S]*?(发文日期|生成日期)?[\\s\\S]?[\\s]*?(\\d+[-|年]\\d+[-|月]\\d+[日]?)";
-		String pattern2 = ".*[^\u4e00-\u9fa5][\u4e00-\u9fa5]+?(机构|委|署|局|厅|处|部|室|委员会|行|院|台|中心|报|司|办|府)[^\u4e00-\u9fa5]*?(发文日期|生成日期)"
-			+ "?([\\s\\S]?[\\s]*?[^\\d](\\d+)年(\\d+)月(\\d+)日)";//".*(?![-|\\dA-z]).(\\d+?)-(\\d+?)-(\\d+?)(?![-|\\d])";
+		String pattern2 = ".*[^-|\\dA-z](\\d+)[年-](\\d+)[月-](\\d+)日?(?![-|\\d])";//".*(?![-|\\dA-z]).(\\d+?)-(\\d+?)-(\\d+?)(?![-|\\d])";
 		Pattern p2 = Pattern.compile(pattern2);
 		Matcher m2 = p2.matcher(document);
 		SimpleDateFormat sdfF1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
