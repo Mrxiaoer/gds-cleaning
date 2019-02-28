@@ -8,10 +8,7 @@ import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 待清洗数据
@@ -123,5 +120,13 @@ public interface DataRuleService extends IService<DataRule> {
 	 * @return
 	 */
 	boolean rulePoolDeletes(Set<Long> ids);
+
+	/**
+	 * 获取规则信息,以prop为key,label为value
+	 *
+	 * @param ruleId
+	 * @return
+	 */
+	SortedMap<String, String> gainRuleData(Long ruleId);
 }
 
