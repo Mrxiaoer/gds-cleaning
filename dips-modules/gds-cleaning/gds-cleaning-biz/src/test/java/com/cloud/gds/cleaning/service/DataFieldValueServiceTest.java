@@ -9,23 +9,9 @@ import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.vo.CleanItem;
-import com.cloud.gds.cleaning.api.vo.DARVo;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
-import com.cloud.gds.cleaning.api.vo.GroupVo;
-import com.cloud.gds.cleaning.api.vo.ResultJsonVo;
+import com.cloud.gds.cleaning.api.vo.*;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
-import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -33,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 @SpringBootTest(classes = GdsCleaningApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -105,25 +94,6 @@ public class DataFieldValueServiceTest {
 		System.out.println(compareResult);
 	}
 
-	@Test
-	public void selectPage() {
-		Map<String, Object> params = new HashMap<>();
-		params.put("page", 1);
-		params.put("limit", 10);
-		params.put("fieldId", 3);
-
-		CommonUtils.PiPei pp = CommonUtils.createPP();
-		List<String> list = new ArrayList<>();
-		list.add("fieldId");
-		pp.setEq(list);
-		//		list.clear();
-		//		list.add("");
-		//		pp.setLike(list);
-		//		Wrapper<DataFieldValue> entityWrapper = CommonUtils.pagePart(params,pp,new DataFieldValue());
-
-		//		Page page = dataFieldValueService.pagePo2Vo(dataFieldValueService.selectPage(new Query<>(CommonUtils
-		// .map2map(params)),entityWrapper));
-	}
 
 	@Test
 	public void saveAll() {
@@ -232,7 +202,7 @@ public class DataFieldValueServiceTest {
 	}
 
 	@Test
-	public void updateBatchById(){
+	public void updateBatchById() {
 		List<DataFieldValue> list = new ArrayList<>();
 		DataFieldValue one = new DataFieldValue();
 		DataFieldValue two = new DataFieldValue();
@@ -241,11 +211,11 @@ public class DataFieldValueServiceTest {
 		one.setModifiedUser(6);
 		one.setModifiedTime(LocalDateTime.now());
 		one.setIsDeleted(DataCleanConstant.TRUE);
-		if (list == null){
+		if (list == null) {
 			System.out.println("111111");
-		}else if (list.size()>0){
+		} else if (list.size() > 0) {
 			System.out.println("222222222222");
-		}else {
+		} else {
 			System.out.println("3333333333");
 		}
 

@@ -141,8 +141,8 @@ public class DataRuleUtils {
 	public static SortedMap<String, String> changeSortedMap(List<DataSetVo> dataSetVos) {
 		SortedMap<String, String> sortedMap = new TreeMap<>();
 		for (DataSetVo vo : dataSetVos) {
-			if (!"".equals(vo.getLabel()) || "".equals(vo.getLabel().trim())) {
-				sortedMap.put(vo.getLabel(), vo.getLabel());
+			if (!"".equals(vo.getProp()) || "".equals(vo.getProp().trim())) {
+				sortedMap.put(vo.getProp(), vo.getProp());
 			}
 		}
 		return sortedMap;

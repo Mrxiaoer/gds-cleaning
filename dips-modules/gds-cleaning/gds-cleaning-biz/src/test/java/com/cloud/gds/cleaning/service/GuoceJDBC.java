@@ -351,7 +351,7 @@ public class GuoceJDBC {
 	@Test
 	public void MultiThreadGetTime1() throws Exception {
 		List<Long> ids = selectIds(
-			"SELECT id FROM gov_policy_general WHERE (publish_time <='1900-1-2 00:00:00') and examine_user_id = " + "2158 and examine_status = 3");
+			"SELECT id FROM gov_policy_general WHERE (publish_time like '%11:11:12') and examine_user_id = " + "2158 and examine_status = 3");
 
 		AtomicInteger doNum = new AtomicInteger(ids.size());
 

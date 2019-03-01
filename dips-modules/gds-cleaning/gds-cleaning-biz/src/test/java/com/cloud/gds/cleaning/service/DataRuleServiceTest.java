@@ -126,7 +126,7 @@ public class DataRuleServiceTest {
 	public void create() throws Exception {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("规则模板表");
-		createTitle(workbook, sheet);
+//		createTitle(workbook, sheet);
 		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(10L);
 		//设置日期格式
 		HSSFCellStyle style = workbook.createCellStyle();

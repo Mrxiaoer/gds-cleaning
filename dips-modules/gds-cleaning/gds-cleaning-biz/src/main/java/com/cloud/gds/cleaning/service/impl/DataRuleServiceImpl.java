@@ -1,6 +1,5 @@
 package com.cloud.gds.cleaning.service.impl;
 
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -19,7 +18,6 @@ import com.cloud.gds.cleaning.mapper.DataRuleMapper;
 import com.cloud.gds.cleaning.service.DataFieldService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataRuleUtils;
-import org.json.simple.JSONArray;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -237,11 +235,14 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 		DataRule dataRule = dataRuleMapper.selectById(ruleId);
 		List<DataSetVo> dataSetVos = JSON.parseArray(dataRule.getParams(), DataSetVo.class);
 		SortedMap<String, String> sortedMap = new TreeMap<>();
-		for (DataSetVo vo : dataSetVos) {
-			if (!"".equals(vo.getLabel()) || "".equals(vo.getLabel().trim())) {
-				sortedMap.put(vo.getProp(), vo.getLabel());
+		if (dataSetVos != null) {
+			for (DataSetVo vo : dataSetVos) {
+				if (!"".equals(vo.getLabel()) || "".equals(vo.getLabel().trim())) {
+					sortedMap.put(vo.getProp(), vo.getLabel());
+				}
 			}
 		}
+
 		return sortedMap;
 	}
 
