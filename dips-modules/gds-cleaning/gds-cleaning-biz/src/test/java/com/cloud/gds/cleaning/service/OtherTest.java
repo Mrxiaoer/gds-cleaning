@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -183,33 +184,38 @@ public class OtherTest {
 
 	@Test
 	public void hanlp() {
-		String document = "<font>所属主题：法哈哈</font><font>发文日期：2015-02-02</font><font>公开责任部门：省政府法制办公室</font></p>"
-			+ "<font>所属主题：法制</font><font>发文日期：2016年02月02日</font><font>公开责任部门：省政府法制办公室</font></p>"
-			+ "<font>所属主题：法哈哈署</font><font>发文日期：2〇一<pp>柒</pp>年0二月02日</font><font> 2018-1-1 公开责任部门：省政府法制办公室</font></p><br/> 青岛市监察局：85911555<br/> "
-			+ "青岛市住房保障中心：82681116</p> <p align=\"right\">二○○九年三月三日<br/></p></div>A-2019-01-01"
-			+ "</div>";
+		String document = "<p align=\"right\">　　                               江苏省国土资源厅</p>\n"
+			+ "<p align=\"right\"> 二оо八年七月二十三日</p>\n" + "<p>　　</p>\n" + "<p>　　</p>\n" + "<p> </p>\n"
+			+ "<p>主题词：矿产资源  储量  补偿费  挂钩  通知</p>\n" + "<p>抄送:  有关矿山企业</p>\n" + "<p> </p>    ";
 		//定义HTML标签的正则表达式，去除标签，只提取文字内容
 		String htmlRegex="<[^>]+>";
 		document = document.replaceAll(htmlRegex, "");
 		document = replaceNum(document);
 		// String pattern2 = ".*[^\u4e00-\u9fa5]([\u4e00-\u9fa5]+?(厅|部|办公室))[\\s\\S]*?(发文日期|生成日期)?[\\s\\S]?[\\s]*?(\\d+[-|年]\\d+[-|月]\\d+[日]?)";
-		String pattern2 = ".*[^-|\\dA-z](\\d+)[年-](\\d+)[月-](\\d+)日?(?![-|\\d])";//".*(?![-|\\dA-z]).(\\d+?)-(\\d+?)-(\\d+?)(?![-|\\d])";
+		String pattern2 =  "[\\s\\S]*[^-|\\dA-z]([ \\d]+)[年-]([ \\d]+)[月-]([ \\d]+)日";//".*
+		// (?![-|\\dA-z]).(\\d+?)-(\\d+?)-(\\d+?)(?![-|\\d])";
 		Pattern p2 = Pattern.compile(pattern2);
 		Matcher m2 = p2.matcher(document);
 		SimpleDateFormat sdfF1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		SimpleDateFormat sdfP2 = new SimpleDateFormat("yyyy年MM月dd日");
+			System.out.println(document);
 		if (m2.find()) {
+			System.out.println(m2.group(0));
 			System.out.println(m2.group(1)+" "+m2.group(2)+" "+m2.group(3));
-			try {
-				Date date = sdfF1.parse(StrUtil.trim(m2.group(3)+"-"+m2.group(4)+"-"+m2.group(5) + " 00:00:11"));
-				System.out.println("时间：" + sdfP2.format(date));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			// System.out.println(m2.group(3)+" "+m2.group(4)+" "+m2.group(5));
+			// try {
+			// 	Date date = sdfF1.parse(StrUtil.trim(m2.group(3)+"-"+m2.group(4)+"-"+m2.group(5) + " 00:00:11"));
+			// 	System.out.println("时间：" + sdfP2.format(date));
+			// } catch (ParseException e) {
+			// 	e.printStackTrace();
+			// }
 		}
 		// System.out.println(document.replaceAll(htmlRegex, "\n"));
 		// List<String> sentenceList = HanLP.extractSummary(document.replaceAll(htmlRegex, "\n"), 1);
 		// System.out.println(sentenceList);
+
+		// String str2 = "890";
+		// System.out.println(str2.substring(str2.length()-4));
 	}
 
 	@Test
@@ -231,10 +237,13 @@ public class OtherTest {
 	}
 
 	private String replaceNum(String str){
-		Map<String,String> map = new HashMap<>(10);
-		map.put("0","[〇○零]");
+		Map<String,String> map = new LinkedHashMap<>(16);
+		map.put("30","[三叁][十拾](?![\\d一壹二贰三叁四肆五伍六陆七柒八捌九玖])");
+		map.put("20","([二贰][十拾]|廿)(?![\\d一壹二贰三叁四肆五伍六陆七柒八捌九玖])");
+		map.put("10","(?![\\d二贰三叁四肆五伍六陆七柒八捌九玖])[十拾](?![\\d一壹二贰三叁四肆五伍六陆七柒八捌九玖])");
+		map.put("0","[\\s]*[〇○ＯO０О零][\\s]*");
 		map.put("1","[一壹]");
-		map.put("2","[二贰]");
+		map.put("2","[２二贰廿]|二十");
 		map.put("3","[三叁]");
 		map.put("4","[四肆]");
 		map.put("5","[五伍]");
@@ -242,6 +251,13 @@ public class OtherTest {
 		map.put("7","[七柒]");
 		map.put("8","[八捌]");
 		map.put("9","[九玖]");
+		map.put("年1","年[\\s]*[十拾]");
+		map.put("月1","月[\\s]*[十拾]");
+		map.put("","[十拾]");
+		// for (Entry<String, String> entry : map.entrySet()) {
+		// 	str = str.replaceAll(entry.getValue(), entry.getKey());
+		// 	System.out.println(entry.getKey()+"===>"+str);
+		// }
 		for (Entry<String, String> entry : map.entrySet()) {
 			str = str.replaceAll(entry.getValue(), entry.getKey());
 		}
