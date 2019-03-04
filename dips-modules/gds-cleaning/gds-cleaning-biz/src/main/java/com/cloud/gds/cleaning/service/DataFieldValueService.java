@@ -183,6 +183,15 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	JSONArray dataJsonInput(long fieldId, JSONArray jsonArray);
 
 	/**
+	 * map格式批量保存
+	 *
+	 * @param fieldId
+	 * @param mapList
+	 * @return
+	 */
+	boolean saveAllMap(long fieldId, List<Map<String, String>> mapList);
+
+	/**
 	 * 批量分段插入
 	 *
 	 * @param list

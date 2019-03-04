@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
+import com.cloud.gds.cleaning.service.DataFieldValueService;
 import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.service.ExcelService;
 import com.cloud.gds.cleaning.utils.CommonUtils;
@@ -33,13 +34,13 @@ import java.util.*;
 @Service
 public class ExcelServiceImpl implements ExcelService {
 
+	Logger log = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	private DataRuleService dataRuleService;
-
 	@Autowired
 	private DataFieldService dataFieldService;
-
-	Logger log = LoggerFactory.getLogger(this.getClass());
+	@Autowired
+	private DataFieldValueService dataFieldValueService;
 
 	@Override
 	public void gainTemplate(Long ruleId, HttpServletResponse response) throws Exception {
@@ -90,83 +91,79 @@ public class ExcelServiceImpl implements ExcelService {
 	}
 
 	@Override
-	public void importExcel(Long fieldId, MultipartFile file){
-		log.info("导入解析开始，fileName:{}", file.getOriginalFilename());
+	public String importCleanPool(Long fieldId, MultipartFile file) {
+
+		List<Map<String, String>> mapList = importExcel(fieldId, file);
+		if (mapList == null) {
+			return "请检查规则模板是否存在问题!";
+		}
+		if (mapList.size() > 0) {
+			return String.valueOf(dataFieldValueService.saveAllMap(fieldId, mapList));
+		}
+		return null;
+	}
+
+	private List<Map<String, String>> importExcel(Long fieldId, MultipartFile file) {
 		try {
-			List<Object[]> list = new ArrayList<>();
 			InputStream inputStream = file.getInputStream();
 			Workbook workbook = WorkbookFactory.create(inputStream);
 			Sheet sheet = workbook.getSheetAt(0);
 			// 获取sheet的行数
 			int rows = sheet.getPhysicalNumberOfRows();
 
-			// 获取参数
+			// 获取参数所在行
 			Row row = sheet.getRow(2);
 
 			//对比规则是否与规则池中规则匹配
 			SortedMap<String, String> sortedMap = rowTSortedMap(row);
-
 			DataRule dataRule = dataRuleService.selectById(dataFieldService.selectById(fieldId).getRuleId());
 			SortedMap<String, String> map = DataRuleUtils.changeSortedMap(JSON.parseArray(dataRule.getParams(), DataSetVo.class));
 			boolean flag = CommonUtils.checkSortedMap(sortedMap, map);
 
-			// TODO 如果flag等于true继续进行
-
-			System.out.println(row.getCell(2).getStringCellValue());
-//			for (Cell cell : row) {
-//				System.out.println(cell.getColumnIndex());
-//				// 控制第二列开始读取
-//				if (cell.getColumnIndex() == 0) {
-//					continue;
-//				}
-//				basemap.put(cell.getStringCellValue(), String.valueOf(cell.getColumnIndex()));
-//			}
-			// 组装真实数据
-			List<Map<String,String>> mapList = new ArrayList<>();
-			for (int i = 2; i < rows; i++) {
-				if (i == 2) {
-					continue;
-				}
-				Row row1 = sheet.getRow(i);
-				Map<String,String> map1 = new HashMap<>();
-				for (Cell cell : row) {
-					// 处理真实数据
-					if (cell.getColumnIndex() == 0) {
-						continue;
-					}
-					if (row1.getCell(cell.getColumnIndex()) == null){
-						map1.put(cell.getStringCellValue(), "");
-						continue;
-					}
-					switch (row1.getCell(cell.getColumnIndex()).getCellTypeEnum()){
-						case NUMERIC:
-							map1.put(cell.getStringCellValue(), String.valueOf(row1.getCell(cell.getColumnIndex()).getNumericCellValue()));
-							break;
-						case STRING:
-							map1.put(cell.getStringCellValue(),row1.getCell(cell.getColumnIndex()).getStringCellValue());
-							break;
-						case BOOLEAN:
-							map1.put(cell.getStringCellValue(), String.valueOf(row1.getCell(cell.getColumnIndex()).getBooleanCellValue()));
-							break;
-						case ERROR:
-							map1.put(cell.getStringCellValue(), String.valueOf(row1.getCell(cell.getColumnIndex()).getErrorCellValue()));
-							break;
-						default:
+			// flag true导入模板的规则与当前清洗池的规则一致，反之不一致
+			List<Map<String, String>> mapList = new ArrayList<>();
+			if (flag) {
+				// 组装真实数据
+				for (int i = 3; i < rows; i++) {
+					Row row1 = sheet.getRow(i);
+					Map<String, String> map1 = new HashMap<>();
+					for (Cell cell : row) {
+						// 处理真实数据
+						if (cell.getColumnIndex() == 0) {
+							continue;
+						}
+						if (row1.getCell(cell.getColumnIndex()) == null) {
 							map1.put(cell.getStringCellValue(), "");
+							continue;
+						}
+						switch (row1.getCell(cell.getColumnIndex()).getCellTypeEnum()) {
+							case NUMERIC:
+								Cell id = row1.getCell(cell.getColumnIndex());
+								id.setCellType(1);
+								map1.put(cell.getStringCellValue(), id.getStringCellValue());
+								break;
+							case STRING:
+								map1.put(cell.getStringCellValue(), row1.getCell(cell.getColumnIndex()).getStringCellValue());
+								break;
+							case BOOLEAN:
+								map1.put(cell.getStringCellValue(), String.valueOf(row1.getCell(cell.getColumnIndex()).getBooleanCellValue()));
+								break;
+							case ERROR:
+								map1.put(cell.getStringCellValue(), String.valueOf(row1.getCell(cell.getColumnIndex()).getErrorCellValue()));
+								break;
+							default:
+								map1.put(cell.getStringCellValue(), "");
+						}
 					}
+					mapList.add(map1);
 				}
-				mapList.add(map1);
+				System.out.println(mapList);
+				return mapList;
 			}
-			System.out.println(mapList);
-			log.info("已执行到--->119col" );
-			// TODO 批量处理数据
-
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		return null;
+		return null;
 	}
 
 	private SortedMap<String, String> rowTSortedMap(Row row) {

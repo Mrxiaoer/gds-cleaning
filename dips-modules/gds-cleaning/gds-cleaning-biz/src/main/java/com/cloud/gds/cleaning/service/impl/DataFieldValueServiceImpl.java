@@ -602,6 +602,31 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return array;
 	}
 
+	@Override
+	public boolean saveAllMap(long fieldId, List<Map<String, String>> mapList) {
+		// 循环插入数据库相关信息
+		List<DataFieldValue> list = new ArrayList<>();
+		LocalDateTime nowTime = LocalDateTime.now();
+		for (Map<String,String> map : mapList) {
+			DataFieldValue value = new DataFieldValue();
+			value.setFieldId(fieldId);
+			value.setCreateTime(nowTime);
+			value.setFieldValue(JSON.toJSONString(map));
+			if (SecurityUtils.getUser() != null) {
+				value.setCreateUser(SecurityUtils.getUser().getId());
+			} else {
+				value.setCreateUser(0);
+			}
+			list.add(value);
+		}
+
+		//批量导入
+		if (list.isEmpty()) {
+			return true;
+		}
+		return batchSave(list, 100);
+	}
+
 	/**
 	 * 检查json数据，与规则字段匹配则返回true
 	 *
