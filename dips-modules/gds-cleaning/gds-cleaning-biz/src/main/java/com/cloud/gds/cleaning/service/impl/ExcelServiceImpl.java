@@ -1,6 +1,10 @@
 package com.cloud.gds.cleaning.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
+import com.cloud.gds.cleaning.api.entity.DataField;
+import com.cloud.gds.cleaning.api.entity.DataFieldValue;
 import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.service.DataFieldService;
@@ -34,18 +38,36 @@ import java.util.*;
 @Service
 public class ExcelServiceImpl implements ExcelService {
 
+	private final DataRuleService dataRuleService;
+	private final DataFieldService dataFieldService;
+	private final DataFieldValueService dataFieldValueService;
+
 	Logger log = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
-	private DataRuleService dataRuleService;
-	@Autowired
-	private DataFieldService dataFieldService;
-	@Autowired
-	private DataFieldValueService dataFieldValueService;
+	public ExcelServiceImpl(DataRuleService dataRuleService, DataFieldService dataFieldService, DataFieldValueService dataFieldValueService) {
+		this.dataRuleService = dataRuleService;
+		this.dataFieldService = dataFieldService;
+		this.dataFieldValueService = dataFieldValueService;
+	}
 
 	@Override
 	public void gainTemplate(Long ruleId, HttpServletResponse response) throws Exception {
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet("规则模板表");
+		HSSFSheet sheet = workbook.createSheet("数据池表");
+		//构建模板sheet里面的内容
+		buildExcelTemplate(workbook, sheet, ruleId);
+		// 自定义名称
+		String fileName = CommonUtils.generateUUID() + ".xls";
+		//生成excel文件
+		buildExcelFile(fileName, workbook);
+		//浏览器下载excel
+		buildExcelDocument(fileName, workbook, response);
+
+	}
+
+	private void buildExcelTemplate(HSSFWorkbook workbook, HSSFSheet sheet, Long ruleId) {
+//		HSSFSheet sheet = workbook.createSheet("数据池表");
 //		createTitle(workbook, sheet);
 		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
 		//设置日期格式
@@ -63,12 +85,6 @@ public class ExcelServiceImpl implements ExcelService {
 			nextRow.createCell(column).setCellValue(entry.getKey());
 		}
 		nextRow.setZeroHeight(true);
-		String fileName = CommonUtils.generateUUID() + ".xls";
-
-		//生成excel文件
-		buildExcelFile(fileName, workbook);
-		//浏览器下载excel
-		buildExcelDocument(fileName, workbook, response);
 
 	}
 
@@ -101,6 +117,54 @@ public class ExcelServiceImpl implements ExcelService {
 			return String.valueOf(dataFieldValueService.saveAllMap(fieldId, mapList));
 		}
 		return null;
+	}
+
+	@Override
+	public void exportExcel(Long fieldId, HttpServletResponse response) throws Exception {
+		// todo 2019-3-4 15:21:51
+		DataField field = dataFieldService.selectById(fieldId);
+
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet("数据池表");
+
+		//构建模板sheet里面的内容
+		buildExcelTemplate(workbook, sheet, field.getRuleId());
+		//将实体数据导入excel
+		buildExcelMap(sheet, fieldId, field.getRuleId());
+
+		// 自定义名称
+		String fileName = CommonUtils.generateUUID() + ".xls";
+		//生成excel文件
+		buildExcelFile(fileName, workbook);
+
+		//浏览器下载excel
+		buildExcelDocument(fileName, workbook, response);
+
+	}
+
+	private void buildExcelMap(HSSFSheet sheet, Long fieldId, Long ruleId) {
+		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
+		// 获取数据池中data
+		List<DataFieldValue> valueList = dataFieldValueService.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
+
+		// 操作excel
+		int rowNum = 2;
+		for (DataFieldValue dataFieldValue : valueList) {
+			Iterator<Map.Entry<String, String>> it = sortedMap.entrySet().iterator();
+			// value -> sortedmap
+			SortedMap<String, String> value = DataRuleUtils.strToSortedMap(dataFieldValue.getFieldValue());
+			rowNum = rowNum + 1;
+			int column = 0;
+			HSSFRow row = sheet.createRow(rowNum);
+			while (it.hasNext()) {
+				Map.Entry<String, String> entry = it.next();
+				column = column + 1;
+				row.createCell(column).setCellValue(value.containsKey(entry.getKey()) ? value.get(entry.getKey()) : "");
+			}
+
+		}
+
+
 	}
 
 	private List<Map<String, String>> importExcel(Long fieldId, MultipartFile file) {

@@ -18,12 +18,20 @@ public interface ExcelService {
 	void gainTemplate(Long ruleId, HttpServletResponse response) throws Exception;
 
 	/**
-	 * 导入清洗池
+	 * 导入数据池
 	 *
 	 * @param fieldId
 	 * @param file
 	 * @return
 	 */
 	String importCleanPool(Long fieldId, MultipartFile file);
+
+	/**
+	 * 导出数据池
+	 *
+	 * @param fieldId
+	 * @param response
+	 */
+	void exportExcel(Long fieldId, HttpServletResponse response) throws Exception;
 
 }
