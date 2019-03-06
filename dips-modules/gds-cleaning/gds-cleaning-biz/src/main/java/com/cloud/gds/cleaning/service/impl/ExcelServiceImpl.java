@@ -53,10 +53,14 @@ public class ExcelServiceImpl implements ExcelService {
 
 	@Override
 	public void gainTemplate(Long ruleId, HttpServletResponse response) throws Exception {
+
 		HSSFWorkbook workbook = new HSSFWorkbook();
+
 		HSSFSheet sheet = workbook.createSheet("数据池表");
+
+		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
 		//构建模板sheet里面的内容
-		buildExcelTemplate(workbook, sheet, ruleId);
+		buildExcelTemplate(workbook, sheet, sortedMap);
 		// 自定义名称
 		String fileName = CommonUtils.generateUUID() + ".xls";
 		//生成excel文件
@@ -66,10 +70,10 @@ public class ExcelServiceImpl implements ExcelService {
 
 	}
 
-	private void buildExcelTemplate(HSSFWorkbook workbook, HSSFSheet sheet, Long ruleId) {
+	private void buildExcelTemplate(HSSFWorkbook workbook, HSSFSheet sheet, SortedMap<String, String> sortedMap) {
 //		HSSFSheet sheet = workbook.createSheet("数据池表");
 //		createTitle(workbook, sheet);
-		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
+//		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
 		//设置日期格式
 		HSSFCellStyle style = workbook.createCellStyle();
 		style.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
@@ -121,19 +125,44 @@ public class ExcelServiceImpl implements ExcelService {
 
 	@Override
 	public void exportExcel(Long fieldId, HttpServletResponse response) throws Exception {
-		// todo 2019-3-4 15:21:51
 		DataField field = dataFieldService.selectById(fieldId);
 
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet("数据池表");
 
-		//构建模板sheet里面的内容
-		buildExcelTemplate(workbook, sheet, field.getRuleId());
-		//将实体数据导入excel
-		buildExcelMap(sheet, fieldId, field.getRuleId());
+		List<DataFieldValue> valueList = dataFieldValueService.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
+
+		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(field.getRuleId());
+		// excel 行最多65536,因为抬头已写3行
+		double num = 65530;
+//		double num = 2;
+		// 判断需要写多少个excel表,向上取整
+		double sum = Math.ceil(valueList.size() / num);
+
+		// 切分list数组
+		List<DataFieldValue> subList;
+		for (int i = 0; i < sum; i++) {
+			System.out.println("开始运行~~");
+			if (valueList.size() > (int) num * (i + 1)) {
+				subList = valueList.subList(i * (int) num, (int) num * (i + 1));
+
+			} else {
+				subList = valueList.subList(i * (int) num, valueList.size());
+			}
+			// 建议此处使用多线程
+			buildExcelSheet(workbook, i, subList, sortedMap);
+			System.out.println("i:" + i);
+
+		}
+
+//		HSSFSheet sheet = workbook.createSheet("数据池表");
+//
+//		//构建模板sheet里面的内容
+//		buildExcelTemplate(workbook, sheet, field.getRuleId());
+//		//将实体数据导入excel
+//		buildExcelMap(sheet, fieldId, field.getRuleId());
 
 		// 自定义名称
-		String fileName = CommonUtils.generateUUID() + ".xls";
+		String fileName = CommonUtils.generateUUID() + ".xlsx";
 		//生成excel文件
 		buildExcelFile(fileName, workbook);
 
@@ -142,10 +171,20 @@ public class ExcelServiceImpl implements ExcelService {
 
 	}
 
-	private void buildExcelMap(HSSFSheet sheet, Long fieldId, Long ruleId) {
-		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
-		// 获取数据池中data
-		List<DataFieldValue> valueList = dataFieldValueService.selectList(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
+	private void buildExcelSheet(HSSFWorkbook workbook, int i, List<DataFieldValue> valueList, SortedMap<String, String> sortedMap) {
+
+		HSSFSheet sheet = workbook.createSheet("数据池表第" + (i + 1) + "页");
+
+		//构建模板sheet里面的内容
+		buildExcelTemplate(workbook, sheet, sortedMap);
+
+		//将实体数据导入excel
+		buildExcelMap(sheet, valueList, sortedMap);
+	}
+
+
+	private void buildExcelMap(HSSFSheet sheet, List<DataFieldValue> valueList, SortedMap<String, String> sortedMap) {
+//		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
 
 		// 操作excel
 		int rowNum = 2;
