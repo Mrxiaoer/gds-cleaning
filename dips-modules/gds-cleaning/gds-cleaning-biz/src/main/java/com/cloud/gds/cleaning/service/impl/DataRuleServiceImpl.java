@@ -58,6 +58,9 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
 		}
 		e.eq("is_deleted", DataCleanConstant.FALSE);
+		// 用户只能查询自己部门的规则
+		assert SecurityUtils.getUser() != null;
+		e.eq("dept_id", SecurityUtils.getUser().getDeptId());
 		Page page = this.selectPage(p, e);
 		if (page.getRecords() != null) {
 			List<DataRule> dataRules = page.getRecords();

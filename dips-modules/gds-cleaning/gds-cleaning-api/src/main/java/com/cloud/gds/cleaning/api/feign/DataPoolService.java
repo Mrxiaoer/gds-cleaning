@@ -73,7 +73,7 @@ public interface DataPoolService {
 	 * @param ids
 	 * @return
 	 */
-	@PostMapping("/data_pool/ids")
+	@PostMapping("/data_pool/delete")
 	public R deleteByIds(@RequestBody Set<Long> ids);
 
 

@@ -23,8 +23,6 @@ public class ExcelController {
 
 	private final ExcelService excelService;
 
-	Logger log = LoggerFactory.getLogger(this.getClass());
-
 	@Autowired
 	public ExcelController(ExcelService excelService) {
 		this.excelService = excelService;
@@ -34,13 +32,14 @@ public class ExcelController {
 	/**
 	 * 导出规则模板
 	 *
-	 * @param ruleId       规则id
+	 * @param ruleId   规则id
 	 * @param response
 	 * @throws Exception
 	 */
 	@GetMapping("/getTemplate/{id}")
 	public void getTemplate(@PathVariable("id") Long ruleId, HttpServletResponse response) throws Exception {
 		// todo 规则空未判断 2019-3-6 11:46:09
+
 		excelService.gainTemplate(ruleId, response);
 	}
 

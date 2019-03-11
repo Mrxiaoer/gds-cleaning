@@ -42,8 +42,6 @@ public class ExcelServiceImpl implements ExcelService {
 	private final DataFieldService dataFieldService;
 	private final DataFieldValueService dataFieldValueService;
 
-	Logger log = LoggerFactory.getLogger(this.getClass());
-
 	@Autowired
 	public ExcelServiceImpl(DataRuleService dataRuleService, DataFieldService dataFieldService, DataFieldValueService dataFieldValueService) {
 		this.dataRuleService = dataRuleService;
@@ -134,23 +132,22 @@ public class ExcelServiceImpl implements ExcelService {
 		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(field.getRuleId());
 		// excel 行最多65536,因为抬头已写3行
 		double num = 65530;
-//		double num = 2;
 		// 判断需要写多少个excel表,向上取整
 		double sum = Math.ceil(valueList.size() / num);
 
 		// 切分list数组
 		List<DataFieldValue> subList;
 		for (int i = 0; i < sum; i++) {
-			System.out.println("开始运行~~");
+//			System.out.println("开始运行~~");
 			if (valueList.size() > (int) num * (i + 1)) {
 				subList = valueList.subList(i * (int) num, (int) num * (i + 1));
 
 			} else {
 				subList = valueList.subList(i * (int) num, valueList.size());
 			}
-			// 建议此处使用多线程
+			// 建议此处使用多线程,提高写入的效率
 			buildExcelSheet(workbook, i, subList, sortedMap);
-			System.out.println("i:" + i);
+//			System.out.println("i:" + (i + 1));
 
 		}
 
@@ -162,7 +159,7 @@ public class ExcelServiceImpl implements ExcelService {
 //		buildExcelMap(sheet, fieldId, field.getRuleId());
 
 		// 自定义名称
-		String fileName = CommonUtils.generateUUID() + ".xlsx";
+		String fileName = CommonUtils.generateUUID() + ".xls";
 		//生成excel文件
 		buildExcelFile(fileName, workbook);
 
@@ -185,7 +182,6 @@ public class ExcelServiceImpl implements ExcelService {
 
 	private void buildExcelMap(HSSFSheet sheet, List<DataFieldValue> valueList, SortedMap<String, String> sortedMap) {
 //		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
-
 		// 操作excel
 		int rowNum = 2;
 		for (DataFieldValue dataFieldValue : valueList) {

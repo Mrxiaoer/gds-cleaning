@@ -97,7 +97,7 @@ public class DataPoolController {
 	 * @param ids
 	 * @return
 	 */
-	@PostMapping("/ids")
+	@PostMapping("/delete")
 	@ApiOperation(value = "批量删除", notes = "批量删除数据池中数据")
 	public R deleteByIds(@RequestBody Set<Long> ids) {
 		return new R<>(dataFieldValueService.deleteByIds(ids));

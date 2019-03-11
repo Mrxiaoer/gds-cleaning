@@ -44,7 +44,7 @@ public class DataField extends Model<DataField> {
 	 */
 	private String deptName;
 	/**
-	 * 来源方式
+	 * 来源方式(1.API导入 2.手动添加 3.多池合一)
 	 */
 	private Integer methodId;
 	/**
