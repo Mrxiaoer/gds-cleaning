@@ -3,6 +3,7 @@ package com.cloud.gds.cleaning.service;
 import com.cloud.gds.cleaning.api.entity.DataField;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 合并清洗池
@@ -29,5 +30,13 @@ public interface CombineService {
 	 * @return
 	 */
 	boolean nominateCleanPool(DataField dataField);
+
+	/**
+	 * 相同规则同步数据
+	 *
+	 * @param params
+	 * @return
+	 */
+	boolean regularizationData(Map<String, Object> params);
 
 }

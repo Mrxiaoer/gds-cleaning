@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.controller;
 
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.service.ExcelService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,9 @@ public class ExcelController {
 	 * @param response
 	 * @throws Exception
 	 */
-	@GetMapping("/getTemplate/{id}")
-	public void getTemplate(@PathVariable("id") Long ruleId, HttpServletResponse response) throws Exception {
+	@GetMapping("/getTemplate/{ruleId}")
+	@ApiOperation(value = "导出规则模板", notes = "导出规则模板")
+	public void getTemplate(@PathVariable("ruleId") Long ruleId, HttpServletResponse response) throws Exception {
 		// todo 规则空未判断 2019-3-6 11:46:09
 
 		excelService.gainTemplate(ruleId, response);
@@ -51,6 +53,7 @@ public class ExcelController {
 	 * @return
 	 */
 	@PostMapping("/importExcel/{fieldId}")
+	@ApiOperation(value = "数据导入数据池", notes = "数据导入数据池")
 	public R importExcel(@PathVariable("fieldId") Long fieldId, MultipartFile file) {
 		String str = excelService.importCleanPool(fieldId, file);
 		if (str != null || str.equals(true)) {
@@ -71,6 +74,7 @@ public class ExcelController {
 	 * @throws Exception
 	 */
 	@GetMapping("/exportExcel/{fieldId}")
+	@ApiOperation(value = "数据导出数据池", notes = "数据导出数据池")
 	public void exportExcel(@PathVariable("fieldId") Long fieldId, HttpServletResponse response) throws Exception {
 		excelService.exportExcel(fieldId, response);
 	}

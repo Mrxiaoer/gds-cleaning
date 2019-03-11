@@ -1,8 +1,6 @@
 package com.cloud.gds.cleaning.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.cloud.dips.common.core.util.R;
-import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.service.CombineService;
 import com.cloud.gds.cleaning.service.DataFieldService;
@@ -10,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 合并清洗池
@@ -47,18 +44,6 @@ public class CombineController {
 
 
 	/**
-	 * 根据规则id获取相同规则的清洗池
-	 *
-	 * @param ruleId
-	 * @return
-	 */
-	@GetMapping("/get_identical_rule/{ruleId}")
-	public R getIdenticalCleanPool(@PathVariable("ruleId") Long ruleId) {
-		// todo 如何去除原先一条
-		return new R<>(dataFieldService.selectList(new EntityWrapper<DataField>().eq("rule_id", ruleId).eq("is_deleted", DataCleanConstant.FALSE)));
-	}
-
-	/**
 	 * 根据清洗池查询相同规则的其他清洗池
 	 *
 	 * @param id
@@ -72,7 +57,7 @@ public class CombineController {
 	/**
 	 * 命名新数据池的名称
 	 *
-	 * @param dataField
+	 * @param dataField 包含name、ruleId
 	 * @return
 	 */
 	@GetMapping("/nominate_clean_pool")
@@ -91,13 +76,12 @@ public class CombineController {
 	/**
 	 * 相同规则同步数据
 	 *
-	 * @param oldPools
-	 * @param newPool
+	 * @param params
 	 * @return
 	 */
 	@PostMapping("/regularization")
-	public R regularizationData(Set<Long> oldPools, Long newPool) {
-		return new R();
+	public R regularizationData(@RequestBody Map<String, Object> params) {
+		return new R<>(combineService.regularizationData(params));
 	}
 
 }
