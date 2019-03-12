@@ -6,18 +6,22 @@ import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
+import com.cloud.gds.cleaning.api.entity.DataRule;
+import com.cloud.gds.cleaning.api.vo.ComBineRuleVo;
+import com.cloud.gds.cleaning.api.vo.DataRuleVo;
+import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.service.CombineService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
+import com.cloud.gds.cleaning.service.DataRuleService;
+import com.cloud.gds.cleaning.utils.DataRuleUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 合并清洗池实现类
@@ -35,9 +39,12 @@ public class CombineServiceImpl implements CombineService {
 
 	private final DataFieldValueService dataFieldValueService;
 
+	private final DataRuleService dataRuleService;
+
 	@Autowired
-	public CombineServiceImpl( DataFieldValueService dataFieldValueService,DataFieldMapper dataFieldMapper, DataFieldValueMapper dataFieldValueMapper) {
+	public CombineServiceImpl(DataFieldValueService dataFieldValueService, DataRuleService dataRuleService, DataFieldMapper dataFieldMapper, DataFieldValueMapper dataFieldValueMapper) {
 		this.dataFieldValueService = dataFieldValueService;
+		this.dataRuleService = dataRuleService;
 		this.dataFieldMapper = dataFieldMapper;
 		this.dataFieldValueMapper = dataFieldValueMapper;
 	}
@@ -85,16 +92,62 @@ public class CombineServiceImpl implements CombineService {
 		// 拼装新池数据
 		List<DataFieldValue> newList = new ArrayList<>();
 		LocalDateTime time = LocalDateTime.now();
-		for (DataFieldValue dataFieldValue : oldList){
+		for (DataFieldValue dataFieldValue : oldList) {
 			DataFieldValue value = new DataFieldValue();
 			value.setFieldValue(dataFieldValue.getFieldValue());
 			value.setFieldId(newPoolId);
 			value.setCreateTime(time);
-			assert  SecurityUtils.getUser() != null;
+			assert SecurityUtils.getUser() != null;
 			value.setCreateUser(SecurityUtils.getUser().getId());
 			newList.add(value);
 		}
-		return dataFieldValueService.batchSave(newList,200 );
+		return dataFieldValueService.batchSave(newList, 200);
+	}
+
+	@Override
+	public List<ComBineRuleVo> itemList(Set<Long> ids) {
+		List<ComBineRuleVo> list = new ArrayList<>();
+		for (Long id : ids) {
+			List<ComBineRuleVo> item = item(id);
+			if (item != null) {
+				list.addAll(item);
+			}
+		}
+		return list;
+	}
+
+	private List<ComBineRuleVo> item(Long id) {
+		DataField dataField = dataFieldMapper.selectById(id);
+		if (!DataCleanConstant.ZERO.equals(dataField.getRuleId())) {
+			DataRuleVo dataRuleVo = DataRuleUtils.po2Vo(dataRuleService.selectById(dataField.getRuleId()));
+			if (dataRuleVo.getDetail() != null) {
+				List<ComBineRuleVo> list = new ArrayList<>();
+				for (DataSetVo dataSetVo : dataRuleVo.getDetail()) {
+					ComBineRuleVo comBineRuleVo = new ComBineRuleVo();
+					BeanUtils.copyProperties(dataSetVo, comBineRuleVo);
+					comBineRuleVo.setCleanPoolName(dataField.getName());
+					list.add(comBineRuleVo);
+				}
+				return list;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Long nominateRule(DataRuleVo dataRuleVo) {
+		DataRule dataRule = new DataRule();
+		dataRule.setParams(DataRuleUtils.vo2po(dataRuleVo).getParams());
+
+		dataRule.setModifiedTime(LocalDateTime.now());
+		dataRule.setModifiedTime(LocalDateTime.now());
+		assert SecurityUtils.getUser() != null;
+		dataRule.setCreateUser(SecurityUtils.getUser().getId());
+		dataRule.setDeptId(SecurityUtils.getUser().getDeptId());
+		if (dataRuleService.insert(dataRule)) {
+			return dataRule.getId();
+		}
+		return DataCleanConstant.ZERO;
 	}
 
 

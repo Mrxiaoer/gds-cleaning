@@ -1,9 +1,12 @@
 package com.cloud.gds.cleaning.service;
 
 import com.cloud.gds.cleaning.api.entity.DataField;
+import com.cloud.gds.cleaning.api.vo.ComBineRuleVo;
+import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 合并清洗池
@@ -38,5 +41,21 @@ public interface CombineService {
 	 * @return
 	 */
 	boolean regularizationData(Map<String, Object> params);
+
+	/**
+	 * 获取清洗池的规则项
+	 *
+	 * @param ids
+	 * @return
+	 */
+	List<ComBineRuleVo> itemList(Set<Long> ids);
+
+	/**
+	 * 重新命名规则池信息
+	 *
+	 * @param dataRuleVo
+	 * @return
+	 */
+	Long nominateRule(DataRuleVo dataRuleVo);
 
 }
