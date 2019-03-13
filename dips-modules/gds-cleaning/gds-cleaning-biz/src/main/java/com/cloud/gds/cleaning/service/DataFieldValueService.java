@@ -194,7 +194,7 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	/**
 	 * 批量分段插入
 	 *
-	 * @param list
+	 * @param list 中entity包函fieldId、value、userId
 	 * @param oneSize
 	 * @return
 	 */

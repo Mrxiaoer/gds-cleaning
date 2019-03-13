@@ -2,6 +2,7 @@ package com.cloud.gds.cleaning.controller;
 
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
+import com.cloud.gds.cleaning.api.dto.DistinctDto;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.service.CombineService;
@@ -36,7 +37,7 @@ public class CombineController {
 
 
 	/**
-	 * 分页
+	 * 合并清洗池index分页
 	 *
 	 * @param params
 	 * @return
@@ -53,9 +54,20 @@ public class CombineController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/get_distinct/{id}")
-	public R getIdenticalCleanPoolT(@PathVariable("id") Long id) {
+	@GetMapping("/get_identical/{id}")
+	public R getIdenticalCleanPool(@PathVariable("id") Long id) {
 		return new R<>(combineService.getIdenticalCleanPool(id));
+	}
+
+	/**
+	 * 根据清洗池查询不同规则的其他清洗池
+	 *
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/get_distinct/{id}")
+	public R getDistinctCleanPool(@PathVariable("id") Long id) {
+		return new R<>(combineService.getDistinctCleanPool(id));
 	}
 
 	/**
@@ -80,12 +92,12 @@ public class CombineController {
 	/**
 	 * 相同规则同步数据
 	 *
-	 * @param params
+	 * @param distinctDto
 	 * @return
 	 */
 	@PostMapping("/regularization")
-	public R regularizationData(@RequestBody Map<String, Object> params) {
-		return new R<>(combineService.regularizationData(params));
+	public R regularizationData(@RequestBody DistinctDto distinctDto) {
+		return new R<>(combineService.regularizationData(distinctDto));
 	}
 
 	/**
@@ -96,7 +108,6 @@ public class CombineController {
 	 */
 	@PostMapping("/item_list")
 	public R itemList(@RequestBody Set<Long> ids) {
-		//todo 2019-3-12 9:28:07
 		return new R<>(combineService.itemList(ids));
 	}
 
@@ -119,6 +130,17 @@ public class CombineController {
 			map.put("ruleId", id);
 			return new R<>(map);
 		}
+	}
+
+	/**
+	 * 不同规则的数据同步
+	 *
+	 * @param distinctDto
+	 * @return
+	 */
+	@PostMapping("/distinct")
+	public R distinctData(@RequestBody DistinctDto distinctDto) {
+		return new R<>(combineService.distinctData(distinctDto));
 	}
 
 }

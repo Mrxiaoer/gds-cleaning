@@ -1,11 +1,11 @@
 package com.cloud.gds.cleaning.service;
 
+import com.cloud.gds.cleaning.api.dto.DistinctDto;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.vo.ComBineRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,6 +27,14 @@ public interface CombineService {
 	List<DataField> getIdenticalCleanPool(Long fieldId);
 
 	/**
+	 * 查询与此清洗池不同规则的数据
+	 *
+	 * @param fieldId
+	 * @return
+	 */
+	List<DataField> getDistinctCleanPool(Long fieldId);
+
+	/**
 	 * 保存新池
 	 *
 	 * @param dataField
@@ -37,10 +45,10 @@ public interface CombineService {
 	/**
 	 * 相同规则同步数据
 	 *
-	 * @param params
+	 * @param distinctDto
 	 * @return
 	 */
-	boolean regularizationData(Map<String, Object> params);
+	boolean regularizationData(DistinctDto distinctDto);
 
 	/**
 	 * 获取清洗池的规则项
@@ -57,5 +65,13 @@ public interface CombineService {
 	 * @return
 	 */
 	Long nominateRule(DataRuleVo dataRuleVo);
+
+	/**
+	 * 不同规则的数据同步
+	 *
+	 * @param distinctDto
+	 * @return
+	 */
+	boolean distinctData(DistinctDto distinctDto);
 
 }

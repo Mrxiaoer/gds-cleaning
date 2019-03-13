@@ -229,6 +229,6 @@ public class DataFieldServiceImpl extends ServiceImpl<DataFieldMapper, DataField
 
 	@Override
 	public boolean cleanPoolDelete(Long id) {
-		return SqlHelper.retBool(dataFieldMapper.deleteById(id));
+		return SqlHelper.retBool(dataFieldMapper.deleteById(id)) && SqlHelper.retBool(dataFieldValueMapper.delete(new EntityWrapper<DataFieldValue>().eq("field_id", id)));
 	}
 }
