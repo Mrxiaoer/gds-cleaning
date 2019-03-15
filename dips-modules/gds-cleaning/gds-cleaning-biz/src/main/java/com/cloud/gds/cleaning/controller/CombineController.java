@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 合并清洗池
+ * 合并清洗池controller
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com

@@ -102,7 +102,7 @@
 		a.is_deleted = 0
 	</select>
 
-	<!-- api数据量较大时添加 -->
+	<!-- api数据量较大时添加(此方法只添加value、userId、fieldId三个字段，是否在后期中是否在新增的时候加入更新用户的信息,时间以数据中时间戳自动化填写) -->
 	<insert id="insertAll">
 		insert into dataclean_data_field_value (field_id,field_value,create_user) values
 		<foreach collection="valueList" item="fieldValue" separator=",">
