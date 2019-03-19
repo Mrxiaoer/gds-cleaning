@@ -3,6 +3,7 @@ package com.cloud.gds.cleaning.api.feign;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.dips.common.core.util.R;
+import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.InputJsonList;
 import com.cloud.gds.cleaning.api.feign.factory.DataPoolServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,7 +17,7 @@ import java.util.Set;
  * @Email : 806039077@qq.com
  * @Date : 2019-01-10
  */
-@FeignClient(value = "gds-cleaning", fallbackFactory = DataPoolServiceFallbackFactory.class)
+@FeignClient(value = DataCleanConstant.MODULE_NAME, fallbackFactory = DataPoolServiceFallbackFactory.class)
 public interface DataPoolService {
 
 	/**
@@ -72,7 +73,7 @@ public interface DataPoolService {
 	 * @param ids
 	 * @return
 	 */
-	@PostMapping("/data_pool/ids")
+	@PostMapping("/data_pool/delete")
 	public R deleteByIds(@RequestBody Set<Long> ids);
 
 

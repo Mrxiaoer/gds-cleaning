@@ -6,6 +6,7 @@ import com.cloud.gds.cleaning.api.vo.CenterData;
 import com.cloud.gds.cleaning.api.vo.DARVo;
 import com.cloud.gds.cleaning.service.AnalysisResultService;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
+import com.cloud.gds.cleaning.service.DoAnalysisService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,14 @@ public class DataAnalysisController {
 
 	private final DataFieldValueService dataFieldValueService;
 	private final AnalysisResultService analysisResultService;
+	private final DoAnalysisService doAnalysisService;
 
 	@Autowired
 	public DataAnalysisController(DataFieldValueService dataFieldValueService,
-								  AnalysisResultService analysisResultService) {
+								  AnalysisResultService analysisResultService, DoAnalysisService doAnalysisService) {
 		this.dataFieldValueService = dataFieldValueService;
 		this.analysisResultService = analysisResultService;
+		this.doAnalysisService = doAnalysisService;
 	}
 
 	/**
@@ -44,7 +47,7 @@ public class DataAnalysisController {
 	@ApiOperation(value = "设置阀值", notes = "设置阀值")
 	public R setThreshold(@RequestBody Map<String, Object> params) {
 		// python分析数据
-		analysisResultService.dataAnalysis(params);
+		analysisResultService.smallDataAnalysis(params);
 		return new R();
 	}
 
@@ -105,7 +108,7 @@ public class DataAnalysisController {
 	@GetMapping("/automatic_cleaning/{fieldId}")
 	@ApiOperation(value = "自动清洗", notes = "根据fieldId自动清洗数据")
 	public R automaticCleaning(@PathVariable Long fieldId) {
-		return new R<>(analysisResultService.automaticCleaning(fieldId));
+		return new R<>(doAnalysisService.automaticCleaning(fieldId));
 	}
 
 	/**
@@ -116,7 +119,7 @@ public class DataAnalysisController {
 	 */
 	@PostMapping("/filter_method")
 	@ApiOperation(value = "数据过滤", notes = "此接口有问题")
-	public Map<String,Object> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
+	public Map<String, Object> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
 		if ("center".equals(type)) {
 			System.out.println("请求中心数据接口");
 			return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
@@ -130,5 +133,11 @@ public class DataAnalysisController {
 		return null;
 	}
 
+	@GetMapping("/big_data_analysis")
+	public String bigDataAnalysis(Long fieldId, Float threshold, @RequestParam(name = "size", defaultValue = "1000") Integer oneSize) {
+		// System.out.println("feign big_data_analysis ==== " + filePath);
+		doAnalysisService.handOutAnalysis(fieldId, threshold / 100, oneSize);
+		return "大数据自动清洗完毕!";
+	}
 
 }

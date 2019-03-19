@@ -20,13 +20,23 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 清洗池分页
+	 *
 	 * @param params
 	 * @return
 	 */
-	Page<DataField> queryPage(Map<String,Object> params);
+	Page<DataField> queryPage(Map<String, Object> params);
+
+	/**
+	 * 回收站分页
+	 *
+	 * @param params
+	 * @return
+	 */
+	Page<DataField> queryRecycleBinPage(Map<String, Object> params);
 
 	/**
 	 * 根据规则id查询
+	 *
 	 * @param ruleId
 	 * @return
 	 */
@@ -34,6 +44,7 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 根据多规则查询那些清洗池中使用过
+	 *
 	 * @param ruleIds
 	 * @return
 	 */
@@ -41,6 +52,7 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 根据清洗池id查询
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -48,6 +60,7 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 保存
+	 *
 	 * @param dataField
 	 * @return
 	 */
@@ -55,6 +68,7 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 更新数据
+	 *
 	 * @param dataField
 	 * @return
 	 */
@@ -62,6 +76,7 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 单独删除数据
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -69,6 +84,7 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 批量删除
+	 *
 	 * @param ids
 	 * @return
 	 */
@@ -76,7 +92,8 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 检测规则是否可以更换
-	 * @param id 清洗池id
+	 *
+	 * @param id     清洗池id
 	 * @param ruleId 选择的规则id
 	 * @return
 	 */
@@ -84,8 +101,25 @@ public interface DataFieldService extends IService<DataField> {
 
 	/**
 	 * 根据规则id更新是否需要重新分析
+	 *
 	 * @param ruleId
 	 * @return
 	 */
 	Boolean updateNeedReanalysis(Long ruleId);
+
+	/**
+	 * 还原清洗池数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	String cleanPoolReduction(Long id);
+
+	/**
+	 * 删除清洗池数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean cleanPoolDelete(Long id);
 }

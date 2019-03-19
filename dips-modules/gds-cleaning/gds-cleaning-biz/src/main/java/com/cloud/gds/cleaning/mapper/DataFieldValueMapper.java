@@ -19,8 +19,6 @@ import java.util.Set;
 @Mapper
 public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 
-	int deleteByIds(@Param("ids") Set<Long> ids);
-
 	/**
 	 * 批量插入
 	 *
@@ -65,5 +63,49 @@ public interface DataFieldValueMapper extends BaseMapper<DataFieldValue> {
 	 * @return
 	 */
 	List<DataPoolAnalysis> centerFiltration(@Param("centerId") Long centerId, @Param("screenSize") Float screenSize);
+
+	/**
+	 * 大数据批量更新
+	 *
+	 * @param list
+	 * @return
+	 */
+	boolean updateBatchById(@Param("valueList") List<DataFieldValue> list);
+
+
+	/**
+	 * 还原数据
+	 *
+	 * @param id
+	 * @param userId
+	 * @return
+	 */
+	Integer reductionById(@Param("id") Long id, @Param("userId") Integer userId);
+
+	/**
+	 * 批量还原数据
+	 *
+	 * @param ids
+	 * @param userId
+	 * @return
+	 */
+	Integer reductionByIds(@Param("ids") Set<Long> ids, @Param("userId") Integer userId);
+
+	/**
+	 * 根据fieldId一键还原
+	 *
+	 * @param fieldId
+	 * @param userId
+	 * @return
+	 */
+	Integer oneKeyReduction(@Param("fieldId") Long fieldId, @Param("userId") Integer userId);
+
+	/**
+	 * 回收站批量删除
+	 *
+	 * @param ids
+	 * @return
+	 */
+	Integer recyclingBinClear(@Param("ids") Set<Long> ids);
 
 }

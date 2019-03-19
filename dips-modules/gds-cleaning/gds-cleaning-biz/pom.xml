@@ -16,6 +16,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.github.haifengl</groupId>
+			<artifactId>smile-core</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		<dependency>
 			<groupId>com.cloud</groupId>
 			<artifactId>gds-cleaning-api</artifactId>
 			<version>${dips.version}</version>
@@ -82,7 +87,23 @@
 			<artifactId>iterator_2.12</artifactId>
 			<version>2.2.0</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
+		<dependency>
+			<groupId>com.hankcs</groupId>
+			<artifactId>hanlp</artifactId>
+			<version>portable-1.7.1</version>
+		</dependency>
+		<!--poi-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.11</version>
+		</dependency>
 	</dependencies>
 
 	<build>

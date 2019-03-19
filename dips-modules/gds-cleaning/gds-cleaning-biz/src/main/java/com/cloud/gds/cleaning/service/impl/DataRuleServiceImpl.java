@@ -1,7 +1,9 @@
 package com.cloud.gds.cleaning.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.util.SpecialStringUtil;
@@ -21,21 +23,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author : lolilijve
  * @Email : 1042703214@qq.com
  * @Date : 2018-11-22
  */
-@Service("dataFieldService")
+@Service
 public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> implements DataRuleService {
 
+	private final DataFieldService dataFieldService;
+
+	private final DataRuleMapper dataRuleMapper;
+
 	@Autowired
-	DataFieldService dataFieldService;
+	public DataRuleServiceImpl(DataFieldService dataFieldService, DataRuleMapper dataRuleMapper) {
+		this.dataFieldService = dataFieldService;
+		this.dataRuleMapper = dataRuleMapper;
+	}
 
 	@Override
 	public Page queryPage(Map<String, Object> params) {
@@ -52,6 +58,9 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
 		}
 		e.eq("is_deleted", DataCleanConstant.FALSE);
+		// 用户只能查询自己部门的规则
+		assert SecurityUtils.getUser() != null;
+		e.eq("dept_id", SecurityUtils.getUser().getDeptId());
 		Page page = this.selectPage(p, e);
 		if (page.getRecords() != null) {
 			List<DataRule> dataRules = page.getRecords();
@@ -64,6 +73,45 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 			page.setRecords(vos);
 		}
 		return page;
+	}
+
+	@Override
+	public Page queryRecycleBinPage(Map<String, Object> params) {
+		Boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataRule> p = new Page<DataRule>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataRule> e = new EntityWrapper<DataRule>();
+		String name = params.getOrDefault("name", "").toString();
+		if (StrUtil.isNotBlank(name)) {
+			e.like("name", SpecialStringUtil.escapeExprSpecialWord(name));
+		}
+		e.eq("is_deleted", DataCleanConstant.TRUE);
+		Page page = this.selectPage(p, e);
+		if (page.getRecords() != null) {
+			List<DataRule> dataRules = page.getRecords();
+			List<BaseVo> vos = new ArrayList<>();
+			for (DataRule dataRule : dataRules) {
+				BaseVo baseVo = new BaseVo();
+				BeanUtils.copyProperties(dataRule, baseVo);
+				vos.add(baseVo);
+			}
+			page.setRecords(vos);
+		}
+		return page;
+	}
+
+	@Override
+	public boolean rulePoolReduction(Long id) {
+		DataRule dataRule = new DataRule();
+		dataRule.setId(id);
+		assert SecurityUtils.getUser() != null;
+		dataRule.setModifiedUser(SecurityUtils.getUser().getId());
+		dataRule.setModifiedTime(LocalDateTime.now());
+		dataRule.setIsDeleted(DataCleanConstant.FALSE);
+		return updateById(dataRule);
 	}
 
 	@Override
@@ -172,6 +220,33 @@ public class DataRuleServiceImpl extends ServiceImpl<DataRuleMapper, DataRule> i
 			}
 		}
 		return resultSet;
+	}
+
+	@Override
+	public boolean rulePoolDelete(Long id) {
+		return SqlHelper.retBool(dataRuleMapper.deleteById(id));
+	}
+
+	@Override
+	public boolean rulePoolDeletes(Set<Long> ids) {
+		return SqlHelper.retBool(dataRuleMapper.recyclingBinClear(ids));
+	}
+
+	@Override
+	public SortedMap<String, String> gainRuleData(Long ruleId) {
+		// 查询规则相关信息
+		DataRule dataRule = dataRuleMapper.selectById(ruleId);
+		List<DataSetVo> dataSetVos = JSON.parseArray(dataRule.getParams(), DataSetVo.class);
+		SortedMap<String, String> sortedMap = new TreeMap<>();
+		if (dataSetVos != null) {
+			for (DataSetVo vo : dataSetVos) {
+				if (!"".equals(vo.getLabel()) || "".equals(vo.getLabel().trim())) {
+					sortedMap.put(vo.getProp(), vo.getLabel());
+				}
+			}
+		}
+
+		return sortedMap;
 	}
 
 }

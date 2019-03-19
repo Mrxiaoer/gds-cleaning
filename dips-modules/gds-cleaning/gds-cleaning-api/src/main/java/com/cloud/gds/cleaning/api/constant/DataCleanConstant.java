@@ -9,7 +9,7 @@ package com.cloud.gds.cleaning.api.constant;
  */
 public interface DataCleanConstant {
 
-
+	String MODULE_NAME = "gds-cleaning";
 	/**
 	 * 默认值0 未删除
 	 */
@@ -18,6 +18,10 @@ public interface DataCleanConstant {
 	 * 已删除
 	 */
 	Integer TRUE = 1;
+	/**
+	 * 常量3
+	 */
+	Integer THREE = 3;
 	/**
 	 * 长整类0
 	 */
@@ -55,13 +59,5 @@ public interface DataCleanConstant {
 	 * 分析状态 4、完成深度分析
 	 */
 	Integer DONE_DEEP_ANALYSIS = 4;
-	/**
-	 * 分页参数page
-	 */
-	String PAGE = "page";
-	/**
-	 * 分页参数LIMIT
-	 */
-	String LIMIT = "limit";
 
 }

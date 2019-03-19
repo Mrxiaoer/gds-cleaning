@@ -1,7 +1,8 @@
 package com.cloud.gds.cleaning.api.feign;
 
 import com.cloud.dips.common.core.util.R;
-import com.cloud.gds.cleaning.api.feign.factory.DataRuleServiceFallbackFactory;
+import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
+import com.cloud.gds.cleaning.api.feign.factory.CleanPoolServiceFallbackFactory;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,7 +17,7 @@ import java.util.Set;
  * @Email : 806039077@qq.com
  * @Date : 2019-01-10
  */
-@FeignClient(value = "gds-cleaning", fallbackFactory = DataRuleServiceFallbackFactory.class)
+@FeignClient(value = DataCleanConstant.MODULE_NAME, fallbackFactory = CleanPoolServiceFallbackFactory.class)
 public interface DataRuleService {
 
 	/**

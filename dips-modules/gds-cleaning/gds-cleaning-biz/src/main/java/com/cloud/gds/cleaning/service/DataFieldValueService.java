@@ -5,12 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.vo.BaseVo;
-import com.cloud.gds.cleaning.api.vo.CenterData;
-import com.cloud.gds.cleaning.api.vo.CleanItem;
-import com.cloud.gds.cleaning.api.vo.DARVo;
-import com.cloud.gds.cleaning.api.vo.DataFieldValueTree;
-import com.cloud.gds.cleaning.api.vo.DataPoolVo;
+import com.cloud.gds.cleaning.api.vo.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +44,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	Page<BaseVo> contrastAfterPage(Map<String, Object> params);
 
 	/**
+	 * 回收站数据池分页
+	 *
+	 * @param params
+	 * @return
+	 */
+	Page<DataPoolVo> queryRecycleBinPage(Map<String, Object> params);
+
+	/**
 	 * 分析结果默认中心数据显示
 	 *
 	 * @param fieldId
@@ -78,14 +82,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 * @return
 	 */
 	List<DARVo> centerToSatellite(Long centerId);
-
-	/**
-	 * 根据清洗池id查询
-	 *
-	 * @param fieldId 清洗池id
-	 * @return 数据池集合
-	 */
-	List<DataFieldValue> selectByfieldId(Long fieldId);
 
 	/**
 	 * 修改结果集字段
@@ -136,14 +132,14 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	List<DataFieldValueTree> compareDifference(Long id);
 
-	/**
-	 * 获取待分析数据
-	 *
-	 * @param fieldId   数据集id
-	 * @param threshold 阀值
-	 * @return String JSON字符串
-	 */
-	String getAnalysisData(Long fieldId, Float threshold);
+	// /**
+	//  * 获取待分析数据
+	//  *
+	//  * @param fieldId   数据集id
+	//  * @param threshold 阀值
+	//  * @return String JSON字符串
+	//  */
+	// String getAnalysisData(Long fieldId, Float threshold);
 
 	/**
 	 * 手动清洗数据
@@ -186,5 +182,62 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	 */
 	JSONArray dataJsonInput(long fieldId, JSONArray jsonArray);
 
+	/**
+	 * map格式批量保存
+	 *
+	 * @param fieldId
+	 * @param mapList
+	 * @return
+	 */
+	boolean saveAllMap(long fieldId, List<Map<String, String>> mapList);
+
+	/**
+	 * 批量分段插入
+	 *
+	 * @param list 中entity包函fieldId、value、userId
+	 * @param oneSize
+	 * @return
+	 */
+	boolean batchSave(List<DataFieldValue> list, int oneSize);
+
+	/**
+	 * 还原数据池中数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean reductionById(Long id);
+
+	/**
+	 * 批量还原数据池中数据
+	 *
+	 * @param ids
+	 * @return
+	 */
+	boolean reductionByIds(Set<Long> ids);
+
+	/**
+	 * 根据清洗池id一键还原
+	 *
+	 * @param fieldId
+	 * @return
+	 */
+	boolean oneKeyReduction(Long fieldId);
+
+	/**
+	 * 直接删除数据池中的数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean dataPoolDelete(Long id);
+
+	/**
+	 * 批量直接删除数据池中的数据
+	 *
+	 * @param ids
+	 * @return
+	 */
+	boolean dataPoolDeletes(Set<Long> ids);
 }
 

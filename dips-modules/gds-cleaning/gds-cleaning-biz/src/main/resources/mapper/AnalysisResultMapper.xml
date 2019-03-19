@@ -13,4 +13,26 @@
 	</resultMap>
 
 
+	<insert id="insertAll">
+		insert into dataclean_analysis_result (field_id,base_id,compare_id,similarity,is_manual) values
+		<foreach collection="valueList" item="result" separator=",">
+			(#{result.fieldId},#{result.baseId},#{result.compareId},#{result.similarity},#{result.isManual})
+		</foreach>
+	</insert>
+
+	<delete id="relevanceDelete">
+		DELETE FROM dataclean_analysis_result
+		where base_id in
+		<foreach item="id" collection="ids" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+		or
+		compare_id in
+		<foreach item="id" collection="ids" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
 </mapper>

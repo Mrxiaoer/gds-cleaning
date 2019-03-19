@@ -11,11 +11,11 @@ import lombok.Data;
 public class LabelVo {
 
 	/**
-	 * 标签
+	 * 标签(中文)
 	 */
 	private String label;
 	/**
-	 * 属性
+	 * 属性(英文)
 	 */
 	private String prop;
 

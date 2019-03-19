@@ -8,10 +8,7 @@ import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.api.vo.DataSetVo;
 import com.cloud.gds.cleaning.api.vo.LabelVo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 待清洗数据
@@ -28,6 +25,22 @@ public interface DataRuleService extends IService<DataRule> {
 	 * @return
 	 */
 	Page queryPage(Map<String, Object> params);
+
+	/**
+	 * 回收站分页
+	 *
+	 * @param params
+	 * @return
+	 */
+	Page queryRecycleBinPage(Map<String, Object> params);
+
+	/**
+	 * 还原规则
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean rulePoolReduction(Long id);
 
 	/**
 	 * 根据id查询规则信息
@@ -91,5 +104,29 @@ public interface DataRuleService extends IService<DataRule> {
 	 * @return
 	 */
 	DataSetVo gainUpperPower(Long ruleId);
+
+	/**
+	 * 直接删除规则池中的数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean rulePoolDelete(Long id);
+
+	/**
+	 * 批量直接删除规则池中的数据
+	 *
+	 * @param ids
+	 * @return
+	 */
+	boolean rulePoolDeletes(Set<Long> ids);
+
+	/**
+	 * 获取规则信息,以prop为key,label为value
+	 *
+	 * @param ruleId
+	 * @return
+	 */
+	SortedMap<String, String> gainRuleData(Long ruleId);
 }
 

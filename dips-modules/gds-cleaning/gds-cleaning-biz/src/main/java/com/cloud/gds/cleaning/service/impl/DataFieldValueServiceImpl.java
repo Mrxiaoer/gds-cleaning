@@ -1,35 +1,34 @@
 package com.cloud.gds.cleaning.service.impl;
 
-import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.util.SpecialStringUtil;
 import com.cloud.dips.common.security.util.SecurityUtils;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.DataPoolAnalysis;
-import com.cloud.gds.cleaning.api.dto.WillAnalysisData;
 import com.cloud.gds.cleaning.api.entity.AnalysisResult;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.entity.DataFieldValue;
-import com.cloud.gds.cleaning.api.entity.DataRule;
 import com.cloud.gds.cleaning.api.utils.TreeUtil;
 import com.cloud.gds.cleaning.api.vo.*;
+import com.cloud.gds.cleaning.mapper.AnalysisResultMapper;
+import com.cloud.gds.cleaning.mapper.DataFieldMapper;
 import com.cloud.gds.cleaning.mapper.DataFieldValueMapper;
 import com.cloud.gds.cleaning.mapper.DataRuleMapper;
-import com.cloud.gds.cleaning.service.*;
+import com.cloud.gds.cleaning.service.DataFieldValueService;
+import com.cloud.gds.cleaning.service.DataRuleService;
 import com.cloud.gds.cleaning.utils.DataPoolUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -43,28 +42,28 @@ import java.util.stream.Collectors;
  * @Email : 1042703214@qq.com
  * @Date : 2018-11-22
  */
-@Service("dataFieldValueService")
+@Service
 public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper, DataFieldValue> implements
 	DataFieldValueService {
 
 	private final DataRuleMapper dataRuleMapper;
 	private final DataFieldValueMapper dataFieldValueMapper;
-	private final CalculateService calculateService;
-	private final DataFieldService dataFieldService;
+	private final AnalysisResultMapper analysisResultMapper;
+	private final DataFieldMapper dataFieldMapper;
 	private final DataRuleService dataRuleService;
+
 	@Value("${file-save.path}")
 	String fileSavePath;
-	@Autowired
-	AnalysisResultService analysisResultService;
 
 	@Autowired
-	public DataFieldValueServiceImpl(CalculateService calculateService, DataFieldService dataFieldService,
-									 DataRuleService dataRuleService, DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper) {
-		this.calculateService = calculateService;
-		this.dataFieldService = dataFieldService;
+	public DataFieldValueServiceImpl(DataFieldMapper dataFieldMapper, DataRuleService dataRuleService,
+									 DataFieldValueMapper dataFieldValueMapper, DataRuleMapper dataRuleMapper,
+									 AnalysisResultMapper analysisResultMapper) {
+		this.dataFieldMapper = dataFieldMapper;
 		this.dataRuleService = dataRuleService;
 		this.dataFieldValueMapper = dataFieldValueMapper;
 		this.dataRuleMapper = dataRuleMapper;
+		this.analysisResultMapper = analysisResultMapper;
 	}
 
 	@Override
@@ -106,7 +105,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
-		DataField dataField = dataFieldService.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
+		DataField dataField = dataFieldMapper.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
@@ -151,7 +150,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Page<DataFieldValue> page = this.selectPage(p, e);
 
 		// 查询当前清洗池信息
-		DataField dataField = dataFieldService.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
+		DataField dataField = dataFieldMapper.selectById(Long.valueOf(String.valueOf(params.get("fieldId"))));
 
 		// 获取规则中百分比最高的字段
 		DataSetVo resultSet = dataRuleService.gainUpperPower(dataField.getRuleId());
@@ -180,12 +179,34 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
+	public Page<DataPoolVo> queryRecycleBinPage(Map<String, Object> params) {
+		boolean isAsc = Boolean.parseBoolean(params.getOrDefault("isAsc", Boolean.TRUE).toString());
+		Page<DataFieldValue> p = new Page<>();
+		p.setCurrent(Integer.parseInt(params.getOrDefault("page", 1).toString()));
+		p.setSize(Integer.parseInt(params.getOrDefault("limit", 10).toString()));
+		p.setOrderByField(params.getOrDefault("orderByField", "id").toString());
+		p.setAsc(isAsc);
+		EntityWrapper<DataFieldValue> e = new EntityWrapper<>();
+		String fieldId = params.getOrDefault("fieldId", "").toString();
+		if (StrUtil.isNotBlank(fieldId)) {
+			e.eq("field_id", SpecialStringUtil.escapeExprSpecialWord(fieldId));
+		}
+		e.eq("is_deleted", DataCleanConstant.TRUE);
+		Page<DataFieldValue> page1 = this.selectPage(p, e);
+		Page<DataPoolVo> page2 = new Page<>();
+		BeanUtils.copyProperties(page1, page2);
+		page2.setRecords(DataPoolUtils.listEntity2Vo(page1.getRecords()));
+
+		return page2;
+	}
+
+	@Override
 	public List<CenterData> gainCleanData(Long fieldId) {
 		// field_value需要取其中比例"较高"的一项,因此需要重新组装中心数据回显
 		List<CenterData> list = dataFieldValueMapper.gainCleanData(fieldId);
 
 		// 获取规则中比较最高的一项
-		DataSetVo dataSetVo = dataRuleService.gainUpperPower(dataFieldService.selectById(fieldId).getRuleId());
+		DataSetVo dataSetVo = dataRuleService.gainUpperPower(dataFieldMapper.selectById(fieldId).getRuleId());
 
 		// 取field_value值,先判断list是否有值
 		if (list != null && list.size() != 0) {
@@ -194,7 +215,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 				com.alibaba.fastjson.JSONObject myJson = com.alibaba.fastjson.JSONObject
 					.parseObject(centerData.getFieldValue());
 				Map<String, Object> map = (Map<String, Object>) myJson;
-				centerData.setFieldValue(map.get(dataSetVo.getProp()).toString());
+				centerData.setFieldValue(map.get(dataSetVo.getProp()) != null ? map.get(dataSetVo.getProp()).toString() : ">无最高权重字段值喔~<");
 			}
 		}
 		return list;
@@ -231,12 +252,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	public List<DataFieldValue> selectByfieldId(Long fieldId) {
-		return this.selectList(
-			new EntityWrapper<DataFieldValue>().eq("field_id", fieldId).eq("is_deleted", DataCleanConstant.FALSE));
-	}
-
-	@Override
 	public Boolean updateJson(Long id, Map<String, Object> map) {
 		// 修改->先删再增
 		DataFieldValue q = this.selectById(id);
@@ -258,8 +273,38 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		// 删除数据时需要删除分析结果表中相关数据
-		analysisResultService.deleteAllById(id);
+		analysisResultDelete(id);
 		return this.updateById(dataFieldValue);
+	}
+
+	/**
+	 * 数据池数据删除 触发分析结果表中的数据进行删除
+	 * 由于未对结果池中查看是否存在此id,因此删除的条数->boolean 可能是false
+	 *
+	 * @param ids
+	 * @return
+	 */
+	private boolean analysisResultDeletes(Set<Long> ids) {
+		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("base_id", ids)))
+			&& SqlHelper
+			.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().in("compare_id", ids)));
+
+	}
+
+	/**
+	 * 数据池数据删除 触发分析结果表中的数据进行删除
+	 * 由于未对结果池中查看是否存在此id,因此删除的条数->boolean 可能是false
+	 *
+	 * @param id
+	 * @return
+	 */
+	private boolean analysisResultDelete(Long id) {
+		AnalysisResult before1 = new AnalysisResult();
+		before1.setBaseId(id);
+		AnalysisResult before2 = new AnalysisResult();
+		before2.setCompareId(id);
+		return SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<>(before1))) && SqlHelper
+			.delBool(analysisResultMapper.delete(new EntityWrapper<>(before2)));
 	}
 
 	@Override
@@ -270,7 +315,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 		dataFieldValue.setModifiedTime(LocalDateTime.now());
 		// 删除数据时需要删除分析结果表中相关数据
-		analysisResultService.deleteAllByIds(ids);
+		analysisResultDeletes(ids);
 		return this.update(dataFieldValue, new EntityWrapper<DataFieldValue>().in("id", ids));
 	}
 
@@ -282,12 +327,15 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 		dataFieldValue.setCreateTime(LocalDateTime.now());
 		// 添加数据需将清洗池中的分析状态更换成最原先的状态
-		DataField dataField = dataFieldService.selectById(fieldId);
+		DataField dataField = dataFieldMapper.selectById(fieldId);
 		if (!DataCleanConstant.FALSE.equals(dataField.getAnalyseState())) {
 			DataField q = new DataField();
 			q.setId(fieldId);
 			q.setAnalyseState(DataCleanConstant.FALSE);
-			dataFieldService.update(q);
+			assert SecurityUtils.getUser() != null;
+			q.setModifiedUser(SecurityUtils.getUser().getId());
+			q.setModifiedTime(LocalDateTime.now());
+			dataFieldMapper.updateById(q);
 		}
 		return this.insert(dataFieldValue);
 	}
@@ -307,7 +355,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			dataFieldValue.setFieldValue(JSON.toJSONString(map));
 			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
 			// 添加数据
-			//			this.insert(dataFieldValue);
 			list.add(dataFieldValue);
 		}
 		this.insertBatch(list);
@@ -329,99 +376,103 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return TreeUtil.buildByRecursive(treeList, 0L);
 	}
 
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public String getAnalysisData(Long fieldId, Float threshold) {
-
-		DataField dataField = new DataField();
-		dataField.setId(fieldId);
-		dataField = dataFieldService.selectById(dataField);
-
-		DataRule dataRule = new DataRule();
-		dataRule.setId(dataField.getRuleId());
-		dataRule = dataRuleService.selectById(dataRule);
-
-		WillAnalysisData willAnalysisData = new WillAnalysisData();
-		//设置阀值
-		willAnalysisData.setThreshold(threshold);
-		//设置字段名，权重，字段是否近似
-		List<DataSetVo> list = JSONUtil.parseArray(dataRule.getParams()).toList(DataSetVo.class);
-		List<String> params = new ArrayList<>(4);
-		List<Float> weights = new ArrayList<>(4);
-		List<Integer> approximates = new ArrayList<>(4);
-		List<String> needDeleteFields = new ArrayList<>();
-		for (DataSetVo dataSetVo : list) {
-			//如果权重为零，删除该字段
-			if (dataSetVo.getWeight() > 0) {
-				params.add(dataSetVo.getProp());
-				weights.add(dataSetVo.getWeight());
-				approximates.add(dataSetVo.getIsSynonymous());
-			} else {
-				needDeleteFields.add(dataSetVo.getProp());
-			}
-		}
-		willAnalysisData.setParams(params);
-		willAnalysisData.setWeights(weights);
-		willAnalysisData.setApproximates(approximates);
-
-		willAnalysisData.setNeedReanalysis(dataField.getNeedReanalysis());
-		//设置待分析数据
-		List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
-		List<JSONObject> objList = new ArrayList<>();
-		for (DataFieldValue dataFieldValue : willAnalysisList) {
-			if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
-				JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
-				//如果原数据含字段id，删除之
-				jsonObj.remove("id");
-				//删除权重为0的字段
-				for (String needDeleteField : needDeleteFields) {
-					jsonObj.remove(needDeleteField);
-				}
-				for (String needField : params) {
-					if (!jsonObj.containsKey(needField)) {
-						jsonObj.put(needField, "");
-					}
-				}
-				//添加id字段
-				jsonObj.putOnce("id", dataFieldValue.getId());
-
-				objList.add(jsonObj);
-			}
-		}
-		willAnalysisData.setData(objList);
-
-		//写入文件
-		String resultPath = fileSavePath + "/" + fieldId + ".json";
-		FileWriter fileWriter = new FileWriter(resultPath);
-		fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
-
-		//返回文件路径
-		return resultPath;
-	}
+	// @Override
+	// @Transactional(rollbackFor = Exception.class)
+	// public String getAnalysisData(Long fieldId, Float threshold) {
+	//
+	// 	DataField dataField = new DataField();
+	// 	dataField.setId(fieldId);
+	// 	dataField = dataFieldService.selectById(dataField);
+	//
+	// 	DataRule dataRule = new DataRule();
+	// 	dataRule.setId(dataField.getRuleId());
+	// 	dataRule = dataRuleService.selectById(dataRule);
+	//
+	// 	WillAnalysisData willAnalysisData = new WillAnalysisData();
+	// 	//设置阀值
+	// 	willAnalysisData.setThreshold(threshold);
+	// 	//设置字段名，权重，字段是否近似
+	// 	List<DataSetVo> list = JSONUtil.parseArray(dataRule.getParams()).toList(DataSetVo.class);
+	// 	List<String> params = new ArrayList<>(4);
+	// 	List<Float> weights = new ArrayList<>(4);
+	// 	List<Integer> approximates = new ArrayList<>(4);
+	// 	List<String> needDeleteFields = new ArrayList<>();
+	// 	for (DataSetVo dataSetVo : list) {
+	// 		//如果权重为零，删除该字段
+	// 		if (dataSetVo.getWeight() > 0) {
+	// 			params.add(dataSetVo.getProp());
+	// 			weights.add(dataSetVo.getWeight());
+	// 			approximates.add(dataSetVo.getIsSynonymous());
+	// 		} else {
+	// 			needDeleteFields.add(dataSetVo.getProp());
+	// 		}
+	// 	}
+	// 	willAnalysisData.setParams(params);
+	// 	willAnalysisData.setWeights(weights);
+	// 	willAnalysisData.setApproximates(approximates);
+	//
+	// 	willAnalysisData.setNeedReanalysis(dataField.getNeedReanalysis());
+	// 	//设置待分析数据
+	// 	List<DataFieldValue> willAnalysisList = firstAnalysisList(fieldId);
+	// 	List<JSONObject> objList = new ArrayList<>();
+	// 	for (DataFieldValue dataFieldValue : willAnalysisList) {
+	// 		if (JSONUtil.isJsonObj(dataFieldValue.getFieldValue())) {
+	// 			JSONObject jsonObj = JSONUtil.parseObj(dataFieldValue.getFieldValue());
+	// 			//如果原数据含字段id，删除之
+	// 			jsonObj.remove("id");
+	// 			//删除权重为0的字段
+	// 			for (String needDeleteField : needDeleteFields) {
+	// 				jsonObj.remove(needDeleteField);
+	// 			}
+	// 			for (String needField : params) {
+	// 				if (!jsonObj.containsKey(needField)) {
+	// 					jsonObj.put(needField, "");
+	// 				}
+	// 			}
+	// 			//添加id字段
+	// 			jsonObj.putOnce("id", dataFieldValue.getId());
+	//
+	// 			objList.add(jsonObj);
+	// 		}
+	// 	}
+	// 	willAnalysisData.setData(objList);
+	//
+	// 	//写入文件
+	// 	String resultPath = fileSavePath + "/" + fieldId + ".json";
+	// 	FileWriter fileWriter = new FileWriter(resultPath);
+	// 	fileWriter.write(JSONUtil.toJsonStr(willAnalysisData));
+	//
+	// 	//返回文件路径
+	// 	return resultPath;
+	// }
 
 	@Override
 	public boolean cleanDate(List<Map<String, Object>> params) {
 
 		List<DataFieldValue> list = new ArrayList<>();
+		Set<Long> ids = new HashSet<>();
 		// 拼装参数进行清洗
 		for (Map<String, Object> map : params) {
 			// 组装value中要清洗的相应数据信息
 			DataFieldValue dataFieldValue = new DataFieldValue();
-			dataFieldValue.setId(Long.valueOf(String.valueOf(map.get("cleanId"))));
+			Long cleanId = Long.valueOf(String.valueOf(map.get("cleanId")));
+			dataFieldValue.setId(cleanId);
 			dataFieldValue.setBeCleanedId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			// 由于数据被清洗了,对数据进行删除状态的更新
 			dataFieldValue.setIsDeleted(DataCleanConstant.TRUE);
 			dataFieldValue.setModifiedUser(SecurityUtils.getUser().getId());
 			dataFieldValue.setModifiedTime(LocalDateTime.now());
 			list.add(dataFieldValue);
-
+			ids.add(cleanId);
 			// 如数据被清洗,分析结果中相应的记录需要删除
 			AnalysisResult q = new AnalysisResult();
 			q.setBaseId(Long.valueOf(String.valueOf(map.get("baseId"))));
 			q.setCompareId(Long.valueOf(String.valueOf(map.get("cleanId"))));
-			analysisResultService.delete(new EntityWrapper<>(q));
+			analysisResultMapper.delete(new EntityWrapper<>(q));
 		}
 		// 清洗数据
+		System.out.println(ids);
+		analysisResultMapper.relevanceDelete(ids);
 		return this.updateBatchById(list);
 	}
 
@@ -431,7 +482,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		DataField field = new DataField();
 		field.setId(fieldId);
 		field.setAnalyseState(DataCleanConstant.NO_ANALYSIS);
-		dataFieldService.update(field);
+		field.setModifiedUser(SecurityUtils.getUser().getId());
+		field.setModifiedTime(LocalDateTime.now());
+		dataFieldMapper.updateById(field);
 		return this.delete(new EntityWrapper<DataFieldValue>().eq("field_id", fieldId));
 	}
 
@@ -446,7 +499,7 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	public List<CleanItem> cleaningItem(Long beCleanedId) {
 		// 查询规则比较高的项
 		Long fieldId = dataFieldValueMapper.selectById(beCleanedId).getFieldId();
-		Long ruleId = dataFieldService.selectById(fieldId).getRuleId();
+		Long ruleId = dataFieldMapper.selectById(fieldId).getRuleId();
 		DataSetVo dataSetVo = dataRuleService.gainUpperPower(ruleId);
 
 		// 查询被清洗掉的数据
@@ -464,7 +517,8 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			Map<String, Object> map = result.getFieldValue();
 			b.setLabel(map.get(dataSetVo.getProp()).toString());
 			// 查询是否存在子叶
-			List<DataFieldValue> leafs = dataFieldValueMapper.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
+			List<DataFieldValue> leafs = dataFieldValueMapper
+				.selectList(new EntityWrapper<DataFieldValue>().eq("be_cleaned_id", result.getId()));
 			b.setLeaf(leafs.size() <= 0);
 
 			baseVos.add(b);
@@ -472,43 +526,44 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return baseVos;
 	}
 
-	/**
-	 * 未分析或需要重新分析的数据
-	 *
-	 * @param fieldId
-	 * @return List<DataFieldValue>
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public List<DataFieldValue> firstAnalysisList(Long fieldId) {
-		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
-			.eq("is_deleted", DataCleanConstant.FALSE);
+	// /**
+	//  * 未分析或需要重新分析的数据
+	//  *
+	//  * @param fieldId
+	//  * @return List<DataFieldValue>
+	//  */
+	// @Transactional(rollbackFor = Exception.class)
+	// public List<DataFieldValue> firstAnalysisList(Long fieldId) {
+	// 	Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
+	// 		.eq("is_deleted", DataCleanConstant.FALSE);
+	//
+	// 	List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
+	// 	DataFieldValue dataFieldValue = new DataFieldValue();
+	// 	dataFieldValue.setState(1);
+	// 	baseMapper.update(dataFieldValue, wrapper);
+	//
+	// 	return needAnalysisList;
+	// }
 
-		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
-		DataFieldValue dataFieldValue = new DataFieldValue();
-		dataFieldValue.setState(1);
-		baseMapper.update(dataFieldValue, wrapper);
-
-		return needAnalysisList;
-	}
-
-	/**
-	 * 多次分析的数据
-	 *
-	 * @param fieldId
-	 * @return List<DataFieldValue>
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public List<DataFieldValue> notFirstAnalysisList(Long fieldId) {
-		Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
-			.eq("is_deleted", DataCleanConstant.FALSE).eq("state", 0);
-
-		List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
-		DataFieldValue dataFieldValue = new DataFieldValue();
-		dataFieldValue.setState(1);
-		baseMapper.update(dataFieldValue, wrapper);
-
-		return needAnalysisList;
-	}
+	// /**
+	//  * 多次分析的数据(已弃用，所有分析统一使用firstAnalysisList方法)
+	//  *
+	//  * @param fieldId
+	//  * @return List<DataFieldValue>
+	//  */
+	// @Deprecated
+	// @Transactional(rollbackFor = Exception.class)
+	// public List<DataFieldValue> notFirstAnalysisList(Long fieldId) {
+	// 	Wrapper<DataFieldValue> wrapper = new EntityWrapper<DataFieldValue>().eq("field_id", fieldId)
+	// 		.eq("is_deleted", DataCleanConstant.FALSE).eq("state", 0);
+	//
+	// 	List<DataFieldValue> needAnalysisList = baseMapper.selectList(wrapper);
+	// 	DataFieldValue dataFieldValue = new DataFieldValue();
+	// 	dataFieldValue.setState(1);
+	// 	baseMapper.update(dataFieldValue, wrapper);
+	//
+	// 	return needAnalysisList;
+	// }
 
 	@Override
 	public JSONArray dataJsonInput(long fieldId, JSONArray jsonArray) throws NullPointerException {
@@ -528,8 +583,9 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		Iterator<Object> iterator = jsonArray.iterator();
 		JSONArray array = new JSONArray();
 		while (iterator.hasNext()) {
-			Object jsonData = iterator.next();
-			if (!checkJsonParams(dl, JSONUtil.parseObj(jsonData, false))) {
+			Object obj = iterator.next();
+			JSONObject jsonData = JSONUtil.parseObj(obj, false);
+			if (!checkJsonParams(dl, jsonData)) {
 				array.add(jsonData);
 				iterator.remove();
 			}
@@ -546,6 +602,31 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return array;
 	}
 
+	@Override
+	public boolean saveAllMap(long fieldId, List<Map<String, String>> mapList) {
+		// 循环插入数据库相关信息
+		List<DataFieldValue> list = new ArrayList<>();
+		LocalDateTime nowTime = LocalDateTime.now();
+		for (Map<String,String> map : mapList) {
+			DataFieldValue value = new DataFieldValue();
+			value.setFieldId(fieldId);
+			value.setCreateTime(nowTime);
+			value.setFieldValue(JSON.toJSONString(map));
+			if (SecurityUtils.getUser() != null) {
+				value.setCreateUser(SecurityUtils.getUser().getId());
+			} else {
+				value.setCreateUser(0);
+			}
+			list.add(value);
+		}
+
+		//批量导入
+		if (list.isEmpty()) {
+			return true;
+		}
+		return batchSave(list, 100);
+	}
+
 	/**
 	 * 检查json数据，与规则字段匹配则返回true
 	 *
@@ -554,7 +635,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	 * @return
 	 */
 	private Boolean checkJsonParams(List<DataSetVo> dl, JSONObject jsonData) {
-
 		boolean flag = true;
 		List<String> dataKeys = new ArrayList<>();
 		//判断是否包含所有规则中的字段
@@ -564,12 +644,21 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 			}
 			dataKeys.add(dsv.getProp());
 		}
-		//判断是否还包含包含规则以外的字段
-		for (String key : jsonData.keySet()) {
+		//判断是否还包含包含规则以外的字段,有则删除
+		Iterator<String> iterator = jsonData.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
 			if (!dataKeys.contains(key)) {
-				flag = false;
+				// flag = false;
+				iterator.remove();
 			}
 		}
+		// for (String key : jsonData.keySet()) {
+		// 	if (!dataKeys.contains(key)) {
+		// 		// flag = false;
+		// 		jsonData.remove(key);
+		// 	}
+		// }
 
 		return flag;
 	}
@@ -605,6 +694,14 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return batchSave(list, 100);
 	}
 
+	/**
+	 * 批量分段插入
+	 *
+	 * @param list
+	 * @param oneSize
+	 * @return
+	 */
+	@Override
 	public boolean batchSave(List<DataFieldValue> list, int oneSize) {
 		boolean flag = true;
 		List<DataFieldValue> subList;
@@ -622,18 +719,35 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 		return true;
 	}
 
-	/**
-	 * 调用清洗相似度计算
-	 */
-	public void interfaceTest() {
-		String str = "{\"threshold\":0.6,\"Params\":[\"length\",\"type\",\"nameEn\",\"nameCn\"],\"weights\":[0.1,0.2,"
-			+ "0.3,0.4],\"approximates\":[0,0,1,1],\"standard\":{\"length\":10,\"type\":1,\"nameEn\":\"mc\","
-			+ "\"nameCn\":\"名称\"},\"similarity\":{\"nameEn\":{\"xm\":0.5,\"mz\":0.8},\"nameCn\":{\"姓名\":0.6,"
-			+ "\"名字\":0.8}},\"data\":[{\"id\":1,\"length\":10,\"type\":1,\"nameEn\":\"xm\",\"nameCn\":\"姓名\"},"
-			+ "{\"id\":2,\"length\":18,\"type\":2,\"nameEn\":\"sfz\",\"nameCn\":\"身份证\"},{\"id\":3,\"length\":1,"
-			+ "\"type\":3,\"nameEn\":\"sex\",\"nameCn\":\"性别\"}]}";
-		String simResult = calculateService.analysisSimilarity(DataCleanConstant.QUICK_ANALYSIS, "dddd");
-		System.out.println(simResult);
+	@Override
+	public boolean reductionById(Long id) {
+		assert SecurityUtils.getUser() != null;
+		Integer userId = SecurityUtils.getUser().getId();
+		return SqlHelper.retBool(dataFieldValueMapper.reductionById(id, userId));
+	}
+
+	@Override
+	public boolean reductionByIds(Set<Long> ids) {
+		assert SecurityUtils.getUser() != null;
+		Integer userId = SecurityUtils.getUser().getId();
+		return SqlHelper.retBool(dataFieldValueMapper.reductionByIds(ids, userId));
+	}
+
+	@Override
+	public boolean oneKeyReduction(Long fieldId) {
+		assert SecurityUtils.getUser() != null;
+		Integer userId = SecurityUtils.getUser().getId();
+		return SqlHelper.retBool(dataFieldValueMapper.oneKeyReduction(fieldId, userId));
+	}
+
+	@Override
+	public boolean dataPoolDelete(Long id) {
+		return SqlHelper.retBool(dataFieldValueMapper.deleteById(id));
+	}
+
+	@Override
+	public boolean dataPoolDeletes(Set<Long> ids) {
+		return SqlHelper.retBool(dataFieldValueMapper.recyclingBinClear(ids));
 	}
 
 }

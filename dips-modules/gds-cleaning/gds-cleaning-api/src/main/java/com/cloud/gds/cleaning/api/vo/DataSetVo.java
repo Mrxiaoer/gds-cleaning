@@ -15,7 +15,7 @@ public class DataSetVo {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 标签名称
+	 * 属性名称
 	 */
 	private String label;
 	/**

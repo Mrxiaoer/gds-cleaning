@@ -3,7 +3,6 @@ package com.cloud.gds.cleaning.controller;
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.service.DataFieldService;
-import com.cloud.gds.cleaning.service.DataRuleService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +23,9 @@ public class CleanPoolController {
 
 	private final DataFieldService dataFieldService;
 
-	private final DataRuleService dataRuleService;
-
 	@Autowired
-	public CleanPoolController(DataFieldService dataFieldService, DataRuleService dataRuleService) {
+	public CleanPoolController(DataFieldService dataFieldService) {
 		this.dataFieldService = dataFieldService;
-		this.dataRuleService = dataRuleService;
 	}
 
 	/**
@@ -40,7 +36,7 @@ public class CleanPoolController {
 	 */
 	@GetMapping("/page")
 	@ApiOperation(value = "查看列表", notes = "根据条件获取列表")
-	public R page(@RequestParam Map<String,Object> params) {
+	public R page(@RequestParam Map<String, Object> params) {
 		return new R<>(dataFieldService.queryPage(params));
 	}
 

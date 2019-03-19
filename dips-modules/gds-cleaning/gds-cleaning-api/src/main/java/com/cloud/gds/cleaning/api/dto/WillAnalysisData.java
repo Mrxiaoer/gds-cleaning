@@ -13,7 +13,7 @@ import lombok.Data;
  * @Date : 2018-12-19
  */
 @Data
-public class WillAnalysisData {
+public class WillAnalysisData implements Cloneable {
 
 	/**
 	 * 阀值
@@ -54,5 +54,16 @@ public class WillAnalysisData {
 	 * 是否需要重新分析
 	 */
 	Integer needReanalysis;
+
+	@Override
+	public WillAnalysisData clone() {
+		WillAnalysisData willAnalysisData = null;
+		try {
+			willAnalysisData = (WillAnalysisData) super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return willAnalysisData;
+	}
 
 }

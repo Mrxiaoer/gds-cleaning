@@ -33,8 +33,8 @@ public class DataRuleVo {
 	 */
 	private Integer state;
 	/**
-	 * 数据来源
+	 * 来源部门
 	 */
-	private Long deptId;
+	private Integer deptId;
 
 }

@@ -3,6 +3,7 @@ package com.cloud.gds.cleaning.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.dips.common.core.util.R;
+import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.dto.InputJsonList;
 import com.cloud.gds.cleaning.service.DataFieldValueService;
 import io.swagger.annotations.ApiOperation;
@@ -97,7 +98,7 @@ public class DataPoolController {
 	 * @param ids
 	 * @return
 	 */
-	@PostMapping("/ids")
+	@PostMapping("/delete")
 	@ApiOperation(value = "批量删除", notes = "批量删除数据池中数据")
 	public R deleteByIds(@RequestBody Set<Long> ids) {
 		return new R<>(dataFieldValueService.deleteByIds(ids));
@@ -124,11 +125,20 @@ public class DataPoolController {
 	 */
 	@PostMapping("/saveJson")
 	@ApiOperation(value = "json导入", notes = "json导入")
-	public void saveJsonData(long id, @RequestBody JSONArray jsonArray) {
+	public R saveJsonData(long id, @RequestBody JSONArray jsonArray) {
+		JSONArray jsonArray1 = new JSONArray();
 		try {
-			System.out.println(dataFieldValueService.dataJsonInput(id, jsonArray));
+			 jsonArray1 = dataFieldValueService.dataJsonInput(id, jsonArray);
 		}catch (NullPointerException npe){
 			System.out.println(npe.getMessage());
+		}
+		if (jsonArray1.size() == DataCleanConstant.FALSE){
+			return new R<>();
+		}else {
+			R r = new R();
+			r.setData(jsonArray1);
+			r.setCode(DataCleanConstant.TRUE);
+			return r;
 		}
 	}
 

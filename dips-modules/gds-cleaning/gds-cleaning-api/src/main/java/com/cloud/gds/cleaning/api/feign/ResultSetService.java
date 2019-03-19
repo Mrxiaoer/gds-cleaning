@@ -1,22 +1,22 @@
 package com.cloud.gds.cleaning.api.feign;
 
 import com.cloud.dips.common.core.util.R;
-import com.cloud.gds.cleaning.api.feign.factory.ResultSetServiceFallbackFactory;
+import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
+import com.cloud.gds.cleaning.api.feign.factory.CleanPoolServiceFallbackFactory;
 import com.cloud.gds.cleaning.api.vo.CleanItem;
+import java.util.List;
+import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author : yaonuan
  * @Email : 806039077@qq.com
  * @Date : 2019-01-10
  */
-@FeignClient(value = "gds-cleaning", fallbackFactory = ResultSetServiceFallbackFactory.class)
+@FeignClient(value = DataCleanConstant.MODULE_NAME, fallbackFactory = CleanPoolServiceFallbackFactory.class)
 public interface ResultSetService {
 
 	/**
@@ -74,4 +74,5 @@ public interface ResultSetService {
 	 */
 	@GetMapping("/result_set/clear_buffer/{fieldId}")
 	public R clearBuffer(@PathVariable("fieldId") Long fieldId);
+
 }
