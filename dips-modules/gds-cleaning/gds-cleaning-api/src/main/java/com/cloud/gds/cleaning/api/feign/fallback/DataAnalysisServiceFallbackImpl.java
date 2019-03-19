@@ -1,14 +1,16 @@
 package com.cloud.gds.cleaning.api.feign.fallback;
 
 import com.cloud.dips.common.core.util.R;
+import com.cloud.gds.cleaning.api.dto.DataDto;
 import com.cloud.gds.cleaning.api.feign.DataAnalysisService;
 import com.cloud.gds.cleaning.api.vo.CenterData;
 import com.cloud.gds.cleaning.api.vo.DARVo;
-import java.util.List;
-import java.util.Map;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author : yaonuan
@@ -58,11 +60,11 @@ public class DataAnalysisServiceFallbackImpl implements DataAnalysisService {
 		return null;
 	}
 
-	// @Override
-	// public Map<String, Object> filterMethod(String type, DataDto dataDto) {
-	// 	log.error("feign 数据过滤接口获取失败", cause);
-	// 	return null;
-	// }
+	@Override
+	public Map<String, Object> filterMethod(String type, DataDto dataDto) {
+		log.error("feign 数据过滤接口获取失败", cause);
+		return null;
+	}
 
 	@Override
 	public String bigDataAnalysis(String filePath) {

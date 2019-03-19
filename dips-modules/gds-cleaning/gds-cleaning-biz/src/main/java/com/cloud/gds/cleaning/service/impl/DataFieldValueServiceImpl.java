@@ -341,26 +341,6 @@ public class DataFieldValueServiceImpl extends ServiceImpl<DataFieldValueMapper,
 	}
 
 	@Override
-	//	@Transactional(rollbackFor = Exception.class)
-	public void saveAll(Long fieldId, List<Map<String, Object>> fieldValues) {
-		// 循环插入数据库相关信息
-		List<DataFieldValue> list = new ArrayList<>();
-		LocalDateTime localDateTime = LocalDateTime.now();
-		// todo 判空处理 2019-1-9 19:25:24
-		for (Map<String, Object> map : fieldValues) {
-			DataFieldValue dataFieldValue = new DataFieldValue();
-			// 组装
-			dataFieldValue.setFieldId(fieldId);
-			dataFieldValue.setCreateTime(localDateTime);
-			dataFieldValue.setFieldValue(JSON.toJSONString(map));
-			dataFieldValue.setCreateUser(SecurityUtils.getUser().getId());
-			// 添加数据
-			list.add(dataFieldValue);
-		}
-		this.insertBatch(list);
-	}
-
-	@Override
 	public List<DataFieldValueTree> compareDifference(Long id) {
 		DataFieldValue dfv = new DataFieldValue();
 		dfv.setFieldId(id);

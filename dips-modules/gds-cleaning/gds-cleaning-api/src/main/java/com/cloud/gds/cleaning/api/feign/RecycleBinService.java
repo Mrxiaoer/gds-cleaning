@@ -19,7 +19,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@GetMapping("/recycle/clean_pool/page")
-	public R cleanPoolPage(@RequestParam Map<String, Object> params);
+	R cleanPoolPage(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 还原清洗池中的数据
@@ -28,7 +28,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/clean_pool/reduction/{id}")
-	public R cleanPoolReduction(@PathVariable("id") Long id);
+	R cleanPoolReduction(@PathVariable("id") Long id);
 
 	/**
 	 * 删除清洗池中的数据
@@ -37,7 +37,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/clean_pool/delete/{id}")
-	public R cleanPoolDelete(@PathVariable("id") Long id);
+	R cleanPoolDelete(@PathVariable("id") Long id);
 
 	/**
 	 * 回收站数据池
@@ -46,7 +46,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@GetMapping("/recycle/data_pool/page")
-	public R dataPoolPage(@RequestParam Map<String, Object> params);
+	R dataPoolPage(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 还原数据池中相应数据
@@ -54,7 +54,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/data_pool/reduction/{id}")
-	public R dataPoolReduction(@PathVariable("id") Long id);
+	R dataPoolReduction(@PathVariable("id") Long id);
 
 	/**
 	 * 批量还原数据池中相应数据
@@ -62,7 +62,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/data_pool/reduction")
-	public R dataPoolReductions(@RequestBody Set<Long> ids);
+	R dataPoolReductions(@RequestBody Set<Long> ids);
 
 	/**
 	 * 一键还原数据池信息
@@ -71,7 +71,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/data_pool/one_key_reduction/{id}")
-	public R oneKeyReduction(@PathVariable("id") Long id);
+	R oneKeyReduction(@PathVariable("id") Long id);
 
 	/**
 	 * 删除数据池中数据
@@ -80,7 +80,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/data_pool/delete/{id}")
-	public R dataPoolDelete(@PathVariable("id") Long id);
+	R dataPoolDelete(@PathVariable("id") Long id);
 
 	/**
 	 * 删除数据池中数据
@@ -89,7 +89,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/data_pool/delete")
-	public R dataPoolDeletes(@RequestBody Set<Long> ids);
+	R dataPoolDeletes(@RequestBody Set<Long> ids);
 
 	/**
 	 * 已删除规则池分页
@@ -98,7 +98,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@GetMapping("/recycle/rule_pool/page")
-	public R rulePoolPage(@RequestParam Map<String, Object> params);
+	R rulePoolPage(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 还原规则池中数据
@@ -107,7 +107,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/rule_pool/reduction/{id}")
-	public R rulePoolReduction(@PathVariable("id") Long id);
+	R rulePoolReduction(@PathVariable("id") Long id);
 
 	/**
 	 * 删除规则池中数据
@@ -116,7 +116,7 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/rule_pool/delete/{id}")
-	public R rulePoolDelete(@PathVariable("id") Long id);
+	R rulePoolDelete(@PathVariable("id") Long id);
 
 
 	/**
@@ -126,5 +126,5 @@ public interface RecycleBinService {
 	 * @return
 	 */
 	@PostMapping("/recycle/rule_poo/delete")
-	public R rulePoolDeletes(@PathVariable("ids") Set<Long> ids);
+	R rulePoolDeletes(@PathVariable("ids") Set<Long> ids);
 }

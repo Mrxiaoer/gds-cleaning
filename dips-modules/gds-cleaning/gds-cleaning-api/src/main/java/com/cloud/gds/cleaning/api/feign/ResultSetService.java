@@ -4,12 +4,13 @@ import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.cleaning.api.constant.DataCleanConstant;
 import com.cloud.gds.cleaning.api.feign.factory.CleanPoolServiceFallbackFactory;
 import com.cloud.gds.cleaning.api.vo.CleanItem;
-import java.util.List;
-import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author : yaonuan
@@ -26,7 +27,7 @@ public interface ResultSetService {
 	 * @return
 	 */
 	@GetMapping("/result_set/page")
-	public R page(@RequestParam Map<String, Object> params);
+	R page(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 对比详情前数据
@@ -35,7 +36,7 @@ public interface ResultSetService {
 	 * @return
 	 */
 	@GetMapping("/result_set/before_comparison")
-	public R contrastBefore(@RequestParam Map<String, Object> params);
+	R contrastBefore(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 对比详情后数据
@@ -44,7 +45,7 @@ public interface ResultSetService {
 	 * @return
 	 */
 	@GetMapping("/result_set/after_comparison")
-	public R contrastAfter(@RequestParam Map<String, Object> params);
+	R contrastAfter(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 清洗项
@@ -53,7 +54,7 @@ public interface ResultSetService {
 	 * @return
 	 */
 	@GetMapping("/result_set/cleaning_item/{id}")
-	public List<CleanItem> cleaningItem(@PathVariable("id") Long id);
+	List<CleanItem> cleaningItem(@PathVariable("id") Long id);
 
 	/**
 	 * 清空数据
@@ -63,7 +64,7 @@ public interface ResultSetService {
 	 * @return
 	 */
 	@GetMapping("/result_set/clear/{fieldId}")
-	public R clear(@PathVariable("fieldId") Long fieldId);
+	R clear(@PathVariable("fieldId") Long fieldId);
 
 	/**
 	 * 清理缓存
@@ -73,6 +74,6 @@ public interface ResultSetService {
 	 * @return
 	 */
 	@GetMapping("/result_set/clear_buffer/{fieldId}")
-	public R clearBuffer(@PathVariable("fieldId") Long fieldId);
+	R clearBuffer(@PathVariable("fieldId") Long fieldId);
 
 }

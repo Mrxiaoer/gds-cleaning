@@ -104,18 +104,6 @@ public class DataPoolController {
 		return new R<>(dataFieldValueService.deleteByIds(ids));
 	}
 
-	/**
-	 * api导入接口
-	 *
-	 * @param id            主表id
-	 * @param inputJsonList
-	 * @return
-	 */
-	@PostMapping("/api")
-	public R jsonapi(Long id, @RequestBody InputJsonList inputJsonList) {
-		dataFieldValueService.saveAll(id, inputJsonList.getRecords());
-		return new R();
-	}
 
 	/**
 	 * json导入
@@ -123,9 +111,9 @@ public class DataPoolController {
 	 * @param id
 	 * @param jsonArray
 	 */
-	@PostMapping("/saveJson")
+	@PostMapping("/save_json")
 	@ApiOperation(value = "json导入", notes = "json导入")
-	public R saveJsonData(long id, @RequestBody JSONArray jsonArray) {
+	public R saveJsonData(@RequestParam long id, @RequestBody JSONArray jsonArray) {
 		JSONArray jsonArray1 = new JSONArray();
 		try {
 			 jsonArray1 = dataFieldValueService.dataJsonInput(id, jsonArray);

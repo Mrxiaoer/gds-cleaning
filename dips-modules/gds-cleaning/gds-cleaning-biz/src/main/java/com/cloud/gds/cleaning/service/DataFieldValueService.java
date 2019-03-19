@@ -117,14 +117,6 @@ public interface DataFieldValueService extends IService<DataFieldValue> {
 	Boolean save(Long fieldId, JSONObject params);
 
 	/**
-	 * excel工具导数据保存到数据库
-	 *
-	 * @param fieldId
-	 * @param fieldValues
-	 */
-	void saveAll(Long fieldId, List<Map<String, Object>> fieldValues);
-
-	/**
 	 * 清洗前后数据比较差异并输出
 	 *
 	 * @param id 数据集id

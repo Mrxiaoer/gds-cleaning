@@ -27,7 +27,7 @@ public interface DataPoolService {
 	 * @param params
 	 */
 	@GetMapping("/data_pool/page")
-	public R page(@RequestParam Map<String, Object> params);
+	R page(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 根据数据池id查询
@@ -36,7 +36,7 @@ public interface DataPoolService {
 	 * @return R
 	 */
 	@GetMapping("/data_pool/{id}")
-	public R info(@PathVariable("id") Long id);
+	R info(@PathVariable("id") Long id);
 
 	/**
 	 * 保存 数据池信息
@@ -46,7 +46,7 @@ public interface DataPoolService {
 	 * @return
 	 */
 	@PostMapping("/data_pool/create/{id}")
-	public R save(@RequestBody JSONObject params, @PathVariable("id") Long id);
+	R save(@RequestBody JSONObject params, @PathVariable("id") Long id);
 
 	/**
 	 * 修改fieldValue
@@ -56,7 +56,7 @@ public interface DataPoolService {
 	 * @return
 	 */
 	@PostMapping("/data_pool/update/{id}")
-	public R update(@PathVariable("id") Long id, @RequestBody Map<String, Object> map);
+	R update(@PathVariable("id") Long id, @RequestBody Map<String, Object> map);
 
 	/**
 	 * 单独删除
@@ -65,7 +65,7 @@ public interface DataPoolService {
 	 * @return
 	 */
 	@PostMapping("/data_pool/delete/{id}")
-	public R delete(@PathVariable("id") Long id);
+	R delete(@PathVariable("id") Long id);
 
 	/**
 	 * 批量删除
@@ -74,7 +74,7 @@ public interface DataPoolService {
 	 * @return
 	 */
 	@PostMapping("/data_pool/delete")
-	public R deleteByIds(@RequestBody Set<Long> ids);
+	R deleteByIds(@RequestBody Set<Long> ids);
 
 
 	/**
@@ -85,7 +85,7 @@ public interface DataPoolService {
 	 * @return
 	 */
 	@PostMapping("/data_pool/api")
-	public R jsonapi(Long id, @RequestBody InputJsonList inputJsonList);
+	R jsonapi(Long id, @RequestBody InputJsonList inputJsonList);
 
 	/**
 	 * json导入
@@ -93,7 +93,7 @@ public interface DataPoolService {
 	 * @param id
 	 * @param jsonArray
 	 */
-	@PostMapping("/saveJson")
-	public void saveJsonData(long id, @RequestBody JSONArray jsonArray);
+	@PostMapping("/data_pool/save_json")
+	void saveJsonData(@RequestParam long id, @RequestBody JSONArray jsonArray);
 
 }
