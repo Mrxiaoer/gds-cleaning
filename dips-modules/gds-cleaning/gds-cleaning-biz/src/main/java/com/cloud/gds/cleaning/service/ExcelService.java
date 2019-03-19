@@ -11,11 +11,11 @@ public interface ExcelService {
 	/**
 	 * 导出规则excel模板
 	 *
-	 * @param ruleId
+	 * @param fieldId
 	 * @param response
 	 * @throws Exception
 	 */
-	void gainTemplate(Long ruleId, HttpServletResponse response) throws Exception;
+	void gainTemplate(Long fieldId, HttpServletResponse response) throws Exception;
 
 	/**
 	 * 导入数据池

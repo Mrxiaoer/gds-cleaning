@@ -15,8 +15,8 @@ import com.cloud.gds.cleaning.utils.CommonUtils;
 import com.cloud.gds.cleaning.utils.DataRuleUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,16 +50,21 @@ public class ExcelServiceImpl implements ExcelService {
 	}
 
 	@Override
-	public void gainTemplate(Long ruleId, HttpServletResponse response) throws Exception {
+	public void gainTemplate(Long fieldId, HttpServletResponse response) throws Exception {
 
+		DataField field = dataFieldService.selectById(fieldId);
 		HSSFWorkbook workbook = new HSSFWorkbook();
 
 		HSSFSheet sheet = workbook.createSheet("数据池表");
 
-		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
+		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(field.getRuleId());
+		//生成表头信息
+		buildExcelHead(workbook,sheet, field.getName(), sortedMap.size());
+
 		//构建模板sheet里面的内容
 		buildExcelTemplate(workbook, sheet, sortedMap);
-		// 自定义名称
+
+		// 自定义名称 todo 暂时使用uuid后期是否考虑到需要修改 2019-3-18 11:06:22
 		String fileName = CommonUtils.generateUUID() + ".xls";
 		//生成excel文件
 		buildExcelFile(fileName, workbook);
@@ -68,13 +73,32 @@ public class ExcelServiceImpl implements ExcelService {
 
 	}
 
+	private void buildExcelHead(HSSFWorkbook workbook,HSSFSheet sheet, String headName, Integer columnNum) {
+		HSSFRow row = sheet.createRow(0);
+		row.createCell(1).setCellValue(headName);
+
+		CellRangeAddress address = new CellRangeAddress(0, 0, 1, columnNum);
+		sheet.addMergedRegion(address);
+		// 设置字体居中
+		HSSFCellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		// 设置边框
+		setBorder(address,sheet );
+
+	}
+	
+	private void setBorder(CellRangeAddress address,HSSFSheet sheet){
+		// 设置单元格框线
+		RegionUtil.setBorderBottom(BorderStyle.THIN, address, sheet);
+		RegionUtil.setBorderTop(BorderStyle.THIN, address, sheet);
+		RegionUtil.setBorderLeft(BorderStyle.THIN, address, sheet);
+		RegionUtil.setBorderRight(BorderStyle.THIN, address, sheet);
+	}
+	
+
 	private void buildExcelTemplate(HSSFWorkbook workbook, HSSFSheet sheet, SortedMap<String, String> sortedMap) {
-//		HSSFSheet sheet = workbook.createSheet("数据池表");
-//		createTitle(workbook, sheet);
-//		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(ruleId);
-		//设置日期格式
-		HSSFCellStyle style = workbook.createCellStyle();
-		style.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
+		//set cell style
+		HSSFCellStyle style = setExcelStyle(workbook);
 		Iterator<Map.Entry<String, String>> it = sortedMap.entrySet().iterator();
 		int rowNum = 1;
 		HSSFRow row = sheet.createRow(rowNum);
@@ -83,13 +107,28 @@ public class ExcelServiceImpl implements ExcelService {
 		while (it.hasNext()) {
 			Map.Entry<String, String> entry = it.next();
 			column = column + 1;
-			row.createCell(column).setCellValue(entry.getValue());
-			nextRow.createCell(column).setCellValue(entry.getKey());
+			HSSFCell cell = row.createCell(column);
+			cell.setCellValue(entry.getValue());
+			cell.setCellStyle(style);
+			HSSFCell nextRowCell = nextRow.createCell(column);
+			nextRowCell.setCellValue(entry.getKey());
+			nextRowCell.setCellStyle(style);
+
 		}
 		nextRow.setZeroHeight(true);
 
 	}
 
+	private HSSFCellStyle setExcelStyle(HSSFWorkbook workbook){
+		//设置日期格式
+		HSSFCellStyle style = workbook.createCellStyle();
+		style.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderBottom(BorderStyle.THIN);
+		return style;
+	}
 
 	private void buildExcelFile(String filename, HSSFWorkbook workbook) throws Exception {
 		FileOutputStream fos = new FileOutputStream(filename);
@@ -138,7 +177,6 @@ public class ExcelServiceImpl implements ExcelService {
 		// 切分list数组
 		List<DataFieldValue> subList;
 		for (int i = 0; i < sum; i++) {
-//			System.out.println("开始运行~~");
 			if (valueList.size() > (int) num * (i + 1)) {
 				subList = valueList.subList(i * (int) num, (int) num * (i + 1));
 
@@ -147,16 +185,7 @@ public class ExcelServiceImpl implements ExcelService {
 			}
 			// 建议此处使用多线程,提高写入的效率
 			buildExcelSheet(workbook, i, subList, sortedMap);
-//			System.out.println("i:" + (i + 1));
-
 		}
-
-//		HSSFSheet sheet = workbook.createSheet("数据池表");
-//
-//		//构建模板sheet里面的内容
-//		buildExcelTemplate(workbook, sheet, field.getRuleId());
-//		//将实体数据导入excel
-//		buildExcelMap(sheet, fieldId, field.getRuleId());
 
 		// 自定义名称
 		String fileName = CommonUtils.generateUUID() + ".xls";

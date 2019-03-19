@@ -37,12 +37,12 @@ public class ExcelController {
 	 * @param response
 	 * @throws Exception
 	 */
-	@GetMapping("/getTemplate/{ruleId}")
+	@GetMapping("/getTemplate/{fieldId}")
 	@ApiOperation(value = "导出规则模板", notes = "导出规则模板")
-	public void getTemplate(@PathVariable("ruleId") Long ruleId, HttpServletResponse response) throws Exception {
+	public void getTemplate(@PathVariable("fieldId") Long fieldId, HttpServletResponse response) throws Exception {
 		// todo 规则空未判断 2019-3-6 11:46:09
 
-		excelService.gainTemplate(ruleId, response);
+		excelService.gainTemplate(fieldId, response);
 	}
 
 	/**
