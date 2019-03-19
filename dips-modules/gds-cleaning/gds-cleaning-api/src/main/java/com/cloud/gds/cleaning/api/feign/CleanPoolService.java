@@ -25,7 +25,7 @@ public interface CleanPoolService {
 	 * @return R
 	 */
 	@GetMapping("/clean_pool/page")
-	public R page(@RequestParam Map<String, Object> params);
+	R page(@RequestParam Map<String, Object> params);
 
 	/**
 	 * 根据id查询
@@ -33,7 +33,7 @@ public interface CleanPoolService {
 	 * @return R
 	 */
 	@GetMapping("/clean_pool/{id}")
-	public R info(@PathVariable("id") Long id);
+	R info(@PathVariable("id") Long id);
 
 	/**
 	 * 保存
@@ -41,7 +41,7 @@ public interface CleanPoolService {
 	 * @return R
 	 */
 	@PostMapping("/clean_pool/create")
-	public R save(@RequestBody DataField dataField);
+	R save(@RequestBody DataField dataField);
 
 	/**
 	 * 修改
@@ -49,7 +49,7 @@ public interface CleanPoolService {
 	 * @return R
 	 */
 	@PostMapping("/clean_pool/update")
-	public R update(@RequestBody DataField dataField);
+	R update(@RequestBody DataField dataField);
 
 	/**
 	 * 单独删除一条
@@ -58,7 +58,7 @@ public interface CleanPoolService {
 	 * @return
 	 */
 	@PostMapping("/clean_pool/delete/{id}")
-	public R delete(@PathVariable("id") Long id);
+	R delete(@PathVariable("id") Long id);
 
 	/**
 	 * 批量删除
@@ -67,5 +67,5 @@ public interface CleanPoolService {
 	 * @return
 	 */
 	@PostMapping("/clean_pool/delete")
-	public R deleteByIds(@RequestBody Set<Long> ids);
+	R deleteByIds(@RequestBody Set<Long> ids);
 }
