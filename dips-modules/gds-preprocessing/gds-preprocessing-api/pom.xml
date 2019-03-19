@@ -8,7 +8,6 @@
 		<artifactId>gds-preprocessing</artifactId>
 		<version>${dips.version}</version>
 	</parent>
-
 	<artifactId>gds-preprocessing-api</artifactId>
 	<packaging>jar</packaging>
 	<name>gds-preprocessing-api</name>
@@ -22,6 +21,5 @@
 			<version>${dips.version}</version>
 		</dependency>
 	</dependencies>
-
 
 </project>

@@ -36,7 +36,7 @@ public @interface EnableDipsFeignClients {
 	 *
 	 * @return the array of 'basePackages'.
 	 */
-	String[] basePackages() default {"com.cloud.dips.tag.api.feign","com.cloud.gds.cleaning.api.feign","com.cloud.dips.admin.api.feign"};
+	String[] basePackages() default {"com.cloud.dips.tag.api.feign","com.cloud.gds.cleaning.api.feign","com.cloud.dips.admin.api.feign","com.cloud.gds.preprocessing.api.feign"};
 
 	/**
 	 * Type-safe alternative to {@link #basePackages()} for specifying the packages to
