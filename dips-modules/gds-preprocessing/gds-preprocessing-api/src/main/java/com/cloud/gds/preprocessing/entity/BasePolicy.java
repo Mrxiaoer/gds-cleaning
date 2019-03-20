@@ -3,6 +3,7 @@ package com.cloud.gds.preprocessing.entity;
 import com.baomidou.mybatisplus.activerecord.Model;
 import lombok.Data;
 
+
 import java.io.Serializable;
 
 /**
@@ -23,16 +24,7 @@ public class BasePolicy extends Model<BasePolicy> {
 	 * 标题
 	 */
 	private String title;
-	/**
-	 * 删除标识（0-正常,1-删除，2-已复制）
-	 */
-	private Long isDeleted;
 
-	/**
-	 * 主键值
-	 *
-	 * @return
-	 */
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

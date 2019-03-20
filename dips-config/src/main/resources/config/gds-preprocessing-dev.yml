@@ -38,4 +38,3 @@ swagger:
         description: 'read all'
     -   scope: 'write'
         description: 'access all'
-

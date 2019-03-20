@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Author : lolilijve
- * @Email : 1042703214@qq.com
- * @Date : 2018-11-21
+ * @Author : yaonuan
+ * @Email : 806039077@qq.com
+ * @Date : 2019-3-19
  */
 @Configuration
 @MapperScan("com.cloud.gds.preprocessing.mapper")

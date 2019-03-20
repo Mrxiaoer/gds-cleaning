@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.preprocessing.mapper.InvalidPolicyMapper">
+
+	<resultMap id="baseMap" type="com.cloud.gds.preprocessing.entity.BasePolicy">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+	</resultMap>
+
+	<select id="gainIdenticalPolicy" resultType="com.cloud.gds.preprocessing.entity.BasePolicy">
+		SELECT
+			id,
+			title
+		FROM
+			scrapy_gov_policy_general
+		WHERE
+			title IN (
+				SELECT
+					a.title
+				FROM
+					(
+						SELECT DISTINCT
+							title,
+							COUNT(title) AS titlenum
+						FROM
+							scrapy_gov_policy_general
+						WHERE
+							is_deleted = 0
+						GROUP BY
+							title
+					) a
+				WHERE
+					a.titlenum > 1
+			)
+	</select>
+
+
+
+</mapper>
