@@ -25,7 +25,7 @@ public class AnalysisThreadFactory {
 		ThreadFactory analysisThreadFactory = new ThreadFactoryBuilder().setNameFormat("analysis-pool-%d").build();
 
 		// return new SimpleAsyncTaskExecutor(analysisThreadFactory);
-		return new ThreadPoolExecutor(8, 16, 100L, TimeUnit.MILLISECONDS,
+		return new ThreadPoolExecutor(16, 16, 100L, TimeUnit.MILLISECONDS,
 			new LinkedBlockingQueue<Runnable>(Integer.MAX_VALUE),
 			analysisThreadFactory, new ThreadPoolExecutor.AbortPolicy());
 

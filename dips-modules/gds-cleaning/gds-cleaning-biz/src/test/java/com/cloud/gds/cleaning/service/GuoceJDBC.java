@@ -502,7 +502,7 @@ public class GuoceJDBC {
 	@Test
 	public void MultiThreadGetDepart() throws Exception {
 		List<Long> ids = selectIds("SELECT id FROM gov_policy_general WHERE publish_time < \"1900-01-01 00:00:05\" "
-			+ "and examine_user_id = 2158 and examine_status = 3");
+			+ "and examine_user_id = 2158 and examine_status = 3 and id>100000");
 
 		AtomicInteger doNum = new AtomicInteger(ids.size());
 
@@ -706,9 +706,8 @@ public class GuoceJDBC {
 	@Test
 	public void removeShortData() {
 		List<Long> ids = selectIds(
-			"SELECT id FROM gov_policy_general WHERE examine_user_id = 2158 and examine_status" + " = 3");
+			"SELECT id FROM gov_policy_general WHERE examine_user_id = 2158 and is_deleted = 0");
 
-		AtomicBoolean flag = new AtomicBoolean(false);
 		AtomicInteger doNum = new AtomicInteger(ids.size());
 
 		for (Long id : ids) {
@@ -717,7 +716,7 @@ public class GuoceJDBC {
 					// 按指定模式在字符串查找
 					String document = this.selectText("select text from gov_policy_general where id = " + id);
 					String htmlRegex = "<[^>]+>";
-					String htmlRegex1 = "&#13;|\\d";
+					String htmlRegex1 = "&#13;|\\d\\pP";
 
 					document = StrUtil.cleanBlank(document.replaceAll(htmlRegex, "").replaceAll(htmlRegex1, ""));
 					Connection conn = null;
@@ -730,12 +729,11 @@ public class GuoceJDBC {
 							// sql = "UPDATE gov_policy_general SET examine_user_id = 2158 WHERE id = " + id;
 						} else {
 							System.out.println("===>" + document);
-							sql = "UPDATE gov_policy_general SET examine_status = 4 WHERE id = " + id;
+							sql = "UPDATE gov_policy_general SET is_deleted = 1 WHERE id = " + id;
 							stmt.execute(sql);
 						}
 
 					} catch (SQLException e) {
-						flag.set(true);
 						e.printStackTrace();
 					}
 
@@ -750,9 +748,10 @@ public class GuoceJDBC {
 			}
 		}
 
-		while (doNum.get() > 0 || flag.get()) {
+		while (doNum.get() > 0) {
 			try {
-				Thread.sleep(250L);
+				Thread.sleep(1000L);
+				System.out.println(doNum.get());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
