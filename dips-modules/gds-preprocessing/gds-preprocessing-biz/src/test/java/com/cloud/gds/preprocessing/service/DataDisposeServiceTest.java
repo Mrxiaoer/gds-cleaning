@@ -9,15 +9,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @SpringBootTest(classes = GdsPreprocessingApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-public class InvalidPolicyServiceTest {
+public class DataDisposeServiceTest {
 
 	@Autowired
-	private InvalidPolicyService service;
+	private DataDisposeService service;
 
 	@Test
-	public void test() {
-		boolean flag = service.cleanRepeatScrapy();
-		System.out.println(flag);
+	public void dataTransfer() {
+		boolean b = service.dataTransfer(2158L);
+		System.out.println("dataTransfer over");
 	}
-
 }

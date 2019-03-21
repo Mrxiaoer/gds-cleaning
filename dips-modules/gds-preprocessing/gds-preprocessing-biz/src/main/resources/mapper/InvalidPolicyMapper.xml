@@ -8,6 +8,10 @@
 		<result column="title" property="title"/>
 	</resultMap>
 
+	<select id="gainIssueId" resultType="java.lang.Long">
+		SELECT id FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength}) AND attachment is NULL
+	</select>
+
 	<select id="gainIdenticalPolicy" resultType="com.cloud.gds.preprocessing.entity.BasePolicy">
 		SELECT
 			id,
@@ -35,6 +39,21 @@
 			)
 	</select>
 
+	<select id="gainRealPolicy" resultMap="baseMap">
+		SELECT id,title FROM gov_policy_general WHERE is_deleted = 0
+	</select>
+
+	<select id="gainScrapyPolicy" resultMap="baseMap">
+		SELECT id,title FROM scrapy_gov_policy_general WHERE is_deleted = 0
+	</select>
+
+
+	<update id="updatePolicyIsDeleted">
+		UPDATE scrapy_gov_policy_general SET is_deleted = 4 where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
 
 
 </mapper>

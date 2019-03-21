@@ -1,13 +1,13 @@
 package com.cloud.gds.preprocessing.mapper;
 
 import com.cloud.gds.preprocessing.GdsPreprocessingApplication;
-import com.cloud.gds.preprocessing.entity.BasePolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest(classes = GdsPreprocessingApplication.class)
@@ -18,10 +18,12 @@ public class InvalidPolicyMapperTest {
 	private InvalidPolicyMapper mapper;
 
 	@Test
-	public void gain(){
+	public void gain() {
 
-		List<BasePolicy> list = mapper.gainIdenticalPolicy();
+		List<Long> ids = new ArrayList<>();
+//		ids.add(513607L);
+		List<Long> list = mapper.gainIssueId(3, 250);
+		System.out.println(list.size());
 
-		System.out.println(list);
 	}
 }
