@@ -27,8 +27,15 @@
 	<select id="gainScrapyPolicy" resultMap="baseMap">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND id &lt; 540000
+		FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND id &lt; 530350
 	</select>
+
+	<update id="updateByIdsAndIsDeleted">
+		UPDATE scrapy_gov_policy_general SET is_deleted = #{state} where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
 
 
 </mapper>

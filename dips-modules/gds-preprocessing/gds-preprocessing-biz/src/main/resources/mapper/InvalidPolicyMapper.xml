@@ -48,8 +48,8 @@
 	</select>
 
 
-	<update id="updatePolicyIsDeleted">
-		UPDATE scrapy_gov_policy_general SET is_deleted = 4 where id IN
+	<update id="updateScrapyIsDeleted">
+		UPDATE scrapy_gov_policy_general SET is_deleted = 1 where id IN
 		<foreach item="id" collection="ids" open="(" separator="," close=")">
 			#{id}
 		</foreach>

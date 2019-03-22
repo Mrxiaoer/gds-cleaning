@@ -50,7 +50,7 @@ public interface InvalidPolicyMapper {
 	 * @param ids
 	 * @return
 	 */
-	boolean updatePolicyIsDeleted(@Param("ids") List<Long> ids);
+	boolean updateScrapyIsDeleted(@Param("ids") List<Long> ids);
 
 	/**
 	 * 根据ids更新真实表中的数据状态

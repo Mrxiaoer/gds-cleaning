@@ -22,7 +22,18 @@
 		<result column="examine_user_id" property="examineUserId"/>
 	</resultMap>
 
+	<sql id="Base_Column_List">
+		id,title,source,reference,issue,style,level,publish_time,text,attachment,url,region,creator_id,create_time,scrapy_id,examine_user_id
+	</sql>
 
+	<insert id="insertBatch">
+		insert into gov_policy_general (<include refid="Base_Column_List"/>)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(null
+			,#{item.title},#{item.source},#{item.reference},#{item.issue},#{item.style},#{item.level},#{item.publishTime},#{item.text},#{item.attachment},#{item.url},#{item.region},#{item.creatorId},#{item.createTime},#{item.scrapyId},#{item.examineUserId})
+		</foreach>
+	</insert>
 
 
 </mapper>

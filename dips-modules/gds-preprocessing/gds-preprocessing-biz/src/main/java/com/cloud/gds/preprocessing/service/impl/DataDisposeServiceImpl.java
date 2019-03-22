@@ -5,11 +5,12 @@ import com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral;
 import com.cloud.gds.preprocessing.mapper.GovPolicyGeneralMapper;
 import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyGeneralMapper;
 import com.cloud.gds.preprocessing.service.DataDisposeService;
+import com.cloud.gds.preprocessing.service.TransactionalService;
 import com.cloud.gds.preprocessing.utils.ConversionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,32 +30,38 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 	private final GovPolicyGeneralMapper govMapper;
 
 	@Autowired
+	private TransactionalService transactionalService;
+
+	@Autowired
 	public DataDisposeServiceImpl(ScrapyGovPolicyGeneralMapper scrapyMapper, GovPolicyGeneralMapper govMapper) {
 		this.scrapyMapper = scrapyMapper;
 		this.govMapper = govMapper;
 	}
 
 	@Override
-	public boolean dataTransfer(Long examineUserId) {
-		// gain scrapy data
+	public boolean dataMigrationSurface(Long examineUserId) {
+		// gain scrapy data is is_deleted = 0
 		List<ScrapyGovPolicyGeneral> generals = scrapyMapper.gainScrapyPolicy();
 
 		// transfer data from ScrapyGovPolicyGeneral to govPolicyGeneral in addition new formation ids
 		List<GovPolicyGeneral> list = new ArrayList<>();
-		List<Long> ids = new ArrayList<>();
 		for (ScrapyGovPolicyGeneral scrapyGovPolicyGeneral : generals) {
-			GovPolicyGeneral general = migrate(scrapyGovPolicyGeneral, examineUserId);
+			GovPolicyGeneral general = migrateDataSplicing(scrapyGovPolicyGeneral, examineUserId);
 			list.add(general);
-			// todo 2019-3-21 17:33:37
-			ids.add(scrapyGovPolicyGeneral.getId());
 		}
 		System.out.println(list.size());
-		return false;
+		// implementing multi-table atomicity with cut-in data
+		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200, GovPolicyGeneral.class);
+
+		for (List<GovPolicyGeneral> list1 : data) {
+			transactionalService.bathCutSurface(list1);
+		}
+		return true;
 	}
 
-	private GovPolicyGeneral migrate(ScrapyGovPolicyGeneral scrapy,Long examineUserId) {
+	private GovPolicyGeneral migrateDataSplicing(ScrapyGovPolicyGeneral scrapy, Long examineUserId) {
 		GovPolicyGeneral policyGeneral = new GovPolicyGeneral();
-		// assignment BeanUtils.copyProperties in scrapy.id is no policyGeneral.id
+		// assignment BeanUtils.copyProperties in scrapy.id is no policyGeneral.id so use this low method
 		policyGeneral.setTitle(scrapy.getTitle());
 		policyGeneral.setSource(scrapy.getSource());
 		policyGeneral.setReference(scrapy.getReference());
@@ -71,6 +78,26 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 		policyGeneral.setScrapyId(scrapy.getId());
 		policyGeneral.setExamineUserId(examineUserId);
 		return policyGeneral;
+	}
+
+	private <T> List<List<T>> cutBatchData(List<T> generals, int cutLength, Class T) {
+
+		List<List<T>> list = new ArrayList<>();
+		boolean flag = true;
+		List<T> subList;
+		int currentNum = 0;
+		while (flag) {
+			if (generals.size() > cutLength * (currentNum + 1)) {
+				subList = generals.subList(currentNum * cutLength, (currentNum + 1) * cutLength);
+			} else {
+				subList = generals.subList(currentNum * cutLength, generals.size());
+				flag = false;
+			}
+			list.add(subList);
+			currentNum++;
+		}
+
+		return list;
 	}
 
 }

@@ -29,7 +29,7 @@ public class InvalidPolicyServiceImpl implements InvalidPolicyService {
 
 		List<Long> list = mapper.gainIssueId(titleLength, textLength);
 		if (list.size() > 0) {
-			return mapper.updatePolicyIsDeleted(list);
+			return mapper.updateScrapyIsDeleted(list);
 		} else {
 			return true;
 		}
@@ -53,9 +53,8 @@ public class InvalidPolicyServiceImpl implements InvalidPolicyService {
 		}
 		// 如果存在重复数据则删除重复的数据
 		if (ids.size() > 0) {
-			// todo 由于爬虫在爬取因此暂时不测
-//			return mapper.updatePolicyIsDeleted(ids);
-			return false;
+			return mapper.updateScrapyIsDeleted(ids);
+//			return false;
 		} else {
 			return true;
 		}

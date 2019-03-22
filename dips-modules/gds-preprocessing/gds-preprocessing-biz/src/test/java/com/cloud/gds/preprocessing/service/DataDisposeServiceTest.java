@@ -16,7 +16,7 @@ public class DataDisposeServiceTest {
 
 	@Test
 	public void dataTransfer() {
-		boolean b = service.dataTransfer(2158L);
+		boolean b = service.dataMigrationSurface(10000L);
 		System.out.println("dataTransfer over");
 	}
 }
