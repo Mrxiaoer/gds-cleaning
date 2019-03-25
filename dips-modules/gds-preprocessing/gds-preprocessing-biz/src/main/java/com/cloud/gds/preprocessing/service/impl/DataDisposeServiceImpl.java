@@ -9,8 +9,6 @@ import com.cloud.gds.preprocessing.service.TransactionalService;
 import com.cloud.gds.preprocessing.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,7 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 		}
 		System.out.println(list.size());
 		// implementing multi-table atomicity with cut-in data
-		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200, GovPolicyGeneral.class);
+		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200);
 
 		for (List<GovPolicyGeneral> list1 : data) {
 			transactionalService.bathCutSurface(list1);
@@ -80,23 +78,20 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 		return policyGeneral;
 	}
 
-	private <T> List<List<T>> cutBatchData(List<T> generals, int cutLength, Class T) {
+	private <T> List<List<T>> cutBatchData(List<T> generals, int cutLength) {
 
 		List<List<T>> list = new ArrayList<>();
 		boolean flag = true;
-		List<T> subList;
 		int currentNum = 0;
 		while (flag) {
 			if (generals.size() > cutLength * (currentNum + 1)) {
-				subList = generals.subList(currentNum * cutLength, (currentNum + 1) * cutLength);
+				list.add(generals.subList(currentNum * cutLength, (currentNum + 1) * cutLength));
 			} else {
-				subList = generals.subList(currentNum * cutLength, generals.size());
+				list.add(generals.subList(currentNum * cutLength, generals.size()));
 				flag = false;
 			}
-			list.add(subList);
 			currentNum++;
 		}
-
 		return list;
 	}
 
