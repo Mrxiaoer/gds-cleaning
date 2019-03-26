@@ -27,13 +27,13 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 
 	private final GovPolicyGeneralMapper govMapper;
 
-	@Autowired
-	private TransactionalService transactionalService;
+	private final TransactionalService transactionalService;
 
 	@Autowired
-	public DataDisposeServiceImpl(ScrapyGovPolicyGeneralMapper scrapyMapper, GovPolicyGeneralMapper govMapper) {
+	public DataDisposeServiceImpl(ScrapyGovPolicyGeneralMapper scrapyMapper, GovPolicyGeneralMapper govMapper, TransactionalService transactionalService) {
 		this.scrapyMapper = scrapyMapper;
 		this.govMapper = govMapper;
+		this.transactionalService = transactionalService;
 	}
 
 	@Override
