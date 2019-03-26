@@ -121,13 +121,10 @@ public class DataAnalysisController {
 	@ApiOperation(value = "数据过滤", notes = "此接口有问题")
 	public Map<String, Object> filterMethod(@RequestParam String type, @RequestBody DataDto dataDto) {
 		if ("center".equals(type)) {
-			System.out.println("请求中心数据接口");
 			return analysisResultService.centerFiltration(dataDto.getId(), dataDto.getScreenSize());
 		} else if ("non_center".equals(type)) {
-			System.out.println("请求非中心数据接口");
 			return analysisResultService.nonCentralFiltration(dataDto.getId(), dataDto.getScreenSize());
 		} else if ("new_center".equals(type)) {
-			System.out.println("请求新中心数据接口");
 			return analysisResultService.centerPointFiltration(dataDto);
 		}
 		return null;
