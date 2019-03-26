@@ -6,8 +6,7 @@ jasypt:
 spring:
   redis:
     password:
-    host: 106.14.176.127
-#    host: 127.0.0.1
+    host: dips-redis
   # Jackson配置
   jackson:
     time-zone: GMT+8
@@ -92,6 +91,7 @@ swagger:
     name: 'BigPan'
     email: '675556650@qq.com'
     url: 'http://ioa.govmade.com'
+
   authorization:
     name: 'DIPS OAuth'
     auth-regex: '^.*$'

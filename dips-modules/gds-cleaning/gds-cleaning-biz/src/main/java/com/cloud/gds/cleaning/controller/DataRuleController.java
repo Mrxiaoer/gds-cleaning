@@ -23,14 +23,11 @@ import java.util.Set;
 @RequestMapping("/data_rule")
 public class DataRuleController {
 
-	private final DataFieldService dataFieldService;
-	private final DataRuleService dataRuleService;
-
 	@Autowired
-	public DataRuleController(DataRuleService dataRuleService, DataFieldService dataFieldService) {
-		this.dataRuleService = dataRuleService;
-		this.dataFieldService = dataFieldService;
-	}
+	private DataFieldService dataFieldService;
+	@Autowired
+	private DataRuleService dataRuleService;
+
 
 	/**
 	 * 规则名称分页

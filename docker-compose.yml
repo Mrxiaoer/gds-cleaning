@@ -6,15 +6,6 @@ services:
       - 6379:6379
     restart: always
 
-  dipsdbserver:
-    image: mysql:5.7.15
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-     - /home/docker/mysql/:/var/lib/mysql
-    ports:
-      - 3306:3306
-
   dips-eureka:
     image: dips-eureka
     build:
@@ -63,7 +54,18 @@ services:
       - dips-gateway
     build:
       context: ./
-      dockerfile: ./dips-upms/dips-upms-biz/Dockerfile
+      dockerfile: ./dips-modules/dips-upms/dips-upms-biz/Dockerfile
+    restart: always
+
+  gds-cleaning:
+    image: gds-cleaning
+    links:
+      - dips-eureka
+      - dips-redis
+      - dips-gateway
+    build:
+      context: ./
+      dockerfile: ./dips-modules/gds-cleaning/gds-cleaning-biz/Dockerfile
     restart: always
 
 #   dips-monitor:
@@ -77,7 +79,7 @@ services:
 #     restart: always
 #     ports:
 #       - 5001:5001
-  
+
 #   dips-daemon:
 #   image: dips-daemon
 #   links:
