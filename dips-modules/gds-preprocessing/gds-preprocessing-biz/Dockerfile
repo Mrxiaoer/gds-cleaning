@@ -8,6 +8,6 @@ WORKDIR /dips-cloud/bin/com.cloud/gds-preprocessing
 
 EXPOSE 3015
 
-ADD ./dips-modules/dips-upms-biz/target/gds-preprocessing-biz.jar ./
+ADD ./dips-modules/gds-preprocessing/gds-preprocessing-biz/target/gds-preprocessing-biz.jar ./
 
 CMD java -Djava.security.egd=file:/dev/./urandom -jar gds-preprocessing-biz.jar

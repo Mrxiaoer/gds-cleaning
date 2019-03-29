@@ -13,5 +13,6 @@
 		<module>gds-cleaning</module>
 		<module>gds-preprocessing</module>
 		<module>gds-gmsnlp</module>
+		<module>gds-gmsanalyse</module>
 	</modules>
 </project>
