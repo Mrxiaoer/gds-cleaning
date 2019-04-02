@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.cloud</groupId>
-			<artifactId>gds-cleaning-api</artifactId>
+			<artifactId>gds-gmsanalyse-api</artifactId>
 			<version>${dips.version}</version>
 		</dependency>
 		<!--日志处理-->

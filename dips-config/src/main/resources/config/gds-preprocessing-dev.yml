@@ -14,7 +14,7 @@ logging:
     com:
       cloud:
         gds:
-          cleaning: DEBUG
+          preprocessing: DEBUG
 
 # 数据源配置
 spring:
