@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.gmsanalyse.mapper.PolicyAnalyseMapper">
+
+	<resultMap id="dataFieldMap" type="com.cloud.gds.gmsanalyse.entity.PolicyAnalyse">
+		<result column="id" property="id"/>
+		<result column="analyse_name" property="analyseName"/>
+		<result column="original_list" property="originalList"/>
+		<result column="analyse_result" property="analyseResult"/>
+		<result column="feature_num" property="featureNum"/>
+		<result column="create_user" property="createUser"/>
+		<result column="create_time" property="createTime"/>
+		<result column="modified_user" property="modifiedUser"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,analyse_name,original_list,analyse_result,feature_num,create_user,create_time,modified_user
+	</sql>
+
+
+</mapper>
