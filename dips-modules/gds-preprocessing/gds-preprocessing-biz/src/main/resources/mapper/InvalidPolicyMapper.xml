@@ -37,6 +37,7 @@
 				WHERE
 					a.titlenum > 1
 			)
+			ORDER BY id DESC
 	</select>
 
 	<select id="gainRealPolicy" resultMap="baseMap">

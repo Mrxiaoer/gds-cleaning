@@ -11,8 +11,9 @@
         <module>dips-upms</module>
         <module>dips-tms</module>
 		<module>gds-cleaning</module>
+		<module>gds-gms</module>
+		<module>gds-gmsanalyse</module>
 		<module>gds-preprocessing</module>
 		<module>gds-gmsnlp</module>
-		<module>gds-gmsanalyse</module>
 	</modules>
 </project>

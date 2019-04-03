@@ -10,12 +10,13 @@
 	</parent>
 
 	<artifactId>gds-gmsanalyse</artifactId>
+	<packaging>pom</packaging>
 	<name>gds-gmsanalyse</name>
 	<description>国策数据分析模块</description>
-	<packaging>pom</packaging>
+
 	<modules>
-		<module>gds-gmsanalyse-api</module>
 		<module>gds-gmsanalyse-biz</module>
+		<module>gds-gmsanalyse-api</module>
 	</modules>
 
 

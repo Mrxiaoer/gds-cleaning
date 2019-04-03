@@ -56,6 +56,10 @@ spring:
         uri: lb://gds-preprocessing
         predicates:
         - Path=/preprocessing/**
+      - id: gds-gms
+        uri: lb://gds-gms
+        predicates:
+        - Path=/gms/**
       - id: gds-gmsanalyse
         uri: lb://gds-gmsanalyse
         predicates:

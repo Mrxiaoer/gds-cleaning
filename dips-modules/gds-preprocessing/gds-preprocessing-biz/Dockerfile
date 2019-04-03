@@ -6,7 +6,7 @@ RUN mkdir -p /dips-cloud/bin/com.cloud/gds-preprocessing
 
 WORKDIR /dips-cloud/bin/com.cloud/gds-preprocessing
 
-EXPOSE 3015
+EXPOSE 3020
 
 ADD ./dips-modules/gds-preprocessing/gds-preprocessing-biz/target/gds-preprocessing-biz.jar ./
 

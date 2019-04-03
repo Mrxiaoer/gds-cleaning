@@ -376,9 +376,7 @@ public class DoAnalysisServiceImpl implements DoAnalysisService {
 		}
 		// 清洗数据,数据被清洗后要将分析结表中相应数据删除
 		if (list.size() > 0) {
-			return dataFieldValueMapper.updateBatchById(list) && SqlHelper
-				.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId)));
-
+			return dataFieldValueMapper.updateBatchById(list) && SqlHelper.delBool(analysisResultMapper.delete(new EntityWrapper<AnalysisResult>().eq("field_id", fieldId)));
 		}
 		return true;
 	}

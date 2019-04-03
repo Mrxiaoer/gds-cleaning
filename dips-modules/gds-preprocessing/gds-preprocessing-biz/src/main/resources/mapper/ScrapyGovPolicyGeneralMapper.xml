@@ -28,6 +28,7 @@
 		SELECT
 		<include refid="Base_Column_List"/>
 		FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND id &lt; 530350
+		ORDER BY id DESC
 	</select>
 
 	<update id="updateByIdsAndIsDeleted">

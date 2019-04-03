@@ -6,7 +6,7 @@ RUN mkdir -p /dips-cloud/bin/com.cloud/gds-gmsanalyse
 
 WORKDIR /dips-cloud/bin/com.cloud/gds-gmsanalyse
 
-EXPOSE 3023
+EXPOSE 3022
 
 ADD ./dips-modules/gds-gmsanalyse/gds-gmsanalyse-biz/target/gds-gmsanalyse-biz.jar ./
 

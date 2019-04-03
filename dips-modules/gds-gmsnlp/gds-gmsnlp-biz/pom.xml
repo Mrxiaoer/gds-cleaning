@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.cloud</groupId>
-			<artifactId>gds-preprocessing-api</artifactId>
+			<artifactId>gds-gmsnlp-api</artifactId>
 			<version>${dips.version}</version>
 		</dependency>
 		<!--日志处理-->

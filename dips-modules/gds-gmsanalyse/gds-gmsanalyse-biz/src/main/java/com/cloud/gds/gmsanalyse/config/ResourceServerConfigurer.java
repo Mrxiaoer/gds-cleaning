@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * @Author : yaonuan
  * @Email : 806039077@qq.com
- * @Date : 2019-03-29
+ * @Date : 2019-04-03
  */
 @Configuration
 @EnableResourceServer
@@ -22,9 +22,9 @@ public class ResourceServerConfigurer extends BaseResourceServerConfigurerAdapte
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.antMatchers("/v2/api-docs"
-				,"/actuator/**"
-				,"/policy/**"
-				,"/analyse/**")
+				, "/actuator/**"
+				,"/analyse/**"
+			)
 			.permitAll().anyRequest().authenticated().and().csrf().disable();
 	}
 

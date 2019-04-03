@@ -59,7 +59,7 @@ public class ExcelServiceImpl implements ExcelService {
 
 		SortedMap<String, String> sortedMap = dataRuleService.gainRuleData(field.getRuleId());
 		//生成表头信息
-		buildExcelHead(workbook,sheet, field.getName(), sortedMap.size());
+		buildExcelHead(workbook, sheet, field.getName(), sortedMap.size());
 
 		//构建模板sheet里面的内容
 		buildExcelTemplate(workbook, sheet, sortedMap);
@@ -73,7 +73,7 @@ public class ExcelServiceImpl implements ExcelService {
 
 	}
 
-	private void buildExcelHead(HSSFWorkbook workbook,HSSFSheet sheet, String headName, Integer columnNum) {
+	private void buildExcelHead(HSSFWorkbook workbook, HSSFSheet sheet, String headName, Integer columnNum) {
 		HSSFRow row = sheet.createRow(0);
 		row.createCell(1).setCellValue(headName);
 
@@ -83,18 +83,18 @@ public class ExcelServiceImpl implements ExcelService {
 		HSSFCellStyle cellStyle = workbook.createCellStyle();
 		cellStyle.setAlignment(HorizontalAlignment.CENTER);
 		// 设置边框
-		setBorder(address,sheet );
+		setBorder(address, sheet);
 
 	}
-	
-	private void setBorder(CellRangeAddress address,HSSFSheet sheet){
+
+	private void setBorder(CellRangeAddress address, HSSFSheet sheet) {
 		// 设置单元格框线
 		RegionUtil.setBorderBottom(BorderStyle.THIN, address, sheet);
 		RegionUtil.setBorderTop(BorderStyle.THIN, address, sheet);
 		RegionUtil.setBorderLeft(BorderStyle.THIN, address, sheet);
 		RegionUtil.setBorderRight(BorderStyle.THIN, address, sheet);
 	}
-	
+
 
 	private void buildExcelTemplate(HSSFWorkbook workbook, HSSFSheet sheet, SortedMap<String, String> sortedMap) {
 		//set cell style
@@ -119,7 +119,7 @@ public class ExcelServiceImpl implements ExcelService {
 
 	}
 
-	private HSSFCellStyle setExcelStyle(HSSFWorkbook workbook){
+	private HSSFCellStyle setExcelStyle(HSSFWorkbook workbook) {
 		//设置日期格式
 		HSSFCellStyle style = workbook.createCellStyle();
 		style.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
@@ -252,7 +252,7 @@ public class ExcelServiceImpl implements ExcelService {
 			List<Map<String, String>> mapList = new ArrayList<>();
 			if (flag) {
 				// 组装真实数据
-				for (int i = 3; i < rows; i++) {
+				for (int i = 3; i <= rows; i++) {
 					Row row1 = sheet.getRow(i);
 					Map<String, String> map1 = new HashMap<>();
 					for (Cell cell : row) {

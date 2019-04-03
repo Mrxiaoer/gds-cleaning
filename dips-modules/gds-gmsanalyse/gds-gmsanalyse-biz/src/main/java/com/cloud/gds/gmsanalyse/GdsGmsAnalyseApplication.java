@@ -6,17 +6,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
 /**
- * 国策分析启动类
+ * 数据分析启动类
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com
- * @Date : 2019-03-29
+ * @Date : 2019-04-03
  */
 @EnableDipsSwagger2
 @SpringCloudApplication
 @EnableDipsFeignClients
-public class GmsAnalyseApplication {
+public class GdsGmsAnalyseApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(GmsAnalyseApplication.class, args);
+		SpringApplication.run(GdsGmsAnalyseApplication.class, args);
 	}
+
 }

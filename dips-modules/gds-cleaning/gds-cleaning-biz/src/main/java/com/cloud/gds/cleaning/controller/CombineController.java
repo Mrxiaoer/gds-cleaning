@@ -7,6 +7,7 @@ import com.cloud.gds.cleaning.api.entity.DataField;
 import com.cloud.gds.cleaning.api.vo.DataRuleVo;
 import com.cloud.gds.cleaning.service.CombineService;
 import com.cloud.gds.cleaning.service.DataFieldService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,10 +44,10 @@ public class CombineController {
 	 * @return
 	 */
 	@GetMapping("/page")
+	@ApiOperation(value = "合并清洗池首页分页", notes = "合并清洗池首页分页")
 	public R gainCombinePage(@RequestParam Map<String, Object> params) {
 		return new R<>(dataFieldService.queryPage(params));
 	}
-
 
 	/**
 	 * 根据清洗池查询相同规则的其他清洗池
@@ -54,7 +55,8 @@ public class CombineController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/get_identical/{id}")
+	@GetMapping("/identical/{id}")
+	@ApiOperation(value = "根据清洗池查询相同规则的其他清洗池", notes = "根据清洗池查询相同规则的其他清洗池")
 	public R getIdenticalCleanPool(@PathVariable("id") Long id) {
 		return new R<>(combineService.getIdenticalCleanPool(id));
 	}
@@ -65,7 +67,8 @@ public class CombineController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/get_distinct/{id}")
+	@GetMapping("/distinct/{id}")
+	@ApiOperation(value = "根据清洗池查询不同规则的其他清洗池", notes = "根据清洗池查询不同规则的其他清洗池")
 	public R getDistinctCleanPool(@PathVariable("id") Long id) {
 		return new R<>(combineService.getDistinctCleanPool(id));
 	}
@@ -77,6 +80,7 @@ public class CombineController {
 	 * @return
 	 */
 	@GetMapping("/nominate_clean_pool")
+	@ApiOperation(value = "命名新数据池的名称", notes = "命名新数据池的名称")
 	public R nominateCleanPool(DataField dataField) {
 		if (combineService.nominateCleanPool(dataField)) {
 
@@ -95,7 +99,8 @@ public class CombineController {
 	 * @param distinctDto
 	 * @return
 	 */
-	@PostMapping("/regularization")
+	@PostMapping("/regularization_data")
+	@ApiOperation(value = "相同规则同步数据", notes = "相同规则同步数据")
 	public R regularizationData(@RequestBody DistinctDto distinctDto) {
 		return new R<>(combineService.regularizationData(distinctDto));
 	}
@@ -107,6 +112,7 @@ public class CombineController {
 	 * @return
 	 */
 	@PostMapping("/item_list")
+	@ApiOperation(value = "获取清洗池的规则项", notes = "获取清洗池的规则项")
 	public R itemList(@RequestBody Set<Long> ids) {
 		return new R<>(combineService.itemList(ids));
 	}
@@ -118,6 +124,7 @@ public class CombineController {
 	 * @return
 	 */
 	@PostMapping("/nominate_rule")
+	@ApiOperation(value = "重新命名规则池", notes = "重新命名规则池")
 	public R nominateRule(DataRuleVo dataRuleVo) {
 		Long id = combineService.nominateRule(dataRuleVo);
 		if (DataCleanConstant.ZERO.equals(id)) {
@@ -138,7 +145,8 @@ public class CombineController {
 	 * @param distinctDto
 	 * @return
 	 */
-	@PostMapping("/distinct")
+	@PostMapping("/distinct_data")
+	@ApiOperation(value = "不同规则的数据同步", notes = "不同规则的数据同步")
 	public R distinctData(@RequestBody DistinctDto distinctDto) {
 		return new R<>(combineService.distinctData(distinctDto));
 	}

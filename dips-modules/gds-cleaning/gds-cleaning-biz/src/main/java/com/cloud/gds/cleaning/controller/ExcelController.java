@@ -33,11 +33,11 @@ public class ExcelController {
 	/**
 	 * 导出规则模板
 	 *
-	 * @param ruleId   规则id
+	 * @param fieldId   规则id
 	 * @param response
 	 * @throws Exception
 	 */
-	@GetMapping("/getTemplate/{fieldId}")
+	@PostMapping("/template/{fieldId}")
 	@ApiOperation(value = "导出规则模板", notes = "导出规则模板")
 	public void getTemplate(@PathVariable("fieldId") Long fieldId, HttpServletResponse response) throws Exception {
 		// todo 规则空未判断 2019-3-6 11:46:09
@@ -52,7 +52,7 @@ public class ExcelController {
 	 * @param file
 	 * @return
 	 */
-	@PostMapping("/importExcel/{fieldId}")
+	@PostMapping("/import/{fieldId}")
 	@ApiOperation(value = "数据导入数据池", notes = "数据导入数据池")
 	public R importExcel(@PathVariable("fieldId") Long fieldId, MultipartFile file) {
 		String str = excelService.importCleanPool(fieldId, file);
@@ -73,7 +73,7 @@ public class ExcelController {
 	 * @param response
 	 * @throws Exception
 	 */
-	@GetMapping("/exportExcel/{fieldId}")
+	@GetMapping("/export/{fieldId}")
 	@ApiOperation(value = "数据导出数据池", notes = "数据导出数据池")
 	public void exportExcel(@PathVariable("fieldId") Long fieldId, HttpServletResponse response) throws Exception {
 		excelService.exportExcel(fieldId, response);

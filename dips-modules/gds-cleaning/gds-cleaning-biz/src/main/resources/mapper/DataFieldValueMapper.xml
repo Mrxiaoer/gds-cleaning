@@ -112,24 +112,32 @@
 
 	<!-- 自动化清洗大数据更新处理 -->
 	<update id="updateBatchById">
-		<foreach collection="valueList" item="fieldValue" separator=",">
-			update dataclean_data_field_value
-			<set>
-				<if test="fieldValue.beCleanedId != null">
-					be_cleaned_id = #{fieldValue.beCleanedId},
-				</if>
-				<if test="fieldValue.isDeleted != null">
-					is_deleted = #{fieldValue.isDeleted},
-				</if>
-				<if test="fieldValue.modifiedUser != null">
-					modified_user = #{fieldValue.modifiedUser},
-				</if>
-				<if test="fieldValue.modifiedTime != null">
-					modified_time = #{fieldValue.modifiedTime},
-				</if>
-			</set>
-			where id = #{fieldValue.id}
+		update dataclean_data_field_value set
+		be_cleaned_id  = case id
+		<foreach collection="valueList" item="fieldValue">
+			when #{fieldValue.id} then #{fieldValue.beCleanedId}
 		</foreach>
+		end ,
+		is_deleted = case id
+		<foreach collection="valueList" item="fieldValue">
+			when #{fieldValue.id} then #{fieldValue.isDeleted}
+		</foreach>
+		end ,
+		modified_user = case id
+		<foreach collection="valueList" item="fieldValue">
+			when #{fieldValue.id} then #{fieldValue.modifiedUser}
+		</foreach>
+		end ,
+		modified_time = case id
+		<foreach collection="valueList" item="fieldValue">
+			when #{fieldValue.id} then #{fieldValue.modifiedTime}
+		</foreach>
+		end
+		where id in (
+		<foreach collection="valueList" item="fieldValue" separator=",">
+		   #{fieldValue.id}
+		</foreach>
+		)
 	</update>
 
 
@@ -163,9 +171,10 @@
 		set
 		modified_time = now(),
 		is_deleted = 0,
-		modified_user = #{userId}
-		where is_deleted = 1,
-		field_id = #{fieldId}
+		modified_user = #{userId},
+		be_cleaned_id = 0
+		where is_deleted = 1
+		and field_id = #{fieldId}
 	</update>
 
 	<delete id="recyclingBinClear">
