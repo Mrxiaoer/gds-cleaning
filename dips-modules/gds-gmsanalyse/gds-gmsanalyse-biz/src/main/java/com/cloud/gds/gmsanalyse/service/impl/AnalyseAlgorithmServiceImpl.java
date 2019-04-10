@@ -17,6 +17,7 @@ import java.util.List;
 @Service
 public class AnalyseAlgorithmServiceImpl implements AnalyseAlgorithmService {
 
+	@Override
 	public String govAnalysis(List<Long> ids) {
 		String result = null;
 		String[] arguments = null;

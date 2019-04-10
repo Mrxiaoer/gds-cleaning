@@ -6,59 +6,40 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-
 
 /**
- * 政策分析表
+ * 政策分析特征实体类
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com
- * @Date : 2019-04-03
+ * @Date : 2019-04-04
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("policy_analyse")
-public class PolicyAnalyse extends Model<PolicyAnalyse> implements Serializable {
+@TableName("policy_analyse_feature")
+public class PolicyAnalyseFeature extends Model<PolicyAnalyseFeature> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
 	/**
-	 * id
+	 * 主键
 	 */
 	private Long id;
 	/**
-	 * 分析名称
+	 * 政策分析表对应id
 	 */
-	private String analyseName;
+	private Long analyseId;
 	/**
-	 * 分析政策的id集
+	 * 政策特征名称
 	 */
-	private String originalList;
+	private String featureName;
 	/**
-	 * 分析结果慨要
-	 */
-	private String analyseSummary;
-	/**
-	 * 特征数
+	 * 政策特征出现的次数
 	 */
 	private Integer featureNum;
-	/**
-	 * 创建用户
-	 */
-	private Long createUser;
-	/**
-	 * 创建时间
-	 */
-	private LocalDateTime createTime;
-	/**
-	 * 更新用户
-	 */
-	private Long modifiedUser;
 
 	@Override
 	protected Serializable pkVal() {
 		return this.id;
 	}
-
-
 }

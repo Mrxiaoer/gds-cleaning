@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cloud.gds.preprocessing.mapper.GovPolicyGeneralMapper">
 
-	<resultMap id="baseMap" type="com.cloud.gds.preprocessing.entity.GovPolicyGeneral">
+	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.GovPolicyGeneral">
 		<result column="id" property="id"/>
 		<result column="title" property="title"/>
 		<result column="source" property="source"/>

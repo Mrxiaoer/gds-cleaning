@@ -76,17 +76,6 @@ public interface DataPoolService {
 	@PostMapping("/data_pool/delete")
 	R deleteByIds(@RequestBody Set<Long> ids);
 
-
-	/**
-	 * api导入接口
-	 *
-	 * @param id            主表id
-	 * @param inputJsonList
-	 * @return
-	 */
-	@PostMapping("/data_pool/api")
-	R jsonapi(Long id, @RequestBody InputJsonList inputJsonList);
-
 	/**
 	 * json导入
 	 *

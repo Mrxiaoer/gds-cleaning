@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.gmsanalyse.mapper.PolicyAnalyseFeatureMapper">
+
+	<resultMap id="BaseMap" type="com.cloud.gds.gmsanalyse.entity.PolicyAnalyseFeature">
+		<result column="id" property="id"/>
+		<result column="analyse_id" property="analyseId"/>
+		<result column="feature_name" property="featureName"/>
+		<result column="feature_num" property="featureNum"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,analyse_id,feature_name,feature_num
+	</sql>
+
+	<insert id="batchInsert">
+		insert into gov_policy_general (<include refid="Base_Column_List"/>)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(null
+			,#{item.analyseId},#{item.featureName},#{item.featureNum})
+		</foreach>
+	</insert>
+
+
+</mapper>

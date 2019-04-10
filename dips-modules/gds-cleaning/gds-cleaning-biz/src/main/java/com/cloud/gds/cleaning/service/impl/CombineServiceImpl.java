@@ -141,6 +141,7 @@ public class CombineServiceImpl implements CombineService {
 					ComBineRuleVo comBineRuleVo = new ComBineRuleVo();
 					BeanUtils.copyProperties(dataSetVo, comBineRuleVo);
 					comBineRuleVo.setCleanPoolName(dataField.getName());
+					comBineRuleVo.setSign(dataField.getName()+dataSetVo.getProp());
 					list.add(comBineRuleVo);
 				}
 				return list;

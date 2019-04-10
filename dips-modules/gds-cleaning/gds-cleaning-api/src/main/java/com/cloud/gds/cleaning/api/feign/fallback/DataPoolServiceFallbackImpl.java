@@ -61,12 +61,6 @@ public class DataPoolServiceFallbackImpl implements DataPoolService {
 	}
 
 	@Override
-	public R jsonapi(Long id, InputJsonList inputJsonList) {
-		log.error("feign api导入失败", cause);
-		return null;
-	}
-
-	@Override
 	public void saveJsonData(long id, JSONArray jsonArray) {
 		log.error("feign json导入失败", cause);
 	}

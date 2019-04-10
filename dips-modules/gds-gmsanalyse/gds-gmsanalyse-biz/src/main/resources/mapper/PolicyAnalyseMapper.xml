@@ -3,11 +3,11 @@
 
 <mapper namespace="com.cloud.gds.gmsanalyse.mapper.PolicyAnalyseMapper">
 
-	<resultMap id="dataFieldMap" type="com.cloud.gds.gmsanalyse.entity.PolicyAnalyse">
+	<resultMap id="BaseMap" type="com.cloud.gds.gmsanalyse.entity.PolicyAnalyse">
 		<result column="id" property="id"/>
 		<result column="analyse_name" property="analyseName"/>
 		<result column="original_list" property="originalList"/>
-		<result column="analyse_result" property="analyseResult"/>
+		<result column="analyse_summary" property="analyseSummary"/>
 		<result column="feature_num" property="featureNum"/>
 		<result column="create_user" property="createUser"/>
 		<result column="create_time" property="createTime"/>

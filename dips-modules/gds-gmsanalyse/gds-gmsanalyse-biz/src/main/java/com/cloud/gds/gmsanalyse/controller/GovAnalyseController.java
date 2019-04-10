@@ -1,6 +1,7 @@
 package com.cloud.gds.gmsanalyse.controller;
 
 import com.cloud.gds.gmsanalyse.dto.GovPolicyDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**

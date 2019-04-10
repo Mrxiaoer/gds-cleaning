@@ -27,16 +27,22 @@ public class GovPolicyGeneralController {
 		this.govPolicyGeneralService = govPolicyGeneralService;
 	}
 
+	/**
+	 * 分页数据
+	 *
+	 * @param params
+	 * @return
+	 */
 	@GetMapping("/page")
-	public R page(@RequestParam Map<String,Object> params){
+	public R page(@RequestParam Map<String, Object> params) {
 		return new R<>(govPolicyGeneralService.selectAllPage(new Query<>(params)));
 	}
 
-	public R gainAll(){
+	@GetMapping("/list")
+	public R gainAll(@RequestParam Map<String, Object> params) {
 
 		return new R();
 	}
-
 
 
 }

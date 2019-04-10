@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cloud.gds.preprocessing.mapper.InvalidPolicyMapper">
 
-	<resultMap id="baseMap" type="com.cloud.gds.preprocessing.entity.BasePolicy">
+	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.BasePolicy">
 		<result column="id" property="id"/>
 		<result column="title" property="title"/>
 	</resultMap>
@@ -40,11 +40,11 @@
 			ORDER BY id DESC
 	</select>
 
-	<select id="gainRealPolicy" resultMap="baseMap">
+	<select id="gainRealPolicy" resultMap="BaseMap">
 		SELECT id,title FROM gov_policy_general WHERE is_deleted = 0
 	</select>
 
-	<select id="gainScrapyPolicy" resultMap="baseMap">
+	<select id="gainScrapyPolicy" resultMap="BaseMap">
 		SELECT id,title FROM scrapy_gov_policy_general WHERE is_deleted = 0
 	</select>
 

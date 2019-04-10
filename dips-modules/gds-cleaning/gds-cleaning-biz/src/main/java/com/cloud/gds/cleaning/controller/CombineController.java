@@ -79,9 +79,9 @@ public class CombineController {
 	 * @param dataField 包含name、ruleId
 	 * @return
 	 */
-	@GetMapping("/nominate_clean_pool")
+	@PostMapping("/nominate_clean_pool")
 	@ApiOperation(value = "命名新数据池的名称", notes = "命名新数据池的名称")
-	public R nominateCleanPool(DataField dataField) {
+	public R nominateCleanPool(@RequestBody DataField dataField) {
 		if (combineService.nominateCleanPool(dataField)) {
 
 			return new R<>(dataField.getId());
@@ -125,7 +125,7 @@ public class CombineController {
 	 */
 	@PostMapping("/nominate_rule")
 	@ApiOperation(value = "重新命名规则池", notes = "重新命名规则池")
-	public R nominateRule(DataRuleVo dataRuleVo) {
+	public R nominateRule(@RequestBody DataRuleVo dataRuleVo) {
 		Long id = combineService.nominateRule(dataRuleVo);
 		if (DataCleanConstant.ZERO.equals(id)) {
 			R r = new R();

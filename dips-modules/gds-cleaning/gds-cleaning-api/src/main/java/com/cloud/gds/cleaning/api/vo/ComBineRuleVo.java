@@ -16,5 +16,9 @@ public class ComBineRuleVo extends DataSetVo {
 	 * 清洗池名称
 	 */
 	private String cleanPoolName;
+	/**
+	 * 标识
+	 */
+	private String sign;
 
 }

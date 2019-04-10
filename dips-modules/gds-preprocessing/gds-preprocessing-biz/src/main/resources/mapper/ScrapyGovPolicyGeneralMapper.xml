@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyGeneralMapper">
 
-	<resultMap id="baseMap" type="com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral">
+	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral">
 		<result column="id" property="id"/>
 		<result column="title" property="title"/>
 		<result column="source" property="source"/>
@@ -24,7 +24,7 @@
 		id,title,source,reference,issue,style,level,publish_time,text,attachment,url,region,creator_id,create_time
 	</sql>
 
-	<select id="gainScrapyPolicy" resultMap="baseMap">
+	<select id="gainScrapyPolicy" resultMap="BaseMap">
 		SELECT
 		<include refid="Base_Column_List"/>
 		FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND id &lt; 530350
