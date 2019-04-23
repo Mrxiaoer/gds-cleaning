@@ -1,1 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.cloud.gds.gms.api.fegin.fallback.RemoteGovPolicyGeneralServiceFallbackImpl,\
+ com.cloud.gds.gms.api.fegin.factory.GovPolicyGeneralServiceFallbackFactory

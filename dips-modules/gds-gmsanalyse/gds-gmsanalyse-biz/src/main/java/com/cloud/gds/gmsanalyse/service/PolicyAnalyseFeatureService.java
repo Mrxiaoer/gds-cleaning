@@ -20,4 +20,12 @@ public interface PolicyAnalyseFeatureService extends IService<PolicyAnalyseFeatu
 	 * @return
 	 */
 	boolean batchInsert(List<PolicyAnalyseFeature> list);
+
+	/**
+	 * 根据分析表的id查询其特征信息
+	 *
+	 * @param analyseId 分析表的id
+	 * @return
+	 */
+	List<PolicyAnalyseFeature> info(Long analyseId);
 }

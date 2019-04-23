@@ -4,7 +4,7 @@
 <mapper namespace="com.cloud.gds.gmsanalyse.mapper.PolicyAnalyseFeatureMapper">
 
 	<resultMap id="BaseMap" type="com.cloud.gds.gmsanalyse.entity.PolicyAnalyseFeature">
-		<result column="id" property="id"/>
+		<id column="id" property="id"/>
 		<result column="analyse_id" property="analyseId"/>
 		<result column="feature_name" property="featureName"/>
 		<result column="feature_num" property="featureNum"/>
@@ -22,6 +22,15 @@
 			,#{item.analyseId},#{item.featureName},#{item.featureNum})
 		</foreach>
 	</insert>
+
+	<!-- 根据分析政策的id 查询政策的特征词 -->
+	<select id="info" resultMap="BaseMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM policy_analyse_feature
+		WHERE analyse_id = #{analyseId}
+		GROUP BY feature_num DESC
+	</select>
 
 
 </mapper>

@@ -30,4 +30,9 @@ public class PolicyAnalyseFeatureServiceImpl extends ServiceImpl<PolicyAnalyseFe
 	public boolean batchInsert(List<PolicyAnalyseFeature> list) {
 		return mapper.batchInsert(list);
 	}
+
+	@Override
+	public List<PolicyAnalyseFeature> info(Long analyseId) {
+		return mapper.info(analyseId);
+	}
 }

@@ -2,6 +2,8 @@ package com.cloud.gds.gmsanalyse.service;
 
 import com.cloud.gds.gmsanalyse.dto.GovPolicyDto;
 
+import java.io.IOException;
+
 /**
  * @Author : yaonuan
  * @Email : 806039077@qq.com
@@ -10,11 +12,11 @@ import com.cloud.gds.gmsanalyse.dto.GovPolicyDto;
 public interface GovAnalyseService {
 
 	/**
-	 * 政策分析入口 TODO
+	 * 政策进行分析
 	 *
 	 * @param govPolicyDto
 	 * @return
 	 */
-	boolean govAnalyse(GovPolicyDto govPolicyDto);
+	void govAnalyse(GovPolicyDto govPolicyDto) throws IOException, ClassNotFoundException;
 
 }

@@ -23,7 +23,9 @@ public class ResourceServerConfigurer extends BaseResourceServerConfigurerAdapte
 		http.authorizeRequests()
 			.antMatchers("/v2/api-docs"
 				, "/actuator/**"
-				,"/analyse/**"
+				,"/gov/**"
+				,"/policy/**"
+				,"/feature/**"
 			)
 			.permitAll().anyRequest().authenticated().and().csrf().disable();
 	}

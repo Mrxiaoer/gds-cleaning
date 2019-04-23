@@ -1,4 +1,4 @@
-package com.cloud.gds.gms.entity;
+package com.cloud.gds.gms.api.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;

@@ -1,1 +1,1 @@
-provides: mybatis-plus, dips-common-security
+provides: mybatis-plus, dips-common-security,gds-gms

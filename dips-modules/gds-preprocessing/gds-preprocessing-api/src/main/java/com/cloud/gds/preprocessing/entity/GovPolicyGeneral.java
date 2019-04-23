@@ -39,12 +39,10 @@ public class GovPolicyGeneral extends Model<GovPolicyGeneral> {
 	/**
 	 * 文体（1|通知 2|公告 3|报告 4|意见 5|办法 6|通报 7|其他）
 	 */
-	// todo 2019-3-21 10:16:17
 	private Integer style;
 	/**
 	 * 层级(1|国家级 2|省级 3|市级 4|区级（县级))
 	 */
-	// todo 2019-3-21 10:16:17
 	private Integer level;
 	/**
 	 * 发文时间

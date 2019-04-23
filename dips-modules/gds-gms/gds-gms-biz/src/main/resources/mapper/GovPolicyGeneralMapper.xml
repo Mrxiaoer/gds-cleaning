@@ -4,7 +4,7 @@
 <mapper namespace="com.cloud.gds.gms.mapper.GovPolicyGeneralMapper">
 
 	<!-- 可根据自己的需求，是否要使用 -->
-	<resultMap id="dataFieldMap" type="com.cloud.gds.gms.entity.GovPolicyGeneral">
+	<resultMap id="dataFieldMap" type="com.cloud.gds.gms.api.entity.GovPolicyGeneral">
 		<result column="id" property="id"/>
 		<result column="title" property="title"/>
 		<result column="summary" property="summary"/>
@@ -48,7 +48,7 @@
 		<result column="commit_time" property="deptId"/>
 	</resultMap>
 
-	<resultMap id="govPolicyGeneralPageVOMap" type="com.cloud.gds.gms.vo.GeneralVO">
+	<resultMap id="govPolicyGeneralPageVOMap" type="com.cloud.gds.gms.api.vo.GeneralVO">
 		<result property="id" column="id"/>
 		<result property="title" column="title"/>
 		<result property="publishTime" column="publish_time"/>
@@ -91,7 +91,21 @@
 		<!--</collection>-->
 	</resultMap>
 
-	<resultMap id="commonVOMap" type="com.cloud.gds.gms.vo.CommonVO">
+	<resultMap id="govAnalyse_Map" type="com.cloud.gds.gms.api.vo.GovAnalyseVo">
+		<result property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="summary" column="summary"/>
+		<result property="publishTime" column="publish_time"/>
+		<result property="creatorId" column="creator_id"/>
+		<result property="mark" column="mark"/>
+		<result property="examineDate" column="examine_date"/>
+		<!--<collection property="dispatchList" select="selectGeneralDispatch" column="id">-->
+		<!--</collection>-->
+		<!--<collection property="tagList" select="selectGeneralTag" column="id">-->
+		<!--</collection>-->
+	</resultMap>
+
+	<resultMap id="commonVOMap" type="com.cloud.gds.gms.api.vo.CommonVO">
 		<id column="id" property="commonId"/>
 		<result column="name" property="commonName"/>
 	</resultMap>
@@ -107,6 +121,130 @@
 		polGen.creator_id,
 		polGen.mark,
 		polGen.examine_date
+		FROM gov_policy_general AS polGen
+		WHERE polGen.is_deleted = '0'
+		AND polGen.examine_status=3
+		<if test="title != null and title != ''">
+			AND MATCH (polGen.title) AGAINST (#{title} IN BOOLEAN MODE)
+		</if>
+		<if test="style != null and style != ''">
+			AND polGen.style = #{style}
+		</if>
+		<if test="level != null and level != ''">
+			AND polGen.level = #{level}
+		</if>
+		<if test="stage != null and stage != ''">
+			AND polGen.stage = #{stage}
+		</if>
+		<if test="formality != null and formality != ''">
+			AND polGen.formality = #{formality}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND polGen.publish_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			AND polGen.publish_time &lt;= #{endTime}
+		</if>
+		<if test="username != null and username != ''">
+			AND u.username = #{username}
+		</if>
+		<if test="target != null and target != ''">
+			AND polGen.target LIKE CONCAT('%',#{target},'%')
+		</if>
+		<if test="theme != null and theme != ''">
+			AND polGen.theme LIKE CONCAT('%',#{theme},'%')
+		</if>
+		<if test="scale != null and scale != ''">
+			AND polGen.scale LIKE CONCAT('%',#{scale},'%')
+		</if>
+		<if test="industry != null and industry != ''">
+			AND polGen.industry LIKE CONCAT('%',#{industry},'%')
+		</if>
+		<if test="timeliness != null and timeliness != ''">
+			AND polGen.timeliness = #{timeliness}
+		</if>
+		<if test="regionArr != null and regionArr != '' and regionArr != '0'.toString()">
+			AND polGen.region_arr LIKE CONCAT('%',#{regionArr})
+		</if>
+		ORDER BY
+		<if test="views != null and views != '' ">
+			polGen.views DESC,
+		</if>
+		<if test="time!=null and time!=''">
+			polGen.publish_time DESC,
+		</if>
+		polGen.id DESC
+	</select>
+
+
+	<!-- 综合查询，完成查询的政策的简单信息-->
+	<select id="queryAll" resultMap="govAnalyse_Map">
+		SELECT
+		polGen.id,
+		polGen.title,
+		polGen.summary,
+		polGen.publish_time,
+		polGen.mark,
+		polGen.examine_date
+		FROM gov_policy_general AS polGen
+		WHERE polGen.is_deleted = '0'
+		AND polGen.examine_status=3
+		<if test="title != null and title != ''">
+			AND MATCH (polGen.title) AGAINST (#{title} IN BOOLEAN MODE)
+		</if>
+		<if test="style != null and style != ''">
+			AND polGen.style = #{style}
+		</if>
+		<if test="level != null and level != ''">
+			AND polGen.level = #{level}
+		</if>
+		<if test="stage != null and stage != ''">
+			AND polGen.stage = #{stage}
+		</if>
+		<if test="formality != null and formality != ''">
+			AND polGen.formality = #{formality}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND polGen.publish_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			AND polGen.publish_time &lt;= #{endTime}
+		</if>
+		<if test="username != null and username != ''">
+			AND u.username = #{username}
+		</if>
+		<if test="target != null and target != ''">
+			AND polGen.target LIKE CONCAT('%',#{target},'%')
+		</if>
+		<if test="theme != null and theme != ''">
+			AND polGen.theme LIKE CONCAT('%',#{theme},'%')
+		</if>
+		<if test="scale != null and scale != ''">
+			AND polGen.scale LIKE CONCAT('%',#{scale},'%')
+		</if>
+		<if test="industry != null and industry != ''">
+			AND polGen.industry LIKE CONCAT('%',#{industry},'%')
+		</if>
+		<if test="timeliness != null and timeliness != ''">
+			AND polGen.timeliness = #{timeliness}
+		</if>
+		<if test="regionArr != null and regionArr != '' and regionArr != '0'.toString()">
+			AND polGen.region_arr LIKE CONCAT('%',#{regionArr})
+		</if>
+		ORDER BY
+		<if test="views != null and views != '' ">
+			polGen.views DESC,
+		</if>
+		<if test="time!=null and time!=''">
+			polGen.publish_time DESC,
+		</if>
+		polGen.id DESC
+	</select>
+
+	<!-- 综合查询,查询政策的id -->
+	<select id="gainList" resultType="java.lang.Long">
+		SELECT
+		polGen.id
 		FROM gov_policy_general AS polGen
 		WHERE polGen.is_deleted = '0'
 		AND polGen.examine_status=3

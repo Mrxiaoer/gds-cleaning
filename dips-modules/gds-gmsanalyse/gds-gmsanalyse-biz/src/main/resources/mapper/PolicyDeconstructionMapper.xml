@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.gmsanalyse.mapper.PolicyDeconstructionMapper">
+
+	<resultMap id="BaseMap" type="com.cloud.gds.gmsanalyse.entity.PolicyDeconstruction">
+		<id column="policy_id" property="policyId"/>
+		<result column="policy_title" property="policyTitle"/>
+		<result column="verbs" property="verbs"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		policy_id,policy_title,verbs
+	</sql>
+
+	<select id="selectByPolicyId" resultMap="BaseMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM policy_deconstruction
+		WHERE policy_id = #{policyId}
+	</select>
+
+	<select id="selectByPolicyIds" resultMap="BaseMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM policy_deconstruction
+		WHERE policy_id IN
+		<foreach item="id" collection="policyIds" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+
+</mapper>

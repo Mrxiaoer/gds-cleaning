@@ -25,4 +25,12 @@ public interface PolicyAnalyseFeatureMapper extends BaseMapper<PolicyAnalyseFeat
 	 */
 	boolean batchInsert(@Param("list") List<PolicyAnalyseFeature> list);
 
+	/**
+	 * 根据政策表id查询其特征
+	 *
+	 * @param analyseId
+	 * @return
+	 */
+	List<PolicyAnalyseFeature> info(@Param("analyseId") Long analyseId);
+
 }

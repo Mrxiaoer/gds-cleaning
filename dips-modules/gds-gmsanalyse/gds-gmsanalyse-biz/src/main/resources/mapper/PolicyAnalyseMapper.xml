@@ -4,10 +4,11 @@
 <mapper namespace="com.cloud.gds.gmsanalyse.mapper.PolicyAnalyseMapper">
 
 	<resultMap id="BaseMap" type="com.cloud.gds.gmsanalyse.entity.PolicyAnalyse">
-		<result column="id" property="id"/>
+		<id column="id" property="id"/>
 		<result column="analyse_name" property="analyseName"/>
 		<result column="original_list" property="originalList"/>
 		<result column="analyse_summary" property="analyseSummary"/>
+		<result column="analyse_state" property="analyseState"/>
 		<result column="feature_num" property="featureNum"/>
 		<result column="create_user" property="createUser"/>
 		<result column="create_time" property="createTime"/>
@@ -15,7 +16,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,analyse_name,original_list,analyse_result,feature_num,create_user,create_time,modified_user
+		id,analyse_name,original_list,analyse_summary,analyse_state,feature_num,create_user,create_time,modified_user
 	</sql>
 
 

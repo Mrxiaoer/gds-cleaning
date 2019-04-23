@@ -3,12 +3,13 @@ package com.cloud.gds.gms.service.impl;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.cloud.dips.common.core.util.Query;
-import com.cloud.gds.gms.constant.GmsConstant;
-import com.cloud.gds.gms.entity.GovPolicyGeneral;
+import com.cloud.gds.gms.api.constant.GmsConstant;
+import com.cloud.gds.gms.api.entity.GovPolicyGeneral;
+import com.cloud.gds.gms.mapper.GovPolicyGeneralMapper;
 import com.cloud.gds.gms.service.GovPolicyGeneralService;
 import com.cloud.gds.gms.service.SortingDataService;
-import com.cloud.gds.gms.mapper.GovPolicyGeneralMapper;
-import com.cloud.gds.gms.vo.GeneralVO;
+import com.cloud.gds.gms.api.vo.GeneralVO;
+import com.cloud.gds.gms.api.vo.GovAnalyseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +78,42 @@ public class GovPolicyGeneralServiceImpl extends ServiceImpl<GovPolicyGeneralMap
 
 		return query;
 
+	}
+
+	@Override
+	public List<GovAnalyseVo> gainAll(Map<String, Object> params) {
+		if (null != params.get("title") && !"".equals(params.get("title"))) {
+			// 去除空格，并添加匹配符
+			String string = params.get("title").toString().trim();
+			String title = sortingDataService.replaceSpecialSign(string);
+			params.put("title", title);
+		}
+		if (null == params.get("title")) {
+			params.put("title", params.get("title"));
+		}
+		if (params.size() > 1) {
+			return  policyGeneralMapper.queryAll(params);
+		}else {
+			return null;
+		}
+
+	}
+
+	@Override
+	public List<Long> gainList(Map<String, Object> params) {
+		if (null != params.get("title") && !"".equals(params.get("title"))) {
+			// 去除空格，并添加匹配符
+			String string = params.get("title").toString().trim();
+			String title = sortingDataService.replaceSpecialSign(string);
+			params.put("title", title);
+		}
+		if (null == params.get("title")) {
+			params.put("title", params.get("title"));
+		}
+		if (params.size() > 1) {
+			return  policyGeneralMapper.gainList(params);
+		}else {
+			return null;
+		}
 	}
 }

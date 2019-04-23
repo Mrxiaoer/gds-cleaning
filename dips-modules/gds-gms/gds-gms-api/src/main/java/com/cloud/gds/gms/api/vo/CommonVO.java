@@ -1,4 +1,4 @@
-package com.cloud.gds.gms.vo;
+package com.cloud.gds.gms.api.vo;
 
 import lombok.Data;
 

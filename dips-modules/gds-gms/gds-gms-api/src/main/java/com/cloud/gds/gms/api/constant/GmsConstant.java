@@ -1,4 +1,4 @@
-package com.cloud.gds.gms.constant;
+package com.cloud.gds.gms.api.constant;
 
 /**
  * 国策政策分析全局变量

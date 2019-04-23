@@ -2,6 +2,7 @@ package com.cloud.gds.gmsanalyse.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,7 +34,7 @@ public class PolicyAnalyse extends Model<PolicyAnalyse> implements Serializable 
 	/**
 	 * 分析政策的id集
 	 */
-	private String originalList;
+//	private String originalList;
 	/**
 	 * 分析结果慨要
 	 */
@@ -43,17 +44,24 @@ public class PolicyAnalyse extends Model<PolicyAnalyse> implements Serializable 
 	 */
 	private Integer featureNum;
 	/**
+	 * 分析状态（1.正在分析 2.完成快速分析 3.分析出错）
+	 */
+	private Integer analyseState;
+	/**
 	 * 创建用户
 	 */
-	private Long createUser;
+	@JsonIgnore
+	private Integer createUser;
 	/**
 	 * 创建时间
 	 */
+	@JsonIgnore
 	private LocalDateTime createTime;
 	/**
 	 * 更新用户
 	 */
-	private Long modifiedUser;
+	@JsonIgnore
+	private Integer modifiedUser;
 
 	@Override
 	protected Serializable pkVal() {

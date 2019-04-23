@@ -4,32 +4,31 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
- * 政策分析
+ * 政策解构DTO
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com
- * @Date : 2019-04-03
+ * @Date : 2019-04-19
  */
 @Data
-public class GovPolicyDto implements Serializable {
+public class PolicyDeconstructionDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 分析名称
+	 * 政策id
 	 */
-	private String analyseName;
-	/**
-	 * 分析政策的id集
-	 */
-	private Map<String,Object> params;
-	/**
-	 * 特征数
-	 */
-	private Integer featureNum;
+	private Long policyId;
 
+	/**
+	 * 政策标题
+	 */
+	private String policyTitle;
+	/**
+	 * 解构完的动词
+	 */
+	private List<String> verbsList;
 
 }
