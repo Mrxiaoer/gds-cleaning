@@ -39,4 +39,12 @@ public interface PolicyAnalyseService extends IService<PolicyAnalyse> {
 	 * @return
 	 */
 	boolean individuationUpdate(PolicyAnalyse policyAnalyse);
+
+	/**
+	 * 根据id删除分析数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean queryDelete(Long id);
 }

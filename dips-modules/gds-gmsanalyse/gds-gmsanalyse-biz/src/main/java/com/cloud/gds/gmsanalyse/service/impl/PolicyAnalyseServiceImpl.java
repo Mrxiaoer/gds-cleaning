@@ -27,8 +27,12 @@ import java.util.Map;
 @Service
 public class PolicyAnalyseServiceImpl extends ServiceImpl<PolicyAnalyseMapper, PolicyAnalyse> implements PolicyAnalyseService {
 
+	private final PolicyAnalyseMapper policyAnalyseMapper;
+
 	@Autowired
-	private PolicyAnalyseMapper policyAnalyseMapper;
+	public PolicyAnalyseServiceImpl(PolicyAnalyseMapper policyAnalyseMapper) {
+		this.policyAnalyseMapper = policyAnalyseMapper;
+	}
 
 	@Override
 	public Page queryPage(Map<String, Object> params) {
@@ -65,6 +69,11 @@ public class PolicyAnalyseServiceImpl extends ServiceImpl<PolicyAnalyseMapper, P
 	@Override
 	public boolean individuationUpdate(PolicyAnalyse policyAnalyse) {
 		return SqlHelper.retBool(policyAnalyseMapper.updateById(policyAnalyse));
+	}
+
+	@Override
+	public boolean queryDelete(Long id) {
+		return policyAnalyseMapper.queryDelete(id);
 	}
 
 }

@@ -323,5 +323,14 @@
 		WHERE gtr.node = 'gov_general_policy' AND gtr.relation_id = #{id} AND gtr.type_id = rt.id
 	</select>
 
+	<select id="queryByInfos" resultMap="dataFieldMap">
+		SELECT id,title,text
+		FROM gov_policy_general
+		WHERE id IN
+		<foreach collection="ids" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
 
 </mapper>

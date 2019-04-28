@@ -25,4 +25,12 @@ public interface PolicyDeconstructionService extends IService<PolicyDeconstructi
 	 * @throws ClassNotFoundException
 	 */
 	DeconstructionListBo gainMaterials(List<Long> ids) throws IOException, ClassNotFoundException;
+
+	/**
+	 * 根据ids查询解构表中不存在的id
+	 *
+	 * @param ids
+	 * @return
+	 */
+	List<Long> deconstructionNonExistent(List<Long> ids);
 }

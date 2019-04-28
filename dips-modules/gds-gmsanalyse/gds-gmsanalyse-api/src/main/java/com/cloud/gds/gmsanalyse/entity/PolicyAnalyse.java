@@ -32,10 +32,6 @@ public class PolicyAnalyse extends Model<PolicyAnalyse> implements Serializable 
 	 */
 	private String analyseName;
 	/**
-	 * 分析政策的id集
-	 */
-//	private String originalList;
-	/**
 	 * 分析结果慨要
 	 */
 	private String analyseSummary;
@@ -43,6 +39,10 @@ public class PolicyAnalyse extends Model<PolicyAnalyse> implements Serializable 
 	 * 特征数
 	 */
 	private Integer featureNum;
+	/**
+	 * 分析政策数
+	 */
+	private Integer policyNum;
 	/**
 	 * 分析状态（1.正在分析 2.完成快速分析 3.分析出错）
 	 */
@@ -53,15 +53,25 @@ public class PolicyAnalyse extends Model<PolicyAnalyse> implements Serializable 
 	@JsonIgnore
 	private Integer createUser;
 	/**
+	 * 更新用户
+	 */
+	@JsonIgnore
+	private Integer modifiedUser;
+	/**
 	 * 创建时间
 	 */
 	@JsonIgnore
 	private LocalDateTime createTime;
 	/**
-	 * 更新用户
+	 * 更新时间
 	 */
 	@JsonIgnore
-	private Integer modifiedUser;
+	private LocalDateTime modifiedTime;
+	/**
+	 * 更新时间
+	 */
+	@JsonIgnore
+	private LocalDateTime isDeleted;
 
 	@Override
 	protected Serializable pkVal() {

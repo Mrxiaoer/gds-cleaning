@@ -12,10 +12,10 @@ public class Child {
 	/**
 	 * 名称
 	 */
-	private String name;
+	private String featureName;
 	/**
 	 * 次数
 	 */
-	private Integer sum;
+	private Integer featureNum;
 
 }

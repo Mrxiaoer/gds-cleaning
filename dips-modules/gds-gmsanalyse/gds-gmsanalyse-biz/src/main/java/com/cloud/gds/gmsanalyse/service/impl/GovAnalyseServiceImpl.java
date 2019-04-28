@@ -1,24 +1,23 @@
 package com.cloud.gds.gmsanalyse.service.impl;
 
-import com.alibaba.fastjson.JSON;
+import com.cloud.gds.gms.api.entity.GovPolicyGeneral;
 import com.cloud.gds.gms.api.fegin.RemoteGovPolicyGeneralService;
-import com.cloud.gds.gmsanalyse.constant.AnalyseConstant;
 import com.cloud.gds.gmsanalyse.bo.DeconstructionListBo;
+import com.cloud.gds.gmsanalyse.constant.AnalyseConstant;
 import com.cloud.gds.gmsanalyse.dto.GovPolicyDto;
 import com.cloud.gds.gmsanalyse.entity.PolicyAnalyse;
 import com.cloud.gds.gmsanalyse.entity.PolicyAnalyseFeature;
+import com.cloud.gds.gmsanalyse.entity.PolicyDeconstruction;
 import com.cloud.gds.gmsanalyse.service.*;
+import com.cloud.gds.gmsanalyse.utils.SerializeUtils;
 import com.cloud.gds.gmsanalyse.vo.Analyse;
 import com.cloud.gds.gmsanalyse.vo.Child;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author : yaonuan
@@ -30,17 +29,19 @@ public class GovAnalyseServiceImpl implements GovAnalyseService {
 
 	private final PolicyAnalyseService policyAnalyseService;
 	private final PolicyAnalyseFeatureService policyAnalyseFeatureService;
+	private final PolicyDeconstructionService policyDeconstructionService;
+	private final AnalyseDeconstruction analyseDeconstruction;
 	private final AnalyseAlgorithmService analyseAlgorithmService;
 	private final RemoteGovPolicyGeneralService remoteGovPolicyGeneralService;
-	private final PolicyDeconstructionService policyDeconstructionService;
 
 	@Autowired
-	public GovAnalyseServiceImpl(PolicyAnalyseService policyAnalyseService, PolicyAnalyseFeatureService policyAnalyseFeatureService, AnalyseAlgorithmService analyseAlgorithmService, RemoteGovPolicyGeneralService remoteGovPolicyGeneralService, PolicyDeconstructionService policyDeconstructionService) {
+	public GovAnalyseServiceImpl(PolicyAnalyseService policyAnalyseService, PolicyAnalyseFeatureService policyAnalyseFeatureService, RemoteGovPolicyGeneralService remoteGovPolicyGeneralService, PolicyDeconstructionService policyDeconstructionService, AnalyseDeconstruction analyseDeconstruction, AnalyseAlgorithmService analyseAlgorithmService) {
 		this.policyAnalyseService = policyAnalyseService;
 		this.policyAnalyseFeatureService = policyAnalyseFeatureService;
-		this.analyseAlgorithmService = analyseAlgorithmService;
 		this.remoteGovPolicyGeneralService = remoteGovPolicyGeneralService;
 		this.policyDeconstructionService = policyDeconstructionService;
+		this.analyseDeconstruction = analyseDeconstruction;
+		this.analyseAlgorithmService = analyseAlgorithmService;
 	}
 
 	@Override
@@ -49,18 +50,44 @@ public class GovAnalyseServiceImpl implements GovAnalyseService {
 		PolicyAnalyse policyAnalyse = policyAnalyseService.save(govPolicyDto);
 		// 调用gms模块获取查询条件的政策数据
 		List<Long> ids = remoteGovPolicyGeneralService.gainList(govPolicyDto.getParams());
+		// 查询未解构的数据
+		List<Long> longList = policyDeconstructionService.deconstructionNonExistent(ids);
+		// 查询需解构的数据
+		if (longList.size() > 0) {
+			List<GovPolicyGeneral> generals = remoteGovPolicyGeneralService.selectByIds(longList);
+			//	这里方法需要修改 TODO 2019-4-25 9:19:16
+			for (GovPolicyGeneral general : generals) {
+				byte[] bytes = new byte[0];
+				ArrayList<String> list = analyseDeconstruction.paragraph_analyse(general.getText());
+				try {
+					bytes = SerializeUtils.serializeObject(list);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				PolicyDeconstruction deconstruction = new PolicyDeconstruction();
+				deconstruction.setVerbs(bytes);
+				deconstruction.setPolicyId(Long.valueOf(general.getId()));
+				deconstruction.setPolicyTitle(general.getTitle());
+				policyDeconstructionService.insert(deconstruction);
+			}
+		}
 		// 获取需分析的东西 2个数组+1个map
 		DeconstructionListBo bo = policyDeconstructionService.gainMaterials(ids);
-		// TODO 2019-4-22 10:18:34 政策分析
-//		String result = analyseAlgorithmService.govAnalysis(ids);
-		String result = null;
+		// 政策分析
+		Analyse wonk = analyseAlgorithmService.policyWonk(bo, govPolicyDto.getFeatureNum());
+//		System.out.println(wonk);
+
 		// 分析状态进行处理
 		PolicyAnalyse analyse = new PolicyAnalyse();
 		analyse.setId(policyAnalyse.getId());
-		if (result != null) {
+		if (wonk != null) {
 			// 分析成功
-			updatePolicyAndFeature(policyAnalyse.getId(), result);
-			analyse.setAnalyseState(AnalyseConstant.TRUE);
+			boolean b = updatePolicyAndFeature(policyAnalyse.getId(), wonk, ids.size());
+			if (b) {
+				analyse.setAnalyseState(AnalyseConstant.TRUE);
+			} else {
+				analyse.setAnalyseState(AnalyseConstant.TWO);
+			}
 		} else {
 			// 分析失败
 			analyse.setAnalyseState(AnalyseConstant.TWO);
@@ -69,34 +96,40 @@ public class GovAnalyseServiceImpl implements GovAnalyseService {
 		policyAnalyseService.updateById(analyse);
 	}
 
-	private boolean updatePolicyAndFeature(Long analyseId, String result) {
-		Map<String, Object> map = spellData(analyseId, result);
+	/**
+	 * 更新特征表与政策总结词
+	 * @param analyseId 分析池中id
+	 * @param wonk      分析政策的结果
+	 * @param total     分析政策数
+	 * @return
+	 */
+	private boolean updatePolicyAndFeature(Long analyseId, Analyse wonk, Integer total) {
 		// 先更特征表
-		List<PolicyAnalyseFeature> list = JSON.parseArray(String.valueOf(map.get("list")), PolicyAnalyseFeature.class);
+		List<PolicyAnalyseFeature> list = spellFeatureData(analyseId, wonk);
 		// 再更新分析表
 		PolicyAnalyse updatePolicy = new PolicyAnalyse();
 		updatePolicy.setId(analyseId);
-		updatePolicy.setAnalyseState(AnalyseConstant.TRUE);
-		updatePolicy.setAnalyseSummary(String.valueOf(map.get("summary")));
+		updatePolicy.setAnalyseSummary(wonk.getSummary());
+		updatePolicy.setPolicyNum(total);
 		return policyAnalyseFeatureService.batchInsert(list) && policyAnalyseService.updateById(updatePolicy);
 	}
 
-	private Map<String, Object> spellData(Long id, String result) {
-		Map<String, Object> map = new HashMap<>();
+	/**
+	 * 拼装特征实体集
+	 *
+	 * @param analyseId 分析id
+	 * @param wonk      分析结果
+	 * @return
+	 */
+	private List<PolicyAnalyseFeature> spellFeatureData(Long analyseId, Analyse wonk) {
 		List<PolicyAnalyseFeature> list = new ArrayList<>();
-
-		Gson gson = new Gson();
-		Analyse analyse = gson.fromJson(result, Analyse.class);
-
-		for (Child child : analyse.getList()) {
+		for (Child child : wonk.getList()) {
 			PolicyAnalyseFeature feature = new PolicyAnalyseFeature();
-			feature.setFeatureNum(child.getSum());
-			feature.setFeatureName(child.getName());
-			feature.setAnalyseId(id);
+			feature.setFeatureNum(child.getFeatureNum());
+			feature.setFeatureName(child.getFeatureName());
+			feature.setAnalyseId(analyseId);
 			list.add(feature);
 		}
-		map.put("summary", analyse.getSummary());
-		map.put("list", list);
-		return map;
+		return list;
 	}
 }

@@ -88,9 +88,9 @@ public class GovPolicyGeneralServiceImpl extends ServiceImpl<GovPolicyGeneralMap
 			String title = sortingDataService.replaceSpecialSign(string);
 			params.put("title", title);
 		}
-		if (null == params.get("title")) {
-			params.put("title", params.get("title"));
-		}
+//		if (null == params.get("title")) {
+//			params.put("title", params.get("title"));
+//		}
 		if (params.size() > 1) {
 			return  policyGeneralMapper.queryAll(params);
 		}else {
@@ -115,5 +115,10 @@ public class GovPolicyGeneralServiceImpl extends ServiceImpl<GovPolicyGeneralMap
 		}else {
 			return null;
 		}
+	}
+
+	@Override
+	public List<GovPolicyGeneral> queryByInfos(List<Long> ids){
+		return policyGeneralMapper.queryByInfos(ids);
 	}
 }

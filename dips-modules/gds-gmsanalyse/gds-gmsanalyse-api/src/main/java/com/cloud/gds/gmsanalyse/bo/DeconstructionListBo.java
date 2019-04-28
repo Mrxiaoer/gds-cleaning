@@ -25,5 +25,5 @@ public class DeconstructionListBo {
 	/**
 	 * 政策id与政策的title关系
 	 */
-	private Map<String,String> map;
+	private Map<Long,String> map;
 }

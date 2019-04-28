@@ -45,4 +45,7 @@ public interface RemoteGovPolicyGeneralService {
 	 */
 	@GetMapping("/info")
 	GovPolicyGeneral info(@RequestParam("id") Long id);
+
+	@PostMapping("/selectByIds")
+	 List<GovPolicyGeneral> selectByIds(@RequestBody List<Long> ids);
 }

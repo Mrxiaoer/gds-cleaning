@@ -1,6 +1,7 @@
 package com.cloud.gds.gmsanalyse.service.impl;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.cloud.gds.gms.api.fegin.RemoteGovPolicyGeneralService;
 import com.cloud.gds.gmsanalyse.bo.DeconstructionListBo;
 import com.cloud.gds.gmsanalyse.dto.PolicyDeconstructionDto;
 import com.cloud.gds.gmsanalyse.entity.PolicyDeconstruction;
@@ -12,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 政策解构
@@ -40,23 +38,23 @@ public class PolicyDeconstructionServiceImpl extends ServiceImpl<PolicyDeconstru
 		List<PolicyDeconstruction> deconstructions = deconstructionMapper.selectByPolicyIds(ids);
 		List<PolicyDeconstructionDto> deconstructionDtos = new ArrayList<>();
 		// 序列化信息反序列化
-		for (PolicyDeconstruction deconstruction : deconstructions){
+		for (PolicyDeconstruction deconstruction : deconstructions) {
 
 			PolicyDeconstructionDto deconstructionDto = new PolicyDeconstructionDto();
-			BeanUtils.copyProperties(deconstruction,deconstructionDto );
+			BeanUtils.copyProperties(deconstruction, deconstructionDto);
 			deconstructionDto.setVerbsList((List<String>) SerializeUtils.deserializeObject(deconstruction.getVerbs()));
 			deconstructionDtos.add(deconstructionDto);
 		}
 		List<String> one = new ArrayList<>();
 		List<Long> two = new ArrayList<>();
-		Map<String,String> map = new HashMap<>();
+		Map<Long, String> map = new HashMap<>();
 		// 获取政策动词
-		for (PolicyDeconstructionDto dto : deconstructionDtos){
-			map.put(String.valueOf(dto.getPolicyId()),dto.getPolicyTitle() );
-			for (String string : dto.getVerbsList()){
+		for (PolicyDeconstructionDto dto : deconstructionDtos) {
+			map.put(dto.getPolicyId(), dto.getPolicyTitle());
+			for (String string : dto.getVerbsList()) {
 				two.add(dto.getPolicyId());
 				String substring = string.substring(1, string.length() - 1);
-				String s = substring.split(",")[1];
+				String s = substring.split(",")[0]+substring.split(",")[1];
 				one.add(s);
 			}
 		}
@@ -67,5 +65,21 @@ public class PolicyDeconstructionServiceImpl extends ServiceImpl<PolicyDeconstru
 		bo.setMap(map);
 		return bo;
 	}
+
+	@Override
+	public List<Long> deconstructionNonExistent(List<Long> ids) {
+		//组装插入的list 转变成Set
+		Set<Long> one = new HashSet<>();
+		one.addAll(ids);
+		List<Long> list = deconstructionMapper.selectIdByPolicyIds(ids);
+		Set<Long> two = new HashSet<>();
+		two.addAll(list);
+		one.removeAll(two);
+		// 查询未解构的数据 one是未解构政策
+		List<Long> result = new ArrayList<>();
+		result.addAll(one);
+		return result;
+	}
+
 
 }

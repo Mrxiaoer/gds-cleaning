@@ -39,4 +39,10 @@ public class RemoteGovPolicyGeneralServiceFallbackImpl implements RemoteGovPolic
 		log.error("feign 获取数据失败", cause);
 		return null;
 	}
+
+	@Override
+	public List<GovPolicyGeneral> selectByIds(List<Long> ids) {
+		log.error("feign 获取数据失败", cause);
+		return null;
+	}
 }

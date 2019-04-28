@@ -6,6 +6,8 @@ import com.cloud.gds.gms.api.entity.GovPolicyGeneral;
 import com.cloud.gds.gms.api.vo.GeneralVO;
 import com.cloud.gds.gms.api.vo.GovAnalyseVo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Map;
@@ -38,4 +40,6 @@ public interface GovPolicyGeneralMapper extends BaseMapper<GovPolicyGeneral> {
 	 * @return
 	 */
 	List<Long> gainList(Map<String, Object> params);
+
+	List<GovPolicyGeneral> queryByInfos(@Param("ids") List<Long> ids);
 }

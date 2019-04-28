@@ -42,4 +42,5 @@ public interface GovPolicyGeneralService extends IService<GovPolicyGeneral> {
 	 */
 	List<Long> gainList(Map<String, Object> params);
 
+	List<GovPolicyGeneral> queryByInfos(List<Long> ids);
 }

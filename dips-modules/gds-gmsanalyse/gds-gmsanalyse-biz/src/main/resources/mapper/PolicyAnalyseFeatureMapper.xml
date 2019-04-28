@@ -15,11 +15,10 @@
 	</sql>
 
 	<insert id="batchInsert">
-		insert into gov_policy_general (<include refid="Base_Column_List"/>)
+		insert into policy_analyse_feature (<include refid="Base_Column_List"/>)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(null
-			,#{item.analyseId},#{item.featureName},#{item.featureNum})
+			(null,#{item.analyseId},#{item.featureName},#{item.featureNum})
 		</foreach>
 	</insert>
 

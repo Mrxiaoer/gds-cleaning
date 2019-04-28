@@ -15,7 +15,7 @@
 
 	<select id="selectByPolicyId" resultMap="BaseMap">
 		SELECT
-		<include refid="Base_Column_List" />
+		<include refid="Base_Column_List"/>
 		FROM policy_deconstruction
 		WHERE policy_id = #{policyId}
 	</select>
@@ -27,6 +27,14 @@
 		WHERE policy_id IN
 		<foreach item="id" collection="policyIds" open="("
 				 separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<!-- 根据用户给定的ids 查询存在的id-->
+	<select id="selectIdByPolicyIds" resultType="java.lang.Long">
+		SELECT policy_id FROM policy_deconstruction WHERE policy_id IN
+		<foreach collection="ids" item="id" open="(" separator="," close=")">
 			#{id}
 		</foreach>
 	</select>

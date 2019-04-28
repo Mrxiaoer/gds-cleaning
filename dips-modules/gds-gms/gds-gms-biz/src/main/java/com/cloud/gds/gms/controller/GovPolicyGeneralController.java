@@ -72,4 +72,10 @@ public class GovPolicyGeneralController {
 	}
 
 
+	@PostMapping("/selectByIds")
+	public List<GovPolicyGeneral> selectByIds(@RequestBody List<Long> ids) {
+		return govPolicyGeneralService.queryByInfos(ids);
+	}
+
+
 }

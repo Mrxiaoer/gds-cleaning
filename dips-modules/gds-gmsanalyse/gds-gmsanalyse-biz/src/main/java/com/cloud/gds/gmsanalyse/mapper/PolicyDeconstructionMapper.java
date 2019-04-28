@@ -33,4 +33,12 @@ public interface PolicyDeconstructionMapper extends BaseMapper<PolicyDeconstruct
 	 */
 	List<PolicyDeconstruction> selectByPolicyIds(@Param("policyIds") List<Long> policyIds);
 
+	/**
+	 * 根据ids查询存在的id
+	 *
+	 * @param ids
+	 * @return
+	 */
+	List<Long> selectIdByPolicyIds(@Param("ids") List<Long> ids);
+
 }

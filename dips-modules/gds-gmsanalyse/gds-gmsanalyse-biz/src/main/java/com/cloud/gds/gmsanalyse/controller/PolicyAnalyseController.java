@@ -58,9 +58,21 @@ public class PolicyAnalyseController {
 	 * @param policyAnalyse
 	 * @return
 	 */
-	@PostMapping("/update")
+	@PutMapping("/update")
 	public R update(@RequestBody PolicyAnalyse policyAnalyse) {
 		return new R<>(policyAnalyseService.individuationUpdate(policyAnalyse));
+	}
+
+	/**
+	 * 删除政策分析数据
+	 *
+	 * @param id
+	 * @return
+	 */
+	@DeleteMapping("/delete/{id}")
+	@ApiOperation(value = "单删", notes = "根据清洗池主键删除")
+	public R delete(@PathVariable("id") Long id) {
+		return new R<>(policyAnalyseService.queryDelete(id));
 	}
 
 }
