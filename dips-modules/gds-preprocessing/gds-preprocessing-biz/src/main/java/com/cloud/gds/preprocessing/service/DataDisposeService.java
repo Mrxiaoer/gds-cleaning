@@ -26,4 +26,19 @@ public interface DataDisposeService {
 	 */
 	boolean dataMigrationSurfaceExplain(Long examineUserId);
 
+	/**
+	 * 数据迁移 申报
+	 *
+	 * @param examineUserId
+	 * @return
+	 */
+	boolean dataMigrationSurfaceDeclare(Long examineUserId);
+
+	/**
+	 * 数据迁移 资讯
+	 *
+	 * @param examineUserId
+	 * @return
+	 */
+	boolean dataMigrationSurfaceInformation(Long examineUserId);
 }

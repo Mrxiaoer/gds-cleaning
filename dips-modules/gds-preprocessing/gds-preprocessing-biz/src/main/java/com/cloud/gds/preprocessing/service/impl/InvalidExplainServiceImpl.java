@@ -3,7 +3,6 @@ package com.cloud.gds.preprocessing.service.impl;
 import com.cloud.gds.preprocessing.entity.BasePolicy;
 import com.cloud.gds.preprocessing.mapper.GovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.mapper.InvalidExplainMapper;
-import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.service.InvalidExplainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,17 +22,14 @@ import java.util.Set;
 @Service
 public class InvalidExplainServiceImpl implements InvalidExplainService {
 
-	@Autowired
-	private ScrapyGovPolicyExplainMapper scrapyExplainMapper;
 
-	@Autowired
-	private GovPolicyExplainMapper govPolicyExplainMapper;
-
+	private final GovPolicyExplainMapper govPolicyExplainMapper;
 	private final InvalidExplainMapper explainMapper;
 
 	@Autowired
-	public InvalidExplainServiceImpl(InvalidExplainMapper explainMapper) {
+	public InvalidExplainServiceImpl(InvalidExplainMapper explainMapper, GovPolicyExplainMapper govPolicyExplainMapper) {
 		this.explainMapper = explainMapper;
+		this.govPolicyExplainMapper = govPolicyExplainMapper;
 	}
 
 	@Override
@@ -72,7 +68,7 @@ public class InvalidExplainServiceImpl implements InvalidExplainService {
 	@Override
 	public boolean cleanRepeatScrapy() {
 		// 爬取的政策数据
-		List<BasePolicy> scrapyPolicy = scrapyExplainMapper.scrapyExplainBase();
+		List<BasePolicy> scrapyPolicy = explainMapper.scrapyExplainBase();
 		// 正式表中的政策数据
 		List<BasePolicy> realPolicy = govPolicyExplainMapper.realPolicyBase();
 		Set<Object> scrapySet = basePolicy2Set(scrapyPolicy);
@@ -84,7 +80,6 @@ public class InvalidExplainServiceImpl implements InvalidExplainService {
 
 		if (ids.size() > 0) {
 			return explainMapper.updateScrapyIsDeleted(ids);
-//			return false;
 		} else {
 			return true;
 		}

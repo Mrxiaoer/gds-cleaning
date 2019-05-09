@@ -1,10 +1,7 @@
 package com.cloud.gds.preprocessing.service.impl;
 
 import com.cloud.gds.preprocessing.entity.GovPolicyGeneral;
-import com.cloud.gds.preprocessing.mapper.GovPolicyExplainMapper;
-import com.cloud.gds.preprocessing.mapper.GovPolicyGeneralMapper;
-import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper;
-import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyGeneralMapper;
+import com.cloud.gds.preprocessing.mapper.*;
 import com.cloud.gds.preprocessing.service.TransactionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,21 +21,25 @@ import java.util.List;
 @Service
 public class TransactionalServiceImpl implements TransactionalService {
 
-	private final ScrapyGovPolicyGeneralMapper scrapyMapper;
-
+	private final InvalidDeclareMapper invalidDeclareMapper;
+	private final GovPolicyDeclareMapper govPolicyDeclareMapper;
+	private final InvalidExplainMapper invalidExplain;
+	private final InvalidInformationMapper invalidInformation;
+	private final GovPolicyInformationMapper govPolicyInformationMapper;
 	private final GovPolicyGeneralMapper govMapper;
+	private final GovPolicyExplainMapper explainMapper;
+	@Autowired
+	private InvalidPolicyMapper invalidPolicyMapper;
 
 	@Autowired
-	private ScrapyGovPolicyExplainMapper scrapyExplainMapper;
-
-	@Autowired
-	private GovPolicyExplainMapper explainMapper;
-
-
-	@Autowired
-	public TransactionalServiceImpl(ScrapyGovPolicyGeneralMapper scrapyMapper, GovPolicyGeneralMapper govMapper) {
-		this.scrapyMapper = scrapyMapper;
+	public TransactionalServiceImpl(GovPolicyGeneralMapper govMapper, GovPolicyExplainMapper explainMapper, InvalidInformationMapper invalidInformation, GovPolicyInformationMapper govPolicyInformationMapper, InvalidExplainMapper invalidExplain, InvalidDeclareMapper invalidDeclareMapper, GovPolicyDeclareMapper govPolicyDeclareMapper) {
 		this.govMapper = govMapper;
+		this.explainMapper = explainMapper;
+		this.invalidInformation = invalidInformation;
+		this.govPolicyInformationMapper = govPolicyInformationMapper;
+		this.invalidExplain = invalidExplain;
+		this.invalidDeclareMapper = invalidDeclareMapper;
+		this.govPolicyDeclareMapper = govPolicyDeclareMapper;
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class TransactionalServiceImpl implements TransactionalService {
 			ids.add(policyGeneral.getScrapyId());
 		}
 		govMapper.insertBatch(list);
-		scrapyMapper.updateByIdsAndIsDeleted(2L, ids);
+		invalidPolicyMapper.updateByIdsAndIsDeleted(2L, ids);
 	}
 
 	@Override
@@ -60,6 +61,28 @@ public class TransactionalServiceImpl implements TransactionalService {
 			ids.add(policyGeneral.getScrapyId());
 		}
 		explainMapper.insertBatch(list);
-		scrapyExplainMapper.updateByIdsAndIsDeleted(7L, ids);
+		invalidExplain.updateByIdsAndIsDeleted(7L, ids);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void bathCutSurfaceInformation(List<GovPolicyGeneral> list) {
+		List<Long> ids = new ArrayList<>();
+		for (GovPolicyGeneral policyGeneral : list) {
+			ids.add(policyGeneral.getScrapyId());
+		}
+		govPolicyInformationMapper.insertBatch(list);
+		invalidInformation.updateByIdsAndIsDeleted(7L, ids);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void bathCutSurfaceDeclare(List<GovPolicyGeneral> list) {
+		List<Long> ids = new ArrayList<>();
+		for (GovPolicyGeneral policyGeneral : list) {
+			ids.add(policyGeneral.getScrapyId());
+		}
+		govPolicyDeclareMapper.insertBatch(list);
+		invalidDeclareMapper.updateByIdsAndIsDeleted(7L, ids);
 	}
 }

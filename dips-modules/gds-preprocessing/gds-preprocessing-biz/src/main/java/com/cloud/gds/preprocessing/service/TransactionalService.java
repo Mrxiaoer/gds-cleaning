@@ -16,9 +16,23 @@ public interface TransactionalService {
 	void bathCutSurface(List<GovPolicyGeneral> list);
 
 	/**
-	 * 事务迁移数据 申报
+	 * 事务迁移数据 解读
 	 *
 	 * @param list
 	 */
 	void bathCutSurfaceExplain(List<GovPolicyGeneral> list);
+
+	/**
+	 * 事务迁移数据 资讯
+	 *
+	 * @param list
+	 */
+	void bathCutSurfaceInformation(List<GovPolicyGeneral> list);
+
+	/**
+	 * 事务迁移数据 申报
+	 *
+	 * @param list
+	 */
+	void bathCutSurfaceDeclare(List<GovPolicyGeneral> list);
 }

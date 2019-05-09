@@ -85,6 +85,10 @@ public class GovPolicyGeneral extends Model<GovPolicyGeneral> {
 	 * 审核状态
 	 */
 	private Integer examineStatus;
+	/**
+	 * 附件 <资讯使用>
+	 */
+	private String file;
 
 	@Override
 	protected Serializable pkVal() {

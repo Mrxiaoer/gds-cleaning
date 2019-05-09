@@ -1,6 +1,7 @@
 package com.cloud.gds.preprocessing.mapper;
 
 import com.cloud.gds.preprocessing.entity.BasePolicy;
+import com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -76,11 +77,19 @@ public interface InvalidPolicyMapper {
 	boolean updateRealIsDeleted(@Param("ids") List<Long> ids);
 
 	/**
-	 * 根据ids更新真实表中的数据状态
+	 * 获取爬虫政策表中最新爬虫数据1w
 	 *
-	 * @param ids
 	 * @return
 	 */
-//	boolean updateRealIsDeleted(@Param("ids") List<Long> ids);
+	List<ScrapyGovPolicyGeneral> ScrapyPolicyGeneral();
+
+	/**
+	 * 根据ids更新爬虫表的状态值
+	 *
+	 * @param state 状态值
+	 * @param ids   需要更新的ids
+	 * @return
+	 */
+	boolean updateByIdsAndIsDeleted(@Param("state") Long state, @Param("ids") List<Long> ids);
 
 }

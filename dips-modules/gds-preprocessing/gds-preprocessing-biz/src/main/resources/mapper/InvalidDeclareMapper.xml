@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.cloud.gds.preprocessing.mapper.InvalidPolicyMapper">
+<mapper namespace="com.cloud.gds.preprocessing.mapper.InvalidDeclareMapper">
+
+	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.BasePolicy">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+	</resultMap>
 
 	<resultMap id="ScrapyBaseMap" type="com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral">
 		<result column="id" property="id"/>
@@ -18,15 +23,15 @@
 		<result column="region" property="region"/>
 		<result column="creator_id" property="creatorId"/>
 		<result column="create_time" property="createTime"/>
+		<result column="file" property="file"/>
 	</resultMap>
 
-	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.BasePolicy">
-		<result column="id" property="id"/>
-		<result column="title" property="title"/>
-	</resultMap>
+	<sql id="Base_Column_List">
+		id,title,source,reference,issue,style,level,publish_time,text,attachment,url,region,creator_id
+	</sql>
 
 	<select id="gainIssueId" resultType="java.lang.Long">
-		SELECT id FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength}) AND attachment is NULL
+		SELECT id FROM scrapy_gov_policy_declare WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength}) AND attachment is NULL
 	</select>
 
 	<select id="gainIdenticalPolicy" resultType="com.cloud.gds.preprocessing.entity.BasePolicy">
@@ -34,7 +39,7 @@
 			id,
 			title
 		FROM
-			scrapy_gov_policy_general
+			scrapy_gov_policy_declare
 		WHERE
 			title IN (
 				SELECT
@@ -45,7 +50,7 @@
 							title,
 							COUNT(title) AS titlenum
 						FROM
-							scrapy_gov_policy_general
+							scrapy_gov_policy_declare
 						WHERE
 							is_deleted = 0
 						GROUP BY
@@ -57,51 +62,29 @@
 			ORDER BY id DESC
 	</select>
 
-	<select id="gainRealPolicy" resultMap="BaseMap">
-		SELECT id,title FROM gov_policy_general WHERE is_deleted = 0
+	<select id="scrapyInformationBase" resultMap="BaseMap">
+		SELECT id,title FROM scrapy_gov_policy_declare WHERE is_deleted = 0
 	</select>
-
-	<select id="gainRealPolicyNull2158" resultMap="BaseMap">
-		SELECT id,title FROM gov_policy_general WHERE is_deleted = 0 and examine_user_id != 2158
-	</select>
-
-	<select id="gainRealPolicyIs2158" resultMap="BaseMap">
-		SELECT id,title FROM gov_policy_general WHERE is_deleted = 0 and examine_user_id = 2158
-	</select>
-
-	<select id="gainScrapyPolicy" resultMap="BaseMap">
-		SELECT id,title FROM scrapy_gov_policy_general WHERE is_deleted = 0
-	</select>
-
 
 	<update id="updateScrapyIsDeleted">
-		UPDATE scrapy_gov_policy_general SET is_deleted = 1 where id IN
+		UPDATE scrapy_gov_policy_declare SET is_deleted = 4 where id IN
 		<foreach item="id" collection="ids" open="(" separator="," close=")">
 			#{id}
 		</foreach>
 	</update>
 
-	<update id="updateRealIsDeleted">
-		UPDATE gov_policy_general SET is_deleted = 1 ,examine_status = 7 where id IN
-		<foreach item="id" collection="ids" open="(" separator="," close=")">
-			#{id}
-		</foreach>
-	</update>
-
-	<select id="ScrapyPolicyGeneral" resultMap="ScrapyBaseMap">
+	<select id="invalidInformationPolicy" resultMap="ScrapyBaseMap">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM scrapy_gov_policy_general WHERE is_deleted = 0
-		ORDER BY id ASC
-		LIMIT 10000
+		FROM scrapy_gov_policy_declare WHERE is_deleted = 0
+		limit 10000
 	</select>
 
 	<update id="updateByIdsAndIsDeleted">
-		UPDATE scrapy_gov_policy_general SET is_deleted = #{state} where id IN
+		UPDATE scrapy_gov_policy_declare SET is_deleted = #{state} where id IN
 		<foreach item="id" collection="ids" open="(" separator="," close=")">
 			#{id}
 		</foreach>
 	</update>
-
 
 </mapper>

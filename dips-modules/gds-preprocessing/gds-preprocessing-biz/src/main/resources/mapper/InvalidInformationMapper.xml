@@ -8,6 +8,28 @@
 		<result column="title" property="title"/>
 	</resultMap>
 
+	<resultMap id="ScrapyBaseMap" type="com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="source" property="source"/>
+		<result column="reference" property="reference"/>
+		<result column="issue" property="issue"/>
+		<result column="style" property="style"/>
+		<result column="level" property="level"/>
+		<result column="publish_time" property="publishTime"/>
+		<result column="text" property="text"/>
+		<result column="attachment" property="attachment"/>
+		<result column="url" property="url"/>
+		<result column="region" property="region"/>
+		<result column="creator_id" property="creatorId"/>
+		<result column="create_time" property="createTime"/>
+		<result column="file" property="file"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,title,source,publish_time,text,url,region,creator_id,file
+	</sql>
+
 	<select id="gainIssueId" resultType="java.lang.Long">
 		SELECT id FROM scrapy_gov_information WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength}) AND file is NULL
 	</select>
@@ -41,11 +63,25 @@
 	</select>
 
 	<select id="scrapyInformationBase" resultMap="BaseMap">
-
+		SELECT id,title FROM scrapy_gov_information WHERE is_deleted = 0
 	</select>
 
 	<update id="updateScrapyIsDeleted">
 		UPDATE scrapy_gov_information SET is_deleted = 4 where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<select id="invalidInformationPolicy" resultMap="ScrapyBaseMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM scrapy_gov_information WHERE is_deleted = 0
+		limit 10000
+	</select>
+
+	<update id="updateByIdsAndIsDeleted">
+		UPDATE scrapy_gov_information SET is_deleted = #{state} where id IN
 		<foreach item="id" collection="ids" open="(" separator="," close=")">
 			#{id}
 		</foreach>

@@ -8,6 +8,23 @@
 		<result column="title" property="title"/>
 	</resultMap>
 
+	<resultMap id="ScrapyBaseMap" type="com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="source" property="source"/>
+		<result column="reference" property="reference"/>
+		<result column="issue" property="issue"/>
+		<result column="style" property="style"/>
+		<result column="level" property="level"/>
+		<result column="publish_time" property="publishTime"/>
+		<result column="text" property="text"/>
+		<result column="attachment" property="attachment"/>
+		<result column="url" property="url"/>
+		<result column="region" property="region"/>
+		<result column="creator_id" property="creatorId"/>
+		<result column="create_time" property="createTime"/>
+	</resultMap>
+
 	<select id="gainIssueId" resultType="java.lang.Long">
 		SELECT id FROM scrapy_gov_policy_explain WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength})
 	</select>
@@ -73,5 +90,23 @@
 		</foreach>
 	</update>
 
+	<update id="updateByIdsAndIsDeleted">
+		UPDATE scrapy_gov_policy_explain SET is_deleted = #{state} where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<select id="gainExplainScrapyPolicy" resultMap="ScrapyBaseMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM scrapy_gov_policy_explain WHERE is_deleted = 0
+		ORDER BY id ASC
+		LIMIT 10000
+	</select>
+
+	<select id="scrapyExplainBase" resultMap="BaseMap">
+		SELECT id,title FROM scrapy_gov_policy_explain WHERE is_deleted = 0
+	</select>
 
 </mapper>

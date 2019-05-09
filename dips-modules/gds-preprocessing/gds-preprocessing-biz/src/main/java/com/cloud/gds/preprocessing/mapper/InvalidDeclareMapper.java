@@ -7,8 +7,15 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 申报
+ *
+ * @Author : yaonuan
+ * @Email : 806039077@qq.com
+ * @Date : 2019-05-09
+ */
 @Mapper
-public interface InvalidInformationMapper {
+public interface InvalidDeclareMapper {
 
 	/**
 	 * 获取国策采集长度问题数据
@@ -28,21 +35,14 @@ public interface InvalidInformationMapper {
 	boolean updateScrapyIsDeleted(@Param("ids") List<Long> ids);
 
 	/**
-	 * 查询采集库中重复数据
+	 * 查询采集库中is_deleted = 0 重复的数据
 	 *
 	 * @return
 	 */
 	List<BasePolicy> gainIdenticalPolicy();
 
 	/**
-	 * 获取资讯数据
-	 *
-	 * @return
-	 */
-	List<BasePolicy> scrapyInformationBase();
-
-	/**
-	 * 获取采集库数据1w
+	 * 查询申报数据
 	 *
 	 * @return
 	 */

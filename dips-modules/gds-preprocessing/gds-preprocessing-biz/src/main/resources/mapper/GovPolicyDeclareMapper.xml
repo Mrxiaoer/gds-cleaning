@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper">
+<mapper namespace="com.cloud.gds.preprocessing.mapper.GovPolicyDeclareMapper">
 
-	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral">
+	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.GovPolicyGeneral">
 		<result column="id" property="id"/>
 		<result column="title" property="title"/>
 		<result column="source" property="source"/>
@@ -18,6 +18,9 @@
 		<result column="region" property="region"/>
 		<result column="creator_id" property="creatorId"/>
 		<result column="create_time" property="createTime"/>
+		<result column="scrapy_id" property="scrapyId"/>
+		<result column="examine_user_id" property="examineUserId"/>
+		<result column="examine_status" property="examineStatus"/>
 	</resultMap>
 
 	<resultMap id="BasePolicy" type="com.cloud.gds.preprocessing.entity.BasePolicy">
@@ -26,28 +29,17 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,title,source,level,publish_time,text,url,region,creator_id
+		id,title,source,level,publish_time,text,url,region,creator_id,scrapy_id,examine_user_id,examine_status
 	</sql>
 
-
-	<select id="gainExplainScrapyPolicy" resultMap="BaseMap">
-		SELECT
-		<include refid="Base_Column_List"/>
-		FROM scrapy_gov_policy_explain WHERE is_deleted = 0
-		ORDER BY id ASC
-		LIMIT 10000
-	</select>
-
-	<select id="scrapyExplainBase" resultMap="BasePolicy">
-		SELECT id,title FROM scrapy_gov_policy_explain WHERE is_deleted = 0
-	</select>
-
-	<update id="updateByIdsAndIsDeleted">
-		UPDATE scrapy_gov_policy_explain SET is_deleted = #{state} where id IN
-		<foreach item="id" collection="ids" open="(" separator="," close=")">
-			#{id}
+	<insert id="insertBatch">
+		insert into gov_policy_declare (<include refid="Base_Column_List"/>)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(null
+			,#{item.title},#{item.source},#{item.level},#{item.publishTime},#{item.text},#{item.url},#{item.region},#{item.creatorId},#{item.scrapyId},#{item.examineUserId},#{item.examineStatus})
 		</foreach>
-	</update>
+	</insert>
 
 
 </mapper>

@@ -72,6 +72,10 @@ public class ScrapyGovPolicyGeneral extends Model<ScrapyGovPolicyGeneral> {
 	 * 创建时间
 	 */
 	private LocalDateTime createTime;
+	/**
+	 * 附件(资讯使用)
+	 */
+	private String file;
 
 	@Override
 	protected Serializable pkVal() {

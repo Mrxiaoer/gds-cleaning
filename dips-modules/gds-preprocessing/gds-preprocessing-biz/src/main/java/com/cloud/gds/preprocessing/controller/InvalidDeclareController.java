@@ -2,6 +2,7 @@ package com.cloud.gds.preprocessing.controller;
 
 import com.cloud.dips.common.core.util.R;
 import com.cloud.gds.preprocessing.service.DataDisposeService;
+import com.cloud.gds.preprocessing.service.InvalidDeclareService;
 import com.cloud.gds.preprocessing.service.InvalidInformationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
  * @Date : 2019-05-09
  */
 @RestController
-@RequestMapping("/invalid/information")
-public class InvalidInformationController {
+@RequestMapping("/invalid/declare")
+public class InvalidDeclareController {
 
-	private final InvalidInformationService invalidInformation;
+	private final InvalidDeclareService invalidDeclareService;
 	private final DataDisposeService dataDisposeService;
 
 	@Autowired
-	public InvalidInformationController(InvalidInformationService invalidInformation, DataDisposeService dataDisposeService) {
-		this.invalidInformation = invalidInformation;
+	public InvalidDeclareController(DataDisposeService dataDisposeService, InvalidDeclareService invalidDeclareService) {
 		this.dataDisposeService = dataDisposeService;
+		this.invalidDeclareService = invalidDeclareService;
 	}
 
 	/**
@@ -39,7 +40,7 @@ public class InvalidInformationController {
 	 */
 	@GetMapping("/clean_title")
 	public R invalidTitle(@RequestParam Integer titleLength, @RequestParam Integer textLength) {
-		return new R<>(invalidInformation.cleanIssueData(titleLength, textLength));
+		return new R<>(invalidDeclareService.cleanIssueData(titleLength, textLength));
 	}
 
 	/**
@@ -49,17 +50,7 @@ public class InvalidInformationController {
 	 */
 	@GetMapping("/clean_equally_title")
 	public R cleanInvalidInScape() {
-		return new R<>(invalidInformation.cleanInvalidInScape());
-	}
-
-	/**
-	 * 爬取数据与正式库中数据进行清洗,清洗到采集表中重复的数据
-	 *
-	 * @return
-	 */
-	@GetMapping("/clean_repeat_scrapy")
-	public R cleanRepeatScrapy() {
-		return new R<>(invalidInformation.cleanRepeatScrapy());
+		return new R<>(invalidDeclareService.cleanInvalidInScape());
 	}
 
 	/**
@@ -71,7 +62,7 @@ public class InvalidInformationController {
 	@GetMapping("/transfer")
 	@ApiOperation(value = "国策数据清洗完成之后迁移", notes = "国策数据清洗完成之后迁移")
 	public R dataMigrationSurface(@RequestParam Long examineUserId) {
-		return new R<>(dataDisposeService.dataMigrationSurfaceInformation(examineUserId));
+		return new R<>(dataDisposeService.dataMigrationSurfaceDeclare(examineUserId));
 	}
 
 

@@ -2,11 +2,9 @@ package com.cloud.gds.preprocessing.service.impl;
 
 import com.cloud.gds.preprocessing.entity.GovPolicyGeneral;
 import com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral;
-import com.cloud.gds.preprocessing.mapper.GovPolicyExplainMapper;
-import com.cloud.gds.preprocessing.mapper.GovPolicyGeneralMapper;
-import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper;
-import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyGeneralMapper;
+import com.cloud.gds.preprocessing.mapper.*;
 import com.cloud.gds.preprocessing.service.DataDisposeService;
+import com.cloud.gds.preprocessing.service.InvalidInformationService;
 import com.cloud.gds.preprocessing.service.TransactionalService;
 import com.cloud.gds.preprocessing.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,25 +24,26 @@ import java.util.List;
 public class DataDisposeServiceImpl implements DataDisposeService  {
 
 	@Autowired
-	private ScrapyGovPolicyExplainMapper scrapyGovPolicyExplainMapper;
-
-	private final ScrapyGovPolicyGeneralMapper scrapyMapper;
-
+	private InvalidPolicyMapper invalidPolicyMapper;
+	private final InvalidExplainMapper invalidExplainMapper;
+	private final InvalidDeclareMapper invalidDeclareMapper;
+	private final InvalidInformationMapper invalidInformation;
 	private final GovPolicyGeneralMapper govMapper;
-
 	private final TransactionalService transactionalService;
 
 	@Autowired
-	public DataDisposeServiceImpl(ScrapyGovPolicyGeneralMapper scrapyMapper, GovPolicyGeneralMapper govMapper, TransactionalService transactionalService) {
-		this.scrapyMapper = scrapyMapper;
+	public DataDisposeServiceImpl(GovPolicyGeneralMapper govMapper, TransactionalService transactionalService, InvalidInformationMapper invalidInformation, InvalidDeclareMapper invalidDeclareMapper, InvalidExplainMapper invalidExplainMapper) {
 		this.govMapper = govMapper;
 		this.transactionalService = transactionalService;
+		this.invalidInformation = invalidInformation;
+		this.invalidDeclareMapper = invalidDeclareMapper;
+		this.invalidExplainMapper = invalidExplainMapper;
 	}
 
 	@Override
 	public boolean dataMigrationSurface(Long examineUserId) {
 		// gain scrapy data is is_deleted = 0
-		List<ScrapyGovPolicyGeneral> generals = scrapyMapper.gainScrapyPolicy();
+		List<ScrapyGovPolicyGeneral> generals = invalidPolicyMapper.ScrapyPolicyGeneral();
 
 		// transfer data from ScrapyGovPolicyGeneral to govPolicyGeneral in addition new formation ids
 		List<GovPolicyGeneral> list = new ArrayList<>();
@@ -65,7 +64,7 @@ public class DataDisposeServiceImpl implements DataDisposeService  {
 	@Override
 	public boolean dataMigrationSurfaceExplain(Long examineUserId) {
 		// gain explain scrapy data is is_deleted = 0
-		List<ScrapyGovPolicyGeneral> generals = scrapyGovPolicyExplainMapper.gainExplainScrapyPolicy();
+		List<ScrapyGovPolicyGeneral> generals = invalidExplainMapper.gainExplainScrapyPolicy();
 
 		// transfer data from ScrapyGovPolicyGeneral to govPolicyGeneral in addition new formation ids
 		List<GovPolicyGeneral> list = new ArrayList<>();
@@ -79,6 +78,47 @@ public class DataDisposeServiceImpl implements DataDisposeService  {
 
 		for (List<GovPolicyGeneral> list1 : data) {
 			transactionalService.bathCutSurfaceExplain(list1);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean dataMigrationSurfaceDeclare(Long examineUserId) {
+		// gain explain scrapy data is is_deleted = 0
+		List<ScrapyGovPolicyGeneral> generals = invalidDeclareMapper.invalidInformationPolicy();
+
+		// transfer data from ScrapyGovPolicyGeneral to govPolicyGeneral in addition new formation ids
+		List<GovPolicyGeneral> list = new ArrayList<>();
+		for (ScrapyGovPolicyGeneral scrapyGovPolicyGeneral : generals) {
+			GovPolicyGeneral general = migrateDataSplicing(scrapyGovPolicyGeneral, examineUserId);
+			list.add(general);
+		}
+		// implementing multi-table atomicity with cut-in data
+		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200);
+
+		for (List<GovPolicyGeneral> list1 : data) {
+			transactionalService.bathCutSurfaceDeclare(list1);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean dataMigrationSurfaceInformation(Long examineUserId) {
+		// gain information scrapy data is is_deleted = 0
+		List<ScrapyGovPolicyGeneral> generals = invalidInformation.invalidInformationPolicy();
+
+		// transfer data from ScrapyGovPolicyGeneral to govPolicyGeneral in addition new formation ids
+		List<GovPolicyGeneral> list = new ArrayList<>();
+		for (ScrapyGovPolicyGeneral scrapyGovPolicyGeneral : generals) {
+			GovPolicyGeneral general = migrateInformationSplicing(scrapyGovPolicyGeneral, examineUserId);
+			list.add(general);
+		}
+//		System.out.println(list.size());
+		// implementing multi-table atomicity with cut-in data
+		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200);
+
+		for (List<GovPolicyGeneral> list1 : data) {
+			transactionalService.bathCutSurfaceInformation(list1);
 		}
 		return true;
 	}
@@ -98,6 +138,24 @@ public class DataDisposeServiceImpl implements DataDisposeService  {
 		policyGeneral.setUrl(scrapy.getUrl());
 		policyGeneral.setRegion(scrapy.getRegion());
 		policyGeneral.setCreatorId(scrapy.getCreatorId());
+		policyGeneral.setCreateTime(scrapy.getCreateTime());
+		policyGeneral.setScrapyId(scrapy.getId());
+		policyGeneral.setExamineUserId(examineUserId);
+		policyGeneral.setExamineStatus(0);
+		return policyGeneral;
+	}
+
+	private GovPolicyGeneral migrateInformationSplicing(ScrapyGovPolicyGeneral scrapy, Long examineUserId) {
+		GovPolicyGeneral policyGeneral = new GovPolicyGeneral();
+		// assignment BeanUtils.copyProperties in scrapy.id is no policyGeneral.id so use this low method
+		policyGeneral.setTitle(scrapy.getTitle());
+		policyGeneral.setSource(scrapy.getSource());
+		policyGeneral.setPublishTime(scrapy.getPublishTime());
+		policyGeneral.setText(scrapy.getText());
+		policyGeneral.setUrl(scrapy.getUrl());
+		policyGeneral.setRegion(scrapy.getRegion());
+		policyGeneral.setCreatorId(scrapy.getCreatorId());
+		policyGeneral.setFile(scrapy.getFile());
 		policyGeneral.setCreateTime(scrapy.getCreateTime());
 		policyGeneral.setScrapyId(scrapy.getId());
 		policyGeneral.setExamineUserId(examineUserId);
