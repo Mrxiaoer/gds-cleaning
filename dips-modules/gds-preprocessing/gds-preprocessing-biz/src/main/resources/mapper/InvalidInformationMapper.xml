@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.preprocessing.mapper.InvalidInformationMapper">
+
+	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.BasePolicy">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+	</resultMap>
+
+	<select id="gainIssueId" resultType="java.lang.Long">
+		SELECT id FROM scrapy_gov_information WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength}) AND file is NULL
+	</select>
+
+	<select id="gainIdenticalPolicy" resultType="com.cloud.gds.preprocessing.entity.BasePolicy">
+		SELECT
+			id,
+			title
+		FROM
+			scrapy_gov_information
+		WHERE
+			title IN (
+				SELECT
+					a.title
+				FROM
+					(
+						SELECT DISTINCT
+							title,
+							COUNT(title) AS titlenum
+						FROM
+							scrapy_gov_information
+						WHERE
+							is_deleted = 0
+						GROUP BY
+							title
+					) a
+				WHERE
+					a.titlenum > 1
+			)
+			ORDER BY id DESC
+	</select>
+
+	<select id="scrapyInformationBase" resultMap="BaseMap">
+
+	</select>
+
+	<update id="updateScrapyIsDeleted">
+		UPDATE scrapy_gov_information SET is_deleted = 4 where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+</mapper>

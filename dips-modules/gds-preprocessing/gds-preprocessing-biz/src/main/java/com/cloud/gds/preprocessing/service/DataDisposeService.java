@@ -1,10 +1,5 @@
 package com.cloud.gds.preprocessing.service;
 
-import com.cloud.gds.preprocessing.entity.GovPolicyGeneral;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * 国策数据转移接口类
@@ -24,7 +19,8 @@ public interface DataDisposeService {
 	boolean dataMigrationSurface(Long examineUserId);
 
 	/**
-	 * 数据迁移 申报
+	 * 数据迁移 解读
+	 *
 	 * @param examineUserId
 	 * @return
 	 */

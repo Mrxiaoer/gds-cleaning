@@ -2,7 +2,9 @@ package com.cloud.gds.preprocessing.service.impl;
 
 import com.cloud.gds.preprocessing.entity.GovPolicyGeneral;
 import com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral;
+import com.cloud.gds.preprocessing.mapper.GovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.mapper.GovPolicyGeneralMapper;
+import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyGeneralMapper;
 import com.cloud.gds.preprocessing.service.DataDisposeService;
 import com.cloud.gds.preprocessing.service.TransactionalService;
@@ -21,7 +23,10 @@ import java.util.List;
  * @Date : 2019-03-21
  */
 @Service
-public class DataDisposeServiceImpl implements DataDisposeService {
+public class DataDisposeServiceImpl implements DataDisposeService  {
+
+	@Autowired
+	private ScrapyGovPolicyExplainMapper scrapyGovPolicyExplainMapper;
 
 	private final ScrapyGovPolicyGeneralMapper scrapyMapper;
 
@@ -60,7 +65,7 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 	@Override
 	public boolean dataMigrationSurfaceExplain(Long examineUserId) {
 		// gain explain scrapy data is is_deleted = 0
-		List<ScrapyGovPolicyGeneral> generals = scrapyMapper.gainExplainScrapyPolicy();
+		List<ScrapyGovPolicyGeneral> generals = scrapyGovPolicyExplainMapper.gainExplainScrapyPolicy();
 
 		// transfer data from ScrapyGovPolicyGeneral to govPolicyGeneral in addition new formation ids
 		List<GovPolicyGeneral> list = new ArrayList<>();
@@ -73,7 +78,7 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200);
 
 		for (List<GovPolicyGeneral> list1 : data) {
-			transactionalService.bathCutSurface(list1);
+			transactionalService.bathCutSurfaceExplain(list1);
 		}
 		return true;
 	}

@@ -1,7 +1,9 @@
 package com.cloud.gds.preprocessing.service.impl;
 
 import com.cloud.gds.preprocessing.entity.GovPolicyGeneral;
+import com.cloud.gds.preprocessing.mapper.GovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.mapper.GovPolicyGeneralMapper;
+import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyGeneralMapper;
 import com.cloud.gds.preprocessing.service.TransactionalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,13 @@ public class TransactionalServiceImpl implements TransactionalService {
 	private final GovPolicyGeneralMapper govMapper;
 
 	@Autowired
+	private ScrapyGovPolicyExplainMapper scrapyExplainMapper;
+
+	@Autowired
+	private GovPolicyExplainMapper explainMapper;
+
+
+	@Autowired
 	public TransactionalServiceImpl(ScrapyGovPolicyGeneralMapper scrapyMapper, GovPolicyGeneralMapper govMapper) {
 		this.scrapyMapper = scrapyMapper;
 		this.govMapper = govMapper;
@@ -41,6 +50,16 @@ public class TransactionalServiceImpl implements TransactionalService {
 		}
 		govMapper.insertBatch(list);
 		scrapyMapper.updateByIdsAndIsDeleted(2L, ids);
+	}
 
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void bathCutSurfaceExplain(List<GovPolicyGeneral> list) {
+		List<Long> ids = new ArrayList<>();
+		for (GovPolicyGeneral policyGeneral : list) {
+			ids.add(policyGeneral.getScrapyId());
+		}
+		explainMapper.insertBatch(list);
+		scrapyExplainMapper.updateByIdsAndIsDeleted(7L, ids);
 	}
 }

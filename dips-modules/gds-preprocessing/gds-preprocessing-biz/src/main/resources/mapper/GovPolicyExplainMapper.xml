@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cloud.gds.preprocessing.mapper.GovPolicyExplainMapper">
+
+	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.GovPolicyGeneral">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="source" property="source"/>
+		<result column="reference" property="reference"/>
+		<result column="issue" property="issue"/>
+		<result column="style" property="style"/>
+		<result column="level" property="level"/>
+		<result column="publish_time" property="publishTime"/>
+		<result column="text" property="text"/>
+		<result column="attachment" property="attachment"/>
+		<result column="url" property="url"/>
+		<result column="region" property="region"/>
+		<result column="creator_id" property="creatorId"/>
+		<result column="create_time" property="createTime"/>
+		<result column="scrapy_id" property="scrapyId"/>
+		<result column="examine_user_id" property="examineUserId"/>
+		<result column="examine_status" property="examineStatus"/>
+	</resultMap>
+
+	<resultMap id="BasePolicy" type="com.cloud.gds.preprocessing.entity.BasePolicy">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,title,source,level,publish_time,text,url,region,creator_id,scrapy_id,examine_user_id,examine_status
+	</sql>
+
+	<select id="realPolicyBase" resultMap="BasePolicy">
+		SELECT id,title FROM gov_policy_explain WHERE is_deleted = 0
+	</select>
+
+	<insert id="insertBatch">
+		insert into gov_policy_explain (<include refid="Base_Column_List"/>)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(null
+			,#{item.title},#{item.source},#{item.level},#{item.publishTime},#{item.text},#{item.url},#{item.region},#{item.creatorId},#{item.scrapyId},#{item.examineUserId},#{item.examineStatus})
+		</foreach>
+	</insert>
+
+
+</mapper>

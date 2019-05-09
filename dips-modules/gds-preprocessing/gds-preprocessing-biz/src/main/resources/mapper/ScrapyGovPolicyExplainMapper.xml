@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyGeneralMapper">
+<mapper namespace="com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper">
 
 	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.ScrapyGovPolicyGeneral">
 		<result column="id" property="id"/>
@@ -20,20 +20,30 @@
 		<result column="create_time" property="createTime"/>
 	</resultMap>
 
+	<resultMap id="BasePolicy" type="com.cloud.gds.preprocessing.entity.BasePolicy">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+	</resultMap>
+
 	<sql id="Base_Column_List">
-		id,title,source,reference,issue,style,level,publish_time,text,attachment,url,region,creator_id,create_time
+		id,title,source,level,publish_time,text,url,region,creator_id
 	</sql>
 
-	<select id="gainScrapyPolicy" resultMap="BaseMap">
+
+	<select id="gainExplainScrapyPolicy" resultMap="BaseMap">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM scrapy_gov_policy_general WHERE is_deleted = 0
+		FROM scrapy_gov_policy_explain WHERE is_deleted = 0
 		ORDER BY id ASC
 		LIMIT 10000
 	</select>
 
+	<select id="scrapyExplainBase" resultMap="BasePolicy">
+		SELECT id,title FROM scrapy_gov_policy_explain WHERE is_deleted = 0
+	</select>
+
 	<update id="updateByIdsAndIsDeleted">
-		UPDATE scrapy_gov_policy_general SET is_deleted = #{state} where id IN
+		UPDATE scrapy_gov_policy_explain SET is_deleted = #{state} where id IN
 		<foreach item="id" collection="ids" open="(" separator="," close=")">
 			#{id}
 		</foreach>

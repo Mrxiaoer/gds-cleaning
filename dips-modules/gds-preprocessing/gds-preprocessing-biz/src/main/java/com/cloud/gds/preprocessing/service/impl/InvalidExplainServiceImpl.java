@@ -1,7 +1,9 @@
 package com.cloud.gds.preprocessing.service.impl;
 
 import com.cloud.gds.preprocessing.entity.BasePolicy;
+import com.cloud.gds.preprocessing.mapper.GovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.mapper.InvalidExplainMapper;
+import com.cloud.gds.preprocessing.mapper.ScrapyGovPolicyExplainMapper;
 import com.cloud.gds.preprocessing.service.InvalidExplainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,12 @@ import java.util.Set;
  */
 @Service
 public class InvalidExplainServiceImpl implements InvalidExplainService {
+
+	@Autowired
+	private ScrapyGovPolicyExplainMapper scrapyExplainMapper;
+
+	@Autowired
+	private GovPolicyExplainMapper govPolicyExplainMapper;
 
 	private final InvalidExplainMapper explainMapper;
 
@@ -61,4 +69,50 @@ public class InvalidExplainServiceImpl implements InvalidExplainService {
 		}
 	}
 
+	@Override
+	public boolean cleanRepeatScrapy() {
+		// 爬取的政策数据
+		List<BasePolicy> scrapyPolicy = scrapyExplainMapper.scrapyExplainBase();
+		// 正式表中的政策数据
+		List<BasePolicy> realPolicy = govPolicyExplainMapper.realPolicyBase();
+		Set<Object> scrapySet = basePolicy2Set(scrapyPolicy);
+		Set<Object> realSet = basePolicy2Set(realPolicy);
+		// 查询爬取表与真实表之间的相同title
+		scrapySet.retainAll(realSet);
+		// 拿取爬取表中与真实表相同标题的id
+		List<Long> ids = gainIdInList(scrapyPolicy, scrapySet);
+
+		if (ids.size() > 0) {
+			return explainMapper.updateScrapyIsDeleted(ids);
+//			return false;
+		} else {
+			return true;
+		}
+	}
+
+
+	private Set<Object> basePolicy2Set(List<BasePolicy> list) {
+		Set<Object> set = new HashSet<>();
+		for (BasePolicy basePolicy : list) {
+			set.add(basePolicy.getTitle());
+		}
+		return set;
+	}
+
+	/**
+	 * 从list中找与set里面名称一样的id
+	 *
+	 * @param list
+	 * @param set
+	 * @return
+	 */
+	private List<Long> gainIdInList(List<BasePolicy> list, Set<Object> set) {
+		List<Long> ids = new ArrayList<>();
+		for (BasePolicy basePolicy : list) {
+			if (set.contains(basePolicy.getTitle())) {
+				ids.add(basePolicy.getId());
+			}
+		}
+		return ids;
+	}
 }

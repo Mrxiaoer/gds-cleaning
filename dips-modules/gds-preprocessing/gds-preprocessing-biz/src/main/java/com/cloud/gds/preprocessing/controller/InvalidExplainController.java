@@ -1,8 +1,8 @@
 package com.cloud.gds.preprocessing.controller;
 
 import com.cloud.dips.common.core.util.R;
+import com.cloud.gds.preprocessing.service.DataDisposeService;
 import com.cloud.gds.preprocessing.service.InvalidExplainService;
-import com.cloud.gds.preprocessing.service.InvalidPolicyService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 申报
+ * 解读
  *
  * @Author : yaonuan
  * @Email : 806039077@qq.com
@@ -50,6 +50,16 @@ public class InvalidExplainController {
 	@GetMapping("/clean_equally_title")
 	public R cleanInvalidInScape() {
 		return new R<>(explainService.cleanInvalidInScape());
+	}
+
+	/**
+	 * 爬取数据与正式库中数据进行清洗,清洗到采集表中重复的数据
+	 *
+	 * @return
+	 */
+	@GetMapping("/clean_repeat_scrapy")
+	public R cleanRepeatScrapy() {
+		return new R<>(explainService.cleanRepeatScrapy());
 	}
 
 	/**
