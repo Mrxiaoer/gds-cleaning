@@ -21,8 +21,12 @@ import java.util.Set;
 @Service
 public class InvalidPolicyServiceImpl implements InvalidPolicyService {
 
+	private final InvalidPolicyMapper mapper;
+
 	@Autowired
-	private InvalidPolicyMapper mapper;
+	public InvalidPolicyServiceImpl(InvalidPolicyMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	@Override
 	public boolean cleanIssueData(Integer titleLength, Integer textLength) {
@@ -61,23 +65,46 @@ public class InvalidPolicyServiceImpl implements InvalidPolicyService {
 	}
 
 	@Override
-	public boolean cleanRepeatScrapy() {
+	public boolean cleanRepeatReal() {
 		// 爬取的政策数据
 		List<BasePolicy> scrapyPolicy = mapper.gainScrapyPolicy();
 		// 正式表中的政策数据
-		List<BasePolicy> realPolicy = mapper.gainRealPolicy();
+		List<BasePolicy> realPolicy = mapper.gainRealPolicyIs2158();
+		Set<Object> scrapySet = basePolicy2Set(scrapyPolicy);
+		Set<Object> realSet = basePolicy2Set(realPolicy);
+		// 查询爬取表与真实表之间的相同title
+		realSet.retainAll(scrapySet);
+		// 拿取爬取表中与真实表相同标题的id
+		List<Long> ids = gainIdInList(realPolicy, realSet);
+		// 去掉真实表中2158数据
+		System.out.println(ids);
+		if (ids.size() > 0) {
+			return mapper.updateRealIsDeleted(ids);
+//			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean cleanRepeatScrapy() {
+		// 爬取的政策数据
+		List<BasePolicy> scrapyPolicy = mapper.gainScrapyPolicy();
+		// 正式表中的政策数据 非2158政策
+		List<BasePolicy> realPolicy = mapper.gainRealPolicyNull2158();
 		Set<Object> scrapySet = basePolicy2Set(scrapyPolicy);
 		Set<Object> realSet = basePolicy2Set(realPolicy);
 		// 查询爬取表与真实表之间的相同title
 		scrapySet.retainAll(realSet);
-		// 拿取爬取表中与真实表同学标题的id
+		// 拿取爬取表中与真实表相同标题的id
 		List<Long> ids = gainIdInList(scrapyPolicy, scrapySet);
 
-		System.out.println("scrapySet.size():" + scrapySet.size());
-		System.out.println("ids.size()" + ids.size());
-		System.out.println(ids);
-
-		return false;
+		if (ids.size() > 0) {
+			return mapper.updateScrapyIsDeleted(ids);
+//			return false;
+		} else {
+			return true;
+		}
 	}
 
 	private Set<Object> basePolicy2Set(List<BasePolicy> list) {

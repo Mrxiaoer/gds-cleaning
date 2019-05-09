@@ -47,7 +47,28 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 			GovPolicyGeneral general = migrateDataSplicing(scrapyGovPolicyGeneral, examineUserId);
 			list.add(general);
 		}
-		System.out.println(list.size());
+//		System.out.println(list.size());
+		// implementing multi-table atomicity with cut-in data
+		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200);
+
+		for (List<GovPolicyGeneral> list1 : data) {
+			transactionalService.bathCutSurface(list1);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean dataMigrationSurfaceExplain(Long examineUserId) {
+		// gain explain scrapy data is is_deleted = 0
+		List<ScrapyGovPolicyGeneral> generals = scrapyMapper.gainExplainScrapyPolicy();
+
+		// transfer data from ScrapyGovPolicyGeneral to govPolicyGeneral in addition new formation ids
+		List<GovPolicyGeneral> list = new ArrayList<>();
+		for (ScrapyGovPolicyGeneral scrapyGovPolicyGeneral : generals) {
+			GovPolicyGeneral general = migrateDataSplicing(scrapyGovPolicyGeneral, examineUserId);
+			list.add(general);
+		}
+//		System.out.println(list.size());
 		// implementing multi-table atomicity with cut-in data
 		List<List<GovPolicyGeneral>> data = cutBatchData(list, 200);
 
@@ -75,6 +96,7 @@ public class DataDisposeServiceImpl implements DataDisposeService {
 		policyGeneral.setCreateTime(scrapy.getCreateTime());
 		policyGeneral.setScrapyId(scrapy.getId());
 		policyGeneral.setExamineUserId(examineUserId);
+		policyGeneral.setExamineStatus(0);
 		return policyGeneral;
 	}
 

@@ -30,8 +30,8 @@ feign:
   client:
     config:
       feignName:
-        connectTimeout: 10000
-        readTimeout: 10000
+        connectTimeout: 1000000
+        readTimeout: 1000000
   compression:
     request:
       enabled: true
@@ -51,8 +51,8 @@ hystrix:
 
 #请求处理的超时时间
 ribbon:
-  ReadTimeout: 10000
-  ConnectTimeout: 10000
+  ReadTimeout: 1000000
+  ConnectTimeout: 1000000
 
 #mybaits-plus配置，修改主键类型，mapper.xml、type 别名等
 mybatis-plus:
@@ -101,10 +101,11 @@ swagger:
     token-url-list:
       - ${security.auth.server}/token
 
-## spring security 配置
+# spring security 配置
 security:
   auth:
     server: http://127.0.0.1:9999/auth/oauth
+#    server: http://gds.ngrok.xiaomiqiu.cn/auth/oauth
   oauth2:
     resource:
       token-info-uri: ${security.auth.server}/check_token

@@ -17,11 +17,18 @@ import java.util.List;
 public interface ScrapyGovPolicyGeneralMapper {
 
 	/**
-	 * 获取爬虫政策表中最新爬虫数据
+	 * 获取爬虫政策表中最新爬虫数据1w
 	 *
 	 * @return
 	 */
 	List<ScrapyGovPolicyGeneral> gainScrapyPolicy();
+
+	/**
+	 * 获取爬虫政策表中最新爬虫数据1w
+	 *
+	 * @return
+	 */
+	List<ScrapyGovPolicyGeneral> gainExplainScrapyPolicy();
 
 	/**
 	 * 根据ids更新爬虫表的状态值

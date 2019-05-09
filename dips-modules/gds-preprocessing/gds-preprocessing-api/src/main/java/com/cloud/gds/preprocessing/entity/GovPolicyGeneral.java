@@ -81,6 +81,10 @@ public class GovPolicyGeneral extends Model<GovPolicyGeneral> {
 	 */
 	private Long examineUserId;
 
+	/**
+	 * 审核状态
+	 */
+	private Integer examineStatus;
 
 	@Override
 	protected Serializable pkVal() {

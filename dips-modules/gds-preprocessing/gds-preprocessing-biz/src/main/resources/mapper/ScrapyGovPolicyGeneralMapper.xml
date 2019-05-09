@@ -27,8 +27,17 @@
 	<select id="gainScrapyPolicy" resultMap="BaseMap">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND id &lt; 530350
-		ORDER BY id DESC
+		FROM scrapy_gov_policy_general WHERE is_deleted = 0
+		ORDER BY id ASC
+		LIMIT 10000
+	</select>
+
+	<select id="gainExplainScrapyPolicy" resultMap="BaseMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM scrapy_gov_policy_general WHERE is_deleted = 0
+		ORDER BY id ASC
+		LIMIT 10000
 	</select>
 
 	<update id="updateByIdsAndIsDeleted">

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
  * @Date : 2019-03-19
  */
 @RestController
-@RequestMapping("/invalid")
-public class InvalidPolicyController {
+@RequestMapping("/invalid/general")
+public class InvalidGeneralController {
 
 
 	private final DataDisposeService disposeService;
@@ -24,7 +24,7 @@ public class InvalidPolicyController {
 	private final InvalidPolicyService invalidPolicyService;
 
 	@Autowired
-	public InvalidPolicyController(DataDisposeService disposeService, InvalidPolicyService invalidPolicyService) {
+	public InvalidGeneralController(DataDisposeService disposeService, InvalidPolicyService invalidPolicyService) {
 		this.disposeService = disposeService;
 		this.invalidPolicyService = invalidPolicyService;
 	}
@@ -37,7 +37,7 @@ public class InvalidPolicyController {
 	 * @param textLength  正文长度
 	 * @return
 	 */
-	@PostMapping("/clean_title")
+	@GetMapping("/clean_title")
 	public R invalidTitle(@RequestParam Integer titleLength, @RequestParam Integer textLength) {
 		return new R<>(invalidPolicyService.cleanIssueData(titleLength, textLength));
 	}
@@ -57,9 +57,19 @@ public class InvalidPolicyController {
 	 *
 	 * @return
 	 */
-	@GetMapping("/clean_two_table")
+	@GetMapping("/clean_repeat_scrapy")
 	public R cleanRepeatScrapy() {
 		return new R<>(invalidPolicyService.cleanRepeatScrapy());
+	}
+
+	/**
+	 * 爬取数据与正式库中数据进行清洗,清洗到采集表中重复的数据
+	 *
+	 * @return
+	 */
+	@GetMapping("/clean_repeat_real")
+	public R cleanRepeatReal() {
+		return new R<>(invalidPolicyService.cleanRepeatReal());
 	}
 
 

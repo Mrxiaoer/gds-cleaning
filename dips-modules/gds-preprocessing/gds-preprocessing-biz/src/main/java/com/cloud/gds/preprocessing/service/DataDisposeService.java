@@ -16,11 +16,18 @@ import java.util.List;
 public interface DataDisposeService {
 
 	/**
-	 * 数据迁移
+	 * 数据迁移 通用
 	 *
 	 * @param examineUserId
 	 * @return
 	 */
 	boolean dataMigrationSurface(Long examineUserId);
+
+	/**
+	 * 数据迁移 申报
+	 * @param examineUserId
+	 * @return
+	 */
+	boolean dataMigrationSurfaceExplain(Long examineUserId);
 
 }

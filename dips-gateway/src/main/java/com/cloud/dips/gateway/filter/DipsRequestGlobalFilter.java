@@ -1,22 +1,25 @@
 package com.cloud.dips.gateway.filter;
 
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
+import com.cloud.dips.common.core.constant.SecurityConstants;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import org.springframework.web.server.ServerWebExchange;
-
-import com.cloud.dips.common.core.constant.SecurityConstants;
-
-import reactor.core.publisher.Mono;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
 
 /**
  * @author BigPan
@@ -30,6 +33,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class DipsRequestGlobalFilter implements GlobalFilter, Ordered {
 	private static final String HEADER_NAME = "X-Forwarded-Prefix";
+//	private static final String MAX_AGE = "18000L";
 
 	/**
 	 * Process the Web request and (optionally) delegate to the next
@@ -56,6 +60,21 @@ public class DipsRequestGlobalFilter implements GlobalFilter, Ordered {
 			.build();
 		exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequest.getURI());
 
+//		ServerHttpResponse response = exchange.getResponse();
+//		HttpHeaders headers = response.getHeaders();
+//		headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+//		headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, PUT, OPTIONS, DELETE, PATCH");
+//		headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+//		headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+//		headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
+//		headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
+//		headers.setAccessControlAllowCredentials(true);
+//		headers.setContentType(MediaType.TEXT_HTML);
+//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		if (request.getMethod() == HttpMethod.OPTIONS) {
+//			response.setStatusCode(HttpStatus.NO_CONTENT);
+//			return Mono.empty();
+//		}
 		return chain.filter(exchange.mutate()
 				.request(newRequest.mutate()
 					.build()).build());

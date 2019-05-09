@@ -25,6 +25,8 @@ public interface InvalidPolicyService {
 	 */
 	boolean cleanInvalidInScape();
 
+	boolean cleanRepeatReal();
+
 	/**
 	 * 爬取数据与正式库中数据进行清洗,清洗到采集表中重复的数据
 	 *

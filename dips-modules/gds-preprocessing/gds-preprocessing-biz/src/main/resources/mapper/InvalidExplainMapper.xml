@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.cloud.gds.preprocessing.mapper.InvalidPolicyMapper">
+<mapper namespace="com.cloud.gds.preprocessing.mapper.InvalidExplainMapper">
 
 	<resultMap id="BaseMap" type="com.cloud.gds.preprocessing.entity.BasePolicy">
 		<result column="id" property="id"/>
@@ -9,15 +9,22 @@
 	</resultMap>
 
 	<select id="gainIssueId" resultType="java.lang.Long">
-		SELECT id FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength}) AND attachment is NULL
+		SELECT id FROM scrapy_gov_policy_explain WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength})
 	</select>
+
+	<update id="updateScrapyIsDeleted">
+		UPDATE scrapy_gov_policy_explain SET is_deleted = 4 where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
 
 	<select id="gainIdenticalPolicy" resultType="com.cloud.gds.preprocessing.entity.BasePolicy">
 		SELECT
 			id,
 			title
 		FROM
-			scrapy_gov_policy_general
+			scrapy_gov_policy_explain
 		WHERE
 			title IN (
 				SELECT
@@ -28,7 +35,7 @@
 							title,
 							COUNT(title) AS titlenum
 						FROM
-							scrapy_gov_policy_general
+							scrapy_gov_policy_explain
 						WHERE
 							is_deleted = 0
 						GROUP BY
@@ -39,6 +46,8 @@
 			)
 			ORDER BY id DESC
 	</select>
+
+	<!--TODO  -->
 
 	<select id="gainRealPolicy" resultMap="BaseMap">
 		SELECT id,title FROM gov_policy_general WHERE is_deleted = 0
@@ -56,13 +65,6 @@
 		SELECT id,title FROM scrapy_gov_policy_general WHERE is_deleted = 0
 	</select>
 
-
-	<update id="updateScrapyIsDeleted">
-		UPDATE scrapy_gov_policy_general SET is_deleted = 1 where id IN
-		<foreach item="id" collection="ids" open="(" separator="," close=")">
-			#{id}
-		</foreach>
-	</update>
 
 	<update id="updateRealIsDeleted">
 		UPDATE gov_policy_general SET is_deleted = 1 ,examine_status = 7 where id IN
