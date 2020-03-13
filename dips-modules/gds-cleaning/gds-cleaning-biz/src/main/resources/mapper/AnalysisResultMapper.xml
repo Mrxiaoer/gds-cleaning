@@ -24,9 +24,9 @@
 		DELETE FROM dataclean_analysis_result
 		where base_id in
 		<foreach item="id" collection="ids" open="("
-				 separator="," close=")">
-			#{id}
-		</foreach>
+						   separator="," close=")">
+		#{id}
+	</foreach>
 		or
 		compare_id in
 		<foreach item="id" collection="ids" open="("

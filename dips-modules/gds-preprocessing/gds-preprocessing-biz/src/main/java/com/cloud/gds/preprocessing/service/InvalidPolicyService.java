@@ -33,4 +33,6 @@ public interface InvalidPolicyService {
 	 * @return
 	 */
 	boolean cleanRepeatScrapy();
+
+	void cleanRealPolic();
 }

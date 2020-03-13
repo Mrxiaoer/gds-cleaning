@@ -25,6 +25,10 @@
 		<result column="create_time" property="createTime"/>
 	</resultMap>
 
+	<sql id="Base_Column_List">
+		id,title,source,level,publish_time,text,url,region,creator_id
+	</sql>
+
 	<select id="gainIssueId" resultType="java.lang.Long">
 		SELECT id FROM scrapy_gov_policy_explain WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength})
 	</select>

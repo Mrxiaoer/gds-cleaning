@@ -61,6 +61,13 @@ public interface InvalidPolicyMapper {
 	List<BasePolicy> gainScrapyPolicy();
 
 	/**
+	 * 重复清洗正式库中重复数据
+	 *
+	 * @return
+	 */
+	List<BasePolicy> cleanRealPolicy();
+
+	/**
 	 * 根据ids更新爬取表中的数据状态
 	 *
 	 * @param ids

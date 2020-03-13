@@ -25,6 +25,10 @@
 		<result column="title" property="title"/>
 	</resultMap>
 
+	<sql id="Base_Column_List">
+		id,title,source,reference,issue,style,level,publish_time,text,attachment,url,region,creator_id,create_time
+	</sql>
+
 	<select id="gainIssueId" resultType="java.lang.Long">
 		SELECT id FROM scrapy_gov_policy_general WHERE is_deleted = 0 AND (LENGTH(title) &lt; #{titleLength} OR LENGTH(text) &lt; #{textLength}) AND attachment is NULL
 	</select>
@@ -57,6 +61,22 @@
 			ORDER BY id DESC
 	</select>
 
+	<select id="cleanRealPolicy" resultType="com.cloud.gds.preprocessing.entity.BasePolicy">
+		SELECT
+			id,title
+		FROM
+			gov_policy_general
+		WHERE
+			title IN (
+			SELECT
+				a.title
+			FROM
+				( SELECT DISTINCT title, COUNT( title ) AS titlenum FROM gov_policy_general WHERE is_deleted = 0 AND examine_status = 3 GROUP BY title ) a
+			WHERE
+			a.titlenum > 1
+			) ORDER BY id asc
+	</select>
+
 	<select id="gainRealPolicy" resultMap="BaseMap">
 		SELECT id,title FROM gov_policy_general WHERE is_deleted = 0
 	</select>
@@ -82,7 +102,7 @@
 	</update>
 
 	<update id="updateRealIsDeleted">
-		UPDATE gov_policy_general SET is_deleted = 1 ,examine_status = 7 where id IN
+		UPDATE gov_policy_general SET is_deleted = 5 ,examine_status = 7 where (examine_user_id = 2788 or examine_user_id = 2158) and id IN
 		<foreach item="id" collection="ids" open="(" separator="," close=")">
 			#{id}
 		</foreach>

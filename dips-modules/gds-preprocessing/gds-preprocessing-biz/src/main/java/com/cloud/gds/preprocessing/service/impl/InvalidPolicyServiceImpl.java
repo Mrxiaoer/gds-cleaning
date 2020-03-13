@@ -132,5 +132,25 @@ public class InvalidPolicyServiceImpl implements InvalidPolicyService {
 		return ids;
 	}
 
+	@Override
+	public void cleanRealPolic(){
+		List<BasePolicy> list = mapper.cleanRealPolicy();
+		List<Long> ids = new ArrayList<>();
+		Set<Object> set = new HashSet<>();
+		for (BasePolicy basePolicy : list) {
+			if (set.contains(basePolicy.getTitle())) {
+				ids.add(basePolicy.getId());
+			} else {
+				set.add(basePolicy.getTitle());
+			}
+		}
+		System.out.println(ids.size());
+
+		if (ids.size() > 0) {
+			 mapper.updateRealIsDeleted(ids);
+//			return false;
+		}
+	}
+
 
 }
