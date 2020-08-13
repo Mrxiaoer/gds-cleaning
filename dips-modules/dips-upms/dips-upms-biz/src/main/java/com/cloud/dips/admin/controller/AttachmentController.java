@@ -41,12 +41,12 @@ import com.cloud.dips.common.security.util.SecurityUtils;
 public class AttachmentController {
 
 	private static final int BUFFERLEGTH = 8192;
-	private final String endpoint = "oss-cn-hangzhou.aliyuncs.com";
-	private final String accessKeyId = "LTAIxflxdBSdv55S";
-	private final String accessKeySecret = "5iF5QmgvBYdI6VYGbJlJZpoGaX8ySs";
+	private final String endpoint = "";
+	private final String accessKeyId = "";
+	private final String accessKeySecret = "";
 
-	private final String bucketName = "dips-cloud-gov";
-	private final String key = "upload/";
+	private final String bucketName = "";
+	private final String key = "";
 
 
 	/**
